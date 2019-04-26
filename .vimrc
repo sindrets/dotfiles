@@ -8,6 +8,7 @@ set ignorecase
 set smartcase
 set showcmd
 set mouse=a
+set hidden
 
 syntax on
 
@@ -21,6 +22,11 @@ call plug#begin("~/.vim/bundle")
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
+Plug 'scrooloose/nerdtree'
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'Yggdroot/indentLine'
+Plug 'anned20/vimsence'
+Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 

@@ -11,6 +11,7 @@ set mouse=a
 set hidden
 
 syntax on
+filetype plugin on
 
 let mapleader = " "						" set the leader key
 let g:airline_powerline_fonts = 1       " enable powerline symbols
@@ -25,9 +26,11 @@ call plug#begin("~/.vim/bundle")
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
+Plug 'scrooloose/nerdtree'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 Plug 'Yggdroot/indentLine'
 Plug 'anned20/vimsence'
+Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 
@@ -43,6 +46,14 @@ map <silent> <Leader>b :NERDTreeToggle<CR>
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR> 
 nnoremap  <silent> <s-tab> :bp<CR>
+
+" Move lines up/down
+nnoremap <A-UP> :m-2<CR>==
+nnoremap <A-DOWN> :m+<CR>==
+inoremap <A-UP> <ESC>:m-2<CR>==gi
+inoremap <A-DOWN> <ESC>:m+<CR>==gi
+vnoremap <A-UP> :m '<-2<CR>gv=gv
+vnoremap <A-DOWN> :m '>+1<CR>gv=gv
 
 " Use <c-space> for trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
