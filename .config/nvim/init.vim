@@ -17,6 +17,7 @@ let mapleader = " "						" set the leader key
 let g:airline_powerline_fonts = 1       " enable powerline symbols
 let g:airline_theme='powerlineish'      " set airline theme
 let NERDTreeShowHidden=1                " show dot files in NERDtree
+let g:startify_session_dir="/home/sindrets/.vim/session"
 
 let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
@@ -31,6 +32,7 @@ Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 Plug 'Yggdroot/indentLine'
 Plug 'anned20/vimsence'
 Plug 'jiangmiao/auto-pairs'
+Plug 'mhinz/vim-startify'
 
 call plug#end()
 
@@ -55,6 +57,11 @@ inoremap <A-DOWN> <ESC>:m+<CR>==gi
 vnoremap <A-UP> :m '<-2<CR>gv=gv
 vnoremap <A-DOWN> :m '>+1<CR>gv=gv
 
+" Select all
+nnoremap <C-A> ggVG
+inoremap <C-A> <ESC>ggVG
+vnoremap <C-A> <ESC>ggVG 
+
 " Use <c-space> for trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
 
@@ -68,4 +75,20 @@ function! s:show_documentation()
     call CocAction('doHover')
   endif
 endfunction
+
+function! s:filter_header(lines) abort
+	let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
+	let centered_lines = map(copy(a:lines),
+		\ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
+	return centered_lines
+endfunction
+let s:startify_ascii_header = [
+\ '     _   __         _    ___          ',
+\ '    / | / /__  ____| |  / (_)___ ___  ',
+\ '   /  |/ / _ \/ __ \ | / / / __ `__ \ ',
+\ '  / /|  /  __/ /_/ / |/ / / / / / / / ',
+\ ' /_/ |_/\___/\____/|___/_/_/ /_/ /_/  ',
+\ '                                      ',
+\ ]
+let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
 
