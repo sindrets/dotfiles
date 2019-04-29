@@ -9,6 +9,7 @@ set smartcase
 set showcmd
 set mouse=a
 set hidden
+set backspace=indent,eol,start
 set termguicolors
 
 syntax on
@@ -34,11 +35,16 @@ Plug 'Yggdroot/indentLine'
 Plug 'anned20/vimsence'
 Plug 'jiangmiao/auto-pairs'
 Plug 'mhinz/vim-startify'
+" THEMES
 Plug 'rakr/vim-one'
+Plug 'ayu-theme/ayu-vim'
 
 call plug#end()
 
-colorscheme one
+" Theme settings
+let ayucolor="mirage"
+let g:airline_theme="ayu_mirage"
+colorscheme ayu
 set background=dark
 
 " Copy and paste to/from system clipboard
