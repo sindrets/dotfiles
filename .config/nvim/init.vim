@@ -62,6 +62,9 @@ nnoremap <C-A> ggVG
 inoremap <C-A> <ESC>ggVG
 vnoremap <C-A> <ESC>ggVG 
 
+" Turn off search highlight until next search
+nnoremap <F3> :noh<CR>
+
 " Use <c-space> for trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
 
