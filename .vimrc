@@ -13,7 +13,7 @@ set hidden
 syntax on
 
 let mapleader = " "						" set the leader key
-"let g:airline_powerline_fonts = 1      " enable powerline symbols
+let g:airline_powerline_fonts = 1      " enable powerline symbols
 let g:airline_theme='powerlineish'      " set airline theme
 let NERDTreeShowHidden=1                " show dot files in NERDtree
 
@@ -30,11 +30,10 @@ Plug 'jiangmiao/auto-pairs'
 
 call plug#end()
 
-" CURSOR SHAPE
-let &t_SI = "\<Esc>]50;CursorShape=1\x7"	" INSERT mode
-let &t_SR = "\<Esc>]50;CursorShape=2\x7"	" REPLACE mode
-let &t_EI = "\<Esc>]50;CursorShape=0\x7"	" NORMAL mode (ELSE)
+set background=dark
 
+set t_8b=[48;2;%lu;%lu;%lum
+set t_8f=[38;2;%lu;%lu;%lum
 
 " Copy and paste to/from system clipboard
 noremap <Leader>y "+y

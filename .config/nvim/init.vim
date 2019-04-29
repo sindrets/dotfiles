@@ -9,6 +9,7 @@ set smartcase
 set showcmd
 set mouse=a
 set hidden
+set termguicolors
 
 syntax on
 filetype plugin on
@@ -33,9 +34,12 @@ Plug 'Yggdroot/indentLine'
 Plug 'anned20/vimsence'
 Plug 'jiangmiao/auto-pairs'
 Plug 'mhinz/vim-startify'
+Plug 'rakr/vim-one'
 
 call plug#end()
 
+colorscheme one
+set background=dark
 
 " Copy and paste to/from system clipboard
 noremap <Leader>y "+y
