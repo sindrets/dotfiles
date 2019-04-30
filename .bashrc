@@ -45,7 +45,7 @@ function rpath () {
 # Get current terminal emulator
 function getTerm () {
 	local TERM_BIN=$(ps -p $(ps -p $$ -o ppid=) o args=)
-	perl -e 'print ( $ARGV[0] =~ /((?<=\/)[^\/]*$)/ )' $TERM_BIN
+	perl -e 'print ( $ARGV[0] =~ /((?(?<=\/))[^\/]*$)/ )' $TERM_BIN
 }
 
 term="$(getTerm)"
