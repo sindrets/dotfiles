@@ -12,13 +12,17 @@ set hidden
 set backspace=indent,eol,start
 set termguicolors
 
+set list
+set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:»
+
 syntax on
 filetype plugin on
 
-let mapleader = " "						" set the leader key
-let g:airline_powerline_fonts = 1       " enable powerline symbols
-let g:airline_theme='powerlineish'      " set airline theme
-let NERDTreeShowHidden=1                " show dot files in NERDtree
+let mapleader = " "											" set the leader key
+let g:airline_powerline_fonts = 1							" enable powerline symbols
+let g:airline_theme='powerlineish'							" set airline theme
+let g:airline#extensions#tabline#enabled = 1				" enable airline tabline
+let NERDTreeShowHidden=1									" show dot files in NERDtree
 let g:startify_session_dir="/home/sindrets/.vim/session"
 
 let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
@@ -30,11 +34,12 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
 Plug 'scrooloose/nerdtree'
+Plug 'tpope/vim-fugitive'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
-Plug 'Yggdroot/indentLine'
 Plug 'anned20/vimsence'
 Plug 'jiangmiao/auto-pairs'
 Plug 'mhinz/vim-startify'
+Plug 'junegunn/goyo.vim'
 " THEMES
 Plug 'rakr/vim-one'
 Plug 'ayu-theme/ayu-vim'
@@ -71,6 +76,20 @@ vnoremap <A-DOWN> :m '>+1<CR>gv=gv
 nnoremap <C-A> ggVG
 inoremap <C-A> <ESC>ggVG
 vnoremap <C-A> <ESC>ggVG 
+
+" Shift+arrow selection
+nmap <S-Up> v<Up>
+nmap <S-Down> v<Down>
+nmap <S-Left> v<Left>
+nmap <S-Right> v<Right>
+vmap <S-Up> <Up>
+vmap <S-Down> <Down>
+vmap <S-Left> <Left>
+vmap <S-Right> <Right>
+imap <S-Up> <Esc>v<Up>
+imap <S-Down> <Esc>v<Down>
+imap <S-Left> <Esc>v<Left>
+imap <S-Right> <Esc>v<Right>
 
 " Turn off search highlight until next search
 nnoremap <F3> :noh<CR>
