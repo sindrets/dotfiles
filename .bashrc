@@ -61,7 +61,9 @@ case $term in
 		fi
 
 		# Change neofetch img backend and source
-		[[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]] && alias neofetch="neofetch --backend kitty --source '$NEOFETCH_IMG'"
+		if [[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]]; then
+			alias neofetch="printf %24s | tr ' ' '\n'; neofetch --backend kitty --source '$NEOFETCH_IMG'"
+		fi
 		;;
 
 esac 
