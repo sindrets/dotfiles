@@ -11,6 +11,8 @@ set mouse=a
 set hidden
 set backspace=indent,eol,start
 set termguicolors
+set pyx=3
+set pyxversion=3
 
 set list
 set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:»
@@ -29,7 +31,10 @@ let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_er
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 
 call plug#begin("~/.vim/bundle")
-
+" SYNTAX
+Plug 'leafgarland/typescript-vim'
+Plug 'PotatoesMaster/i3-vim-syntax'
+" MISC
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
