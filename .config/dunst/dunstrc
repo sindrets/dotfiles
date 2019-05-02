@@ -167,7 +167,7 @@
 
     # Paths to default icons.
     #icoin_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
-	icon_path = /usr/share/icons/Numix/16/status/:/usr/share/icons/Numix/16/devices/:/usr/share/icons/Numix/16/actions
+	icon_path = /usr/share/icons/Numix/16/status/:/usr/share/icons/Numix/16/devices/:/usr/share/icons/Numix/16/actions:/usr/share/icons/Numix/48/notifications
 
     ### History ###
 
