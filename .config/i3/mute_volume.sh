@@ -11,7 +11,7 @@ fi
 
 isMute=$(pamixer --sink $sink --get-mute)
 if [ "$isMute" == "true" ]; then
-	notify-send "🔇 Volume muted" -t 1000;
+	notify-send "Volume muted" -t 1000 -i audio-volume-muted-blocked-panel;
 else 
-	notify-send "🔈 Volume unmuted" -t 1000
+	notify-send "Volume unmuted" -t 1000 -i audio-volume-medium
 fi

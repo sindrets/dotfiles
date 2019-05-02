@@ -167,7 +167,7 @@
 
     # Paths to default icons.
     #icoin_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
-	icon_path = /usr/share/icons/Numix/32/status/:/usr/share/icons/Numix/32/devices/
+	icon_path = /usr/share/icons/Numix/16/status/:/usr/share/icons/Numix/16/devices/:/usr/share/icons/Numix/16/actions
 
     ### History ###
 
@@ -284,7 +284,7 @@
 
 [urgency_normal]
     background = "#3a3a3b"
-    foreground = "#5bc8ed"
+    foreground = "#c7c7c8"
     timeout = 10
     # Icon for notifications with normal urgency, uncomment to enable
     #icon = /path/to/icon

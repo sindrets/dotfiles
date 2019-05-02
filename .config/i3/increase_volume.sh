@@ -12,4 +12,4 @@ volume=`pamixer --sink $sink --get-volume-human`
 rounded=`awk '{print int( ($1+2) / 5) * 5 + 5 "%"}' <<< $volume`
 
 /usr/bin/pactl set-sink-volume $sink "$rounded"
-notify-send "🔊 Volume $(pamixer --sink $sink --get-volume-human)" -t 1000
+notify-send "Volume $(pamixer --sink $sink --get-volume-human)" -t 1000 -i audio-volume-high
