@@ -9,7 +9,7 @@ PATH=~/.config/scripts:$PATH
 
 export NEOFETCH_IMG="/home/sindrets/Google Drive/sindrets@gmail.com/Bilder/neofetch/"
 
-BROWSER=/usr/bin/chrome
+BROWSER=/usr/bin/google-chrome-stable
 export VISUAL=nvim
 export EDITOR=nvim
 export LC_ALL=en_US.UTF-8 # force all applications to use default language for output
