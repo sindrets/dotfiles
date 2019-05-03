@@ -155,7 +155,7 @@ menu-3-1-exec = menu-open-0
 [module/update-indicator]
 type = custom/script
 exec = ~/.config/polybar/scripts/update-indicator.sh
-interval = 600
+interval = 300
 format-prefix = " "
 click-left = pamac-manager &
 
