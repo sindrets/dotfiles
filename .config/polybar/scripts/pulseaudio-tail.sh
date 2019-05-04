@@ -1,6 +1,7 @@
 #!/bin/sh
 
 volume=0
+muted=false
 
 # Get the most relevant sink
 update_sink() {	
@@ -46,7 +47,6 @@ volume_print() {
     muted=$(pamixer --sink "$sink" --get-mute)
 
     if [ "$muted" = true ]; then
-		volume=0
         echo "$icon --"
     else
 		volume=`pamixer --sink "$sink" --get-volume`
@@ -56,19 +56,20 @@ volume_print() {
 
 update_volume () {
 	volume=`pamixer --sink "$sink" --get-volume`
+	muted=`pamixer --sink "$sink" --get-mute`
 }
 
 listen() {
     volume_print
 
-	local now=$volume
-	local last=$volume
+	local vLast=$volume
+	local mLast=$muted
     pactl subscribe | while read -r event; do
         if echo "$event" | grep -q "'change' on sink"; then
 			update_volume
-            now=$volume
-			if [ $now != $last ]; then 
-				last=$now
+			if [ $volume != $vLast ] || [ $muted != $mLast  ]; then 
+				vLast=$volume
+				mLast=$muted
 				volume_print
 			fi
         fi
