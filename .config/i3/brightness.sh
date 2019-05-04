@@ -36,6 +36,7 @@ case $1 in
 	get)
 		# return current percent
 		echo `currentPercent`
+		;;
 esac
 
 

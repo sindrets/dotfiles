@@ -27,7 +27,7 @@ font-2 = "Font Awesome 5 Brands:size=10;1"
 
 modules-left = i3
 modules-center = date
-modules-right = cpu-temp wlan eth update-indicator brightness battery pulseaudio-tail powermenu
+modules-right = cpu-temp wlan eth update-indicator backlight battery pulseaudio-tail powermenu
 
 tray-position = none
 ;tray-padding = 10
