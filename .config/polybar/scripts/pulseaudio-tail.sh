@@ -3,8 +3,7 @@
 # Get the most relevant sink
 update_sink() {	
     sink=`pactl list short sinks | grep RUNNING | cut -f1`
-	sLength=`expr length "$sink"`
-	if [ $sLength -eq 0 ]; then
+	if [ `expr length "$sink"` -eq 0 ]; then
 		sink=`pacmd info | grep "Default sink" | awk '{print $4}'`
 	fi
 }
@@ -27,13 +26,19 @@ volume_mute() {
 volume_print() {
     update_sink
 
-    active_port=$(pacmd list-sinks | sed -n "/index: $sink/,/index:/p" | grep active)
+	active_port=$(pacmd list-sinks | sed -n "/index: $sink/,/index:/p")
+	if [ `expr length "$active_port"` -eq 0 ]; then
+		active_port=`pacmd list-sinks | sed -n "/name: <$sink/,/index:/p"`
+	fi
+	active_port=`echo "$active_port" | grep "active port"`
+
     if echo "$active_port" | grep -q speaker; then
-        icon=""
+        # icon=""
+		icon=""
     elif echo "$active_port" | grep -Pq "headphones|lineout"; then
-        icon=""
+        icon=""
     else
-        icon=""
+        icon=""
     fi
 
     muted=$(pamixer --sink "$sink" --get-mute)

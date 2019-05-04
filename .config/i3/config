@@ -20,6 +20,7 @@ bindsym $mod+Shift+q kill
 
 # start program launcher
 bindsym $mod+d exec --no-startup-id rofi -show run
+bindsym $mod+Shift+d exec --no-startup-id ~/.config/scripts/sudo-rofi
 
 # change focus
 #bindsym $mod+h focus left

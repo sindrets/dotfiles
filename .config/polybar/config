@@ -21,7 +21,8 @@ module-margin-left = 1
 module-margin-right = 2
 
 font-0 = "Source Code Pro Semibold:size=10;1"
-font-1 = "Font Awesome 5 Free:style=Solid:size=10;1"
+font-1 = "Material Design Icons:size=12;1"
+#font-1 = "Font Awesome 5 Free:style=Solid:size=10;1"
 font-2 = "Font Awesome 5 Brands:size=10;1"
 
 modules-left = i3
@@ -78,11 +79,11 @@ label-connected = %essid%
 
 format-disconnected =
 
-ramp-signal-0 = 
-ramp-signal-1 = 
-ramp-signal-2 = 
-ramp-signal-3 = 
-ramp-signal-4 = 
+ramp-signal-0 = 冷
+ramp-signal-1 = 爛
+ramp-signal-2 = 嵐
+ramp-signal-3 = 襤
+ramp-signal-4 = 蠟
 ramp-signal-foreground = #1E272B
 
 [module/eth]
@@ -93,7 +94,7 @@ interval = 3.0
 format-connected-padding = 2
 format-connected-foreground = #1E272B
 format-connected-background = #9d6a47
-format-connected-prefix = " "
+format-connected-prefix = " "
 format-connected-prefix-foreground = #1E272B
 label-connected = %local_ip%
 
@@ -109,7 +110,7 @@ date-alt = " %Y-%m-%d"
 time = %H:%M
 time-alt = %H:%M:%S
 
-format-prefix = 
+format-prefix = 肋
 format-foreground = #1E272B
 format-background = #d99f57
 format-padding = 2
@@ -123,9 +124,9 @@ expand-right = true
 
 format-spacing = 1
 
-label-open = 
+label-open = 
 label-open-foreground = #9d6a47
-label-close =  cancel
+label-close =  cancel
 label-close-foreground = #9d6a47
 label-separator = |
 label-separator-foreground = #9d6a47
@@ -156,14 +157,14 @@ menu-3-1-exec = menu-open-0
 type = custom/script
 exec = ~/.config/polybar/scripts/update-indicator.sh
 interval = 300
-format-prefix = " "
+format-prefix = " "
 click-left = pamac-manager &
 
 [module/pulseaudio-tail]
 type = custom/script
 exec = ~/.config/polybar/scripts/pulseaudio-tail.sh
 tail = true
-click-right = exec pavucontrol &
+click-right = exec pavucontrol-qt &
 click-left = ~/.config/polybar/scripts/pulseaudio-tail.sh --mute
 scroll-up = ~/.config/polybar/scripts/pulseaudio-tail.sh --up
 scroll-down = ~/.config/polybar/scripts/pulseaudio-tail.sh --down
@@ -171,7 +172,7 @@ scroll-down = ~/.config/polybar/scripts/pulseaudio-tail.sh --down
 [module/cpu-temp]
 type = custom/script
 exec = ~/.config/polybar/scripts/cpu-temp.sh
-format-prefix = " "
+format-prefix = " "
 interval = 5
 
 [settings]

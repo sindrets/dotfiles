@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if [ -z $1 ]; then
+	cmd=`rofi -dmenu \
+		-no-fixed-num-lines \
+		-p "sudo"`
+
+else cmd=$@
+
+fi
+
+pass=`rofi -dmenu \
+	-password \
+	-no-fixed-num-lines \
+	-p "$(printf "[sudo] password for $USER" | sed s/://)"`
+
+echo $pass | sudo -kS $cmd 
+echo ""
+
