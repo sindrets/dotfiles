@@ -1,5 +1,7 @@
 #!/bin/sh
 
+volume=0
+
 # Get the most relevant sink
 update_sink() {	
     sink=`pactl list short sinks | grep RUNNING | cut -f1`
@@ -44,18 +46,31 @@ volume_print() {
     muted=$(pamixer --sink "$sink" --get-mute)
 
     if [ "$muted" = true ]; then
+		volume=0
         echo "$icon --"
     else
-        echo "$icon $(pamixer --sink "$sink" --get-volume)"
+		volume=`pamixer --sink "$sink" --get-volume`
+        echo "$icon $volume"
     fi
+}
+
+update_volume () {
+	volume=`pamixer --sink "$sink" --get-volume`
 }
 
 listen() {
     volume_print
 
+	local now=$volume
+	local last=$volume
     pactl subscribe | while read -r event; do
-        if echo "$event" | grep -qv "Client"; then
-            volume_print
+        if echo "$event" | grep -q "'change' on sink"; then
+			update_volume
+            now=$volume
+			if [ $now != $last ]; then 
+				last=$now
+				volume_print
+			fi
         fi
     done
 }

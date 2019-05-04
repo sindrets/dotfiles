@@ -158,7 +158,7 @@ type = custom/script
 exec = ~/.config/polybar/scripts/update-indicator.sh
 interval = 300
 format-prefix = " "
-click-left = pamac-manager &
+click-left = pamac-manager --updates &
 
 [module/pulseaudio-tail]
 type = custom/script
