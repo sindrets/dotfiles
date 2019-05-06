@@ -27,7 +27,7 @@ font-2 = "Font Awesome 5 Brands:size=10;1"
 
 modules-left = i3
 modules-center = date
-modules-right = cpu-temp wlan eth update-indicator backlight battery pulseaudio-tail powermenu
+modules-right = cpu-temp wlan eth insync update-indicator backlight battery pulseaudio-tail powermenu
 
 tray-position = none
 ;tray-padding = 10
@@ -168,6 +168,11 @@ click-right = exec pavucontrol-qt &
 click-left = ~/.config/polybar/scripts/pulseaudio-tail.sh --mute
 scroll-up = ~/.config/polybar/scripts/pulseaudio-tail.sh --up
 scroll-down = ~/.config/polybar/scripts/pulseaudio-tail.sh --down
+
+[module/insync]
+type = custom/script
+click-left = exec insync show
+exec = echo ""
 
 [module/cpu-temp]
 type = custom/script

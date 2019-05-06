@@ -9,6 +9,8 @@ else cmd=$@
 
 fi
 
+[ -z "$cmd" ] && exit 0
+
 pass=`rofi -dmenu \
 	-password \
 	-no-fixed-num-lines \

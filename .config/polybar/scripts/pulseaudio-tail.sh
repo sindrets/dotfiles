@@ -2,11 +2,12 @@
 
 volume=0
 muted=false
+sink=0
 
 # Get the most relevant sink
 update_sink() {	
-    sink=`pactl list short sinks | grep RUNNING | cut -f1`
-	if [ `expr length "$sink"` -eq 0 ]; then
+	sink=`pactl list short sinks | grep RUNNING | cut -f1`
+	if [ -z "$sink" ]; then
 		sink=`pacmd info | grep "Default sink" | awk '{print $4}'`
 	fi
 }
@@ -30,7 +31,7 @@ volume_print() {
     update_sink
 
 	active_port=$(pacmd list-sinks | sed -n "/index: $sink/,/index:/p")
-	if [ `expr length "$active_port"` -eq 0 ]; then
+	if [ -z "$active_port" ]; then
 		active_port=`pacmd list-sinks | sed -n "/name: <$sink/,/index:/p"`
 	fi
 	active_port=`echo "$active_port" | grep "active port"`
@@ -64,12 +65,14 @@ listen() {
 
 	local vLast=$volume
 	local mLast=$muted
+	local sLast=$sink
     pactl subscribe | while read -r event; do
         if echo "$event" | grep -q "'change' on sink"; then
 			update_volume
-			if [ $volume != $vLast ] || [ $muted != $mLast  ]; then 
+			if [ $volume != $vLast ] || [ $muted != $mLast  ] || [ $sink != $sLast ]; then 
 				vLast=$volume
 				mLast=$muted
+				sLast=$sink
 				volume_print
 			fi
         fi
