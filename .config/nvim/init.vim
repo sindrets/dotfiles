@@ -93,8 +93,8 @@ vmap <S-Left> <Left>
 vmap <S-Right> <Right>
 imap <S-Up> <Esc>v<Up>
 imap <S-Down> <Esc>v<Down>
-imap <S-Left> <Esc>v<Left>
-imap <S-Right> <Esc>v<Right>
+imap <S-Left> <Esc>v
+imap <S-Right> <Esc><Right>v
 
 " Turn off search highlight until next search
 nnoremap <F3> :noh<CR>

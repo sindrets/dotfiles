@@ -27,7 +27,7 @@ font-2 = "Font Awesome 5 Brands:size=10;1"
 
 modules-left = i3
 modules-center = date
-modules-right = cpu-temp redshift wlan eth insync update-indicator backlight battery pulseaudio-tail powermenu
+modules-right = cpu-temp wlan eth 1password redshift insync update-indicator backlight battery pulseaudio-tail powermenu
 
 tray-position = none
 ;tray-padding = 10
@@ -179,10 +179,19 @@ type = custom/script
 click-left = exec killall -USR1 redshift
 exec = echo ""
 
+[module/1password]
+type = custom/script
+click-left = exec google-chrome-stable --app-id="njlbeaomblooegknfihpombhkolpndmg"
+exec = echo ""
+
 [module/cpu-temp]
 type = custom/script
 exec = ~/.config/polybar/scripts/cpu-temp.sh
 format-prefix = " "
+format-padding = 2
+format-foreground = #1E272B
+format-background = #9d6a47
+format-prefix-foreground = #1E272B
 interval = 5
 
 [settings]

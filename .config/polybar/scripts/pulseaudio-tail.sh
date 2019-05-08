@@ -70,7 +70,7 @@ listen() {
 	if echo "$event" | grep -Pq "('change' on sink)|('new' on source-output)"; then
 			update_volume
 			update_sink
-			if [ $volume != $vLast ] || [ $muted != $mLast  ] || [ $sink != $sLast ]; then 
+			if [ "$volume" != "$vLast" ] || [ "$muted" != "$mLast"  ] || [ "$sink" != "$sLast" ]; then 
 				vLast=$volume
 				mLast=$muted
 				sLast=$sink

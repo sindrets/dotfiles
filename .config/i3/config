@@ -1,3 +1,7 @@
+
+# Mod1: alt
+# Mod4: super
+# Mod5: alt_gr
 set $mod Mod4
 
 new_window pixel 1
@@ -14,6 +18,9 @@ font xft:URWGothic-Book 11
 floating_modifier $mod
 
 bindsym $mod+Return exec kitty
+bindsym $mod+Shift+Return exec kitty --class kitty_FLOAT
+# AltGr+3
+bindsym Mod5+sterling exec google-chrome-stable --app-id="njlbeaomblooegknfihpombhkolpndmg"
 
 # Window kill command
 bindsym $mod+Shift+q kill
@@ -39,10 +46,10 @@ bindsym $mod+Shift+j move down
 bindsym $mod+Shift+k move up
 bindsym $mod+Shift+l move right
 
-bindsym $mod+Shift+Left move left
-bindsym $mod+Shift+Down move down
-bindsym $mod+Shift+Up move up
-bindsym $mod+Shift+Right move right
+bindsym $mod+Shift+Left move left 30 px
+bindsym $mod+Shift+Down move down 30 px
+bindsym $mod+Shift+Up move up 30 px
+bindsym $mod+Shift+Right move right 30 px
 
 # workspace back and forth (with/without active container)
 workspace_auto_back_and_forth yes
@@ -152,8 +159,13 @@ for_window [class="Thus"] floating enable border normal
 for_window [class="Timeset-gui"] floating enable border normal
 for_window [class="(?i)virtualbox"] floating enable border normal
 for_window [class="Xfburn"] floating enable
-for_window [title="Sublime.*"] floating enable border normal
-for_window [title="Insync.*"] floating enable border pixel 1
+for_window [class="Subl3"] floating enable border normal
+for_window [class="insync.py"] floating enable border pixel 1
+for_window [class="kitty_FLOAT"] floating enable border pixel 1
+for_window [class="Headset" title="Headset - Player"] move scratchpad
+for_window [instance="fam-strom.1password.com"] floating enable border normal
+# 1password chrome app
+for_window [instance="crx_njlbeaomblooegknfihpombhkolpndmg"] floating enable
 
 # switch to workspace with urgent window automatically
 for_window [urgent=latest] focus
@@ -198,10 +210,10 @@ mode "resize" {
         bindsym l resize grow width 2 px or 2 ppt
 
         # same bindings, but for the arrow keys
-        bindsym Left resize shrink width 4 px or 4 ppt
-        bindsym Down resize grow height 4 px or 4 ppt
-        bindsym Up resize shrink height 4 px or 4 ppt
-        bindsym Right resize grow width 4 px or 4 ppt
+        bindsym Left resize shrink width 20 px or 4 ppt
+        bindsym Down resize grow height 20 px or 4 ppt
+        bindsym Up resize shrink height 20 px or 4 ppt
+        bindsym Right resize grow width 20 px or 4 ppt
 
         # exit resize mode: Enter or Escape
         bindsym Return mode "default"
@@ -233,7 +245,7 @@ client.background #1E272B
 
 # Gaps
 gaps inner 20
-gaps outer 60
+gaps outer 40
 
 #smart_gaps on
 
@@ -277,9 +289,17 @@ mode "$mode_gaps_outer" {
 # set power-manager and volume control
 exec --no-startup-id mate-power-manager
 
+# Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec /home/sindrets/.config/i3/increase_volume.sh
 bindsym XF86AudioLowerVolume exec /home/sindrets/.config/i3/decrease_volume.sh
 bindsym XF86AudioMute exec /home/sindrets/.config/i3/mute_volume.sh
+
+# Media player controls
+bindsym XF86AudioPlay exec playerctl play-pause
+bindsym XF86AudioPause exec playerctl pause
+bindsym XF86AudioNext exec playerctl next
+bindsym XF86AudioPrev exec playerctl previous
+bindsym XF86AudioStop exec playerctl stop
 
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec ~/.config/i3/brightness.sh inc
