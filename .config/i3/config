@@ -290,9 +290,9 @@ mode "$mode_gaps_outer" {
 exec --no-startup-id mate-power-manager
 
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec /home/sindrets/.config/i3/increase_volume.sh
-bindsym XF86AudioLowerVolume exec /home/sindrets/.config/i3/decrease_volume.sh
-bindsym XF86AudioMute exec /home/sindrets/.config/i3/mute_volume.sh
+bindsym XF86AudioRaiseVolume exec /home/sindrets/.config/i3/volume-utils.sh --inc
+bindsym XF86AudioLowerVolume exec /home/sindrets/.config/i3/volume-utils.sh --dec
+bindsym XF86AudioMute exec /home/sindrets/.config/i3/volume-utils.sh --mute
 
 # Media player controls
 bindsym XF86AudioPlay exec "$HOME/.config/i3/playerctl-utils.sh --use-active play-pause"
