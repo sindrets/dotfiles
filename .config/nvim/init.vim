@@ -57,17 +57,22 @@ let g:airline_theme="ayu_mirage"
 colorscheme ayu
 set background=dark
 
-" Copy and paste to/from system clipboard
+" Copy, cut and paste to/from system clipboard
 noremap <Leader>y "+y
 noremap <Leader>p "+p
 noremap <C-C> "+y
+vnoremap <C-x> "+d
+
 map <silent> <Leader>e :NERDTreeFocus<CR>
 map <silent> <Leader>b :NERDTreeToggle<CR>
-" map <silent> <Leader><Tab> :tabn<CR>
 
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR> 
 nnoremap  <silent> <s-tab> :bp<CR>
+
+" Navigate tabs
+map <silent> <Leader><Tab> :tabn<CR>
+map <silent> <Leader><S-Tab> :tabp<CR>
 
 " Move lines up/down
 nnoremap <A-UP> :m-2<CR>==

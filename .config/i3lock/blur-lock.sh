@@ -3,6 +3,7 @@
 lighticon="/home/sindrets/.config/i3lock/img/lock-icon-light-200.png"
 darkicon="/home/sindrets/.config/i3lock/img/lock-icon-dark-200.png"
 tmpbg='/tmp/i3lock-bg.png'
+darken_amount=30
 
 # take a screenshot
 scrot "$tmpbg"
@@ -15,7 +16,7 @@ VALUE="60" #brightness value to compare to
 # thanks to [i3lock-fancy](https://github.com/meskarune/i3lock-fancy) for the
 # idea of getting the background color to change the icons
 COLOR=$(convert "$tmpbg" -gravity center -crop 100x100+0+0 +repage -colorspace hsb \
-    -resize 1x1 txt:- | awk -F '[%$]' 'NR==2{gsub(",",""); printf "%.0f\n", $(NF-1)}');
+    -brightness-contrast -"$darken_amount"x0 -resize 1x1 txt:- | awk -F '[%$]' 'NR==2{gsub(",",""); printf "%.0f\n", $(NF-1)}');
 
 # change the color ring colors to leave the middle of the feedback ring
 # transparent and the outside to use either dark or light colors based on the 
@@ -36,7 +37,7 @@ fi
 
 # blur the screenshot by resizing and scaling back up
 #convert "$tmpbg" -filter Gaussian -thumbnail 20% -sample 500% "$tmpbg"
-convert "$tmpbg" -scale 10% -blur 0x5 -resize 1000% "$tmpbg"
+convert "$tmpbg" -scale 10% -blur 0x5 -resize 1000% -brightness-contrast -"$darken_amount"x0 "$tmpbg"
 
 # overlay the icon onto the screenshot
 convert "$tmpbg" "$icon" -gravity center -composite "$tmpbg"

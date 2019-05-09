@@ -3,7 +3,8 @@
 backlight=/sys/class/backlight/intel_backlight/brightness
 max=`cat /sys/class/backlight/intel_backlight/max_brightness`
 min=`perl -e "use POSIX; print ceil($max / 100)"`
-step="$[ ($max - $min) / 20 ]"
+nSteps=20
+step="$[ $max / $nSteps ]"
 
 #echo "max: $max"
 #echo "min: $min"
@@ -12,6 +13,11 @@ step="$[ ($max - $min) / 20 ]"
 modValue () {
 	local result=`cat /sys/class/backlight/intel_backlight/brightness`
 	result="$[ $result + $1 ]"
+	# round to closest step % of max
+	pStep=$[ 100 / $nSteps ]
+	result=`perl -e \
+		"use POSIX;
+		print floor( ($result / $max * 100 + ($pStep / 2)) / $pStep) * $pStep * $max / 100"`
 	[ $result -gt $max ] && result=$max
 	[ $result -lt $min ] && result=$min
 	echo $result
@@ -19,7 +25,7 @@ modValue () {
 
 currentPercent () {
 	current=`cat $backlight`
-	perl -e "use POSIX; print floor( (($current - $min) / ($max - $min) * 100) + 0.5 )"
+	perl -e "use POSIX; print floor( ($current / $max * 100) + 0.5 )"
 }
 
 case $1 in
