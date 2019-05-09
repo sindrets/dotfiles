@@ -204,10 +204,10 @@ mode "resize" {
         # Pressing right will grow the window’s width.
         # Pressing up will shrink the window’s height.
         # Pressing down will grow the window’s height.
-        bindsym h resize shrink width 2 px or 2 ppt
-        bindsym j resize grow height 2 px or 2 ppt
-        bindsym k resize shrink height 2 px or 2 ppt
-        bindsym l resize grow width 2 px or 2 ppt
+        bindsym h resize shrink width 1 px or 1 ppt
+        bindsym j resize grow height 1 px or 1 ppt
+        bindsym k resize shrink height 1 px or 1 ppt
+        bindsym l resize grow width 1 px or 1 ppt
 
         # same bindings, but for the arrow keys
         bindsym Left resize shrink width 20 px or 4 ppt
@@ -295,11 +295,11 @@ bindsym XF86AudioLowerVolume exec /home/sindrets/.config/i3/decrease_volume.sh
 bindsym XF86AudioMute exec /home/sindrets/.config/i3/mute_volume.sh
 
 # Media player controls
-bindsym XF86AudioPlay exec playerctl play-pause
-bindsym XF86AudioPause exec playerctl pause
-bindsym XF86AudioNext exec playerctl next
-bindsym XF86AudioPrev exec playerctl previous
-bindsym XF86AudioStop exec playerctl stop
+bindsym XF86AudioPlay exec "$HOME/.config/i3/playerctl-utils.sh --use-active play-pause"
+bindsym XF86AudioPause exec "$HOME/.config/i3/playerctl-utils.sh --use-active pause"
+bindsym XF86AudioNext exec "$HOME/.config/i3/playerctl-utils.sh --use-active next"
+bindsym XF86AudioPrev exec "$HOME/.config/i3/playerctl-utils.sh --use-active previous"
+bindsym XF86AudioStop exec "$HOME/.config/i3/playerctl-utils.sh --use-active stop"
 
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec ~/.config/i3/brightness.sh inc
@@ -307,3 +307,7 @@ bindsym XF86MonBrightnessDown exec ~/.config/i3/brightness.sh dec
 # touchpad on and off controller on laptop with Fn+<touchpad control functional key>
 bindsym XF86TouchpadOn exec --no-startup-id synclient Touchpadoff=0
 bindsym XF86TouchpadOff exec --no-startup-id synclient Touchpadoff=1
+
+# Printscreen
+bindsym --release Print exec "maim -s | xclip -selection clipboard -t image/png"
+bindsym --release Mod4+Shift+Print exec "$HOME/.config/scripts/screenshot-active.sh"
