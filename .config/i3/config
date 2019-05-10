@@ -20,7 +20,7 @@ floating_modifier $mod
 bindsym $mod+Return exec kitty
 bindsym $mod+Shift+Return exec kitty --class kitty_FLOAT
 # AltGr+3
-bindsym Mod5+sterling exec google-chrome-stable --app-id="njlbeaomblooegknfihpombhkolpndmg"
+bindsym Mod5+sterling exec google-chrome-stable --app="https://fam-strom.1password.com/vaults/all/allitems/"
 
 # Window kill command
 bindsym $mod+Shift+q kill
@@ -103,6 +103,7 @@ set $ws5 5
 set $ws6 6
 set $ws7 7
 set $ws8 8
+set $wsTrash number 99: 
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -113,6 +114,7 @@ bindsym $mod+5 workspace $ws5
 bindsym $mod+6 workspace $ws6
 bindsym $mod+7 workspace $ws7
 bindsym $mod+8 workspace $ws8
+bindsym Mod4+Mod1+minus workspace $wsTrash
 
 # Move focused container to workspace
 bindsym $mod+Ctrl+1 move container to workspace $ws1
@@ -123,6 +125,7 @@ bindsym $mod+Ctrl+5 move container to workspace $ws5
 bindsym $mod+Ctrl+6 move container to workspace $ws6
 bindsym $mod+Ctrl+7 move container to workspace $ws7
 bindsym $mod+Ctrl+8 move container to workspace $ws8
+bindsym $mod+Ctrl+Shift+underscore move container to workspace $wsTrash
 
 # Move to workspace with focused container
 bindsym $mod+Shift+1 move container to workspace $ws1; workspace $ws1
@@ -133,6 +136,7 @@ bindsym $mod+Shift+5 move container to workspace $ws5; workspace $ws5
 bindsym $mod+Shift+6 move container to workspace $ws6; workspace $ws6
 bindsym $mod+Shift+7 move container to workspace $ws7; workspace $ws7
 bindsym $mod+Shift+8 move container to workspace $ws8; workspace $ws8
+bindsym $mod+Shift+underscore move container to workspace $wsTrash; workspace $wsTrash
 
 # Open specific applications in floating mode
 for_window [title="alsamixer"] floating enable border pixel 1
@@ -162,10 +166,8 @@ for_window [class="Xfburn"] floating enable
 for_window [class="Subl3"] floating enable border normal
 for_window [class="insync.py"] floating enable border pixel 1
 for_window [class="kitty_FLOAT"] floating enable border pixel 1
-for_window [class="Headset" title="Headset - Player"] move scratchpad
+for_window [class="Headset" title="Headset - Player"] move container to workspace $wsTrash
 for_window [instance="fam-strom.1password.com"] floating enable border normal
-# 1password chrome app
-for_window [instance="crx_njlbeaomblooegknfihpombhkolpndmg"] floating enable
 
 # switch to workspace with urgent window automatically
 for_window [urgent=latest] focus
@@ -177,10 +179,10 @@ bindsym $mod+Shift+c reload
 bindsym $mod+Shift+r restart
 
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
+#bindsym $mod+Shift+e exec "i3-nagbar -t warning -m 'You pressed the exit shortcut. Do you really want to exit i3? This will end your X session.' -b 'Yes, exit i3' 'i3-msg exit'"
 
 # Set shut down, restart and locking features
-bindsym $mod+0 mode "$mode_system"
+bindsym $mod+Shift+e mode "$mode_system"
 set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (Shift+s)hutdown
 mode "$mode_system" {
     bindsym l exec --no-startup-id i3exit lock, mode "default"

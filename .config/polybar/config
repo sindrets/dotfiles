@@ -39,30 +39,32 @@ include-file = ~/.config/polybar/custom.ini
 
 [module/i3]
 type = internal/i3
-format = <label-state> <label-mode>
+format = <label-state>
 index-sort = true
 wrapping-scroll = false
+; This will split the workspace name on ':'
+strip-wsnumbers = true
 
 label-mode-padding = 2
 label-mode-foreground = #1E272B
 label-mode-background = #78824b
 
-label-focused = %index%
+label-focused = %name%
 label-focused-background = #78824b
 label-focused-foreground = #6b7443
 label-focused-padding = 2
 
-label-unfocused = %index%
+label-unfocused = %name%
 label-unfocused-background = #78824b
 label-unfocused-foreground = #1E272B
 label-unfocused-padding = 2
 
-label-visible = %index%
+label-visible = %name%
 label-visible-background = #78824b
 label-visible-foreground = #1E272B
 label-visible-padding = 2
 
-label-urgent = %index%
+label-urgent = %name%
 label-urgent-background = #BA2922
 label-urgent-padding = 2
 
@@ -181,7 +183,7 @@ exec = echo ""
 
 [module/1password]
 type = custom/script
-click-left = exec google-chrome-stable --app-id="njlbeaomblooegknfihpombhkolpndmg"
+click-left = exec google-chrome-stable --app="https://fam-strom.1password.com/vaults/all/allitems/"
 exec = echo ""
 
 [module/cpu-temp]

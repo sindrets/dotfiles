@@ -4,8 +4,22 @@ icon_playing=""
 icon_paused=""
 
 player=""
-interval_rate="high"
+interval_rate="medium"
 path_last_player="/tmp/PU_LAST_PLAYER"
+metadata=""
+
+format_index=1
+format_list=(
+	"__STATUS__ __PLAYER__: __ARTIST__ - __TITLE__ __POSITION__|__DURATION__"
+	"__STATUS__ __PLAYER__: __ARTIST__ - __TITLE__ | __DURATION__"
+	"__STATUS__ __PLAYER__: __TITLE__"
+	"__STATUS__ __PLAYER__"
+	"__STATUS__"
+)
+
+cycle_formats () {
+	format_index=$[ ($format_index + 1) % ${#format_list[@]} ]
+}
 
 # get the most relevant player
 update_player () {
@@ -44,33 +58,64 @@ duration () {
 
 }
 
-player_tail () {
-	
-	local format=""
-	local rate=`echo "${@}" | grep -Po "(--interval-rate\s*\S*)" | awk '{print $2}'`
-	[ -n "$rate" ] && interval_rate=$rate
+update_metadata () {
 
+	local t=`playerctl -p "$player" metadata mpris:length 2>/dev/null`
+	[ -n "$t" ] && t=`duration "$t"`
+
+	metadata=$(printf "`playerctl -p "$player" metadata --format "__{{ uc(status) }}__\n{{ playerName }}\n{{ artist }}\n{{ title }}\n{{ duration(position) }}\n__DURATION__\n" 2>/dev/null`")
+	metadata="${metadata/__PLAYING__/$icon_playing}"
+	metadata="${metadata/__PAUSED__/$icon_paused}"
+	metadata="${metadata/__DURATION__/$t}"
+
+}
+
+# Retrieve metadata.
+# @param {int} line number
+data () {
+	echo -n "$metadata" | sed -n "$1 p"
+}
+
+player_tail () {	
+
+	update_metadata
+	local format=""
+	local rate=`echo "${@}" | grep -Po "((?:\s|^)--interval-rate\s*\S*)" | awk '{print $2}'`
+	local index=`echo "${@}" | grep -Po "((?:\s|^)(?:--format-index|-i)\s*\S*)" | awk '{print $2}'`
+	[ -n "$rate" ] && interval_rate=$rate
+	[ -n "$index" ] && format_index=$index
+
+	# the interval format is only used to control how often iformation is polled
 	case $interval_rate in
 		high)
-			format="__{{ uc(status) }}__ {{ playerName }}: {{ artist }} - {{ title }} {{ duration(position) }}|__DURATION__"
+			format="{{ status }} {{ playerName }} {{ title }} {{ position }}"
 			;;
 		medium)
-			format="__{{ uc(status) }}__ {{ playerName }}: {{ artist }} - {{ title }} | __DURATION__"
+			format="{{ status }} {{ playerName }} {{ title }}"
 			;;
 		low)
-			format="{{ playerName }}: {{ artist }} - {{ title }} | __DURATION__"
+			format="{{ playerName }} {{ title }}"
 			;;
 	esac
 
-	playerctl -a metadata --format "$format" --follow | while read -r line ; do
-		[ ! `echo "$line" | awk '{print $2}' | cut -d : -f1 | grep -q "$player"` ] && update_player
-		local t=`playerctl -p "$player" metadata mpris:length 2>/dev/null`
+	playerctl -a metadata --format "$format" --follow 2>/dev/null | while read -r line ; do
 
-		[ -n "$t" ] && t=`duration "$t"`
-		line="${line/__DURATION__/$t}"
-		line="${line/__PLAYING__/$icon_playing}"
-		line="${line/__PAUSED__/$icon_paused}"
-		echo $line
+		trap cycle_formats USR1
+
+		[ ! `echo "$line" | awk '{print $2}' | cut -d : -f1 | grep -q "$player"` ] && update_player
+
+		update_metadata
+		local result="${format_list[$format_index]}"
+
+		result="${result/__STATUS__/`data 1`}"
+		result="${result/__PLAYER__/`data 2`}"
+		result="${result/__ARTIST__/`data 3`}"
+		result="${result/__TITLE__/`data 4`}"
+		result="${result/__POSITION__/`data 5`}"
+		result="${result/__DURATION__/`data 6`}"
+
+		echo "$result"
+
 	done
 
 }
