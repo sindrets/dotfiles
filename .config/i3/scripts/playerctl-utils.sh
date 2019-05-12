@@ -26,7 +26,10 @@ cycle_formats () {
 # get the most relevant player
 update_player () {
 
-	[ -z "`playerctl -l 2>/dev/null`" ] && return
+	if [ -z "`playerctl -l 2>/dev/null`" ]; then
+		rm "$path_last_player" 2>/dev/null
+		return
+	fi
 
 	local n=`playerctl -a status 2>/dev/null | grep -m 1 -ni playing | cut -d : -f 1`
 	

@@ -24,14 +24,14 @@ bindsym $mod+Shift+Return exec kitty --class kitty_FLOAT
 bindsym Mod5+sterling exec google-chrome-stable --app="https://fam-strom.1password.com/vaults/all/allitems/"
 bindsym $mod+e exec dolphin
 bindsym $mod+s exec fsearch
+bindsym $mod+g exec --no-startup-id ~/.config/i3/scripts/goto-workspace.sh
 
 # Window kill command
 bindsym $mod+Shift+q kill
 
 # start program launcher
-bindsym Mod1+space exec --no-startup-id rofi -show run
-bindsym Mod1+Ctrl+space exec --no-startup-id ~/.config/scripts/sudo-rofi
-bindsym $mod+g exec --no-startup-id ~/.config/i3/scripts/goto-workspace.sh
+bindsym $mod+space exec --no-startup-id rofi -show run
+bindsym $mod+Ctrl+space exec --no-startup-id ~/.config/scripts/sudo-rofi
 
 # change focus
 #bindsym $mod+h focus left
@@ -61,8 +61,8 @@ bindsym $mod+b workspace back_and_forth
 bindsym $mod+Shift+b move container to workspace back_and_forth; workspace back_and_forth
 
 # split orientation
-bindsym $mod+h split h; exec notify-send 'Tile horizontally' -t 1000 -i align-horizontal-left
-bindsym $mod+v split v; exec notify-send 'Tile vertically' -t 1000 -i align-vertical-top
+bindsym $mod+h split h; exec --no-startup-id notify-send 'Tile horizontally' -t 1000 -i align-horizontal-left
+bindsym $mod+v split v; exec --no-startup-id notify-send 'Tile vertically' -t 1000 -i align-vertical-top
 bindsym $mod+q split toggle
 
 # toggle fullscreen mode for the focused container
@@ -77,7 +77,7 @@ bindsym $mod+w layout tabbed
 bindsym $mod+Shift+space floating toggle
 
 # change focus between tiling / floating windows
-bindsym $mod+space focus mode_toggle
+bindsym $mod+b focus mode_toggle
 
 # toggle sticky
 bindsym $mod+Shift+s sticky toggle
@@ -92,7 +92,7 @@ bindsym $mod+Shift+minus move scratchpad
 # If there are multiple scratchpad windows, this command cycles through them.
 bindsym $mod+minus scratchpad show
 
-bindsym Mod4+l exec ~/.config/i3lock/blur-lock.sh
+bindsym Mod4+l exec --no-startup-id ~/.config/i3lock/blur-lock.sh
 
 # navigate workspaces next / previous
 bindsym $mod+Ctrl+Right workspace next
@@ -300,24 +300,24 @@ mode "$mode_gaps_outer" {
 exec --no-startup-id mate-power-manager
 
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec /home/sindrets/.config/i3/scripts/volume-utils.sh --inc
-bindsym XF86AudioLowerVolume exec /home/sindrets/.config/i3/scripts/volume-utils.sh --dec
-bindsym XF86AudioMute exec /home/sindrets/.config/i3/scripts/volume-utils.sh --mute
+bindsym XF86AudioRaiseVolume exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --inc
+bindsym XF86AudioLowerVolume exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --dec
+bindsym XF86AudioMute exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --mute
 
 # Media player controls
-bindsym XF86AudioPlay exec "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active play-pause"
-bindsym XF86AudioPause exec "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active pause"
-bindsym XF86AudioNext exec "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active next"
-bindsym XF86AudioPrev exec "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active previous"
-bindsym XF86AudioStop exec "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active stop"
+bindsym XF86AudioPlay exec --no-startup-id "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active play-pause"
+bindsym XF86AudioPause exec --no-startup-id "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active pause"
+bindsym XF86AudioNext exec --no-startup-id "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active next"
+bindsym XF86AudioPrev exec --no-startup-id "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active previous"
+bindsym XF86AudioStop exec --no-startup-id "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active stop"
 
 # Sreen brightness controls
-bindsym XF86MonBrightnessUp exec ~/.config/i3/scripts/brightness.sh inc
-bindsym XF86MonBrightnessDown exec ~/.config/i3/scripts/brightness.sh dec
+bindsym XF86MonBrightnessUp exec --no-startup-id ~/.config/i3/scripts/brightness.sh inc
+bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/brightness.sh dec
 # touchpad on and off controller on laptop with Fn+<touchpad control functional key>
 bindsym XF86TouchpadOn exec --no-startup-id synclient Touchpadoff=0
 bindsym XF86TouchpadOff exec --no-startup-id synclient Touchpadoff=1
 
 # Printscreen
-bindsym --release Print exec "maim -s | xclip -selection clipboard -t image/png"
-bindsym --release Mod4+Shift+Print exec "$HOME/.config/scripts/screenshot-active.sh"
+bindsym --release Print exec --no-startup-id "$HOME/.config/scripts/screenshot-utils.sh -s"
+bindsym --release Mod4+Shift+Print exec --no-startup-id "$HOME/.config/scripts/screenshot-utils.sh -a"

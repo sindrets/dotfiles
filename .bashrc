@@ -18,6 +18,7 @@ export LC_ALL=en_US.UTF-8 # force all applications to use default language for o
 
 alias ls='ls --color=auto'
 alias ll="ls -lh"
+alias lla="ls -lha"
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 alias setclip="xclip -selection c"
 alias getclip="xclip -selection c -o"
