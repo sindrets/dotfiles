@@ -8,14 +8,16 @@ interval_rate="medium"
 path_last_player="/tmp/PU_LAST_PLAYER"
 metadata=""
 
-format_index=1
+format_index=0
 format_list=(
-	"__STATUS__ __PLAYER__: __ARTIST__ - __TITLE__ __POSITION__|__DURATION__"
 	"__STATUS__ __PLAYER__: __ARTIST__ - __TITLE__ | __DURATION__"
 	"__STATUS__ __PLAYER__: __TITLE__"
 	"__STATUS__ __PLAYER__"
 	"__STATUS__"
 )
+
+# ensure that the process doesn't terminate upon receiving SIGUSR1
+trap "" USR1
 
 cycle_formats () {
 	format_index=$[ ($format_index + 1) % ${#format_list[@]} ]
@@ -23,7 +25,9 @@ cycle_formats () {
 
 # get the most relevant player
 update_player () {
-	
+
+	[ -z "`playerctl -l 2>/dev/null`" ] && return
+
 	local n=`playerctl -a status 2>/dev/null | grep -m 1 -ni playing | cut -d : -f 1`
 	
 	if [ -z "$n" ]; then 
@@ -33,7 +37,7 @@ update_player () {
 			player=`playerctl -l | sed -n "1p"`
 		fi
 	else 
-		player=`playerctl -l | sed -n "$n p"`
+		player=`playerctl -l 2>/dev/null | sed -n "$n p"`
 	fi
 
 	printf "$player" > "$path_last_player"
@@ -76,6 +80,29 @@ data () {
 	echo -n "$metadata" | sed -n "$1 p"
 }
 
+print_format () {
+
+	[ ! `echo "$1" | awk '{print $2}' | cut -d : -f1 | grep -q "$player"` ] && update_player
+
+	if [ -z "$player" ]; then 
+		echo ""
+		return
+	fi
+
+	update_metadata
+	local result="${format_list[$format_index]}"
+
+	result="${result/__STATUS__/`data 1`}"
+	result="${result/__PLAYER__/`data 2`}"
+	result="${result/__ARTIST__/`data 3`}"
+	result="${result/__TITLE__/`data 4`}"
+	result="${result/__POSITION__/`data 5`}"
+	result="${result/__DURATION__/`data 6`}"
+
+	echo "$result"
+
+}
+
 player_tail () {	
 
 	update_metadata
@@ -88,33 +115,20 @@ player_tail () {
 	# the interval format is only used to control how often iformation is polled
 	case $interval_rate in
 		high)
-			format="{{ status }} {{ playerName }} {{ title }} {{ position }}"
+			format="{{ status }} {{ playerName }} {{ artist }} {{ title }} {{ position }}"
 			;;
 		medium)
-			format="{{ status }} {{ playerName }} {{ title }}"
+			format="{{ status }} {{ playerName }} {{ artist }} {{ title }}"
 			;;
 		low)
-			format="{{ playerName }} {{ title }}"
+			format="# {{ playerName }} {{ artist }} {{ title }}"
 			;;
 	esac
 
 	playerctl -a metadata --format "$format" --follow 2>/dev/null | while read -r line ; do
 
-		trap cycle_formats USR1
-
-		[ ! `echo "$line" | awk '{print $2}' | cut -d : -f1 | grep -q "$player"` ] && update_player
-
-		update_metadata
-		local result="${format_list[$format_index]}"
-
-		result="${result/__STATUS__/`data 1`}"
-		result="${result/__PLAYER__/`data 2`}"
-		result="${result/__ARTIST__/`data 3`}"
-		result="${result/__TITLE__/`data 4`}"
-		result="${result/__POSITION__/`data 5`}"
-		result="${result/__DURATION__/`data 6`}"
-
-		echo "$result"
+		trap "cycle_formats && print_format '$line';" USR1
+		print_format "$line"
 
 	done
 

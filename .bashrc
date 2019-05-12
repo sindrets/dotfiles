@@ -38,8 +38,9 @@ function cs () {
 
 # Resolve and print path
 function rpath () {
-	local RELATIVE_PATH=$1
+	local RELATIVE_PATH="${@: -1}"
 	printf "$(readlink -f "$RELATIVE_PATH")"
+	[ "$1" != "-n" ] && printf "\n"
 }
 
 # Get current terminal emulator
@@ -62,7 +63,7 @@ case $term in
 
 		# Change neofetch img backend and source
 		if [[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]]; then
-			alias neofetch="printf %24s | tr ' ' '\n'; neofetch --backend kitty --source '$NEOFETCH_IMG'"
+			alias neofetch="printf %`tput lines`s | tr ' ' '\n'; neofetch --backend kitty --source '$NEOFETCH_IMG'"
 		fi
 		;;
 
