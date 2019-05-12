@@ -1,26 +1,31 @@
 #!/bin/bash 
 
-icon_playing=""
-icon_paused=""
-
-player=""
-interval_rate="medium"
-path_last_player="/tmp/PU_LAST_PLAYER"
-metadata=""
-
-format_index=0
-format_list=(
+# CONFIGURABLE VARS:
+icon_playing=""							# Will replace the status token when music is playing
+icon_paused=""								# Will replace the status token when music is paused
+interval_rate="medium"						# {low/medium/high} Controls how often information is polled during --follow
+path_last_player="/tmp/PU_LAST_PLAYER"		# A file that will be used to keep track of the last used player
+template_index=0							# Determines the initial format template
+# A list of templates that will be used to format the output of the --follow command.
+# The available tokens are:
+# __STATUS__, __PLAYER__, __ARTIST__, __ALBUM__, __TITLE__, __TRACK_NUMBER__, __POSITION__, __DURATION__
+templates=(
 	"__STATUS__ __PLAYER__: __ARTIST__ - __TITLE__ | __DURATION__"
+	"__STATUS__ __PLAYER__: __TITLE__ | __DURATION__"
 	"__STATUS__ __PLAYER__: __TITLE__"
 	"__STATUS__ __PLAYER__"
 	"__STATUS__"
 )
 
+
+player=""
+metadata=""
+
 # ensure that the process doesn't terminate upon receiving SIGUSR1
 trap "" USR1
 
-cycle_formats () {
-	format_index=$[ ($format_index + 1) % ${#format_list[@]} ]
+cycle_templates () {
+	template_index=$[ ($template_index + 1) % ${#templates[@]} ]
 }
 
 # get the most relevant player
@@ -70,7 +75,7 @@ update_metadata () {
 	local t=`playerctl -p "$player" metadata mpris:length 2>/dev/null`
 	[ -n "$t" ] && t=`duration "$t"`
 
-	metadata=$(printf "`playerctl -p "$player" metadata --format "__{{ uc(status) }}__\n{{ playerName }}\n{{ artist }}\n{{ title }}\n{{ duration(position) }}\n__DURATION__\n" 2>/dev/null`")
+	metadata=$(printf "`playerctl -p "$player" metadata --format "__{{ uc(status) }}__\n{{ playerName }}\n{{ artist }}\n{{ album }}\n{{ title }}\n{{ xesam:trackNumber }}\n{{ duration(position) }}\n__DURATION__\n" 2>/dev/null`")
 	metadata="${metadata/__PLAYING__/$icon_playing}"
 	metadata="${metadata/__PAUSED__/$icon_paused}"
 	metadata="${metadata/__DURATION__/$t}"
@@ -83,9 +88,11 @@ data () {
 	echo -n "$metadata" | sed -n "$1 p"
 }
 
+# Print formatted output
+# @param {string} playerctl event
 print_format () {
 
-	[ ! `echo "$1" | awk '{print $2}' | cut -d : -f1 | grep -q "$player"` ] && update_player
+	[ ! `echo "$1" | awk '{print $1}' | grep -q "$player"` ] && update_player
 
 	if [ -z "$player" ]; then 
 		echo ""
@@ -93,45 +100,51 @@ print_format () {
 	fi
 
 	update_metadata
-	local result="${format_list[$format_index]}"
+	local result="${templates[$template_index]}"
 
 	result="${result/__STATUS__/`data 1`}"
 	result="${result/__PLAYER__/`data 2`}"
 	result="${result/__ARTIST__/`data 3`}"
-	result="${result/__TITLE__/`data 4`}"
-	result="${result/__POSITION__/`data 5`}"
-	result="${result/__DURATION__/`data 6`}"
+	result="${result/__ALBUM__/`data 4`}"
+	result="${result/__TITLE__/`data 5`}"
+	result="${result/__TRACK_NUMBER__/`data 6`}"
+	result="${result/__POSITION__/`data 7`}"
+	result="${result/__DURATION__/`data 8`}"
 
 	echo "$result"
 
 }
 
-player_tail () {	
+# Subscribe to changes in all players. Event frequency is controlled by interval-rate.
+# Upon receiving SIGUSR1, the program will cycle through the list of format templates.
+# @flag [-r, --interval-rate RATE] {string} - Controls event frequency.
+# @flag [-i, --template-index INDEX] {int} - Controls what template is initially used to format the output string.
+player_follow () {
 
 	update_metadata
-	local format=""
-	local rate=`echo "${@}" | grep -Po "((?:\s|^)--interval-rate\s*\S*)" | awk '{print $2}'`
-	local index=`echo "${@}" | grep -Po "((?:\s|^)(?:--format-index|-i)\s*\S*)" | awk '{print $2}'`
+	local rate=`echo "${@}" | grep -Po "((?:\s|^)(?:--interval-rate|-r)\s*\S*)" | awk '{print $2}'`
+	local index=`echo "${@}" | grep -Po "((?:\s|^)(?:--template-index|-i)\s*\S*)" | awk '{print $2}'`
 	[ -n "$rate" ] && interval_rate=$rate
-	[ -n "$index" ] && format_index=$index
+	[ -n "$index" ] && template_index=$index
 
 	# the interval format is only used to control how often iformation is polled
-	case $interval_rate in
+	local format=""
+	case "$interval_rate" in
 		high)
-			format="{{ status }} {{ playerName }} {{ artist }} {{ title }} {{ position }}"
+			format="{{ playerName }} {{ artist }} {{ title }} {{ status }} {{ position }}"
 			;;
 		medium)
-			format="{{ status }} {{ playerName }} {{ artist }} {{ title }}"
+			format="{{ playerName }} {{ artist }} {{ title }} {{ status }}"
 			;;
 		low)
-			format="# {{ playerName }} {{ artist }} {{ title }}"
+			format="{{ playerName }} {{ artist }} {{ title }}"
 			;;
 	esac
 
-	playerctl -a metadata --format "$format" --follow 2>/dev/null | while read -r line ; do
+	playerctl -a metadata --format "$format" --follow 2>/dev/null | while read -r event ; do
 
-		trap "cycle_formats && print_format '$line';" USR1
-		print_format "$line"
+		trap "cycle_templates && print_format '$event';" USR1
+		print_format "$event"
 
 	done
 
@@ -139,19 +152,22 @@ player_tail () {
 
 case "$1" in 
 
+	# Print the name of the active player
 	--active)
 		update_player
 		echo $player
 		;;
 
+	# Automatically select the active player and execute a playerctl command
 	--use-active)
 		update_player
 		playerctl -p "$player" "${@:2}"
 		;;
 
-	--tail)
+	# Subscribe to changes on all players and print a formatted string whenever something changes
+	--follow)
 		update_player
-		player_tail ${@:2}
+		player_follow ${@:2}
 		;;
 
 esac

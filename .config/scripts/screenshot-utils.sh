@@ -12,7 +12,10 @@ case "$1" in
 		;;
 esac
 
-# copy to clipboard
-xclip -selection clipboard -t image/png -i "$target"
+if [ "$?" -eq 0 ]; then
+	# copy to clipboard
+	xclip -selection clipboard -t image/png -i "$target"
 
-dunstify "Screenshot" "Screenshot saved to: '$target'" -i "$target"
+	dunstify "Screenshot" "Screenshot saved to: '$target'" -i "$target"	
+fi
+
