@@ -33,6 +33,7 @@ update_player () {
 
 	if [ -z "`playerctl -l 2>/dev/null`" ]; then
 		rm "$path_last_player" 2>/dev/null
+		player=""
 		return
 	fi
 
@@ -161,7 +162,11 @@ case "$1" in
 	# Automatically select the active player and execute a playerctl command
 	--use-active)
 		update_player
-		playerctl -p "$player" "${@:2}"
+		if [ -z "$player" ]; then
+			echo "No players found." 1>&2
+		else
+			playerctl -p "$player" "${@:2}"
+		fi
 		;;
 
 	# Subscribe to changes on all players and print a formatted string whenever something changes

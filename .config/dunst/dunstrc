@@ -163,7 +163,7 @@
     icon_position = right
 
     # Scale larger icons down to this size, set to 0 to disable
-    max_icon_size = 100
+    max_icon_size = 72
 
     # Paths to default icons.
     #icoin_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/

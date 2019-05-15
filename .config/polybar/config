@@ -39,34 +39,43 @@ include-file = ~/.config/polybar/custom.ini
 
 [module/i3]
 type = internal/i3
-format = <label-state>
+format = <label-state> <label-mode>
 index-sort = true
 wrapping-scroll = false
 ; This will split the workspace name on ':'
 strip-wsnumbers = true
+; Use fuzzy (partial) matching on labels when assigning 
+; icons to workspaces
+; Example: code;♚ will apply the icon to all workspaces 
+; containing 'code' in the label
+; Default: false
+fuzzy-match = true
 
 label-mode-padding = 2
 label-mode-foreground = #1E272B
 label-mode-background = #78824b
 
-label-focused = %name%
+label-focused = %icon% %name%
 label-focused-background = #78824b
-label-focused-foreground = #6b7443
+#label-focused-foreground = #6b7443
+label-focused-foreground = #e2b151
 label-focused-padding = 2
 
-label-unfocused = %name%
+label-unfocused = %icon% %name%
 label-unfocused-background = #78824b
 label-unfocused-foreground = #1E272B
 label-unfocused-padding = 2
 
-label-visible = %name%
+label-visible = %icon% %name%
 label-visible-background = #78824b
 label-visible-foreground = #1E272B
 label-visible-padding = 2
 
-label-urgent = %name%
+label-urgent = %icon% %name%
 label-urgent-background = #BA2922
 label-urgent-padding = 2
+
+ws-icon-0 = ssh;
 
 [module/wlan]
 type = internal/network

@@ -3,10 +3,10 @@
 lighticon="/home/sindrets/.config/i3lock/img/lock-icon-light-200.png"
 darkicon="/home/sindrets/.config/i3lock/img/lock-icon-dark-200.png"
 tmpbg='/tmp/i3lock-bg.png'
-darken_amount=30
+darken_amount=10
 
 # take a screenshot
-scrot "$tmpbg"
+scrot "$tmpbg" --quality 100
 
 # set a threshold value to determine if we should use the light icon or dark
 # icon
@@ -37,10 +37,8 @@ fi
 
 # blur the screenshot by resizing and scaling back up
 #convert "$tmpbg" -filter Gaussian -thumbnail 20% -sample 500% "$tmpbg"
-convert "$tmpbg" -scale 10% -blur 0x5 -resize 1000% -brightness-contrast -"$darken_amount"x0 "$tmpbg"
-
-# overlay the icon onto the screenshot
-convert "$tmpbg" "$icon" -gravity center -composite "$tmpbg"
+convert "$tmpbg" -scale 10% -blur 0x4 -resize 1000% -brightness-contrast -"$darken_amount"x0 \
+	"$icon" -gravity center -composite "$tmpbg"
 
 # lock the screen with the color parameters
 i3lock "${PARAM[@]}" --radius 140 --greetertext="Enter password to unlock" -i "$tmpbg"
