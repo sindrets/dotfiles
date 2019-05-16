@@ -9,6 +9,7 @@ set smartcase
 set showcmd
 set mouse=a
 set hidden
+set wrap linebreak nolist
 set backspace=indent,eol,start
 set termguicolors
 set pyx=3

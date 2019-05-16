@@ -8,17 +8,27 @@ if [ -z "$sink" ]; then
 	sink=`pacmd info | grep "Default sink" | awk '{print $4}'`
 fi
 
+mod=5
+[ -n "$2" ] && mod="$2"
+
+roundToClosestN () {
+	local input="$1"
+	local n="$2"
+	awk '{print int( ($1 + ($2/2)) / $2) * $2}' <<< "$input $n"
+}
+
 case "$1" in
 	--inc)
 		volume=`pamixer --sink $sink --get-volume-human`
-		rounded=`awk '{print int( ($1+2) / 5) * 5 + 5 "%"}' <<< $volume`
-		pactl set-sink-volume $sink "$rounded"
+		rounded=$[ "`roundToClosestN "$volume" "$mod"`" + "$mod" ]
+		echo "volume: $volume, mod: $mod, rounded: $rounded"
+		pamixer --sink "$sink" --set-volume "$rounded"
 		dunstify -r $notif_id "Volume $(pamixer --sink $sink --get-volume-human)" -t 1000 -i audio-volume-high
 		;;
 	--dec)
 		volume=`pamixer --sink $sink --get-volume-human`
-		rounded=`awk '{print int( ($1+2) / 5) * 5 - 5 "%"}' <<< $volume`
-		pactl set-sink-volume $sink "$rounded"
+		rounded=$[ "`roundToClosestN "$volume" "$mod"`" - "$mod" ]
+		pamixer --sink "$sink" --set-volume "$rounded"
 		dunstify -r $notif_id "Volume $(pamixer --sink $sink --get-volume-human)" -t 1000 -i audio-volume-low
 		;;
 	--mute)
