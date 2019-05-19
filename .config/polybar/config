@@ -27,7 +27,7 @@ font-2 = "Font Awesome 5 Brands:size=10;1"
 
 modules-left = i3 player
 modules-center = date
-modules-right = cpu-temp wlan eth 1password redshift insync update-indicator backlight battery pulseaudio-tail powermenu
+modules-right = cpu-temp wlan eth 1password redshift insync update-indicator battery pulseaudio-tail powermenu
 
 tray-position = none
 ;tray-padding = 10
@@ -55,23 +55,23 @@ label-mode-padding = 2
 label-mode-foreground = #1E272B
 label-mode-background = #78824b
 
-label-focused = %icon% %name%
+label-focused = %icon%%name%
 label-focused-background = #78824b
-#label-focused-foreground = #6b7443
+#label-focused-background = #94a05b
 label-focused-foreground = #c7e0ba
 label-focused-padding = 2
 
-label-unfocused = %icon% %name%
+label-unfocused = %icon%%name%
 label-unfocused-background = #78824b
 label-unfocused-foreground = #1E272B
 label-unfocused-padding = 2
 
-label-visible = %icon% %name%
+label-visible = %icon%%name%
 label-visible-background = #78824b
 label-visible-foreground = #1E272B
 label-visible-padding = 2
 
-label-urgent = %icon% %name%
+label-urgent = %icon%%name%
 label-urgent-background = #BA2922
 label-urgent-padding = 2
 

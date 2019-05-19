@@ -1,5 +1,7 @@
 #!/bin/bash
 
+notif_id="1559176921"
+
 backlight=/sys/class/backlight/intel_backlight/brightness
 max=`cat /sys/class/backlight/intel_backlight/max_brightness`
 min=`perl -e "use POSIX; print ceil($max / 100)"`
@@ -29,17 +31,19 @@ currentPercent () {
 }
 
 case $1 in
-	inc)
+	--inc)
 		# increase
+		echo `modValue $step`
 		echo `modValue $step` > $backlight
-		notify-send "Brightness: $(currentPercent)%" -t 1000 -i notification-display-brightness-high
+		dunstify -r "$notif_id" "Brightness: $(currentPercent)%" -t 1000 -i notification-display-brightness-high
 		;;
-	dec)
+	--dec)
 		# decrease
+		echo `modValue -$step`
 		echo `modValue -$step` > $backlight
-		notify-send "Brightness: $(currentPercent)%" -t 1000 -i notification-display-brightness-low
+		dunstify -r "$notif_id" "Brightness: $(currentPercent)%" -t 1000 -i notification-display-brightness-low
 		;;
-	get)
+	--get)
 		# return current percent
 		echo `currentPercent`
 		;;

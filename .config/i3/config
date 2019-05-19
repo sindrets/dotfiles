@@ -110,6 +110,10 @@ set $ws8 8
 set $ws9 9
 set $wsTrash number "99:"
 
+# navigate workspaces
+bindsym $mod+Tab workspace next
+bindsym $mod+Shift+Tab workspace prev
+
 # switch to workspace
 bindsym $mod+1 workspace $ws1
 bindsym $mod+2 workspace $ws2
@@ -193,13 +197,13 @@ bindsym $mod+Shift+r restart
 bindsym $mod+Shift+e mode "$mode_system"
 set $mode_system (l)ock, (e)xit, switch_(u)ser, (s)uspend, (h)ibernate, (r)eboot, (Shift+s)hutdown
 mode "$mode_system" {
-    bindsym l exec --no-startup-id i3exit lock, mode "default"
-    bindsym s exec --no-startup-id i3exit suspend, mode "default"
-    bindsym u exec --no-startup-id i3exit switch_user, mode "default"
-    bindsym e exec --no-startup-id i3exit logout, mode "default"
-    bindsym h exec --no-startup-id i3exit hibernate, mode "default"
-    bindsym r exec --no-startup-id i3exit reboot, mode "default"
-    bindsym Shift+s exec --no-startup-id i3exit shutdown, mode "default"
+    bindsym l exec --no-startup-id /$HOME/.config/i3/scripts/i3-session.sh lock, mode "default"
+    bindsym s exec --no-startup-id /$HOME/.config/i3/scripts/i3-session.sh suspend, mode "default"
+    bindsym u exec --no-startup-id /$HOME/.config/i3/scripts/i3-session.sh switch_user, mode "default"
+    bindsym e exec --no-startup-id /$HOME/.config/i3/scripts/i3-session.sh logout, mode "default"
+    bindsym h exec --no-startup-id /$HOME/.config/i3/scripts/i3-session.sh hibernate, mode "default"
+    bindsym r exec --no-startup-id /$HOME/.config/i3/scripts/i3-session.sh reboot, mode "default"
+    bindsym Shift+s exec --no-startup-id /$HOME/.config/i3/scripts/i3-session.sh shutdown, mode "default"
 
     # exit system mode: "Enter" or "Escape"
     bindsym Return mode "default"
@@ -312,8 +316,8 @@ bindsym XF86AudioPrev exec --no-startup-id "$HOME/.config/i3/scripts/playerctl-u
 bindsym XF86AudioStop exec --no-startup-id "$HOME/.config/i3/scripts/playerctl-utils.sh --use-active stop"
 
 # Sreen brightness controls
-bindsym XF86MonBrightnessUp exec --no-startup-id ~/.config/i3/scripts/brightness.sh inc
-bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/brightness.sh dec
+bindsym XF86MonBrightnessUp exec --no-startup-id ~/.config/i3/scripts/brightness.sh --inc
+bindsym XF86MonBrightnessDown exec --no-startup-id ~/.config/i3/scripts/brightness.sh --dec
 # touchpad on and off controller on laptop with Fn+<touchpad control functional key>
 bindsym XF86TouchpadOn exec --no-startup-id synclient Touchpadoff=0
 bindsym XF86TouchpadOff exec --no-startup-id synclient Touchpadoff=1
