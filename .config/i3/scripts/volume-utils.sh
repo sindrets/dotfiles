@@ -22,13 +22,13 @@ case "$1" in
 		volume=`pamixer --sink $sink --get-volume-human`
 		rounded=$[ "`roundToClosestN "$volume" "$mod"`" + "$mod" ]
 		echo "volume: $volume, mod: $mod, rounded: $rounded"
-		pamixer --sink "$sink" --set-volume "$rounded"
+		pamixer --sink "$sink" --allow-boost --set-volume "$rounded"
 		dunstify -r $notif_id "Volume $(pamixer --sink $sink --get-volume-human)" -t 1000 -i audio-volume-high
 		;;
 	--dec)
 		volume=`pamixer --sink $sink --get-volume-human`
 		rounded=$[ "`roundToClosestN "$volume" "$mod"`" - "$mod" ]
-		pamixer --sink "$sink" --set-volume "$rounded"
+		pamixer --sink "$sink" --allow-boost --set-volume "$rounded"
 		dunstify -r $notif_id "Volume $(pamixer --sink $sink --get-volume-human)" -t 1000 -i audio-volume-low
 		;;
 	--mute)
