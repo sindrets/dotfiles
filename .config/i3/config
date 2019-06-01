@@ -239,6 +239,7 @@ mode "resize" {
 exec --no-startup-id dunst
 exec --no-startup-id nitrogen --restore; sleep 1; compton -b
 exec --no-startup-id nm-applet
+exec --no-startup-id udiskie
 # exec --no-startup-id xfce4-power-manager
 exec --no-startup-id pamac-tray
 exec --no-startup-id clipit
@@ -304,8 +305,8 @@ mode "$mode_gaps_outer" {
 exec --no-startup-id mate-power-manager
 
 # Pulse Audio controls
-bindsym XF86AudioRaiseVolume exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --inc 1
-bindsym XF86AudioLowerVolume exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --dec 1
+bindsym XF86AudioRaiseVolume exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --inc 2
+bindsym XF86AudioLowerVolume exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --dec 2
 bindsym XF86AudioMute exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --mute
 
 # Media player controls
