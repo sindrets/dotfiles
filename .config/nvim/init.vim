@@ -39,12 +39,14 @@ Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
-Plug 'scrooloose/nerdtree'
 Plug 'tpope/vim-fugitive'
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
-Plug 'anned20/vimsence'
-Plug 'jiangmiao/auto-pairs'
 Plug 'mhinz/vim-startify'
+Plug 'scrooloose/nerdtree'
+Plug 'ryanoasis/vim-devicons'
+Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'ananagame/vimsence'
+Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/goyo.vim'
 " THEMES
 Plug 'rakr/vim-one'
