@@ -1,8 +1,8 @@
 #!/bin/bash 
 
 # CONFIGURABLE VARS:
-icon_playing=""							# Will replace the status token when music is playing
-icon_paused=""								# Will replace the status token when music is paused
+icon_playing=""							# Will replace the status token when music is playing
+icon_paused=""								# Will replace the status token when music is paused
 interval_rate="medium"						# {low/medium/high} Controls how often information is polled during --follow
 path_last_player="/tmp/PU_LAST_PLAYER"		# A file that will be used to keep track of the last used player
 template_index=0							# Determines the initial format template
