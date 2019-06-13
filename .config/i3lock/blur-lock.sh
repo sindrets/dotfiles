@@ -44,10 +44,22 @@ else # dark background so use the light icon
 	)
 fi
 
+# parse dimensions + position of primary display, to center icon on multi-monitor setups
+resPos="$(xrandr | grep primary | awk '{print $4}')"
+
+width="$(echo $resPos | perl -lne 'print $& if /[0-9]*(?=x)/')"
+height="$(echo $resPos | perl -lne 'print $& if /(?<=x)[0-9]*/')"
+
+offsetX="$(echo $resPos | perl -lne 'print $& if /(?<=\+)[0-9]*/')"
+offsetY="$(echo $resPos | perl -lne 'print $& if /(?<=\+)[0-9]*$/')"
+
+iconHWidth="`expr $(identify -format '%w' "$icon") / 2`"
+iconHHeight="`expr $(identify -format '%h' "$icon") / 2`"
+
 # blur the screenshot by resizing and scaling back up
 #convert "$tmpbg" -filter Gaussian -thumbnail 20% -sample 500% "$tmpbg"
 convert "$tmpbg" -scale 10% -blur 0x4 -resize 1000% -brightness-contrast -"$darken_amount"x-"$darken_amount" \
-	"$icon" -gravity center -composite "$tmpbg"
+	"$icon" -geometry +"`expr $width / 2 + $offsetX - $iconHWidth`"+"`expr $height / 2 + $offsetY - $iconHHeight`" -composite "$tmpbg"
 
 # lock the screen with the color parameters
 i3lock "${PARAM[@]}" --radius 140 --greetertext="Enter password to unlock" -i "$tmpbg"
