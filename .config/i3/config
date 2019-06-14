@@ -97,6 +97,8 @@ bindsym Mod4+l exec --no-startup-id ~/.config/i3lock/blur-lock.sh
 # navigate workspaces next / previous
 bindsym $mod+Ctrl+Right workspace next
 bindsym $mod+Ctrl+Left workspace prev
+bindsym $mod+Tab workspace next_on_output
+bindsym $mod+Shift+Tab workspace prev_on_output
 
 # workspaces
 set $ws1 1
@@ -109,10 +111,6 @@ set $ws7 7
 set $ws8 8
 set $ws9 9
 set $wsTrash number "99:"
-
-# navigate workspaces
-bindsym $mod+Tab workspace next
-bindsym $mod+Shift+Tab workspace prev
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1

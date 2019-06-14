@@ -19,7 +19,7 @@ modValue () {
 	pStep=$[ 100 / $nSteps ]
 	result=`perl -e \
 		"use POSIX;
-		print floor( ($result / $max * 100 + ($pStep / 2)) / $pStep) * $pStep * $max / 100"`
+		print floor( floor( ($result / $max * 100 + ($pStep / 2)) / $pStep) * $pStep * $max / 100 )"`
 	[ $result -gt $max ] && result=$max
 	[ $result -lt $min ] && result=$min
 	echo $result

@@ -13,6 +13,7 @@ templates=(
 	"__STATUS__ __PLAYER__: __ARTIST__ - __TITLE__ | __DURATION__"
 	"__STATUS__ __PLAYER__: __TITLE__ | __DURATION__"
 	"__STATUS__ __PLAYER__: __TITLE__"
+	"__STATUS__ __PLAYER__ | __DURATION__"
 	"__STATUS__ __PLAYER__"
 	"__STATUS__"
 )
