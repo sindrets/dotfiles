@@ -236,15 +236,11 @@ mode "resize" {
 #		notification manager
 exec --no-startup-id dunst
 exec --no-startup-id nitrogen --restore; sleep 1; compton -b
-exec --no-startup-id nm-applet
 exec --no-startup-id udiskie
-# exec --no-startup-id xfce4-power-manager
-exec --no-startup-id pamac-tray
+exec --no-startup-id bash -c "eval `ssh-agent`"
 exec --no-startup-id clipit
 exec --no-startup-id insync start
 exec --no-startup-id redshift -l 59.89:10.75
-exec_always --no-startup-id ff-theme-util
-exec_always --no-startup-id fix_xcursor
 exec_always --no-startup-id /$HOME/.config/polybar/i3wmthemer_bar_launch.sh
 
 # Theme colors
@@ -305,6 +301,8 @@ exec --no-startup-id mate-power-manager
 # Pulse Audio controls
 bindsym XF86AudioRaiseVolume exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --inc 2
 bindsym XF86AudioLowerVolume exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --dec 2
+bindsym $mod+Prior exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --inc 2
+bindsym $mod+Next exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --dec 2
 bindsym XF86AudioMute exec --no-startup-id /home/sindrets/.config/i3/scripts/volume-utils.sh --mute
 
 # Media player controls
