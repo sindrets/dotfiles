@@ -28,8 +28,8 @@ if [ "$COLOR" -gt "$VALUE" ]; then #light background, use dark icon
 		--layoutcolor=333333ff --insidecolor=00000000 \
 		--ringcolor=0000003e --linecolor=00000000 \
 		--keyhlcolor=ffffff80 --ringvercolor=ffffff00 \
-        --separatorcolor=22222260 --insidevercolor=ffffff1c \
-        --ringwrongcolor=ffffff55 --insidewrongcolor=ffffff1c 
+		--separatorcolor=22222260 --insidevercolor=ffffff1c \
+		--ringwrongcolor=ffffff55 --insidewrongcolor=ffffff1c 
 	)
 
 else # dark background so use the light icon
@@ -39,8 +39,8 @@ else # dark background so use the light icon
 		--layoutcolor=edededff --insidecolor=ffffff00 \
 		--ringcolor=ffffff3e --linecolor=ffffff00 \
 		--keyhlcolor=00000080 --ringvercolor=00000000 \
-        --separatorcolor=22222260 --insidevercolor=0000001c \
-        --ringwrongcolor=00000055 --insidewrongcolor=0000001c 
+		--separatorcolor=22222260 --insidevercolor=0000001c \
+		--ringwrongcolor=00000055 --insidewrongcolor=0000001c 
 	)
 fi
 
