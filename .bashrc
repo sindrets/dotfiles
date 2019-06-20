@@ -30,7 +30,7 @@ alias r="source ~/.bashrc"
 alias nvim-conf="$EDITOR ~/.config/nvim/init.vim"
 alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"
-alias rmorphans="yay -Rs $(yay -Qqdt)"
+alias rmorphans='yay -Rs $(yay -Qqdt)'
 
 # Change directory and ls
 function cs () {
