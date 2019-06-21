@@ -111,6 +111,7 @@ set $ws7 7
 set $ws8 8
 set $ws9 9
 set $wsTrash number "99:"
+set $vm number "88:"
 
 # switch to workspace
 bindsym $mod+1 workspace $ws1
@@ -177,6 +178,7 @@ for_window [class="Subl3"] floating enable border normal
 for_window [class="insync.py"] floating enable border pixel 1
 for_window [class="kitty_FLOAT"] floating enable border pixel 1
 for_window [class="Headset" title="Headset - Player"] move container to workspace $wsTrash
+for_window [class="VirtualBox Machine"] move container to workspace $vm fullscreen enable
 for_window [instance="fam-strom.1password.com"] floating enable border normal
 
 # switch to workspace with urgent window automatically
