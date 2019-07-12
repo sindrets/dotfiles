@@ -25,6 +25,7 @@ bindsym Mod5+sterling exec google-chrome-stable --app="https://fam-strom.1passwo
 bindsym $mod+e exec dolphin
 bindsym $mod+s exec fsearch
 bindsym $mod+g exec --no-startup-id ~/.config/i3/scripts/goto-workspace.sh
+bindsym $mod+period exec ~/.config/scripts/rofi-emoji.sh
 
 # Window kill command
 bindsym $mod+Shift+q kill
