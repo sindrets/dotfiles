@@ -24,6 +24,7 @@ alias setclip="xclip -selection c"
 alias getclip="xclip -selection c -o"
 alias tree="tree -C"
 alias cd="cs"
+alias popd="popd_wrap" 
 alias h="cd ~"
 alias g="cd ~/Documents/git"
 alias r="source ~/.bashrc"
@@ -34,7 +35,11 @@ alias rmorphans='yay -Rs $(yay -Qqdt)'
 
 # Change directory and ls
 function cs () {
-	builtin cd "$@" && ls
+	builtin cd "$@" && chpwd_hook && ls
+}
+
+function popd_wrap () {
+	builtin popd "$@" && chpwd_hook
 }
 
 # Resolve and print path
@@ -51,6 +56,13 @@ function getTerm () {
 }
 
 term="$(getTerm)"
+
+function chpwd_hook() {
+	if [ $term == "kitty" ]; then
+		kitty @ set-tab-title `basename $(pwd)`
+	fi
+}
+
 case $term in
 
 	"konsole") ;;
@@ -79,5 +91,6 @@ POWERLINE_BASH_SELECT=1
 . /usr/share/powerline/bindings/bash/powerline.sh
 
 # POST INIT
+chpwd_hook
 neofetch
 
