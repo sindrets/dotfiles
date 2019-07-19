@@ -35,13 +35,12 @@ alias rmorphans='yay -Rs $(yay -Qqdt)'
 
 # Change directory and ls
 function cs () {
-	builtin cd "$@" && chpwd_hook && ls
+	builtin cd "$@" && ls && chpwd_hook
 }
 
 function popd_wrap () {
 	builtin popd "$@" && chpwd_hook
 }
-
 # Resolve and print path
 function rpath () {
 	local RELATIVE_PATH="${@: -1}"
@@ -51,8 +50,12 @@ function rpath () {
 
 # Get current terminal emulator
 function getTerm () {
-	local TERM_BIN=$(ps -p $(ps -p $$ -o ppid=) o args=)
-	perl -e 'print ( $ARGV[0] =~ /((?(?<=\/))[^\/]*$)/ )' $TERM_BIN
+	sid=$(ps -o sid= -p "$$")
+	sid_int=$((sid)) # strips blanks if any
+	session_leader_parent=$(ps -o ppid= -p "$sid_int")
+	session_leader_parent_int=$((session_leader_parent))
+	emulator=$(ps -o comm= -p "$session_leader_parent_int")
+	echo $emulator
 }
 
 term="$(getTerm)"
