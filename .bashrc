@@ -24,6 +24,7 @@ alias setclip="xclip -selection c"
 alias getclip="xclip -selection c -o"
 alias tree="tree -C"
 alias cd="cs"
+alias popd="popd_wrap" 
 alias h="cd ~"
 alias g="cd ~/Documents/git"
 alias r="source ~/.bashrc"
@@ -34,9 +35,12 @@ alias rmorphans='yay -Rs $(yay -Qqdt)'
 
 # Change directory and ls
 function cs () {
-	builtin cd "$@" && ls
+	builtin cd "$@" && ls && chpwd_hook
 }
 
+function popd_wrap () {
+	builtin popd "$@" && chpwd_hook
+}
 # Resolve and print path
 function rpath () {
 	local RELATIVE_PATH="${@: -1}"
@@ -46,11 +50,22 @@ function rpath () {
 
 # Get current terminal emulator
 function getTerm () {
-	local TERM_BIN=$(ps -p $(ps -p $$ -o ppid=) o args=)
-	perl -e 'print ( $ARGV[0] =~ /((?(?<=\/))[^\/]*$)/ )' $TERM_BIN
+	sid=$(ps -o sid= -p "$$")
+	sid_int=$((sid)) # strips blanks if any
+	session_leader_parent=$(ps -o ppid= -p "$sid_int")
+	session_leader_parent_int=$((session_leader_parent))
+	emulator=$(ps -o comm= -p "$session_leader_parent_int")
+	echo $emulator
 }
 
 term="$(getTerm)"
+
+function chpwd_hook() {
+	if [ $term == "kitty" ]; then
+		kitty @ set-tab-title `basename $(pwd)`
+	fi
+}
+
 case $term in
 
 	"konsole") ;;
@@ -79,5 +94,6 @@ POWERLINE_BASH_SELECT=1
 . /usr/share/powerline/bindings/bash/powerline.sh
 
 # POST INIT
+chpwd_hook
 neofetch
 

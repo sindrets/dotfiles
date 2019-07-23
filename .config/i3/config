@@ -18,8 +18,8 @@ font xft:URWGothic-Book 11
 floating_modifier $mod
 
 # program binds
-bindsym $mod+Return exec kitty
-bindsym $mod+Shift+Return exec kitty --class kitty_FLOAT
+bindsym $mod+Return exec kitty -o allow_remote_control=yes
+bindsym $mod+Shift+Return exec kitty --class kitty_FLOAT -o allow_remote_control=yes
 # AltGr+3
 bindsym Mod5+sterling exec google-chrome-stable --app="https://fam-strom.1password.com/vaults/all/allitems/"
 bindsym $mod+e exec dolphin
