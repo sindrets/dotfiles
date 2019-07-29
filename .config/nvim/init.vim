@@ -51,13 +51,16 @@ Plug 'junegunn/goyo.vim'
 " THEMES
 Plug 'rakr/vim-one'
 Plug 'ayu-theme/ayu-vim'
+Plug 'kaicataldo/material.vim'
 
 call plug#end()
 
 " Theme settings
-let ayucolor="mirage"
 let g:airline_theme="ayu_mirage"
-colorscheme ayu
+"let ayucolor="mirage"
+let g:material_terminal_italics = 1
+let g:material_theme_style = 'darker'
+colorscheme material
 set background=dark
 
 " Copy, cut and paste to/from system clipboard
