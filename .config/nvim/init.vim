@@ -35,6 +35,10 @@ call plug#begin("~/.vim/bundle")
 " SYNTAX
 Plug 'leafgarland/typescript-vim'
 Plug 'PotatoesMaster/i3-vim-syntax'
+" BEHAVIOUR
+Plug 'terryma/vim-multiple-cursors'
+Plug 'jiangmiao/auto-pairs'
+Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 " MISC
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -44,9 +48,7 @@ Plug 'mhinz/vim-startify'
 Plug 'scrooloose/nerdtree'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 Plug 'ananagame/vimsence'
-Plug 'jiangmiao/auto-pairs'
 Plug 'junegunn/goyo.vim'
 " THEMES
 Plug 'rakr/vim-one'
