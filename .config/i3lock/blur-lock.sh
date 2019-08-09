@@ -6,7 +6,7 @@ tmpbg='/tmp/i3lock-bg.png'
 darken_amount=20
 
 # take a screenshot
-scrot "$tmpbg" --quality 100
+scrot -o "$tmpbg" --quality 100
 
 # set a threshold value to determine if we should use the light icon or dark
 # icon

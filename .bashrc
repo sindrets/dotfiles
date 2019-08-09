@@ -34,6 +34,7 @@ alias nvim-conf="$EDITOR ~/.config/nvim/init.vim"
 alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"
 alias rmorphans='yay -Rs $(yay -Qqdt)'
+alias npmls="cat package.json | jq .scripts"
 
 # Change directory and ls
 function cs () {
@@ -46,7 +47,7 @@ function popd_wrap () {
 # Resolve and print path
 function rpath () {
 	local RELATIVE_PATH="${@: -1}"
-	printf "$(readlink -f "$RELATIVE_PATH")"
+	printf "$(realpath -ms "$RELATIVE_PATH")"
 	[ "$1" != "-n" ] && printf "\n"
 }
 
