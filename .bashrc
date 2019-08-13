@@ -61,6 +61,15 @@ function getTerm () {
 	echo $emulator
 }
 
+# Toggle VPN
+function vpn () {
+	if nordvpn status | grep -iq disconnected; then
+		nordvpn c no
+	else
+		nordvpn d
+	fi
+}
+
 term="$(getTerm)"
 
 function chpwd_hook() {
