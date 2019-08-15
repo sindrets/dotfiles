@@ -35,6 +35,9 @@ alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"
 alias rmorphans='yay -Rs $(yay -Qqdt)'
 alias npmls="cat package.json | jq .scripts"
+alias pls="sudo "
+alias daddy="systemctl"
+alias kys="systemctl poweroff"
 
 # Change directory and ls
 function cs () {
@@ -53,12 +56,11 @@ function rpath () {
 
 # Get current terminal emulator
 function getTerm () {
-	sid=$(ps -o sid= -p "$$")
-	sid_int=$((sid)) # strips blanks if any
-	session_leader_parent=$(ps -o ppid= -p "$sid_int")
-	session_leader_parent_int=$((session_leader_parent))
-	emulator=$(ps -o comm= -p "$session_leader_parent_int")
-	echo $emulator
+	local sid=$(ps -o sid= -p "$$")
+	local sid_int=$((sid)) # strips blanks if any
+	local session_leader_parent=$(ps -o ppid= -p "$sid_int")
+	local session_leader_parent_int=$((session_leader_parent))
+	echo $(ps -o comm= -p "$session_leader_parent_int")
 }
 
 # Toggle VPN
