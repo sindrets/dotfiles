@@ -12,11 +12,19 @@ scrot -o "$tmpbg" --quality 100
 # icon
 VALUE="60" #brightness value to compare to
 
-# determine the color of the screenshot
-# thanks to [i3lock-fancy](https://github.com/meskarune/i3lock-fancy) for the
-# idea of getting the background color to change the icons
-COLOR=$(convert "$tmpbg" -gravity center -crop 100x100+0+0 +repage -colorspace hsb \
-    -brightness-contrast -"$darken_amount"x0 -resize 1x1 txt:- | awk -F '[%$]' 'NR==2{gsub(",",""); printf "%.0f\n", $(NF-1)}');
+# parse dimensions + position of primary display, to center icon on multi-monitor setups
+resPos="$(xrandr | grep primary | awk '{print $4}')"
+
+width="$(echo $resPos | perl -lne 'print $& if /[0-9]*(?=x)/')"
+height="$(echo $resPos | perl -lne 'print $& if /(?<=x)[0-9]*/')"
+
+offsetX="$(echo $resPos | perl -lne 'print $& if /(?<=\+)[0-9]*/')"
+offsetY="$(echo $resPos | perl -lne 'print $& if /(?<=\+)[0-9]*$/')"
+
+# determine the average color of the center of the primary monitor.
+cropSize=300
+COLOR=$(convert "$tmpbg" -crop "$cropSize"x"$cropSize"+$(expr $offsetX + $width / 2 - $cropSize / 2)+$(expr $offsetY + $height / 2 - $cropSize / 2) \
+	+repage -colorspace hsb -brightness-contrast -"$darken_amount"x0 -resize 1x1 txt:- | awk -F '[%$]' 'NR==2{gsub(",",""); printf "%.0f\n", $(NF-1)}');
 
 # change the color ring colors to leave the middle of the feedback ring
 # transparent and the outside to use either dark or light colors based on the 
@@ -43,15 +51,6 @@ else # dark background so use the light icon
 		--ringwrongcolor=00000055 --insidewrongcolor=0000001c 
 	)
 fi
-
-# parse dimensions + position of primary display, to center icon on multi-monitor setups
-resPos="$(xrandr | grep primary | awk '{print $4}')"
-
-width="$(echo $resPos | perl -lne 'print $& if /[0-9]*(?=x)/')"
-height="$(echo $resPos | perl -lne 'print $& if /(?<=x)[0-9]*/')"
-
-offsetX="$(echo $resPos | perl -lne 'print $& if /(?<=\+)[0-9]*/')"
-offsetY="$(echo $resPos | perl -lne 'print $& if /(?<=\+)[0-9]*$/')"
 
 iconHWidth="`expr $(identify -format '%w' "$icon") / 2`"
 iconHHeight="`expr $(identify -format '%h' "$icon") / 2`"
