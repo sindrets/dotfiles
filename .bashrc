@@ -38,6 +38,7 @@ alias npmls="cat package.json | jq .scripts"
 alias pls="sudo "
 alias daddy="systemctl"
 alias kys="systemctl poweroff"
+alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save /etc/pacman.d/mirrorlist"
 
 # Change directory and ls
 function cs () {
