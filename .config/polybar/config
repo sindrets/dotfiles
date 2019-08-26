@@ -5,8 +5,8 @@ height = 27
 radius = 0
 fixed-center = true
 
-background = #1E272B
-foreground = #EAD49B
+background = ${xrdb:background}
+foreground = ${xrdb:foreground}
 
 line-size = 3
 line-color =
@@ -54,23 +54,23 @@ strip-wsnumbers = true
 fuzzy-match = true
 
 label-mode-padding = 2
-label-mode-foreground = #1E272B
-label-mode-background = #78824b
+label-mode-foreground = ${xrdb:color0}
+label-mode-background = ${xrdb:color4}
 
 label-focused = %icon%%name%
-label-focused-background = #78824b
+label-focused-background = ${xrdb:color4}
 #label-focused-background = #94a05b
 label-focused-foreground = #c7e0ba
 label-focused-padding = 2
 
 label-unfocused = %icon%%name%
-label-unfocused-background = #78824b
-label-unfocused-foreground = #1E272B
+label-unfocused-background = ${xrdb:color4}
+label-unfocused-foreground = ${xrdb:color0}
 label-unfocused-padding = 2
 
 label-visible = %icon%%name%
-label-visible-background = #78824b
-label-visible-foreground = #1E272B
+label-visible-background = ${xrdb:color4}
+label-visible-foreground = ${xrdb:color0}
 label-visible-padding = 2
 
 label-urgent = %icon%%name%
@@ -85,8 +85,8 @@ interface = ${env:WLAN}
 interval = 3.0
 
 format-connected = <ramp-signal> <label-connected>
-format-connected-foreground = #1E272B
-format-connected-background = #9d6a47
+format-connected-foreground = ${xrdb:color0}
+format-connected-background = ${xrdb:color2}
 format-connected-padding = 2
 label-connected = %essid%
 
@@ -97,7 +97,7 @@ ramp-signal-1 = 爛
 ramp-signal-2 = 嵐
 ramp-signal-3 = 襤
 ramp-signal-4 = 蠟
-ramp-signal-foreground = #1E272B
+ramp-signal-foreground = ${xrdb:color0}
 
 [module/eth]
 type = internal/network
@@ -105,10 +105,10 @@ interface = ${env:ETH}
 interval = 3.0
 
 format-connected-padding = 2
-format-connected-foreground = #1E272B
-format-connected-background = #9d6a47
+format-connected-foreground = ${xrdb:color0}
+format-connected-background = ${xrdb:color2}
 format-connected-prefix = " "
-format-connected-prefix-foreground = #1E272B
+format-connected-prefix-foreground = ${xrdb:color0}
 label-connected = %local_ip%
 
 format-disconnected =
@@ -124,8 +124,8 @@ time = %H:%M
 time-alt = %H:%M:%S
 
 format-prefix = 肋
-format-foreground = #1E272B
-format-background = #d99f57
+format-foreground = ${xrdb:color0}
+format-background = ${xrdb:color5}
 format-padding = 2
 
 label = %date% %time%
@@ -138,11 +138,11 @@ expand-right = true
 format-spacing = 1
 
 label-open = 
-label-open-foreground = #9d6a47
+label-open-foreground = ${xrdb:color2}
 label-close =  cancel
-label-close-foreground = #9d6a47
+label-close-foreground = ${xrdb:color2}
 label-separator = |
-label-separator-foreground = #9d6a47
+label-separator-foreground = ${xrdb:color2}
 
 menu-0-0 = reboot
 menu-0-0-exec = menu-open-1
@@ -202,9 +202,9 @@ type = custom/script
 exec = ~/.config/polybar/scripts/cpu-temp.sh
 format-prefix = " "
 format-padding = 2
-format-foreground = #1E272B
-format-background = #9d6a47
-format-prefix-foreground = #1E272B
+format-foreground = ${xrdb:color0}
+format-background = ${xrdb:color2}
+format-prefix-foreground = ${xrdb:color0}
 interval = 5
 
 [settings]
