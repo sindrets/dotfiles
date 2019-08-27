@@ -77,7 +77,7 @@ term="$(getTerm)"
 
 function chpwd_hook() {
 	if [ $term == "kitty" ]; then
-		kitty @ set-tab-title `basename $(pwd)`
+		kitty @ set-tab-title `basename "$(pwd)"`
 	fi
 }
 
