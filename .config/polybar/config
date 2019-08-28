@@ -60,7 +60,7 @@ label-mode-background = ${xrdb:color4}
 label-focused = %icon%%name%
 label-focused-background = ${xrdb:color4}
 #label-focused-background = #94a05b
-label-focused-foreground = #c7e0ba
+label-focused-foreground = ${xrdb:foreground}
 label-focused-padding = 2
 
 label-unfocused = %icon%%name%

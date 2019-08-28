@@ -39,6 +39,7 @@ Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'jiangmiao/auto-pairs'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'ap/vim-css-color'
 " MISC
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
