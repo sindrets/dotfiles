@@ -243,6 +243,7 @@ exec --no-startup-id udiskie
 exec --no-startup-id clipit
 exec --no-startup-id insync start
 exec --no-startup-id redshift -l 59.89:10.75
+exec_always --no-startup-id wal -sntR
 exec_always --no-startup-id /$HOME/.config/polybar/launch.sh
 
 # Theme colors
