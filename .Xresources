@@ -43,3 +43,7 @@ rofi.columns: 2
 rofi.padding: 5
 rofi.fixed-num-lines: true
 rofi.hide-scrollbar: true
+
+xterm*faceName: Hack
+xterm*faceSize: 11
+xterm*renderFont: true

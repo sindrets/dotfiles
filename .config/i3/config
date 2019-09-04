@@ -152,35 +152,22 @@ bindsym $mod+Shift+KP_Subtract move container to workspace $wsTrash; workspace $
 
 # Open specific applications in floating mode
 for_window [title="alsamixer"] floating enable border pixel 1
-for_window [class="Calamares"] floating enable border normal
-for_window [class="Clipgrab"] floating enable
 for_window [title="File Transfer*"] floating enable
-for_window [class="Galculator"] floating enable border pixel 1
 for_window [class="GParted"] floating enable border normal
 for_window [title="i3_help"] floating enable sticky enable border normal
 for_window [class="Lightdm-gtk-greeter-settings"] floating enable
 for_window [class="Lxappearance"] floating enable sticky enable border normal
-for_window [title="MuseScore: Play Panel"] floating enable
 for_window [class="Nitrogen"] floating enable sticky enable border normal
-for_window [class="Oblogout"] fullscreen enable
-for_window [class="octopi"] floating enable
-for_window [title="About Pale Moon"] floating enable
 for_window [class="Pamac-manager"] floating enable
 for_window [class="Pavucontrol"] floating enable
 for_window [class="qt5ct"] floating enable sticky enable border normal
-for_window [class="Qtconfig-qt4"] floating enable sticky enable border normal
-for_window [class="Simple-scan"] floating enable border normal
-for_window [class="(?i)System-config-printer.py"] floating enable border normal
-for_window [class="Thus"] floating enable border normal
-for_window [class="Timeset-gui"] floating enable border normal
-for_window [class="(?i)virtualbox"] floating enable border normal
-for_window [class="Xfburn"] floating enable
-for_window [class="Subl3"] floating enable border normal
+for_window [class="Subl3"] floating enable border pixel 1
 for_window [class="insync.py"] floating enable border pixel 1
 for_window [class="kitty_FLOAT"] floating enable border pixel 1
+for_window [class="Headset" title="Headset"] floating enable border none
 for_window [class="Headset" title="Headset - Player"] move container to workspace $wsTrash
 for_window [class="VirtualBox Machine"] move container to workspace $vm fullscreen enable
-for_window [instance="fam-strom.1password.com"] floating enable border normal
+for_window [instance="fam-strom.1password.com"] floating enable border pixel 1
 
 # switch to workspace with urgent window automatically
 for_window [urgent=latest] focus
@@ -243,17 +230,36 @@ exec --no-startup-id udiskie
 exec --no-startup-id clipit
 exec --no-startup-id insync start
 exec --no-startup-id redshift -l 59.89:10.75
-exec_always --no-startup-id wal -sntR
-exec_always --no-startup-id /$HOME/.config/polybar/launch.sh
+exec_always --no-startup-id wal -sntR; /$HOME/.config/polybar/launch.sh
 
 # Theme colors
-client.focused #EAD49B #1E272B #EAD49B #9D6A47 #9D6A47
-client.focused_inactive #EAD49B #1E272B #EAD49B #78824B #78824B
-client.unfocused #EAD49B #1E272B #EAD49B #78824B #78824B
-client.urgent #EAD49B #1E272B #EAD49B #78824B #78824B
-client.placeholder #EAD49B #1E272B #EAD49B #78824B #78824B
+set_from_resource $background background
+set_from_resource $foreground foreground
+set_from_resource $cursorColor cursorColor
+set_from_resource $color0 color0
+set_from_resource $color8 color8
+set_from_resource $color1 color1
+set_from_resource $color9 color9
+set_from_resource $color2 color2
+set_from_resource $color10 color10
+set_from_resource $color3 color3
+set_from_resource $color11 color11
+set_from_resource $color4 color4
+set_from_resource $color12 color12
+set_from_resource $color5 color5
+set_from_resource $color13 color13
+set_from_resource $color6 color6
+set_from_resource $color14 color14
+set_from_resource $color7 color7
+set_from_resource $color15 color15
 
-client.background #1E272B
+client.focused $foreground $background $color7 $color2 $color10
+client.focused_inactive $foreground $background $color7 $color4 $color12
+client.unfocused $foreground $background $color7 $color4 $color12
+client.urgent $foreground $background $color7 $color4 $color12
+client.placeholder $foreground $background $color7 $color4 $color12
+
+client.background $background
 
 # Gaps
 gaps inner 20
