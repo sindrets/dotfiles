@@ -79,6 +79,13 @@ label-urgent-padding = 2
 
 ws-icon-0 = ssh;
 
+[module/player]
+type = custom/script
+exec = ~/.config/i3/scripts/playerctl-utils.sh --follow
+tail = true
+click-left = ~/.config/i3/scripts/playerctl-utils.sh --use-active play-pause
+click-right = killall -USR1 playerctl-utils
+
 [module/wlan]
 type = internal/network
 interface = ${env:WLAN}
