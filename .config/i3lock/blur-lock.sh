@@ -57,7 +57,7 @@ iconHHeight="`expr $(identify -format '%h' "$icon") / 2`"
 
 # blur the screenshot by resizing and scaling back up
 #convert "$tmpbg" -filter Gaussian -thumbnail 20% -sample 500% "$tmpbg"
-convert "$tmpbg" -scale 10% -blur 0x4 -resize 1000% -brightness-contrast -"$darken_amount"x-"$darken_amount" \
+convert "$tmpbg" -scale 10% -blur 0x6 -resize 1000% -brightness-contrast -"$darken_amount"x-"$darken_amount" \
 	"$icon" -geometry +"`expr $width / 2 + $offsetX - $iconHWidth`"+"`expr $height / 2 + $offsetY - $iconHHeight`" -composite "$tmpbg"
 
 # lock the screen with the color parameters
