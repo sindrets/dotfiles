@@ -13,6 +13,7 @@ BROWSER=/usr/bin/google-chrome-stable
 export VISUAL=nvim
 export EDITOR=nvim
 export LC_ALL=en_US.UTF-8 # force all applications to use default language for output
+export LESS=-r # scroll pager with mouse wheel.
 
 [[ -f "./.bashrc.aliases" ]] && source "./.bashrc.aliases"
 
