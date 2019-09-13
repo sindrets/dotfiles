@@ -1,0 +1,8 @@
+<keymap version="1" name="Sublime Text copy" parent="Sublime Text">
+  <action id="RenameElement">
+    <keyboard-shortcut first-keystroke="f2" />
+  </action>
+  <action id="RenameFile">
+    <keyboard-shortcut first-keystroke="f2" />
+  </action>
+</keymap>

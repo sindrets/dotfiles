@@ -1,0 +1,11 @@
+<application>
+  <component name="MaterialThemeConfig">
+    <option name="isHighContrast" value="true" />
+    <option name="isWizardShown" value="true" />
+    <option name="pristineConfig" value="false" />
+    <option name="settingsSelectedTab" value="4" />
+    <option name="selectedTheme" value="MONOKAI" />
+    <option name="userId" value="-c4bcab0:16d2a53fea9:-8000" />
+    <option name="version" value="4.5.1" />
+  </component>
+</application>
