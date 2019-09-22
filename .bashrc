@@ -40,6 +40,7 @@ alias pls="sudo "
 alias daddy="systemctl"
 alias kys="systemctl poweroff"
 alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save /etc/pacman.d/mirrorlist"
+alias mdv="mdvless"
 
 # Change directory and ls
 function cs () {
@@ -72,6 +73,10 @@ function vpn () {
 	else
 		nordvpn d
 	fi
+}
+
+function mdvless () {
+	/usr/bin/mdv $@ | less
 }
 
 term="$(getTerm)"

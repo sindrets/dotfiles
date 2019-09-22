@@ -31,7 +31,7 @@ bindsym $mod+period exec ~/.config/scripts/rofi-emoji.sh
 bindsym $mod+Shift+q kill
 
 # start program launcher
-bindsym $mod+space exec --no-startup-id rofi -show run
+bindsym $mod+space exec --no-startup-id "rofi -modi drun,run,ssh,window -show drun -show-icons -font 'Source Code Pro Semibold 16' -columns 1 -width 1000px -lines 10"
 bindsym $mod+Ctrl+space exec --no-startup-id ~/.config/scripts/sudo-rofi
 
 # change focus
