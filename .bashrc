@@ -118,5 +118,7 @@ eval $(thefuck --alias)
 
 # POST INIT
 chpwd_hook
-neofetch
+if [ ! $UID = 0 ]; then
+	neofetch
+fi
 

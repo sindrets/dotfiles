@@ -16,6 +16,7 @@ appendpath () {
 appendpath '/usr/local/sbin'
 appendpath '/usr/local/bin'
 appendpath '/usr/bin'
+appendpath "$(ruby -e 'puts Gem.user_dir')/bin"
 unset appendpath
 
 export PATH
