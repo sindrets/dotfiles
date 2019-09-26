@@ -79,6 +79,11 @@ function mdvless () {
 	/usr/bin/mdv $@ | less
 }
 
+# calculator
+function = () {
+	python -c "from math import *; print($*)"
+}
+
 term="$(getTerm)"
 
 function chpwd_hook() {
