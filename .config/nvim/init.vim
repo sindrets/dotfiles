@@ -15,6 +15,11 @@ set termguicolors
 set pyx=3
 set pyxversion=3
 
+" ruler
+set colorcolumn=100
+highlight ColorColumn ctermbg=0 guibg=red
+
+" render whitespace
 set list
 set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:»
 
