@@ -150,7 +150,7 @@ bindsym $mod+Shift+8 move container to workspace $ws8; workspace $ws8
 bindsym $mod+Shift+9 move container to workspace $ws9; workspace $ws9
 bindsym $mod+Shift+KP_Subtract move container to workspace $wsTrash; workspace $wsTrash
 
-# Open specific applications in floating mode
+# Window rules
 for_window [title="alsamixer"] floating enable border pixel 1
 for_window [title="File Transfer*"] floating enable
 for_window [class="GParted"] floating enable border normal
@@ -169,6 +169,7 @@ for_window [class="Headset" title="Headset - Player"] move container to workspac
 for_window [class="VirtualBox Machine"] move container to workspace $vm fullscreen enable
 for_window [instance="fam-strom.1password.com"] floating enable border pixel 1
 for_window [class="SpeedCrunch"] floating enable border pixel 1
+for_window [class="firefox"] border none
 
 # switch to workspace with urgent window automatically
 for_window [urgent=latest] focus

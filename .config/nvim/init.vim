@@ -17,7 +17,7 @@ set pyxversion=3
 
 " ruler
 set colorcolumn=100
-highlight ColorColumn ctermbg=0 guibg=red
+highlight ColorColumn ctermbg=0 guibg=#292929
 
 " render whitespace
 set list
@@ -73,6 +73,8 @@ let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
 colorscheme material
 set background=dark
+" Override ruler column from theme
+highlight ColorColumn guibg=#292929
 
 " Copy, cut and paste to/from system clipboard
 noremap <Leader>y "+y
