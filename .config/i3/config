@@ -3,6 +3,7 @@
 # Mod4: super
 # Mod5: alt_gr
 set $mod Mod4
+set $terminal kitty -o allow_remote_control=yes
 
 new_window pixel 1
 new_float normal
@@ -18,14 +19,16 @@ font xft:URWGothic-Book 11
 floating_modifier $mod
 
 # program binds
-bindsym $mod+Return exec kitty -o allow_remote_control=yes
-bindsym $mod+Shift+Return exec kitty --class kitty_FLOAT -o allow_remote_control=yes
+bindsym $mod+Return exec $terminal
+bindsym $mod+Shift+Return exec $terminal --class kitty_FLOAT
 # AltGr+3
 bindsym Mod5+sterling exec google-chrome-stable --app="https://fam-strom.1password.com/vaults/all/allitems/"
 bindsym $mod+e exec dolphin
 bindsym $mod+s exec fsearch
 bindsym $mod+g exec --no-startup-id ~/.config/i3/scripts/goto-workspace.sh
 bindsym $mod+period exec ~/.config/scripts/rofi-emoji.sh
+
+bindsym $mod+F1 exec $terminal $EDITOR ~/.config/i3/config
 
 # Window kill command
 bindsym $mod+Shift+q kill

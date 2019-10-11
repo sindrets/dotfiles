@@ -1,50 +1,39 @@
 #!/usr/bin/perl
 
+use List::Util qw[min max];
+
 my $info = `ip addr`;
 
-# Get the nth line in a string. 
-sub nthLine {
-	my ($text, $n) = (@_);
-	$n--;
-	if ($text =~ /(?:^[^\n]*\n){$n}([^\n]*)/m) {
-		return $1;
+sub cidrToSubmask {
+	my ($nbits) = @_;
+	my @mask = ();
+	for (my $i = 0; $i < 4; $i++) {
+		my $n = min($nbits, 8);
+		push @mask, (256 - 2**(8 - $n));
+		$nbits -= $n;
 	}
-	return undef;
-}
-
-sub trim {
-	my $s = shift; 
-	$s =~ s/^\s+|\s+$//g; 
-	return $s 
+	return join(".", @mask);
 }
 
 while ($info =~ /(^\S.*\Wstate UP\W(?:.*\n(?!\S))*)/gm) {
-
-	my $line = trim(nthLine($1, 1));
-	my @atoms = split(/\s+/, $line);
-	my $dev = substr($atoms[0], 0, length($atoms[0]) - 1);
-
-	$line = trim(nthLine($1, 3));
-	@atoms = split(/\s+/, $line);
-	my $inet = $atoms[1];
-	my $mask = $atoms[3];
-	my $broadcast = $atoms[3];
-
-	$line = trim(nthLine($1, 7));
-	@atoms = split(/\s+/, $line);
-	my $inet6 = $atoms[1];
-
-	$line = trim(nthLine($1, 2));
-	my ($type) = ( $line =~ /(\(.*\)$)/ );
+	
+	my $section = $1;
+	
+	my ($dev) = ( $section =~ /^\d: ([a-zA-Z0-9]+):/ );
+	my ($inet4, $cidr4) = ( $section =~ /inet (\d{1,3}(?:.\d{1,3}){3})\/(\d+)/m );
+	my $mask4 = cidrToSubmask($cidr4);
+	my ($inet6, $cidr6) = ( $section =~ /inet6 (\S+:(?::\S+){4})\/(\d+)/m );
+	my ($broadcast) = ( $section =~ /^\s*inet .*brd (\d{1,3}(?:.\d{1,3}){3})/m );
 
 	print "Device: $dev $type", "\n";
-	print "\tinet: $inet", "\n";
-	print "\tinet6: $inet6", "\n";
-	# print "\tnetmask: $mask", "\n";
-	print "\tbroadcast: $broadcast", "\n";
+	print "  inet: $inet4", "\n";
+	print "    netmask: $mask4 (CIDR: $cidr4)", "\n";
+	print "    broadcast: $broadcast", "\n";
+	print "  inet6: $inet6", "\n";
+	print "    prefixlen: $cidr6", "\n";
 	print "\n";
 
 }
 
-my $publicIp = `curl --max-time 3 https://ident.me/ 2>/dev/null`;
+my $publicIp = `curl --max-time 3 https://ifconfig.me 2>/dev/null`;
 print "Public IP: $publicIp", "\n";
