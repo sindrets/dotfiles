@@ -27,10 +27,10 @@ while ($info =~ /(^\S.*\Wstate UP\W(?:.*\n(?!\S))*)/gm) {
 
 	print "Device: $dev $type", "\n";
 	print "  inet: $inet4", "\n";
-	print "    netmask: $mask4 (CIDR: $cidr4)", "\n";
-	print "    broadcast: $broadcast", "\n";
+	print "  ├── netmask: $mask4 (CIDR: $cidr4)", "\n";
+	print "  └── broadcast: $broadcast", "\n";
 	print "  inet6: $inet6", "\n";
-	print "    prefixlen: $cidr6", "\n";
+	print "  └── prefixlen: $cidr6", "\n";
 	print "\n";
 
 }
