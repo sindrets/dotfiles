@@ -5,11 +5,9 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-PATH=~/.config/scripts:$PATH
-
 export NEOFETCH_IMG="/home/sindrets/Google Drive/sindrets@gmail.com/Bilder/neofetch/"
 
-BROWSER=/usr/bin/google-chrome-stable
+export BROWSER=/usr/bin/firefox
 export VISUAL=nvim
 export EDITOR=nvim
 export LC_ALL=en_US.UTF-8 # force all applications to use default language for output

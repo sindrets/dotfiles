@@ -17,16 +17,16 @@ sub cidrToSubmask {
 
 while ($info =~ /(^\S.*\Wstate UP\W(?:.*\n(?!\S))*)/gm) {
 	
-	my $section = $1;
+	my $s = $1;
 	
-	my ($dev) = ( $section =~ /^\d: ([a-zA-Z0-9]+):/ );
-	my ($inet4, $cidr4) = ( $section =~ /inet (\d{1,3}(?:.\d{1,3}){3})\/(\d+)/m );
+	my ($dev) = ( $s =~ /^\d: ([a-zA-Z0-9]+):/ );
+	my ($inet4, $cidr4) = ( $s =~ /inet (\d{1,3}(?:.\d{1,3}){3})\/(\d+)/m );
 	my $mask4 = cidrToSubmask($cidr4);
-	my ($inet6, $cidr6) = ( $section =~ /inet6 (\S+:(?::\S+){4})\/(\d+)/m );
-	my ($broadcast) = ( $section =~ /^\s*inet .*brd (\d{1,3}(?:.\d{1,3}){3})/m );
+	my ($inet6, $cidr6) = ( $s =~ /inet6 (\S+:(?::\S+){4})\/(\d+)/m );
+	my ($broadcast) = ( $s =~ /^\s*inet .*brd (\d{1,3}(?:.\d{1,3}){3})/m );
 
 	print "Device: $dev $type", "\n";
-	print "  inet: $inet4", "\n";
+	print "  inet4: $inet4", "\n";
 	print "  ├── netmask: $mask4 (CIDR: $cidr4)", "\n";
 	print "  └── broadcast: $broadcast", "\n";
 	print "  inet6: $inet6", "\n";
