@@ -28,6 +28,7 @@ filetype plugin on
 
 let mapleader = " "											" set the leader key
 let g:airline_powerline_fonts = 1							" enable powerline symbols
+let g:python_recommended_style = 0
 let g:airline_theme='powerlineish'							" set airline theme
 let g:airline#extensions#tabline#enabled = 1				" enable airline tabline
 let NERDTreeShowHidden=1									" show dot files in NERDtree
