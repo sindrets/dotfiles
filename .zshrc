@@ -33,6 +33,10 @@ export LESS=-r # scroll pager with mouse wheel.
 
 bindkey "^[[H" beginning-of-line
 bindkey "^[[F" end-of-line
+bindkey -M viins '^[[1;5D' backward-word  # Ctrl-left
+bindkey -M viins '^[[1;5C' forward-word  # Ctrl-right
+bindkey -M viins '^[[3~' delete-char  # delete key
+bindkey "^?" backward-delete-char
 
 [[ -f "./.bashrc.aliases" ]] && source "./.bashrc.aliases"
 
