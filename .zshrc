@@ -63,7 +63,14 @@ alias man="man-color"
 
 function chpwd() {
 	emulate -L zsh
+	updateKittyTabTitle
 	ls
+}
+
+function updateKittyTabTitle() {
+	if [ "$term" = "kitty" ]; then
+		kitty @ set-tab-title `basename "$(pwd)"`
+	fi
 }
 
 # Resolve and print path
@@ -111,12 +118,6 @@ function man-color () {
 	/usr/bin/man $@
 }
 
-function chpwd_hook() {
-	if [ "$term" == "kitty" ]; then
-		kitty @ set-tab-title `basename "$(pwd)"`
-	fi
-}
-
 term="$(getTerm)"
 case $term in
 
@@ -144,6 +145,7 @@ source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 . /usr/share/powerline/bindings/zsh/powerline.zsh
 
 # post init
+updateKittyTabTitle
 if [ ! $UID = 0 ]; then
 	neofetch
 fi
