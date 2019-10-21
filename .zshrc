@@ -24,13 +24,14 @@ compinit
 
 
 export NEOFETCH_IMG="/home/sindrets/Google Drive/sindrets@gmail.com/Bilder/neofetch/"
-
 export BROWSER=/usr/bin/firefox
 export VISUAL=nvim
 export EDITOR=nvim
 export LC_ALL=en_US.UTF-8 # force all applications to use default language for output
 export LESS=-r # scroll pager with mouse wheel.
+export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 
+# find escape codes with "showkey -a"
 bindkey "^[[H" beginning-of-line
 bindkey "^[[F" end-of-line
 bindkey -M viins '^[[1;5D' backward-word  # Ctrl-left
