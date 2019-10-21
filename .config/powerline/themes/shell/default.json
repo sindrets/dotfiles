@@ -37,6 +37,10 @@
 		],
 		"right": [
 			{
+				"function": "powerline.segments.common.vcs.branch",
+				"priority": 60
+			},
+			{
 				"function": "powerline.segments.common.time.date",
 				"args": {
 					"format": "%H:%M:%S",
@@ -50,10 +54,6 @@
 			{
 				"function": "powerline.segments.common.vcs.stash",
 				"priority": 50
-			},
-			{
-				"function": "powerline.segments.common.vcs.branch",
-				"priority": 40
 			}
 		]
 	}
