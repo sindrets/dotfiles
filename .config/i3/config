@@ -234,7 +234,7 @@ exec --no-startup-id nitrogen --restore; sleep 1; compton -b
 exec --no-startup-id udiskie
 exec --no-startup-id clipit
 exec --no-startup-id insync start
-exec --no-startup-id redshift -l 59.89:10.75
+exec --no-startup-id redshift -l 59.89:10.75 -t 6500:4000
 exec_always --no-startup-id wal -sntR; /$HOME/.config/polybar/launch.sh
 
 # Theme colors

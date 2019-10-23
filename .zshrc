@@ -36,8 +36,16 @@ bindkey "^[[H" beginning-of-line
 bindkey "^[[F" end-of-line
 bindkey -M viins '^[[1;5D' backward-word  # Ctrl-left
 bindkey -M viins '^[[1;5C' forward-word  # Ctrl-right
+bindkey -M vicmd '^[[1;5D' backward-word  # Ctrl-left
+bindkey -M vicmd '^[[1;5C' forward-word  # Ctrl-right
 bindkey -M viins '^[[3~' delete-char  # delete key
 bindkey "^?" backward-delete-char
+
+# Enable Ctrl-x-e to edit command line
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^xe' edit-command-line
+bindkey '^x^e' edit-command-line
 
 [[ -f "./.bashrc.aliases" ]] && source "./.bashrc.aliases"
 
@@ -147,6 +155,7 @@ esac
 # syntax highlighting
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # init powerline
+powerline-daemon -q
 . /usr/share/powerline/bindings/zsh/powerline.zsh
 
 # post init
