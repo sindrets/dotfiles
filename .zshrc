@@ -160,7 +160,7 @@ powerline-daemon -q
 
 # post init
 updateKittyTabTitle
-if [ ! $UID = 0 ]; then
+if [ ! $UID = 0 ] && [ ! $term = "init" ]; then
 	neofetch
 fi
 
