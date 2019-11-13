@@ -73,6 +73,7 @@ alias kys="systemctl poweroff"
 alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save /etc/pacman.d/mirrorlist"
 alias mdv="mdvless"
 alias man="man-color"
+alias nvminit="source /usr/share/nvm/init-nvm.sh"
 
 function chpwd() {
 	emulate -L zsh
@@ -160,7 +161,10 @@ powerline-daemon -q
 
 # post init
 updateKittyTabTitle
-if [ ! $UID = 0 ] && [ ! $term = "init" ]; then
+if	[ ! $UID = 0 ] &&
+	[ ! $term = "init" ]  # WSL
+	[ ! $term = "code" ];   # vscode
+then
 	neofetch
 fi
 
