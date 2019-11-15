@@ -155,6 +155,27 @@ esac
 
 # syntax highlighting
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# init fzf
+source /usr/share/fzf/key-bindings.zsh
+source /usr/share/fzf/completion.zsh
+FD_OPTIONS="--hidden --follow --exclude .git --exclude node_modules"
+export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard | fd --type f --type l $FD_OPTIONS"
+export FZF_CTRL_T_COMMAND="fd $FD_OPTIONS"
+export FZF_ALT_C_COMMAND="fd --type d $FD_OPTIONS"
+export FZF_DEFAULT_OPTS="-1 --reverse --multi --preview='[[ \$(file --mime {}) =~ binary ]] && \
+echo {} is a binary file || (bat -n --color=always {} || cat {}) 2> /dev/null | head -300' \
+--preview-window='right:hidden:wrap' --bind='\
+f3:execute(bat -n {} || less -f {}),\
+f2:toggle-preview,ctrl-d:half-page-down,ctrl-u:half-page-up'"
+
+_fzf_compgen_path() {
+	fd --hidden --follow --exclude ".git" . "$1"
+}
+_fzf_compgen_dir() {
+	fd --type d --hidden --follow --exclude ".git" . "$1"
+}
+
 # init powerline
 powerline-daemon -q
 . /usr/share/powerline/bindings/zsh/powerline.zsh
@@ -162,7 +183,7 @@ powerline-daemon -q
 # post init
 updateKittyTabTitle
 if	[ ! $UID = 0 ] &&
-	[ ! $term = "init" ]  # WSL
+	[ ! $term = "init" ] &&  # WSL
 	[ ! $term = "code" ];   # vscode
 then
 	neofetch

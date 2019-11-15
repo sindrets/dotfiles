@@ -48,7 +48,6 @@ Plug 'terryma/vim-multiple-cursors'
 Plug 'jiangmiao/auto-pairs'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 Plug 'ap/vim-css-color'
-Plug 'jpalardy/vim-slime'
 " MISC
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'

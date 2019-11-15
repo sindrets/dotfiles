@@ -1,14 +1,17 @@
-#!/bin/bash 
+#!/usr/bin/env sh
 
-# CONFIGURABLE VARS:
+# --- CONFIGURABLE VARS: ---
 icon_playing=""							# Will replace the status token when music is playing
 icon_paused=""								# Will replace the status token when music is paused
 interval_rate="medium"						# {low/medium/high} Controls how often information is polled during --follow
 path_last_player="/tmp/PU_LAST_PLAYER"		# A file that will be used to keep track of the last used player
+title_max_length=25							# The max length of the title string. If longer will be shortened with ellipsis
 template_index=0							# Determines the initial format template
+
 # A list of templates that will be used to format the output of the --follow command.
 # The available tokens are:
 # __STATUS__, __PLAYER__, __ARTIST__, __ALBUM__, __TITLE__, __TRACK_NUMBER__, __POSITION__, __DURATION__
+# The __POSITION__ token requires 'high' interval_rate to be useful.
 templates=(
 	"__STATUS__ __PLAYER__: __ARTIST__ - __TITLE__ | __DURATION__"
 	"__STATUS__ __PLAYER__: __TITLE__ | __DURATION__"
@@ -17,6 +20,7 @@ templates=(
 	"__STATUS__ __PLAYER__"
 	"__STATUS__"
 )
+# --------------------------
 
 
 player=""
@@ -55,6 +59,7 @@ update_player () {
 }
 
 # nanoseconds to duration string
+# @param {int} $1 Nanosecond duration
 duration () {
 
 	local n=`echo $1 | cut -d . -f1` # remove decimal point
@@ -72,6 +77,20 @@ duration () {
 
 }
 
+# Shorten a string to a given max length.
+# @param {string} $1 The string to be shortened.
+# @param {int} $2 The max length
+shorten_string () {
+	local result="$1"
+
+	if (( ${#result} > $2 )); then
+		local length="$[ $2 - 3 ]"
+		result="${result:0:$length}..."
+	fi
+
+	echo $result
+}
+
 update_metadata () {
 
 	local t=`playerctl -p "$player" metadata mpris:length 2>/dev/null`
@@ -85,16 +104,16 @@ update_metadata () {
 }
 
 # Retrieve metadata.
-# @param {int} line number
+# @param {int} $1 line number
 data () {
 	echo -n "$metadata" | sed -n "$1 p"
 }
 
 # Print formatted output
-# @param {string} playerctl event
+# @param {string} $1 playerctl event
 print_format () {
 
-	[ ! `echo "$1" | awk '{print $1}' | grep -q "$player"` ] && update_player
+	! echo "$1" | awk '{print $1}' | grep -q "$player" && update_player
 
 	if [ -z "$player" ]; then 
 		echo ""
@@ -102,13 +121,14 @@ print_format () {
 	fi
 
 	update_metadata
+	local title=`shorten_string "$(data 5)" $title_max_length`
 	local result="${templates[$template_index]}"
 
 	result="${result/__STATUS__/`data 1`}"
 	result="${result/__PLAYER__/`data 2`}"
 	result="${result/__ARTIST__/`data 3`}"
 	result="${result/__ALBUM__/`data 4`}"
-	result="${result/__TITLE__/`data 5`}"
+	result="${result/__TITLE__/$title}"
 	result="${result/__TRACK_NUMBER__/`data 6`}"
 	result="${result/__POSITION__/`data 7`}"
 	result="${result/__DURATION__/`data 8`}"
@@ -145,7 +165,7 @@ player_follow () {
 
 	playerctl -a metadata --format "$format" --follow 2>/dev/null | while read -r event ; do
 
-		trap "cycle_templates && print_format '$event';" USR1
+		trap "cycle_templates; print_format '$event';" USR1
 		print_format "$event"
 
 	done
