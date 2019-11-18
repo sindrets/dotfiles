@@ -20,6 +20,11 @@ templates=(
 	"__STATUS__ __PLAYER__"
 	"__STATUS__"
 )
+
+# A list of regex patterns for players you want to ignore.
+ignore_players=(
+	"chromium.*"
+)
 # --------------------------
 
 
@@ -33,25 +38,38 @@ cycle_templates () {
 	template_index=$[ ($template_index + 1) % ${#templates[@]} ]
 }
 
+# Returns all players with ignored players excluded
+list_players () {
+	
+	local format="{{ playerName }} {{ status }}"
+	local all_players="`playerctl -a metadata -f "$format" 2> /dev/null`"
+	for pattern in "${ignore_players[@]}"; do
+		all_players="`echo "$all_players" | sed "/$pattern/d"`"
+	done
+
+	echo "$all_players"
+
+}
+
 # get the most relevant player
 update_player () {
 
-	if [ -z "`playerctl -l 2>/dev/null`" ]; then
+	local all_players="`list_players`"
+
+	if [ -z "$all_players" ]; then
 		rm "$path_last_player" 2>/dev/null
 		player=""
 		return
 	fi
 
-	local n=`playerctl -a status 2>/dev/null | grep -m 1 -ni playing | cut -d : -f 1`
+	player=`echo "$all_players" | grep -m 1 -i playing | awk '{print $1}'`
 	
-	if [ -z "$n" ]; then 
-		if [ -e "$path_last_player" ] && [ -n "`cat \"$path_last_player\"`" ]; then
+	if [ -z "$player" ]; then 
+		if [ -e "$path_last_player" ] && [ -n "`cat "$path_last_player"`" ]; then
 			player=`cat "$path_last_player"`
 		elif [ -z "$player" ]; then
-			player=`playerctl -l | sed -n "1p"`
+			player=`echo "$all_players" | sed -n "1p" | awk '{print $1}'`
 		fi
-	else 
-		player=`playerctl -l 2>/dev/null | sed -n "$n p"`
 	fi
 
 	printf "$player" > "$path_last_player"
@@ -166,14 +184,19 @@ player_follow () {
 
 	playerctl -a metadata --format "$format" --follow 2>/dev/null | while read -r event ; do
 
-		trap "cycle_templates; print_format '$event';" USR1
+		trap 'cycle_templates; print_format "$event"' USR1
 		print_format "$event"
 
 	done
 
 }
 
-case "$1" in 
+case "$1" in
+
+	# Print all players, ignored players excluded.
+	--list)
+		list_players
+		;;
 
 	# Print the name of the active player
 	--active)
