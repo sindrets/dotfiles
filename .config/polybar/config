@@ -96,7 +96,7 @@ exec = "~/.config/i3/scripts/playerctl-utils.sh --follow"
 label-font = 6
 tail = true
 click-left = ~/.config/i3/scripts/playerctl-utils.sh --use-active play-pause
-click-right = killall -USR1 playerctl-utils
+click-right = pkill -USR1 -f "playerctl-utils.sh --follow"
 
 [module/wlan]
 type = internal/network

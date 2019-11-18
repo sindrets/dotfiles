@@ -1,4 +1,4 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 # --- CONFIGURABLE VARS: ---
 icon_playing=""							# Will replace the status token when music is playing
@@ -113,7 +113,8 @@ data () {
 # @param {string} $1 playerctl event
 print_format () {
 
-	! echo "$1" | awk '{print $1}' | grep -q "$player" && update_player
+	# if player in event is not same as var: update player
+	(! echo "$1" | awk '{print $1}' | grep -qP "^$player$") && update_player
 
 	if [ -z "$player" ]; then 
 		echo ""
