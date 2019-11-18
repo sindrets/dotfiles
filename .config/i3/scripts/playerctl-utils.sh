@@ -8,7 +8,8 @@ path_last_player="/tmp/PU_LAST_PLAYER"		# A file that will be used to keep track
 title_max_length=25							# The max length of the title string. If longer will be shortened with ellipsis
 template_index=0							# Determines the initial format template
 
-# A list of templates that will be used to format the output of the --follow command.
+# A list of templates that will be used to format the output of the --follow command. The template 
+# list is cycled when the script receives a SIGUSR1 signal.
 # The available tokens are:
 # __STATUS__, __PLAYER__, __ARTIST__, __ALBUM__, __TITLE__, __TRACK_NUMBER__, __POSITION__, __DURATION__
 # The __POSITION__ token requires 'high' interval_rate to be useful.
