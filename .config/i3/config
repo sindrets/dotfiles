@@ -233,7 +233,7 @@ mode "resize" {
 # Autostart applications 
 #		notification manager
 exec --no-startup-id dunst
-exec --no-startup-id nitrogen --restore; sleep 1; compton -b
+exec --no-startup-id nitrogen --restore; sleep 1; picom -b
 exec --no-startup-id udiskie
 exec --no-startup-id clipit
 exec --no-startup-id insync start
