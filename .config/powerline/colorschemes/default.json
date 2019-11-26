@@ -12,7 +12,7 @@
 		"background:divider":         { "fg": "gray5", "bg": "gray0", "attrs": [] },
 		"session":                    { "fg": "black", "bg": "gray10", "attrs": ["bold"] },
 		"date":                       { "fg": "gray8", "bg": "gray2", "attrs": [] },
-		"time":                       { "fg": "gray10", "bg": "gray2", "attrs": ["bold"] },
+		"time":                       { "fg": "gray2", "bg": "white", "attrs": ["bold"] },
 		"time:divider":               { "fg": "gray5", "bg": "gray2", "attrs": [] },
 		"email_alert":                "warning:regular",
 		"email_alert_gradient":       { "fg": "white", "bg": "yellow_orange_red", "attrs": ["bold"] },
