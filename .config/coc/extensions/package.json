@@ -5,6 +5,7 @@
     "coc-java": ">=1.4.5",
     "coc-json": ">=1.2.4",
     "coc-tsserver": ">=1.4.8",
-    "coc-pairs": ">=1.2.19"
+    "coc-pairs": ">=1.2.19",
+    "coc-python": ">=1.2.6"
   }
 }

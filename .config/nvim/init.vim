@@ -45,12 +45,14 @@ call plug#begin("~/.vim/bundle")
 " SYNTAX
 Plug 'leafgarland/typescript-vim'
 Plug 'PotatoesMaster/i3-vim-syntax'
+Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 Plug 'ap/vim-css-color'
 Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
+Plug 'tpope/vim-sleuth'
 " MISC
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -132,6 +134,9 @@ vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 
 " Use <c-space> for trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
+
+noremap <F2> <Plug>(coc-rename)
+noremap <F12> :call CocAction("jumpDefinition")<CR>
 
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
