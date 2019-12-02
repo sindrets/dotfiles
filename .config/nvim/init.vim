@@ -32,9 +32,11 @@ let g:python_recommended_style = 0
 let g:airline_theme='powerlineish'							" set airline theme
 let g:airline#extensions#tabline#enabled = 1				" enable airline tabline
 let NERDTreeShowHidden=1									" show dot files in NERDtree
-let g:startify_session_dir="/home/sindrets/.vim/session"
+let g:startify_session_dir="$HOME/.vim/session"
 let g:slime_target = "tmux"
 let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
+let g:NERDToggleCheckAllLines = 1
+let g:NERDSpaceDelims = 1
 
 let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
@@ -47,13 +49,14 @@ Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 Plug 'ap/vim-css-color'
+Plug 'scrooloose/nerdtree'
+Plug 'scrooloose/nerdcommenter'
 " MISC
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
-Plug 'scrooloose/nerdtree'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ananagame/vimsence'
@@ -121,6 +124,11 @@ imap <S-Right> <Esc><Right>v
 
 " Turn off search highlight until next search
 nnoremap <F3> :noh<CR>
+
+" Toggle comments
+nnoremap <C-\> :call NERDComment(0, "toggle")<CR>
+inoremap <C-\> <Esc>:call NERDComment(0, "toggle")<CR>i
+vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 
 " Use <c-space> for trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()

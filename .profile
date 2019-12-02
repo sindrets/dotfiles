@@ -3,6 +3,8 @@
 # Set our umask
 umask 022
 
+export XDG_CONFIG_HOME="$HOME/.config"
+
 # Append our default paths
 appendpath () {
     case ":$PATH:" in
