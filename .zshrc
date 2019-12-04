@@ -75,6 +75,7 @@ alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save /etc
 alias mdv="mdvless"
 alias man="man-color"
 alias nvminit="source /usr/share/nvm/init-nvm.sh"
+alias diff='diff -tW $(tput cols) --color=always'
 
 function chpwd() {
 	emulate -L zsh
