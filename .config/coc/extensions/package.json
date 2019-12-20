@@ -2,10 +2,10 @@
   "dependencies": {
     "coc-css": "^1.2.2",
     "coc-html": "^1.2.1",
-    "coc-java": ">=1.4.5",
+    "coc-java": ">=1.4.6",
     "coc-json": ">=1.2.4",
     "coc-pairs": ">=1.2.19",
     "coc-python": ">=1.2.6",
-    "coc-tsserver": ">=1.4.8"
+    "coc-tsserver": ">=1.4.9"
   }
 }
