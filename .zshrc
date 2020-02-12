@@ -76,6 +76,7 @@ alias mdv="mdvless"
 alias man="man-color"
 alias nvminit="source /usr/share/nvm/init-nvm.sh"
 alias diff='diff -tW $(tput cols) --color=always'
+alias ts-node='/bin/ts-node --project "$HOME/.config/ts-node/tsconfig.json"'
 
 function chpwd() {
 	emulate -L zsh
