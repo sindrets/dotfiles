@@ -30,6 +30,7 @@ export EDITOR=nvim
 export LC_ALL=en_US.UTF-8 # force all applications to use default language for output
 export LESS=-r # scroll pager with mouse wheel.
 export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
+export NODE_PATH=/usr/lib/node_modules
 
 # find escape codes with "showkey -a"
 bindkey "^[[H" beginning-of-line
@@ -73,6 +74,9 @@ alias kys="systemctl poweroff"
 alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save /etc/pacman.d/mirrorlist"
 alias mdv="mdvless"
 alias man="man-color"
+alias nvminit="source /usr/share/nvm/init-nvm.sh"
+alias diff='diff -tW $(tput cols) --color=always'
+alias ts-node='/bin/ts-node --project "$HOME/.config/ts-node/tsconfig.json"'
 
 function chpwd() {
 	emulate -L zsh
@@ -154,13 +158,39 @@ esac
 
 # syntax highlighting
 source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# auto suggestions
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# init fzf
+source /usr/share/fzf/key-bindings.zsh
+source /usr/share/fzf/completion.zsh
+FD_OPTIONS="--hidden --follow --exclude .git --exclude node_modules"
+export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard | fd --type f --type l $FD_OPTIONS"
+export FZF_CTRL_T_COMMAND="fd $FD_OPTIONS"
+export FZF_ALT_C_COMMAND="fd --type d $FD_OPTIONS"
+export FZF_DEFAULT_OPTS="-1 --reverse --multi --preview='[[ \$(file --mime {}) =~ binary ]] && \
+echo {} is a binary file || (bat -n --color=always {} || cat {}) 2> /dev/null | head -300' \
+--preview-window='right:hidden:wrap' --bind='\
+f3:execute(bat -n {} || less -f {}),\
+f2:toggle-preview,ctrl-d:half-page-down,ctrl-u:half-page-up'"
+
+_fzf_compgen_path() {
+	fd --hidden --follow --exclude ".git" . "$1"
+}
+_fzf_compgen_dir() {
+	fd --type d --hidden --follow --exclude ".git" . "$1"
+}
+
 # init powerline
 powerline-daemon -q
 . /usr/share/powerline/bindings/zsh/powerline.zsh
 
 # post init
 updateKittyTabTitle
-if [ ! $UID = 0 ] && [ ! $term = "init" ]; then
+if	[ ! $UID = 0 ] &&
+	[ ! $term = "init" ] &&  # WSL
+	[ ! $term = "code" ];   # vscode
+then
 	neofetch
 fi
 

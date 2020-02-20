@@ -3,6 +3,8 @@
 # Set our umask
 umask 022
 
+export XDG_CONFIG_HOME="$HOME/.config"
+
 # Append our default paths
 appendpath () {
     case ":$PATH:" in
@@ -16,6 +18,8 @@ appendpath () {
 appendpath '/usr/local/sbin'
 appendpath '/usr/local/bin'
 appendpath '/usr/bin'
+appendpath "$HOME/.local/bin"
+appendpath "$HOME/.local/sbin"
 appendpath "$HOME/.config/scripts"
 appendpath "$(ruby -e 'puts Gem.user_dir')/bin"
 unset appendpath

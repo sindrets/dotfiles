@@ -1,3 +1,13 @@
+[color]
+bg = #aa130e19
+fg = #efefef
+
+c1 = #002038
+c2 = #15b097
+c3 = #1fc294
+c4 = #67e191
+c5 = #afd26d
+
 [bar/main]
 monitor = ${env:monitor_primary}
 width = 100%
@@ -5,8 +15,8 @@ height = 27
 radius = 0
 fixed-center = true
 
-background = ${xrdb:background}
-foreground = ${xrdb:foreground}
+background = ${color.bg}
+foreground = ${color.fg}
 
 line-size = 3
 line-color =
@@ -20,11 +30,12 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 2
 
-font-0 = "Source Code Pro Semibold:size=10;1"
+font-0 = "Iosevka Term:weight=bold:size=10;1"
 font-1 = "Noto Color Emoji:scale=10"
 font-2 = "Material Design Icons:size=12;1"
 font-3 = "Source Han Sans:size=10;1"
 font-4 = "Font Awesome 5 Brands:size=10;1"
+font-5 = "GothamRounded:style=semi-light:size=10;1"
 #font-1 = "Font Awesome 5 Free:style=Solid:size=10;1"
 
 modules-left = i3 player
@@ -53,38 +64,39 @@ strip-wsnumbers = true
 ; Default: false
 fuzzy-match = true
 
+label-mode-background = ${color.c3}
+label-mode-foreground = ${color.c1}
 label-mode-padding = 2
-label-mode-foreground = ${xrdb:color0}
-label-mode-background = ${xrdb:color4}
 
 label-focused = %icon%%name%
-label-focused-background = ${xrdb:color4}
-#label-focused-background = #94a05b
-label-focused-foreground = ${xrdb:foreground}
+label-focused-background = ${color.c3}
+label-focused-foreground = ${color.fg}
 label-focused-padding = 2
 
 label-unfocused = %icon%%name%
-label-unfocused-background = ${xrdb:color4}
-label-unfocused-foreground = ${xrdb:color0}
+label-unfocused-background = ${color.c3}
+label-unfocused-foreground = ${color.c1}
 label-unfocused-padding = 2
 
 label-visible = %icon%%name%
-label-visible-background = ${xrdb:color4}
-label-visible-foreground = ${xrdb:color0}
+label-visible-background = ${color.c3}
+label-visible-foreground = ${color.c1}
 label-visible-padding = 2
 
 label-urgent = %icon%%name%
-label-urgent-background = #BA2922
+label-urgent-background = ${color.c5}
+label-urgent-foreground = ${color.c1}
 label-urgent-padding = 2
 
 ws-icon-0 = ssh;
 
 [module/player]
 type = custom/script
-exec = ~/.config/i3/scripts/playerctl-utils.sh --follow
+exec = "~/.config/i3/scripts/playerctl-utils.sh --follow"
+label-font = 6
 tail = true
 click-left = ~/.config/i3/scripts/playerctl-utils.sh --use-active play-pause
-click-right = killall -USR1 playerctl-utils
+click-right = pkill -USR1 -f "playerctl-utils.sh --follow"
 
 [module/wlan]
 type = internal/network
@@ -92,8 +104,8 @@ interface = ${env:WLAN}
 interval = 3.0
 
 format-connected = <ramp-signal> <label-connected>
-format-connected-foreground = ${xrdb:color0}
-format-connected-background = ${xrdb:color2}
+format-connected-foreground = ${color.c1}
+format-connected-background = ${color.c4}
 format-connected-padding = 2
 label-connected = %essid%
 
@@ -104,7 +116,7 @@ ramp-signal-1 = 爛
 ramp-signal-2 = 嵐
 ramp-signal-3 = 襤
 ramp-signal-4 = 蠟
-ramp-signal-foreground = ${xrdb:color0}
+ramp-signal-foreground = ${color.c1}
 
 [module/eth]
 type = internal/network
@@ -112,27 +124,27 @@ interface = ${env:ETH}
 interval = 3.0
 
 format-connected-padding = 2
-format-connected-foreground = ${xrdb:color0}
-format-connected-background = ${xrdb:color2}
+format-connected-foreground = ${color.c1}
+format-connected-background = ${color.c4}
 format-connected-prefix = " "
-format-connected-prefix-foreground = ${xrdb:color0}
+format-connected-prefix-foreground = ${color.c1}
 label-connected = %local_ip%
 
 format-disconnected =
 
 [module/date]
 type = internal/date
-interval = 5
+interval = 1
 
 date =
-date-alt = " %Y-%m-%d"
+date-alt = " %Y.%m.%d"
 
 time = %H:%M
 time-alt = %H:%M:%S
 
 format-prefix = 肋
-format-foreground = ${xrdb:color0}
-format-background = ${xrdb:color5}
+format-foreground = ${color.c1}
+format-background = ${color.c2}
 format-padding = 2
 
 label = %date% %time%
@@ -145,11 +157,11 @@ expand-right = true
 format-spacing = 1
 
 label-open = 
-label-open-foreground = ${xrdb:color2}
+label-open-foreground = ${color.c4}
 label-close =  cancel
-label-close-foreground = ${xrdb:color2}
+label-close-foreground = ${color.c4}
 label-separator = |
-label-separator-foreground = ${xrdb:color2}
+label-separator-foreground = ${color.c4}
 
 menu-0-0 = reboot
 menu-0-0-exec = menu-open-1
@@ -209,9 +221,9 @@ type = custom/script
 exec = ~/.config/polybar/scripts/cpu-temp.sh
 format-prefix = " "
 format-padding = 2
-format-foreground = ${xrdb:color0}
-format-background = ${xrdb:color2}
-format-prefix-foreground = ${xrdb:color0}
+format-foreground = ${color.c1}
+format-background = ${color.c4}
+format-prefix-foreground = ${color.c1}
 interval = 5
 
 [settings]

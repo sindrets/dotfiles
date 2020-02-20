@@ -54,17 +54,17 @@
     separator_height = 1
 
     # Padding between text and separator.
-    padding = 22
+    padding = 32
 
     # Horizontal padding.
-    horizontal_padding = 22
+    horizontal_padding = 32
 
     # Defines width in pixels of frame around the notification window.
     # Set to 0 to disable.
     frame_width = 1
 
     # Defines color of the frame around the notification window.
-    frame_color = "#9d6a47"
+    frame_color = "#212733"
 
     # Define a color for the separator.
     # possible values are:
@@ -237,9 +237,9 @@
     #              invoke it. If there are multiple and no default, open the context menu.
     # * close_current: Close current notification.
     # * close_all: Close all notifications.
-    mouse_left_click = close_current
-    mouse_middle_click = do_action
-    mouse_right_click = close_all
+    mouse_left_click = do_action
+    mouse_middle_click = close_all
+    mouse_right_click = close_current
 
 # Experimental features that may or may not work correctly. Do not expect them
 # to have a consistent behaviour across releases.
@@ -268,7 +268,7 @@
     # On the US keyboard layout "grave" is normally above TAB and left
     # of "1". Make sure this key actually exists on your keyboard layout,
     # e.g. check output of 'xmodmap -pke'
-    history = ctrl+grave
+    #history = ctrl+grave
 
     # Context menu.
     context = ctrl+shift+period
