@@ -19,7 +19,7 @@ while ($info =~ /(^\S.*\Wstate UP\W(?:.*\n(?!\S))*)/gm) {
 	
 	my $s = $1;
 	
-	my ($dev) = ( $s =~ /^\d: ([a-zA-Z0-9]+):/ );
+	my ($dev) = ( $s =~ /^\d+: ([a-zA-Z0-9]+):/ );
 	my ($inet4, $cidr4) = ( $s =~ /inet (\d{1,3}(?:.\d{1,3}){3})\/(\d+)/m );
 	my $mask4 = cidrToSubmask($cidr4);
 	my ($inet6, $cidr6) = ( $s =~ /inet6 (\S+:(?::\S+){4})\/(\d+)/m );
