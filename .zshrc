@@ -47,7 +47,7 @@ zle -N edit-command-line
 bindkey '^xe' edit-command-line
 bindkey '^x^e' edit-command-line
 
-[[ -f "./.bashrc.aliases" ]] && source "./.bashrc.aliases"
+[ -f "$HOME/.bashrc.aliases" ] && source "$HOME/.bashrc.aliases"
 
 alias ls='ls --color=auto'
 alias ll="ls -lh"
