@@ -48,7 +48,7 @@ zle -N edit-command-line
 bindkey '^xe' edit-command-line
 bindkey '^x^e' edit-command-line
 
-[[ -f "./.bashrc.aliases" ]] && source "./.bashrc.aliases"
+[ -f "$HOME/.bashrc.aliases" ] && source "$HOME/.bashrc.aliases"
 
 alias ls='ls --color=auto'
 alias ll="ls -lh"
@@ -77,6 +77,7 @@ alias man="man-color"
 alias nvminit="source /usr/share/nvm/init-nvm.sh"
 alias diff='diff -tW $(tput cols) --color=always'
 alias ts-node='/bin/ts-node --project "$HOME/.config/ts-node/tsconfig.json"'
+alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/storage.json" | fzf --height 10` && [ ! -z "$code_dir" ] && code --folder-uri $code_dir'
 
 function chpwd() {
 	emulate -L zsh

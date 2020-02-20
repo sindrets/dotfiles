@@ -67,6 +67,7 @@ Plug 'junegunn/goyo.vim'
 Plug 'rakr/vim-one'
 Plug 'ayu-theme/ayu-vim'
 Plug 'kaicataldo/material.vim'
+Plug 'phanviet/vim-monokai-pro'
 
 call plug#end()
 
@@ -75,7 +76,7 @@ let g:airline_theme="ayu_mirage"
 "let ayucolor="mirage"
 let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
-colorscheme material
+colorscheme monokai_pro
 set background=dark
 " Override ruler column from theme
 highlight ColorColumn guibg=#292929
