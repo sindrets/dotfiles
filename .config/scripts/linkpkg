@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+
+# Create a symlink to a target in pwd/node_modules.
+# Args:
+#       $1 target directory
+
+cd "$PWD"
+target="`realpath -ms "$1"`"
+link_name="`realpath -ms "./node_modules/$(basename $target)"`"
+
+if [ ! -d "./node_modules" ]; then
+    echo "No node_modules in current directory!"
+    exit 0
+fi
+
+if [ ! -d "$target" ]; then
+    echo "Target doesn't exist: $target"
+    exit 0
+fi
+
+echo "Deleting $link_name..."
+if [ -L "$link_name" ]; then
+    # if symlink exists:
+    rm "$link_name"
+else
+    rm -rf "$link_name"
+fi
+
+echo "Linking target..."
+ln -s "$target" "$link_name"
+
+echo " ✅ Done!"
+
