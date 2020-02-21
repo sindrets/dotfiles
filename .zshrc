@@ -78,6 +78,7 @@ alias nvminit="source /usr/share/nvm/init-nvm.sh"
 alias diff='diff -tW $(tput cols) --color=always'
 alias ts-node='/bin/ts-node --project "$HOME/.config/ts-node/tsconfig.json"'
 alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/storage.json" | fzf --height 10` && [ ! -z "$code_dir" ] && code --folder-uri $code_dir'
+alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compiling for {}...\" && tsc -p {}' \\;"
 
 function chpwd() {
 	emulate -L zsh
@@ -181,6 +182,9 @@ _fzf_compgen_path() {
 _fzf_compgen_dir() {
 	fd --type d --hidden --follow --exclude ".git" . "$1"
 }
+
+# source .extra if it exists
+[ -e "$HOME/.extra" ] && source "$HOME/.extra"
 
 # init powerline
 powerline-daemon -q
