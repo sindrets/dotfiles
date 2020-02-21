@@ -4,6 +4,9 @@
 umask 022
 
 export XDG_CONFIG_HOME="$HOME/.config"
+export VISUAL=nvim
+export EDITOR=nvim
+export BROWSER=/usr/bin/firefox
 
 # Append our default paths
 appendpath () {
