@@ -2,7 +2,7 @@
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
-setopt appendhistory autocd notify
+setopt appendhistory autocd notify interactivecomments
 unsetopt beep
 bindkey -v  # vi mode
 # End of lines configured by zsh-newuser-install
