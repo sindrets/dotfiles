@@ -10,4 +10,4 @@ export ETH="`ip route | grep -P '^default( .*){3} en' | awk '{print $5}' | head 
 custom_path="$HOME/.config/polybar/custom.ini"
 [ ! -e "$custom_path" ] && touch "$custom_path"
 
-polybar -r main >> /home/sindrets/.config/polybar/polybar.log 2>&1 &
+polybar -r main >> $HOME/.config/polybar/polybar.log 2>&1 &
