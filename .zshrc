@@ -23,7 +23,7 @@ compinit
 # End of lines added by compinstall
 
 
-export NEOFETCH_IMG="/home/sindrets/Google Drive/sindrets@gmail.com/Bilder/neofetch/"
+export NEOFETCH_IMG="$HOME/Google Drive/sindrets@gmail.com/Bilder/neofetch/"
 export BROWSER=/usr/bin/firefox
 export VISUAL=nvim
 export EDITOR=nvim
@@ -31,6 +31,7 @@ export LC_ALL=en_US.UTF-8 # force all applications to use default language for o
 export LESS=-r # scroll pager with mouse wheel.
 export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
+export GIT_DIR="$HOME/Documents/git"
 
 # find escape codes with "showkey -a"
 bindkey "^[[H" beginning-of-line
@@ -59,7 +60,7 @@ alias setclip="xclip -selection c"
 alias getclip="xclip -selection c -o"
 alias tree="tree -C"
 alias h="cd ~"
-alias g="cd ~/Documents/git"
+alias g="cd $GIT_DIR"
 alias m="cd ~/Documents/misc"
 alias r="source ~/.zshrc"
 alias nvim-conf="$EDITOR ~/.config/nvim/init.vim"
@@ -124,6 +125,11 @@ function mdvless () {
 # calculator
 function = () {
 	python -c "from math import *; print($*)"
+}
+
+# create dir and cd
+function mkcd (){
+	mkdir -p "$1" && cd "$1"
 }
 
 function man-color () {
