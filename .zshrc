@@ -31,7 +31,7 @@ export LC_ALL=en_US.UTF-8 # force all applications to use default language for o
 export LESS=-r # scroll pager with mouse wheel.
 export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
-export GIT_DIR="$HOME/Documents/git"
+export GIT_DIRECTORY="$HOME/Documents/git"
 
 # find escape codes with "showkey -a"
 bindkey "^[[H" beginning-of-line
@@ -60,7 +60,7 @@ alias setclip="xclip -selection c"
 alias getclip="xclip -selection c -o"
 alias tree="tree -C"
 alias h="cd ~"
-alias g="cd $GIT_DIR"
+alias g="cd $GIT_DIRECTORY"
 alias m="cd ~/Documents/misc"
 alias r="source ~/.zshrc"
 alias nvim-conf="$EDITOR ~/.config/nvim/init.vim"
@@ -193,8 +193,15 @@ _fzf_compgen_dir() {
 [ -e "$HOME/.extra" ] && source "$HOME/.extra"
 
 # init powerline
-powerline-daemon -q
-. /usr/share/powerline/bindings/zsh/powerline.zsh
+# powerline-daemon -q
+# . /usr/share/powerline/bindings/zsh/powerline.zsh
+
+# init pure prompt
+autoload -U promptinit; promptinit
+zstyle :prompt:pure:git:stash show yes
+export PURE_PROMPT_SYMBOL="❱"
+export PURE_PROMPT_VICMD_SYMBOL="⚡"
+prompt pure
 
 # post init
 updateKittyTabTitle
@@ -203,5 +210,6 @@ if	[ ! $UID = 0 ] &&
 	[ ! $term = "code" ];   # vscode
 then
 	neofetch
+	printf '\e[2A'
 fi
 
