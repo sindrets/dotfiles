@@ -157,7 +157,7 @@ case $term in
 
 		# Change neofetch img backend and source
 		if [[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]]; then
-			alias neofetch='printf %$(tput lines)s | tr " " "\n"; neofetch --backend kitty --source "$NEOFETCH_IMG"'
+			alias neofetch='printf %$(tput lines)s | tr " " "\n"; neofetch --backend kitty --source "$NEOFETCH_IMG" && printf "\e[2A"'
 		fi
 		;;
 
@@ -210,6 +210,5 @@ if	[ ! $UID = 0 ] &&
 	[ ! $term = "code" ];   # vscode
 then
 	neofetch
-	printf '\e[2A'
 fi
 
