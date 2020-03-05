@@ -40,12 +40,14 @@ let g:NERDSpaceDelims = 1
 
 let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
+let g:airline#extensions#tabline#ignore_bufadd_pat = 'defx|gundo|nerd_tree|startify|tagbar|undotree|vimfiler'
 
 call plug#begin("~/.vim/bundle")
 " SYNTAX
 Plug 'leafgarland/typescript-vim'
 Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
+Plug 'mustache/vim-mustache-handlebars'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
@@ -53,6 +55,8 @@ Plug 'ap/vim-css-color'
 Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
+Plug 'junegunn/fzf'
+Plug 'junegunn/fzf.vim'
 " MISC
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -63,6 +67,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'ananagame/vimsence'
 Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
 " THEMES
 Plug 'rakr/vim-one'
 Plug 'ayu-theme/ayu-vim'
@@ -132,6 +137,43 @@ nnoremap <F3> :noh<CR>
 nnoremap <C-\> :call NERDComment(0, "toggle")<CR>
 inoremap <C-\> <Esc>:call NERDComment(0, "toggle")<CR>i
 vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
+
+" FZF
+nnoremap <C-P> :Files .<CR>
+nnoremap <C-F> :Ag 
+
+" Neovim Terminal Colors
+" black
+let g:terminal_color_0 =   "#222222"
+let g:terminal_color_8 =   "#666666"
+
+" red
+let g:terminal_color_1 =   "#e84f4f"
+let g:terminal_color_9 =   "#d23d3d"
+
+" green
+let g:terminal_color_2 =   "#b7ce42"
+let g:terminal_color_10 =  "#bde077"
+
+" yellow
+let g:terminal_color_3 =   "#fea63c"
+let g:terminal_color_11 =  "#ffe863"
+
+" blue
+let g:terminal_color_4 =   "#66a9b9"
+let g:terminal_color_12 =  "#aaccbb"
+
+" magenta
+let g:terminal_color_5 =   "#b7416e"
+let g:terminal_color_13 =  "#e16a98"
+
+" cyan
+let g:terminal_color_6 =   "#6dc1b6"
+let g:terminal_color_14 =  "#42717b"
+
+" white
+let g:terminal_color_7 =   "#cccccc"
+let g:terminal_color_15 =  "#ffffff"
 
 " Use <c-space> for trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
