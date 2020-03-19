@@ -3,6 +3,7 @@
 # --- CONFIGURABLE VARS: ---
 icon_playing=""							# Will replace the status token when music is playing
 icon_paused=""								# Will replace the status token when music is paused
+icon_stopped="󰙧"								# Will replace the status token when music is stopped
 interval_rate="medium"						# {low/medium/high} Controls how often information is polled during --follow
 path_last_player="/tmp/PU_LAST_PLAYER"		# A file that will be used to keep track of the last used player
 title_max_length=25							# The max length of the title string. If longer will be shortened with ellipsis
@@ -118,6 +119,7 @@ update_metadata () {
 	metadata=$(printf "`playerctl -p "$player" metadata --format "__{{ uc(status) }}__\n{{ playerName }}\n{{ artist }}\n{{ album }}\n{{ title }}\n{{ xesam:trackNumber }}\n{{ duration(position) }}\n__DURATION__\n" 2>/dev/null`")
 	metadata="${metadata/__PLAYING__/$icon_playing}"
 	metadata="${metadata/__PAUSED__/$icon_paused}"
+	metadata="${metadata/__STOPPED__/$icon_stopped}"
 	metadata="${metadata/__DURATION__/$t}"
 
 }
