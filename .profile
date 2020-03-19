@@ -53,3 +53,7 @@ if [ -z "$SSH_AUTH_SOCK" ] ; then
   eval `ssh-agent -s`
 fi
 
+if [ -e "$HOME/.profile_extra" ]; then
+  source "$HOME/.profile_extra"
+fi
+

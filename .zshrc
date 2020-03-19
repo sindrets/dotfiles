@@ -189,8 +189,8 @@ _fzf_compgen_dir() {
 	fd --type d --hidden --follow --exclude ".git" . "$1"
 }
 
-# source .extra if it exists
-[ -e "$HOME/.extra" ] && source "$HOME/.extra"
+# source .sh_extra if it exists
+[ -e "$HOME/.sh_extra" ] && source "$HOME/.sh_extra"
 
 # init powerline
 # powerline-daemon -q
