@@ -48,6 +48,7 @@ Plug 'leafgarland/typescript-vim'
 Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
 Plug 'mustache/vim-mustache-handlebars'
+Plug 'chr4/nginx.vim'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
