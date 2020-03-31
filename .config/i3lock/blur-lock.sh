@@ -1,8 +1,8 @@
-#!/usr/bin/env bash
+#!/usr/bin/env zsh
 
 lighticon="/home/sindrets/.config/i3lock/img/lock-icon-light-200.png"
 darkicon="/home/sindrets/.config/i3lock/img/lock-icon-dark-200.png"
-tmpbg='/tmp/i3lock-bg.png'
+tmpbg='/tmp/i3lock-bg.jpg'
 darken_amount=20
 
 # take a screenshot
@@ -37,7 +37,8 @@ if [ "$COLOR" -gt "$VALUE" ]; then #light background, use dark icon
 		--ringcolor=0000003e --linecolor=00000000 \
 		--keyhlcolor=ffffff80 --ringvercolor=ffffff00 \
 		--separatorcolor=22222260 --insidevercolor=ffffff1c \
-		--ringwrongcolor=ffffff55 --insidewrongcolor=ffffff1c 
+		--ringwrongcolor=ffffff55 --insidewrongcolor=ffffff1c \
+		--wrongcolor=333333ff
 	)
 
 else # dark background so use the light icon
@@ -48,14 +49,15 @@ else # dark background so use the light icon
 		--ringcolor=ffffff3e --linecolor=ffffff00 \
 		--keyhlcolor=00000080 --ringvercolor=00000000 \
 		--separatorcolor=22222260 --insidevercolor=0000001c \
-		--ringwrongcolor=00000055 --insidewrongcolor=0000001c 
+		--ringwrongcolor=00000055 --insidewrongcolor=0000001c \
+		--wrongcolor=edededff
 	)
 fi
 
 iconHWidth="`expr $(identify -format '%w' "$icon") / 2`"
 iconHHeight="`expr $(identify -format '%h' "$icon") / 2`"
 
-# blur the screenshot by resizing and scaling back up
+# blur the screenshot by resizing and scaling back up (faster than gaussian blur)
 #convert "$tmpbg" -filter Gaussian -thumbnail 20% -sample 500% "$tmpbg"
 convert "$tmpbg" -scale 10% -blur 0x6 -resize 1000% -brightness-contrast -"$darken_amount"x-"$darken_amount" \
 	"$icon" -geometry +"`expr $width / 2 + $offsetX - $iconHWidth`"+"`expr $height / 2 + $offsetY - $iconHHeight`" -composite "$tmpbg"

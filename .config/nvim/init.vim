@@ -104,6 +104,10 @@ nnoremap  <silent> <s-tab> :bp<CR>
 map <silent> <Leader><Tab> :tabn<CR>
 map <silent> <Leader><S-Tab> :tabp<CR>
 
+" Home moves to first non-whitespace char
+noremap <Home> ^
+inoremap <Home> <Esc>^i
+
 " Move lines up/down
 nnoremap <A-UP> :m-2<CR>==
 nnoremap <A-DOWN> :m+<CR>==
@@ -146,6 +150,9 @@ vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 " FZF
 nnoremap <C-P> :Files .<CR>
 nnoremap <C-F> :Ag 
+
+" Open a terminal split
+nnoremap <Leader>t :split<CR><C-W><DOWN>:term<CR>i
 
 " Neovim Terminal Colors
 " black
