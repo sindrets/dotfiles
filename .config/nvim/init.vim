@@ -9,6 +9,7 @@ set smartcase
 set showcmd
 set mouse=a
 set hidden
+set cursorline
 set wrap linebreak nolist
 set backspace=indent,eol,start
 set termguicolors
@@ -49,6 +50,7 @@ Plug 'PotatoesMaster/i3-vim-syntax'
 Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'chr4/nginx.vim'
+Plug 'octol/vim-cpp-enhanced-highlight'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
@@ -189,6 +191,11 @@ let g:terminal_color_15 =  "#ffffff"
 
 " Use <c-space> for trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
 
 noremap <F2> <Plug>(coc-rename)
 noremap <F12> :call CocAction("jumpDefinition")<CR>
