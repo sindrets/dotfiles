@@ -203,6 +203,10 @@ noremap <F12> :call CocAction("jumpDefinition")<CR>
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
+function! FixNerdtree()
+  call feedkeys(":30vsp\<CR>\<C-w>\<Right>:bn\<CR>")
+endfunction
+
 function! s:show_documentation()
   if &filetype == 'vim'
     execute 'h '.expand('<cword>')
