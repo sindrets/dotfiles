@@ -37,7 +37,7 @@ bindsym $mod+F3 exec $terminal $EDITOR ~/.config/kitty/kitty.conf
 bindsym $mod+Shift+q kill
 
 # start program launcher
-bindsym $mod+space exec --no-startup-id "rofi -modi drun,run,ssh,window -show drun -show-icons -font 'Source Code Pro Semibold 16' -columns 1 -width 1000px -lines 10"
+bindsym $mod+space exec --no-startup-id "~/.config/rofi/applets/launchers-git/launcher.sh"
 bindsym $mod+Ctrl+space exec --no-startup-id ~/.config/scripts/sudo-rofi
 
 # change focus
