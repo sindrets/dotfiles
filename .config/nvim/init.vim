@@ -15,6 +15,7 @@ set backspace=indent,eol,start
 set termguicolors
 set pyx=3
 set pyxversion=3
+set shada=!,'10,/100,:100,<0,@1,f1,h,s1,%10
 
 " ruler
 set colorcolumn=100
@@ -51,6 +52,8 @@ Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'chr4/nginx.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
+Plug 'othree/html5.vim'
+Plug 'tomasiser/vim-code-dark'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
@@ -60,6 +63,7 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
+Plug 'mattn/emmet-vim'
 " MISC
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -80,11 +84,11 @@ Plug 'phanviet/vim-monokai-pro'
 call plug#end()
 
 " Theme settings
-let g:airline_theme="ayu_mirage"
+let g:airline_theme="codedark"
 "let ayucolor="mirage"
 let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
-colorscheme monokai_pro
+colorscheme codedark
 set background=dark
 " Override ruler column from theme
 highlight ColorColumn guibg=#292929
@@ -214,6 +218,14 @@ function! s:show_documentation()
     call CocAction('doHover')
   endif
 endfunction
+
+" AutoCommands
+
+" Restore cursor pos
+autocmd BufReadPost *
+  \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+  \ |   exe "normal! g`\""
+  \ | endif
 
 function! s:filter_header(lines) abort
 	let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
