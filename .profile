@@ -7,6 +7,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export VISUAL=nvim
 export EDITOR=nvim
 export BROWSER=/usr/bin/firefox
+export TERMINAL=kitty
 
 # Append our default paths
 appendpath () {

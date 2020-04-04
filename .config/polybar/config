@@ -107,7 +107,7 @@ format-connected = <ramp-signal> <label-connected>
 format-connected-foreground = ${color.c1}
 format-connected-background = ${color.c4}
 format-connected-padding = 2
-label-connected = %essid%
+label-connected = %{A1:kitty --class kitty_FLOAT sudo wifi-menu:}%essid%%{A}
 
 format-disconnected =
 

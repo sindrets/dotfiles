@@ -15,7 +15,7 @@ set backspace=indent,eol,start
 set termguicolors
 set pyx=3
 set pyxversion=3
-set shada=!,'10,/100,:100,<0,@1,f1,h,s1,%10
+set shada=!,'10,/100,:100,<0,@1,f1,h,s1
 
 " ruler
 set colorcolumn=100
@@ -28,12 +28,12 @@ set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:
 syntax on
 filetype plugin on
 
-let mapleader = " "						" set the leader key
-let g:airline_powerline_fonts = 1				" enable powerline symbols
+let mapleader = " "                             " set the leader key
+let g:airline_powerline_fonts = 1               " enable powerline symbols
 let g:python_recommended_style = 0
-let g:airline_theme='powerlineish'				" set airline theme
-let g:airline#extensions#tabline#enabled = 1			" enable airline tabline
-let NERDTreeShowHidden=1					" show dot files in NERDtree
+let g:airline_theme='powerlineish'              " set airline theme
+let g:airline#extensions#tabline#enabled = 1    " enable airline tabline
+let NERDTreeShowHidden=1                        " show dot files in NERDtree
 let g:startify_session_dir="$HOME/.vim/session"
 let g:slime_target = "tmux"
 let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
@@ -154,11 +154,11 @@ inoremap <C-\> <Esc>:call NERDComment(0, "toggle")<CR>i
 vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 
 " FZF
-nnoremap <C-P> :Files .<CR>
+nnoremap <C-P> :call WorkspaceFiles()<CR>
 nnoremap <C-F> :Ag 
 
 " Open a terminal split
-nnoremap <Leader>t :split<CR><C-W><DOWN>:term<CR>i
+nnoremap <Leader>t :call FocusTerminalSplit()<CR>
 
 " Neovim Terminal Colors
 " black
@@ -208,30 +208,65 @@ noremap <F12> :call CocAction("jumpDefinition")<CR>
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! FixNerdtree()
-  call feedkeys(":30vsp\<CR>\<C-w>\<Right>:bn\<CR>")
+    call feedkeys(":30vsp\<CR>\<C-w>\<Right>:bn\<CR>")
+endfunction
+
+function! WorkspaceFiles()
+    if !empty(glob("./.git"))
+        call feedkeys(":GFiles --cached --others --exclude-standard\<CR>")
+    else
+        call feedkeys(":Files\<CR>")
+    endif
+endfunction
+
+function! GetBufferWithPattern(pattern)
+    let i = 0
+    let n = bufnr("$")
+    while i < n
+        let i = i + 1
+        if (bufname(i)) =~ a:pattern
+            return i
+        endif
+    endwhile
+    return -1
+endfunction
+
+function! FocusTerminalSplit()
+    let term_buf_id = GetBufferWithPattern("term://")
+    echom term_buf_id
+    if term_buf_id == -1
+        split | wincmd j
+        let term_height = min([16, float2nr(floor(&lines / 2))])
+        exec "res " . term_height
+        call feedkeys(":term\<CR>i")
+    else
+        exec 10 "wincmd j"
+        exec "buffer " . term_buf_id
+        startinsert
+    endif
 endfunction
 
 function! s:show_documentation()
-  if &filetype == 'vim'
-    execute 'h '.expand('<cword>')
-  else
-    call CocAction('doHover')
-  endif
+    if &filetype == 'vim'
+        exec 'h '.expand('<cword>')
+    else
+        call CocAction('doHover')
+    endif
 endfunction
 
 " AutoCommands
 
 " Restore cursor pos
 autocmd BufReadPost *
-  \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-  \ |   exe "normal! g`\""
-  \ | endif
+        \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+        \ |   exe "normal! g`\""
+        \ | endif
 
 function! s:filter_header(lines) abort
-	let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
-	let centered_lines = map(copy(a:lines),
-		\ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
-	return centered_lines
+    let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
+    let centered_lines = map(copy(a:lines),
+                \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
+    return centered_lines
 endfunction
 let s:startify_ascii_header = [
 \ '     _   __         _    ___          ',
@@ -243,3 +278,4 @@ let s:startify_ascii_header = [
 \ ]
 let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
 
+" vim: shiftwidth=4 tabstop=4 expandtab

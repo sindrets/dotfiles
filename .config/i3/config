@@ -3,10 +3,10 @@
 # Mod4: super
 # Mod5: alt_gr
 set $mod Mod4
-set $terminal kitty -o allow_remote_control=yes
+set $terminal kitty
 
-new_window pixel 1
-new_float normal
+new_window none
+new_float pixel 1
 
 hide_edge_borders none
 
