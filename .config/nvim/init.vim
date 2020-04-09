@@ -105,6 +105,7 @@ map <silent> <Leader>b :NERDTreeToggle<CR>
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR> 
 nnoremap  <silent> <s-tab> :bp<CR>
+nnoremap <leader><leader> <C-^>zz
 
 " Navigate tabs
 map <silent> <Leader><Tab> :tabn<CR>
@@ -195,6 +196,10 @@ let g:terminal_color_15 =  "#ffffff"
 
 " Use <c-space> for trigger completion.
 inoremap <silent><expr> <c-space> coc#refresh()
+
+" Notify coc.nvim that <CR> has been pressed.
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+            \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
