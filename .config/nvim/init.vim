@@ -10,6 +10,8 @@ set showcmd
 set mouse=a
 set hidden
 set cursorline
+set splitbelow
+set splitright
 set wrap linebreak nolist
 set backspace=indent,eol,start
 set termguicolors
@@ -52,8 +54,8 @@ Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
 Plug 'mustache/vim-mustache-handlebars'
 Plug 'chr4/nginx.vim'
 Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'othree/html5.vim'
 Plug 'tomasiser/vim-code-dark'
+Plug 'jelera/vim-javascript-syntax'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
@@ -80,6 +82,8 @@ Plug 'rakr/vim-one'
 Plug 'ayu-theme/ayu-vim'
 Plug 'kaicataldo/material.vim'
 Plug 'phanviet/vim-monokai-pro'
+Plug 'w0ng/vim-hybrid'
+Plug 'chriskempson/base16-vim'
 
 call plug#end()
 
@@ -88,10 +92,11 @@ let g:airline_theme="codedark"
 "let ayucolor="mirage"
 let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
-colorscheme codedark
+let base16colorspace=256
 set background=dark
+colorscheme hybrid
 " Override ruler column from theme
-highlight ColorColumn guibg=#292929
+highlight ColorColumn guibg=#282a2e
 
 " Copy, cut and paste to/from system clipboard
 noremap <Leader>y "+y
@@ -106,6 +111,7 @@ map <silent> <Leader>b :NERDTreeToggle<CR>
 nnoremap  <silent>   <tab> :bn<CR> 
 nnoremap  <silent> <s-tab> :bp<CR>
 nnoremap <leader><leader> <C-^>zz
+nnoremap <silent> <leader>w :call CloseBufferAndGoToAlt()<CR>
 
 " Navigate tabs
 map <silent> <Leader><Tab> :tabn<CR>
@@ -158,8 +164,12 @@ vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 nnoremap <C-P> :call WorkspaceFiles()<CR>
 nnoremap <C-F> :Ag 
 
+nnoremap <leader>rh :call FindAndReplaceInAll()<CR>
+
 " Open a terminal split
 nnoremap <Leader>t :call FocusTerminalSplit()<CR>
+
+nnoremap <silent> <F5> :call FixNerdtree()<CR>
 
 " Neovim Terminal Colors
 " black
@@ -205,22 +215,25 @@ nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
-
-noremap <F2> <Plug>(coc-rename)
-noremap <F12> :call CocAction("jumpDefinition")<CR>
+nmap <silent> <leader>rn <PLug>(coc-rename)
+nmap <silent> <F2> <Plug>(coc-rename)
+nmap <leader>. :CocAction<CR>
 
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! FixNerdtree()
-    call feedkeys(":30vsp\<CR>\<C-w>\<Right>:bn\<CR>")
+    bn
+    NERDTreeFocus
+    vertical res 30
+    wincmd l
 endfunction
 
 function! WorkspaceFiles()
     if !empty(glob("./.git"))
-        call feedkeys(":GFiles --cached --others --exclude-standard\<CR>")
+        GFiles --cached --others --exclude-standard
     else
-        call feedkeys(":Files\<CR>")
+        Files
     endif
 endfunction
 
@@ -237,18 +250,46 @@ function! GetBufferWithPattern(pattern)
 endfunction
 
 function! FocusTerminalSplit()
-    let term_buf_id = GetBufferWithPattern("term://")
-    echom term_buf_id
-    if term_buf_id == -1
-        split | wincmd j
-        let term_height = min([16, float2nr(floor(&lines / 2))])
-        exec "res " . term_height
-        call feedkeys(":term\<CR>i")
-    else
-        exec 10 "wincmd j"
+    let term_buf_id = GetBufferWithPattern("term_split")
+    if term_buf_id != -1
+        if exists("g:term_split_winid") && win_id2win(g:term_split_winid) > 0
+            call win_gotoid(g:term_split_winid)
+        else
+            100 wincmd j
+            belowright split
+            exec "res " . min([16, float2nr(&lines / 2)])
+            let g:term_split_winid = win_getid()
+        endif
         exec "buffer " . term_buf_id
         startinsert
+    else
+        belowright split | term
+        set nobuflisted | file! term_split
+        let g:term_split_winid = win_getid()
+        exec "res " . min([16, float2nr(&lines / 2)])
+        startinsert
     endif
+endfunction
+
+function! FindAndReplaceInAll()
+    call inputsave()
+    let find_string = substitute(input("Find: "), "/", "\\\\/", "g")
+    exec "term ag '" . find_string . "'"
+    let find_preview_nr = bufnr("$")
+    sleep 100m
+    redraw
+    let replace_string = substitute(input("Replace with: "), "/", "\\\\/", "g")
+    call inputrestore()
+    if bufnr("#") != -1 | edit # | else | bp | endif
+    exec "bd! " . find_preview_nr
+    echo "\n"
+    exec "!{ag -0 -l '" . find_string . "' | xargs -0 sed -i -e 's/" . find_string . "/" . replace_string . "/g'}"
+endfunction
+
+function! CloseBufferAndGoToAlt(...)
+    let cur_buf = get(a:000, 0, bufnr("%"))
+    if bufnr("#") != -1 | edit # | else | bp | endif
+    exec "bw " . cur_buf
 endfunction
 
 function! s:show_documentation()
@@ -261,11 +302,14 @@ endfunction
 
 " AutoCommands
 
-" Restore cursor pos
+"   Restore cursor pos
 autocmd BufReadPost *
         \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
         \ |   exe "normal! g`\""
         \ | endif
+
+"   Highlight the symbol and its references when holding the cursor.
+autocmd CursorHold * silent call CocActionAsync('highlight')
 
 function! s:filter_header(lines) abort
     let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
