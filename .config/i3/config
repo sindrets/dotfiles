@@ -5,7 +5,7 @@
 set $mod Mod4
 set $terminal kitty
 
-new_window none
+new_window pixel 1
 new_float pixel 1
 
 hide_edge_borders none
@@ -14,7 +14,7 @@ bindsym $mod+u border none
 bindsym $mod+y border pixel 1
 bindsym $mod+n border normal
 
-font xft:URWGothic-Book 11
+font xft:Iosevka Term 11
 
 floating_modifier $mod
 
@@ -242,34 +242,36 @@ exec --no-startup-id udiskie
 exec --no-startup-id clipit
 exec --no-startup-id insync start
 exec --no-startup-id redshift -l 59.89:10.75
-exec_always --no-startup-id wal -sntR; /$HOME/.config/polybar/launch.sh
+exec --no-startup-id wal -sntR; /$HOME/.config/polybar/launch.sh
 
 # Theme colors
 set_from_resource $background background
 set_from_resource $foreground foreground
 set_from_resource $cursorColor cursorColor
-set_from_resource $color0 color0
-set_from_resource $color8 color8
-set_from_resource $color1 color1
-set_from_resource $color9 color9
-set_from_resource $color2 color2
-set_from_resource $color10 color10
-set_from_resource $color3 color3
-set_from_resource $color11 color11
-set_from_resource $color4 color4
-set_from_resource $color12 color12
-set_from_resource $color5 color5
-set_from_resource $color13 color13
-set_from_resource $color6 color6
-set_from_resource $color14 color14
-set_from_resource $color7 color7
-set_from_resource $color15 color15
+set_from_resource $black color0
+set_from_resource $blackBright color8
+set_from_resource $red color1
+set_from_resource $redBright color9
+set_from_resource $green color2
+set_from_resource $greenBright color10
+set_from_resource $yellow color3
+set_from_resource $yellowBright color11
+set_from_resource $blue color4
+set_from_resource $blueBright color12
+set_from_resource $magenta color5
+set_from_resource $magentaBright color13
+set_from_resource $cyan color6
+set_from_resource $cyanBright color14
+set_from_resource $white color7
+set_from_resource $whiteBright color15
+set $borderActive #6b6b6b99
+set $borderInactive #282a2e99
 
-client.focused $foreground $background $color7 $color2 $color10
-client.focused_inactive $foreground $background $color7 $color4 $color12
-client.unfocused $foreground $background $color7 $color4 $color12
-client.urgent $foreground $background $color7 $color4 $color12
-client.placeholder $foreground $background $color7 $color4 $color12
+client.focused $borderActive $background $white $green $borderActive
+client.focused_inactive $borderInactive $background $white $blue $borderInactive
+client.unfocused $borderInactive $background $white $blue $borderInactive
+client.urgent $borderActive $background $white $blue $borderActive
+client.placeholder $borderActive $background $white $blue $borderActive
 
 client.background $background
 

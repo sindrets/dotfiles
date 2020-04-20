@@ -1,4 +1,3 @@
-
 set nu
 set autoindent
 set shiftwidth=4
@@ -28,7 +27,7 @@ set list
 set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:»
 
 syntax on
-filetype plugin on
+filetype plugin indent on
 
 let mapleader = " "                             " set the leader key
 let g:airline_powerline_fonts = 1               " enable powerline symbols
@@ -66,6 +65,7 @@ Plug 'tpope/vim-sleuth'
 Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'mattn/emmet-vim'
+Plug 'tpope/vim-abolish'
 " MISC
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -217,6 +217,7 @@ nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 nmap <silent> <leader>rn <PLug>(coc-rename)
 nmap <silent> <F2> <Plug>(coc-rename)
+nmap <silent> <leader>f :call CocAction("format")<CR>
 nmap <leader>. :CocAction<CR>
 
 " Use K for show documentation in preview window
