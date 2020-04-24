@@ -1,4 +1,3 @@
-
 # Mod1: alt
 # Mod4: super
 # Mod5: alt_gr
@@ -12,9 +11,9 @@ hide_edge_borders none
 
 bindsym $mod+u border none
 bindsym $mod+y border pixel 1
-bindsym $mod+n border normal
+bindsym $mod+n border normal 1
 
-font xft:Iosevka Term 11
+font pango:Iosevka Term Semi-Bold 10
 
 floating_modifier $mod
 
@@ -161,6 +160,7 @@ bindsym $mod+Shift+0 move container to workspace $ws9; workspace $ws0
 bindsym $mod+Shift+KP_Subtract move container to workspace $wsTrash; workspace $wsTrash
 
 # Window rules
+for_window [class=".*"] title_format " %title"
 for_window [title="alsamixer"] floating enable border pixel 1
 for_window [title="File Transfer*"] floating enable
 for_window [class="GParted"] floating enable border normal
@@ -264,8 +264,8 @@ set_from_resource $cyan color6
 set_from_resource $cyanBright color14
 set_from_resource $white color7
 set_from_resource $whiteBright color15
-set $borderActive #6b6b6b99
-set $borderInactive #282a2e99
+set $borderActive #6b6b6bc0
+set $borderInactive #282a2ec0
 
 client.focused $borderActive $background $white $green $borderActive
 client.focused_inactive $borderInactive $background $white $blue $borderInactive
@@ -349,3 +349,5 @@ bindsym XF86TouchpadOff exec --no-startup-id synclient Touchpadoff=1
 # Printscreen
 bindsym --release Print exec --no-startup-id "$HOME/.config/scripts/screenshot-utils.sh -s"
 bindsym --release Mod4+Shift+Print exec --no-startup-id "$HOME/.config/scripts/screenshot-utils.sh -a"
+
+# vim: ft=i3config

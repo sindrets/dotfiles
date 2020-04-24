@@ -5,6 +5,7 @@ set tabstop=4
 set softtabstop=4
 set ignorecase
 set smartcase
+set wildignorecase
 set showcmd
 set mouse=a
 set hidden
@@ -20,11 +21,12 @@ set shada=!,'10,/100,:100,<0,@1,f1,h,s1
 
 " ruler
 set colorcolumn=100
-highlight ColorColumn ctermbg=0 guibg=#292929
+highlight ColorColumn ctermbg=0
 
 " render whitespace
 set list
-set listchars=tab:→\ ,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:»
+set listchars=tab:\ ―→,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:»
+set showbreak=⤷\ 
 
 syntax on
 filetype plugin indent on
@@ -47,14 +49,8 @@ let g:airline#extensions#tabline#ignore_bufadd_pat = 'defx|gundo|nerd_tree|start
 
 call plug#begin("~/.vim/bundle")
 " SYNTAX
-Plug 'leafgarland/typescript-vim'
-Plug 'PotatoesMaster/i3-vim-syntax'
-Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
-Plug 'mustache/vim-mustache-handlebars'
-Plug 'chr4/nginx.vim'
-Plug 'octol/vim-cpp-enhanced-highlight'
-Plug 'tomasiser/vim-code-dark'
-Plug 'jelera/vim-javascript-syntax'
+Plug 'kevinoid/vim-jsonc'
+Plug 'sheerun/vim-polyglot'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
@@ -82,8 +78,10 @@ Plug 'rakr/vim-one'
 Plug 'ayu-theme/ayu-vim'
 Plug 'kaicataldo/material.vim'
 Plug 'phanviet/vim-monokai-pro'
+Plug 'tomasiser/vim-code-dark'
 Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
+Plug 'nanotech/jellybeans.vim'
 
 call plug#end()
 
@@ -100,7 +98,6 @@ highlight ColorColumn guibg=#282a2e
 
 " Copy, cut and paste to/from system clipboard
 noremap <Leader>y "+y
-noremap <Leader>p "+p
 noremap <C-C> "+y
 vnoremap <C-x> "+d
 
@@ -162,6 +159,7 @@ vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 
 " FZF
 nnoremap <C-P> :call WorkspaceFiles()<CR>
+nnoremap <M-b> :Buffers<CR>
 nnoremap <C-F> :Ag 
 
 nnoremap <leader>rh :call FindAndReplaceInAll()<CR>
@@ -224,10 +222,9 @@ nmap <leader>. :CocAction<CR>
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
 function! FixNerdtree()
-    bn
     NERDTreeFocus
-    vertical res 30
-    wincmd l
+    topleft 30vsp
+    wincmd l | bp
 endfunction
 
 function! WorkspaceFiles()
