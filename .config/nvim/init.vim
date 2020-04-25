@@ -12,7 +12,7 @@ set hidden
 set cursorline
 set splitbelow
 set splitright
-set wrap linebreak nolist
+set wrap linebreak
 set backspace=indent,eol,start
 set termguicolors
 set pyx=3
