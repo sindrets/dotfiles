@@ -82,6 +82,7 @@ Plug 'tomasiser/vim-code-dark'
 Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
 Plug 'nanotech/jellybeans.vim'
+Plug 'morhetz/gruvbox'
 
 call plug#end()
 
@@ -90,11 +91,12 @@ let g:airline_theme="codedark"
 "let ayucolor="mirage"
 let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
+let g:gruvbox_italic = 1
 let base16colorspace=256
 set background=dark
-colorscheme hybrid
+colorscheme gruvbox
 " Override ruler column from theme
-highlight ColorColumn guibg=#282a2e
+" highlight ColorColumn guibg=#282a2e
 
 " Copy, cut and paste to/from system clipboard
 noremap <Leader>y "+y

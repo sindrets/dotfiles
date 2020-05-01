@@ -33,6 +33,16 @@ export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
 export GIT_DIRECTORY="$HOME/Documents/git"
 
+# --- Plugins ---
+source /usr/share/zsh/share/antigen.zsh
+
+antigen bundle zsh-users/zsh-syntax-highlighting
+antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle zsh-vi-more/evil-registers
+
+antigen apply
+# ---------------
+
 # find escape codes with "showkey -a"
 bindkey "^[[H" beginning-of-line
 bindkey "^[[F" end-of-line
@@ -143,32 +153,6 @@ function man-color () {
 	/usr/bin/man $@
 }
 
-term="$(getTerm)"
-case $term in
-
-	"konsole") ;;
-
-	"kitty") 
-		# Enable blurred transparency for Kitty
-		if [[ $(ps --no-header -p $PPID -o comm | grep -Ev '^(yakuake|konsole)$' ) ]]; then
-			for wid in $(xdotool search --pid $PPID); do
-				xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -id $wid; done
-		fi
-
-		# Change neofetch img backend and source
-		if [[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]]; then
-			alias neofetch='printf %$(tput lines)s | tr " " "\n"; neofetch --backend kitty --source "$NEOFETCH_IMG" && printf "\e[2A"'
-		fi
-		;;
-
-esac
-
-
-# syntax highlighting
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-# auto suggestions
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-
 # init fzf
 source /usr/share/fzf/key-bindings.zsh
 source /usr/share/fzf/completion.zsh
@@ -203,12 +187,32 @@ export PURE_PROMPT_SYMBOL="❱"
 export PURE_PROMPT_VICMD_SYMBOL="⚡"
 prompt pure
 
+term="$(getTerm)"
+case $term in
+
+	"konsole") ;;
+
+	"kitty") 
+		# Enable blurred transparency for Kitty
+		if [[ $(ps --no-header -p $PPID -o comm | grep -Ev '^(yakuake|konsole)$' ) ]]; then
+			for wid in $(xdotool search --pid $PPID); do
+				xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -id $wid; done
+		fi
+
+		# Change neofetch img backend and source
+		if [[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]]; then
+			alias neofetch='printf %$(tput lines)s | tr " " "\n"; /bin/neofetch --backend kitty --source "$NEOFETCH_IMG" && printf "\e[2A"'
+		fi
+		;;
+
+esac
+
 # post init
 updateKittyTabTitle
 if	[ ! $UID = 0 ] &&
 	[ ! $term = "init" ] &&  # WSL
 	[ ! $term = "code" ];   # vscode
 then
-	neofetch
+	eval neofetch
 fi
 
