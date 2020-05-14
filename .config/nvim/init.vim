@@ -42,6 +42,7 @@ let g:slime_target = "tmux"
 let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
 let g:NERDToggleCheckAllLines = 1
 let g:NERDSpaceDelims = 1
+let g:NERDDefaultAlign = 'left'
 
 let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
@@ -305,7 +306,7 @@ endfunction
 "   Restore cursor pos
 autocmd BufReadPost *
         \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-        \ |   exe "normal! g`\""
+        \ |   exe "normal! g`\"zz"
         \ | endif
 
 "   Highlight the symbol and its references when holding the cursor.

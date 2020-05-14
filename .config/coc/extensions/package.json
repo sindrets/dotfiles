@@ -3,7 +3,7 @@
     "coc-css": ">=1.2.3",
     "coc-html": ">=1.2.4",
     "coc-java": ">=1.4.10",
-    "coc-json": ">=1.2.5",
+    "coc-json": ">=1.2.6",
     "coc-pairs": ">=1.2.21",
     "coc-python": ">=1.2.12",
     "coc-tsserver": ">=1.5.1"

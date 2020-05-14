@@ -94,7 +94,7 @@ alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compili
 function chpwd() {
 	emulate -L zsh
 	updateKittyTabTitle
-	ls
+	eval ls
 }
 
 function updateKittyTabTitle() {
