@@ -1,3 +1,10 @@
+"      _       _ __        _         
+"     (_)___  (_) /__   __(_)___ ___ 
+"    / / __ \/ / __/ | / / / __ `__ \
+"   / / / / / / /__| |/ / / / / / / /
+"  /_/_/ /_/_/\__(_)___/_/_/ /_/ /_/ 
+"                                    
+
 set nu
 set autoindent
 set shiftwidth=4
@@ -54,7 +61,7 @@ Plug 'kevinoid/vim-jsonc'
 Plug 'sheerun/vim-polyglot'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'ap/vim-css-color'
 Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
@@ -84,6 +91,15 @@ Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
 Plug 'nanotech/jellybeans.vim'
 Plug 'morhetz/gruvbox'
+" CoC
+Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
+Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-java', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-pairs', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 
 call plug#end()
 
@@ -104,8 +120,8 @@ noremap <Leader>y "+y
 noremap <C-C> "+y
 vnoremap <C-x> "+d
 
-map <silent> <Leader>e :NERDTreeFocus<CR>
-map <silent> <Leader>b :NERDTreeToggle<CR>
+map <silent> <Leader>e :CocCommand explorer --no-toggle<CR>
+map <silent> <Leader>b :CocCommand explorer --toggle<CR>
 
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR> 
@@ -170,8 +186,6 @@ nnoremap <leader>rh :call FindAndReplaceInAll()<CR>
 " Open a terminal split
 nnoremap <Leader>t :call FocusTerminalSplit()<CR>
 
-nnoremap <silent> <F5> :call FixNerdtree()<CR>
-
 " Neovim Terminal Colors
 " black
 let g:terminal_color_0 =   "#222222"
@@ -223,12 +237,6 @@ nmap <leader>. :CocAction<CR>
 
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-function! FixNerdtree()
-    NERDTreeFocus
-    topleft 30vsp
-    wincmd l | bp
-endfunction
 
 function! WorkspaceFiles()
     if !empty(glob("./.git"))
