@@ -1,0 +1,59 @@
+{
+	"coc.preferences.formatOnType": true,
+	"java.jdt.ls.vmargs": "-Dfile.encoding=UTF-8",
+	"languageserver": {
+		"ccls": {
+			"command": "ccls",
+			"filetypes": [
+				"c",
+				"h",
+				"cpp",
+				"hpp",
+				"objc",
+				"objcpp"
+			],
+			"rootPatterns": [
+				".ccls",
+				"compile_commands.json",
+				".vim/",
+				".git/",
+				".hg/"
+			],
+			"initializationOptions": {
+				"cache": {
+					"directory": "/tmp/ccls"
+				}
+			}
+		}
+	},
+	"explorer.width": 30,
+	"explorer.icon.enableNerdfont": true,
+	"explorer.previewAction.onHover": false,
+	"explorer.file.showHiddenFiles": true,
+	"explorer.keyMappings": {
+		"<cr>": [
+			"expandable?", [
+				"expanded?", "collapse", "expand"
+			],
+			"open"
+		],
+		"v": "open:vsplit",
+		"y": "copyFile",
+		"x": "cutFile",
+		"p": "pasteFile",
+		"d": "delete",
+		"D": "deleteForever",
+
+		"a": "addFile",
+		"A": "addDirectory",
+		"r": "rename",
+
+		".": "toggleHidden",
+		"R": "refresh",
+
+		"<<": "gitStage",
+		">>": "gitUnstage",
+
+		"<C-v>": "toggleSelection"
+	}
+}
