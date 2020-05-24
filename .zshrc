@@ -39,6 +39,8 @@ source /usr/share/zsh/share/antigen.zsh
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle zsh-vi-more/evil-registers
+antigen bundle mafredri/zsh-async
+antigen bundle sindresorhus/pure
 
 antigen apply
 # ---------------
@@ -175,10 +177,6 @@ _fzf_compgen_dir() {
 
 # source .sh_extra if it exists
 [ -e "$HOME/.sh_extra" ] && source "$HOME/.sh_extra"
-
-# init powerline
-# powerline-daemon -q
-# . /usr/share/powerline/bindings/zsh/powerline.zsh
 
 # init pure prompt
 autoload -U promptinit; promptinit
