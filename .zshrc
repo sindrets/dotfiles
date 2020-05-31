@@ -181,8 +181,9 @@ _fzf_compgen_dir() {
 # init pure prompt
 autoload -U promptinit; promptinit
 zstyle :prompt:pure:git:stash show yes
-export PURE_PROMPT_SYMBOL="❱"
-export PURE_PROMPT_VICMD_SYMBOL="⚡"
+zstyle :prompt:pure:prompt:success color green
+export PURE_PROMPT_SYMBOL="→"
+export PURE_PROMPT_VICMD_SYMBOL="λ"
 prompt pure
 
 term="$(getTerm)"
@@ -213,4 +214,5 @@ if	[ ! $UID = 0 ] &&
 then
 	eval neofetch
 fi
+
 
