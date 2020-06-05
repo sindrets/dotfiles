@@ -120,8 +120,8 @@ noremap <Leader>y "+y
 noremap <C-C> "+y
 vnoremap <C-x> "+d
 
-map <silent> <Leader>e :CocCommand explorer --no-toggle<CR>
-map <silent> <Leader>b :CocCommand explorer --toggle<CR>
+map <silent> <Leader>e :NERDTreeFocus<CR>
+map <silent> <Leader>b :NERDTreeToggle<CR>
 
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR> 
