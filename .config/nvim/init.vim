@@ -90,7 +90,8 @@ Plug 'tomasiser/vim-code-dark'
 Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
 Plug 'nanotech/jellybeans.vim'
-Plug 'morhetz/gruvbox'
+Plug 'gruvbox-community/gruvbox'
+Plug 'cocopon/iceberg.vim'
 " CoC
 Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
 Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
@@ -104,7 +105,7 @@ Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
 " Theme settings
-let g:airline_theme="codedark"
+let g:airline_theme="gruvbox"
 "let ayucolor="mirage"
 let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
@@ -170,6 +171,8 @@ vmap > >gv
 
 " Turn off search highlight until next search
 nnoremap <F3> :noh<CR>
+
+nmap , @@
 
 " Toggle comments
 nnoremap <C-\> :call NERDComment(0, "toggle")<CR>
@@ -238,6 +241,13 @@ nmap <leader>. :CocAction<CR>
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
+xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
+
+function! ExecuteMacroOverVisualRange()
+  echo "@".getcmdline()
+  execute ":'<,'>normal @".nr2char(getchar())
+endfunction
+
 function! WorkspaceFiles()
     if !empty(glob("./.git"))
         GFiles --cached --others --exclude-standard
@@ -301,6 +311,18 @@ function! CloseBufferAndGoToAlt(...)
     exec "bw " . cur_buf
 endfunction
 
+let s:last_sourced_config = ""
+function! SourceProjectConfig()
+    if filereadable(".vim/init.vim")
+        let project_config_path = system('realpath -m .vim/init.vim')
+        if s:last_sourced_config != project_config_path
+            source .vim/init.vim
+            let s:last_sourced_config = project_config_path
+            echom "Sourced project config: " . project_config_path
+        endif
+    endif
+endfunction
+
 function! s:show_documentation()
     if &filetype == 'vim'
         exec 'h '.expand('<cword>')
@@ -313,17 +335,35 @@ endfunction
 
 "   Restore cursor pos
 autocmd BufReadPost *
-        \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-        \ |   exe "normal! g`\"zz"
-        \ | endif
+    \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+    \ |   exe "normal! g`\"zz"
+    \ | endif
 
 "   Highlight the symbol and its references when holding the cursor.
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
+"   Update NERDtree dir on dir change
+autocmd DirChanged *
+    \ exec SourceProjectConfig()
+    \ | NERDTreeCWD | wincmd p
+
+"   Update NERDtree when new file is written
+let s:should_refresh_tree = 0
+autocmd BufWrite *
+    \ if !filereadable(expand("%:p"))
+    \ |     let s:should_refresh_tree = 1
+    \ | endif
+
+autocmd BufWritePost *
+    \ if s:should_refresh_tree
+    \ |     NERDTreeRefreshRoot | NERDTreeRefreshRoot
+    \ |     let s:should_refresh_tree = 0
+    \ | endif
+
 function! s:filter_header(lines) abort
     let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
     let centered_lines = map(copy(a:lines),
-                \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
+        \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
     return centered_lines
 endfunction
 let s:startify_ascii_header = [
@@ -335,5 +375,7 @@ let s:startify_ascii_header = [
 \ '                                      ',
 \ ]
 let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
+
+exec SourceProjectConfig()
 
 " vim: shiftwidth=4 tabstop=4 expandtab
