@@ -38,6 +38,10 @@ set showbreak=⤷\
 syntax on
 filetype plugin indent on
 
+if filereadable($MYVIMRC . "/../init_extra.vim")
+    exec "source " $MYVIMRC . "/../init_extra.vim"
+endif
+
 let mapleader = " "                             " set the leader key
 let g:airline_powerline_fonts = 1               " enable powerline symbols
 let g:python_recommended_style = 0
@@ -78,7 +82,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'ananagame/vimsence'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 " THEMES
