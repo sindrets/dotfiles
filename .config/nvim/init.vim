@@ -6,6 +6,7 @@
 "                                    
 
 set nu
+set rnu
 set autoindent
 set shiftwidth=4
 set tabstop=4
@@ -45,7 +46,6 @@ endif
 let mapleader = " "                             " set the leader key
 let g:airline_powerline_fonts = 1               " enable powerline symbols
 let g:python_recommended_style = 0
-let g:airline_theme='powerlineish'              " set airline theme
 let g:airline#extensions#tabline#enabled = 1    " enable airline tabline
 let NERDTreeShowHidden=1                        " show dot files in NERDtree
 let g:startify_session_dir="$HOME/.vim/session"
@@ -95,6 +95,7 @@ Plug 'chriskempson/base16-vim'
 Plug 'nanotech/jellybeans.vim'
 Plug 'gruvbox-community/gruvbox'
 Plug 'cocopon/iceberg.vim'
+Plug 'junegunn/seoul256.vim'
 " CoC
 Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
 Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
@@ -108,14 +109,15 @@ Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
 " Theme settings
-let g:airline_theme="gruvbox"
-"let ayucolor="mirage"
+let g:airline_theme = "ayu_dark"
+let ayucolor="dark"
 let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
 let g:gruvbox_italic = 1
-let base16colorspace=256
+let base16colorspace = 256
+let g:seoul256_background = 234
 set background=dark
-colorscheme gruvbox
+colorscheme ayu
 " Override ruler column from theme
 " highlight ColorColumn guibg=#282a2e
 
@@ -382,3 +384,4 @@ let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
 exec SourceProjectConfig()
 
 " vim: shiftwidth=4 tabstop=4 expandtab
+
