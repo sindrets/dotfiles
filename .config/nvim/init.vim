@@ -21,6 +21,7 @@ set cursorline
 set splitbelow
 set splitright
 set wrap linebreak
+set updatetime=1000
 set backspace=indent,eol,start
 set termguicolors
 set pyx=3
