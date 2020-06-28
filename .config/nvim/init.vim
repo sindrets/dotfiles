@@ -254,6 +254,14 @@ function! ExecuteMacroOverVisualRange()
   execute ":'<,'>normal @".nr2char(getchar())
 endfunction
 
+" Read the output of a command into a new buffer
+function! ReadNew(expr)
+    enew | set ft=log
+    exec "r! " . a:expr
+endfunction
+
+command! -nargs=+ Rnew call ReadNew(<q-args>)
+
 function! WorkspaceFiles()
     if !empty(glob("./.git"))
         GFiles --cached --others --exclude-standard
@@ -385,4 +393,3 @@ let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
 exec SourceProjectConfig()
 
 " vim: shiftwidth=4 tabstop=4 expandtab
-
