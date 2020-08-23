@@ -180,6 +180,7 @@ for_window [class="VirtualBox Machine"] move container to workspace $vm fullscre
 for_window [instance="fam-strom.1password.com"] floating enable border pixel 1
 for_window [class="SpeedCrunch"] floating enable border pixel 1
 for_window [class="firefox"] border none
+for_window [class="Steam" title="Friends List"] floating enable
 
 # switch to workspace with urgent window automatically
 for_window [urgent=latest] focus
@@ -277,7 +278,7 @@ client.background $background
 
 # Gaps
 gaps inner 20
-gaps outer 30
+gaps outer 0
 
 #smart_gaps on
 

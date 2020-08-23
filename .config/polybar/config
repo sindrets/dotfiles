@@ -196,8 +196,8 @@ click-left = pamac-manager --updates &
 type = custom/script
 exec = ~/.config/polybar/scripts/pulseaudio-tail.sh
 tail = true
-click-right = exec pavucontrol-qt &
-click-left = ~/.config/polybar/scripts/pulseaudio-tail.sh --mute
+click-right = ~/.config/scripts/change-sink &
+click-left = exec pavucontrol-qt &
 scroll-up = ~/.config/polybar/scripts/pulseaudio-tail.sh --up
 scroll-down = ~/.config/polybar/scripts/pulseaudio-tail.sh --down
 

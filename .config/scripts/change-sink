@@ -1,0 +1,52 @@
+#!/usr/bin/python3
+# Change default output sink and update all current playbacks.
+
+import subprocess
+import re
+
+result = subprocess.run(["pacmd", "list-sinks"], stdout=subprocess.PIPE)
+sink_list_string = result.stdout.decode("utf-8")
+
+matches = re.finditer(r"index:[^\n]*(\n(?![ \t*]+index:)[^\n]*)*", sink_list_string)
+
+sink_info = []
+for match in matches:
+	sink_info.append(match.group())
+
+sink_list = []
+for s in sink_info:
+	sink = {}
+	sink["index"] = re.search(r"(?<=index: )\d+", s).group()
+	sink["description"] = re.search(r"(?<=device.description = \")[^\"]*", s).group();
+	sink_list.append(sink)
+
+print(sink_list)
+
+dmenu_string = ""
+i = 0;
+for sink in sink_list:
+	dmenu_string += str(i) + ": " + sink["description"] + "\n"
+	i += 1
+
+dmenu_string = dmenu_string[:-1]
+
+result = subprocess.run(["rofi", "-dmenu", "-p", "Choose sink"], stdout=subprocess.PIPE, input=dmenu_string.encode("utf-8"))
+if (result.returncode != 0):
+	exit(0)
+
+print(result.stdout.decode("utf-8"))
+
+target_sink = sink_list[int(result.stdout.decode("utf-8")[0])]
+print(target_sink)
+subprocess.run(["pacmd", "set-default-sink", target_sink["index"]])
+
+result = subprocess.run(["pacmd", "list-sink-inputs"], stdout=subprocess.PIPE)
+result = subprocess.run(["grep", "index"], input=result.stdout, stdout=subprocess.PIPE)
+sink_inputs_string = result.stdout.decode("utf-8")
+
+matches = re.finditer(r"(?<=index: )\d+", sink_inputs_string)
+for match in matches:
+	input_index = match.group()
+	print("sink input: " + input_index)
+	subprocess.run(["pacmd", "move-sink-input", input_index, target_sink["index"]])
+
