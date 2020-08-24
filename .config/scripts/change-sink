@@ -36,7 +36,7 @@ if (result.returncode != 0):
 
 print(result.stdout.decode("utf-8"))
 
-target_sink = sink_list[int(result.stdout.decode("utf-8")[0])]
+target_sink = sink_list[int(result.stdout.decode("utf-8").split(":")[0])]
 print(target_sink)
 subprocess.run(["pacmd", "set-default-sink", target_sink["index"]])
 
