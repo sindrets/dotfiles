@@ -60,6 +60,9 @@ let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_er
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 let g:airline#extensions#tabline#ignore_bufadd_pat = 'defx|gundo|nerd_tree|startify|tagbar|undotree|vimfiler'
 
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.xml'
+let g:closetag_filetypes = 'html,xhtml,phtml,xml'
+
 call plug#begin("~/.vim/bundle")
 " SYNTAX
 Plug 'kevinoid/vim-jsonc'
@@ -76,6 +79,7 @@ Plug 'junegunn/fzf'
 Plug 'junegunn/fzf.vim'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-abolish'
+Plug 'alvan/vim-closetag'
 " MISC
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -130,6 +134,8 @@ vnoremap <C-x> "+d
 
 map <silent> <Leader>e :NERDTreeFocus<CR>
 map <silent> <Leader>b :NERDTreeToggle<CR>
+
+nnoremap <silent> <Leader>q :q<CR>
 
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR> 
