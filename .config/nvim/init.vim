@@ -46,12 +46,14 @@ endif
 
 let mapleader = " "                             " set the leader key
 let g:airline_powerline_fonts = 1               " enable powerline symbols
-let g:python_recommended_style = 0
 let g:airline#extensions#tabline#enabled = 1    " enable airline tabline
-let NERDTreeShowHidden=1                        " show dot files in NERDtree
 let g:startify_session_dir="$HOME/.vim/session"
+let g:python_recommended_style = 0
+
 let g:slime_target = "tmux"
 let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
+
+let NERDTreeShowHidden=1                        " show dot files in NERDtree
 let g:NERDToggleCheckAllLines = 1
 let g:NERDSpaceDelims = 1
 let g:NERDDefaultAlign = 'left'
@@ -62,6 +64,8 @@ let g:airline#extensions#tabline#ignore_bufadd_pat = 'defx|gundo|nerd_tree|start
 
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.xml'
 let g:closetag_filetypes = 'html,xhtml,phtml,xml'
+
+let g:user_emmet_leader_key='<C-Z>'
 
 call plug#begin("~/.vim/bundle")
 " SYNTAX
