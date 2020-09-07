@@ -40,8 +40,9 @@ set showbreak=⤷\
 syntax on
 filetype plugin indent on
 
-if filereadable($MYVIMRC . "/../init_extra.vim")
-    exec "source " $MYVIMRC . "/../init_extra.vim"
+let s:init_extra_path = system("realpath -m " . $MYVIMRC . "/../init_extra.vim")[:-2]
+if filereadable(s:init_extra_path)
+    exec "source " . s:init_extra_path
 endif
 
 let mapleader = " "                             " set the leader key
@@ -71,6 +72,7 @@ call plug#begin("~/.vim/bundle")
 " SYNTAX
 Plug 'kevinoid/vim-jsonc'
 Plug 'sheerun/vim-polyglot'
+Plug 'vim-scripts/TagHighlight'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -79,7 +81,7 @@ Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
-Plug 'junegunn/fzf'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-abolish'
@@ -124,6 +126,8 @@ let ayucolor="dark"
 let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
 let g:gruvbox_italic = 1
+let g:gruvbox_contrast_dark = "hard"
+let g:gruvbox_invert_selection = 0
 let base16colorspace = 256
 let g:seoul256_background = 234
 set background=dark
@@ -382,9 +386,9 @@ autocmd BufReadPost *
 autocmd CursorHold * silent call CocActionAsync('highlight')
 
 "   Update NERDtree dir on dir change
-autocmd DirChanged *
-    \ exec SourceProjectConfig()
-    \ | NERDTreeCWD | wincmd p
+" autocmd DirChanged *
+"     \ exec SourceProjectConfig()
+"     \ | NERDTreeCWD | wincmd p
 
 "   Update NERDtree when new file is written
 let s:should_refresh_tree = 0
