@@ -179,7 +179,7 @@ nnoremap <A-DOWN> :m+<CR>==
 inoremap <A-UP> <ESC>:m-2<CR>==gi
 inoremap <A-DOWN> <ESC>:m+<CR>==gi
 vnoremap <A-UP> :m '<-2<CR>gv=gv
-vnoremap <A-DOWN> :m '>+1<CR>gv=gv
+vnoremap <A-DOWN> :m '>+<CR>gv=gv
 
 " Select all
 nnoremap <C-A> ggVG
@@ -223,6 +223,9 @@ nnoremap <leader>rh :call FindAndReplaceInAll()<CR>
 
 " Open a terminal split
 nnoremap <Leader>t :call FocusTerminalSplit()<CR>
+nnoremap <silent> <C-I> :call ToggleTerminalSplit()<CR>
+inoremap <silent> <C-I> <Esc>:call ToggleTerminalSplit()<CR>
+tnoremap <silent> <C-I> <C-\><C-N>:call ToggleTerminalSplit()<CR>
 
 " Neovim Terminal Colors
 " black
@@ -330,6 +333,21 @@ function! FocusTerminalSplit()
         let g:term_split_winid = win_getid()
         exec "res " . min([16, float2nr(&lines / 2)])
         startinsert
+    endif
+endfunction
+
+function! ToggleTerminalSplit()
+    let term_buf_id = GetBufferWithPattern("term_split")
+    if term_buf_id == -1
+        call FocusTerminalSplit()
+    elseif exists("g:term_split_winid")
+        " term buffer exists. check if it is focused
+        if g:term_split_winid == win_getid()
+            " term is focused: close it
+            wincmd q
+        else
+            call FocusTerminalSplit()
+        endif
     endif
 endfunction
 
