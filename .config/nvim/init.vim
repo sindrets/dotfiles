@@ -23,10 +23,13 @@ set splitright
 set wrap linebreak
 set updatetime=1000
 set backspace=indent,eol,start
-set termguicolors
 set pyx=3
 set pyxversion=3
 set shada=!,'10,/100,:100,<0,@1,f1,h,s1
+
+if has("termguicolors")
+    set termguicolors
+endif
 
 " ruler
 set colorcolumn=100
@@ -108,6 +111,7 @@ Plug 'nanotech/jellybeans.vim'
 Plug 'gruvbox-community/gruvbox'
 Plug 'cocopon/iceberg.vim'
 Plug 'junegunn/seoul256.vim'
+Plug 'drewtempelmeyer/palenight.vim'
 " CoC
 Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
 Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
@@ -121,7 +125,7 @@ Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
 " Theme settings
-let g:airline_theme = "ayu_dark"
+let g:airline_theme = "palenight"
 let ayucolor="dark"
 let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
@@ -130,15 +134,16 @@ let g:gruvbox_contrast_dark = "hard"
 let g:gruvbox_invert_selection = 0
 let base16colorspace = 256
 let g:seoul256_background = 234
+let g:palenight_terminal_italics=1
 set background=dark
-colorscheme ayu
+colorscheme palenight
 " Override ruler column from theme
 " highlight ColorColumn guibg=#282a2e
 
 " Copy, cut and paste to/from system clipboard
-noremap <Leader>y "+y
-noremap <C-C> "+y
+vnoremap <S-Y> "+y
 vnoremap <C-x> "+d
+nnoremap <S-P> "+p
 
 map <silent> <Leader>e :NERDTreeFocus<CR>
 map <silent> <Leader>b :NERDTreeToggle<CR>
