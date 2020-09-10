@@ -228,9 +228,9 @@ nnoremap <leader>rh :call FindAndReplaceInAll()<CR>
 
 " Open a terminal split
 nnoremap <Leader>t :call FocusTerminalSplit()<CR>
-nnoremap <silent> <C-I> :call ToggleTerminalSplit()<CR>
-inoremap <silent> <C-I> <Esc>:call ToggleTerminalSplit()<CR>
-tnoremap <silent> <C-I> <C-\><C-N>:call ToggleTerminalSplit()<CR>
+nnoremap <silent> <C-L> :call ToggleTerminalSplit()<CR>
+inoremap <silent> <C-L> <Esc>:call ToggleTerminalSplit()<CR>
+tnoremap <silent> <C-L> <C-\><C-N>:call ToggleTerminalSplit()<CR>
 
 " Neovim Terminal Colors
 " black
