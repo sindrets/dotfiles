@@ -50,6 +50,7 @@ unset TERMCAP
 # Man is much better than us at figuring this out
 unset MANPATH
 
+eval `dircolors "$HOME/.dir_colors"`
 
 if [ -z "$SSH_AUTH_SOCK" ] ; then
   eval `ssh-agent -s`

@@ -71,6 +71,9 @@ let g:closetag_filetypes = 'html,xhtml,phtml,xml'
 
 let g:user_emmet_leader_key='<C-Z>'
 
+" CHADtree config
+source ~/.config/nvim/chadtree-config.vim
+
 call plug#begin("~/.vim/bundle")
 " SYNTAX
 Plug 'kevinoid/vim-jsonc'
@@ -115,14 +118,13 @@ Plug 'junegunn/seoul256.vim'
 Plug 'drewtempelmeyer/palenight.vim'
 " CoC
 Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
-Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-java', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-pairs', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
-
+Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
 " Theme settings
@@ -237,31 +239,24 @@ tnoremap <silent> <C-L> <C-\><C-N>:call ToggleTerminalSplit()<CR>
 " black
 let g:terminal_color_0 =   "#222222"
 let g:terminal_color_8 =   "#666666"
-
 " red
 let g:terminal_color_1 =   "#e84f4f"
 let g:terminal_color_9 =   "#d23d3d"
-
 " green
 let g:terminal_color_2 =   "#b7ce42"
 let g:terminal_color_10 =  "#bde077"
-
 " yellow
 let g:terminal_color_3 =   "#fea63c"
 let g:terminal_color_11 =  "#ffe863"
-
 " blue
 let g:terminal_color_4 =   "#66a9b9"
 let g:terminal_color_12 =  "#aaccbb"
-
 " magenta
 let g:terminal_color_5 =   "#b7416e"
 let g:terminal_color_13 =  "#e16a98"
-
 " cyan
 let g:terminal_color_6 =   "#6dc1b6"
 let g:terminal_color_14 =  "#42717b"
-
 " white
 let g:terminal_color_7 =   "#cccccc"
 let g:terminal_color_15 =  "#ffffff"

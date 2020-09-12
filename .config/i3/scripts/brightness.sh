@@ -1,6 +1,6 @@
 #!/bin/bash
 
-notif_id="1559176921"
+notif_id="$($HOME/.config/scripts/int-hash.sh $(realpath -m $0))"
 
 backlight=/sys/class/backlight/intel_backlight/brightness
 max=`cat /sys/class/backlight/intel_backlight/max_brightness`
@@ -48,6 +48,3 @@ case $1 in
 		echo `currentPercent`
 		;;
 esac
-
-
-
