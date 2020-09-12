@@ -82,6 +82,7 @@ Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'ap/vim-css-color'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -145,8 +146,8 @@ vnoremap <S-Y> "+y
 vnoremap <C-x> "+d
 nnoremap <S-P> "+p
 
-map <silent> <Leader>e :NERDTreeFocus<CR>
-map <silent> <Leader>b :NERDTreeToggle<CR>
+map <silent> <Leader>e :call CHADtreeFocus()<CR>
+map <silent> <Leader>b :call CHADtreeToggle()<CR>
 
 nnoremap <silent> <Leader>q :q<CR>
 
@@ -397,6 +398,31 @@ function! s:show_documentation()
     endif
 endfunction
 
+function! CHADtreeFocus()
+    if exists("g:chadtree_winid") && win_id2win(g:chadtree_winid) > 0
+        call win_gotoid(g:chadtree_winid)
+    else
+        let cur_winid = win_getid()
+        CHADopen
+        while win_getid() == cur_winid
+            sleep 1m
+        endwhile
+        let g:chadtree_winid = win_getid()
+    endif
+endfunction
+
+function! CHADtreeToggle()
+    if exists("g:chadtree_winid") && win_id2win(g:chadtree_winid) > 0
+        if win_getid() == g:chadtree_winid
+            wincmd q
+        else
+            call win_gotoid(g:chadtree_winid)
+        endif
+    else
+        call CHADtreeFocus()
+    endif
+endfunction
+
 " AutoCommands
 
 "   Restore cursor pos
@@ -414,17 +440,17 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 "     \ | NERDTreeCWD | wincmd p
 
 "   Update NERDtree when new file is written
-let s:should_refresh_tree = 0
-autocmd BufWrite *
-    \ if !filereadable(expand("%:p"))
-    \ |     let s:should_refresh_tree = 1
-    \ | endif
+" let s:should_refresh_tree = 0
+" autocmd BufWrite *
+"     \ if !filereadable(expand("%:p"))
+"     \ |     let s:should_refresh_tree = 1
+"     \ | endif
 
-autocmd BufWritePost *
-    \ if s:should_refresh_tree
-    \ |     NERDTreeRefreshRoot | NERDTreeRefreshRoot
-    \ |     let s:should_refresh_tree = 0
-    \ | endif
+" autocmd BufWritePost *
+"     \ if s:should_refresh_tree
+"     \ |     NERDTreeRefreshRoot | NERDTreeRefreshRoot
+"     \ |     let s:should_refresh_tree = 0
+"     \ | endif
 
 function! s:filter_header(lines) abort
     let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
