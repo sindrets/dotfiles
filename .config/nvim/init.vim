@@ -124,6 +124,7 @@ Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-pairs', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile'}
 Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
@@ -408,11 +409,8 @@ endfunction
 
 function! CHADtreeToggle()
     if exists("g:chadtree_winid") && win_id2win(g:chadtree_winid) > 0
-        if win_getid() == g:chadtree_winid
-            wincmd q
-        else
-            call win_gotoid(g:chadtree_winid)
-        endif
+        call win_gotoid(g:chadtree_winid)
+        wincmd q
     else
         call CHADtreeFocus()
     endif
