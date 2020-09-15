@@ -41,6 +41,7 @@ set listchars=tab:\ ―→,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,exten
 set showbreak=⤷\ 
 
 syntax on
+syntax sync minlines=10000
 filetype plugin indent on
 
 let s:init_extra_path = system("realpath -m " . $MYVIMRC . "/../init_extra.vim")[:-2]
@@ -126,6 +127,7 @@ Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile'}
 Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
+Plug 'iamcco/coc-vimlsp', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
 " Theme settings
@@ -387,11 +389,7 @@ function! SourceProjectConfig()
 endfunction
 
 function! s:show_documentation()
-    if &filetype == 'vim'
-        exec 'h '.expand('<cword>')
-    else
-        call CocAction('doHover')
-    endif
+    call CocAction('doHover')
 endfunction
 
 function! CHADtreeFocus()

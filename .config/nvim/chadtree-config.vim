@@ -1,10 +1,22 @@
 let g:chadtree_settings = {
-\        "keymap": {
+\   "keymap": {
 \        "refresh": ["R"],
 \        "v_split": ["v"],
 \        "h_split": ["w"]
 \    },
 \    "show_hidden": "true"
+\}
+
+let g:chadtree_view = {
+\   "window_options": [
+\       "nonumber",
+\       "norelativenumber",
+\       "nowrap",
+\       "signcolumn=no",
+\       "cursorline",
+\       "winfixwidth",
+\       "nolist"
+\   ]
 \}
 
 let g:chadtree_colours = {
