@@ -146,11 +146,24 @@ colorscheme palenight
 " Override ruler column from theme
 " highlight ColorColumn guibg=#282a2e
 
+" Allow movement through display lines (wrapped lines)
+nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+nnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
+nnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
+xnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+xnoremap <expr> k v:count == 0 ? 'gk' : 'k'
+xnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
+xnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
+inoremap <DOWN> <C-\><C-O>gj
+inoremap <UP> <C-\><C-O>gk
+
 " Copy, cut and paste to/from system clipboard
 vnoremap <S-Y> "+y
 vnoremap <C-x> "+d
 nnoremap <S-P> "+p
 
+" File explorer
 map <silent> <Leader>e :call CHADtreeFocus()<CR>
 map <silent> <Leader>b :call CHADtreeToggle()<CR>
 
@@ -211,6 +224,10 @@ imap <S-Down> <Esc>v<Down>
 imap <S-Left> <Esc>v
 imap <S-Right> <Esc><Right>v
 
+" Ctrl+backspace to delete prev word, ctrl+del to delete next word
+inoremap <C-H> <C-\><C-O>db
+inoremap <C-Del> <C-\><C-O>dw
+
 " Indentation
 vmap <lt> <gv
 vmap > >gv
@@ -218,6 +235,7 @@ vmap > >gv
 " Turn off search highlight until next search
 nnoremap <F3> :noh<CR>
 
+" Repeat prev macro
 nmap , @@
 
 " Toggle comments
