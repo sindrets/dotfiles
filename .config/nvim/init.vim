@@ -345,6 +345,7 @@ function! GetBufferWithPattern(pattern)
     return -1
 endfunction
 
+let g:term_split_height = 16
 function! FocusTerminalSplit()
     let term_buf_id = GetBufferWithPattern("term_split")
     if term_buf_id != -1
@@ -353,7 +354,7 @@ function! FocusTerminalSplit()
         else
             100 wincmd j
             belowright split
-            exec "res " . min([16, float2nr(&lines / 2)])
+            exec "res " . min([g:term_split_height, float2nr(&lines / 2)])
             let g:term_split_winid = win_getid()
         endif
         exec "buffer " . term_buf_id
@@ -362,7 +363,8 @@ function! FocusTerminalSplit()
         belowright split | term
         set nobuflisted | file! term_split
         let g:term_split_winid = win_getid()
-        exec "res " . min([16, float2nr(&lines / 2)])
+        au WinClosed <buffer> let g:term_split_height = winheight("%")
+        exec "res " . min([g:term_split_height, float2nr(&lines / 2)])
         startinsert
     endif
 endfunction
@@ -443,6 +445,11 @@ endfunction
 
 function! MkdpOpenInNewWindow(url)
     exec system("$BROWSER --new-window " . a:url)
+endfunction
+
+function! CocJavaClearCache()
+    exec system('rm -rf ~/.config/coc/extensions/coc-java-data/jdt_ws_$(printf "' . getcwd()
+                \ . '" | md5sum | awk "{print \$1}")')
 endfunction
 
 " AutoCommands
