@@ -41,7 +41,7 @@ set listchars=tab:\ ―→,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,exten
 set showbreak=⤷\ 
 
 syntax on
-syntax sync minlines=10000
+syntax sync minlines=3000
 filetype plugin indent on
 
 let s:init_extra_path = system("realpath -m " . $MYVIMRC . "/../init_extra.vim")[:-2]
@@ -58,11 +58,6 @@ let g:python_recommended_style = 0
 let g:slime_target = "tmux"
 let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
 
-let NERDTreeShowHidden=1                        " show dot files in NERDtree
-let g:NERDToggleCheckAllLines = 1
-let g:NERDSpaceDelims = 1
-let g:NERDDefaultAlign = 'left'
-
 let g:airline_section_error = '%{airline#util#wrap(airline#extensions#coc#get_error(),0)}'
 let g:airline_section_warning = '%{airline#util#wrap(airline#extensions#coc#get_warning(),0)}'
 let g:airline#extensions#tabline#ignore_bufadd_pat = 'defx|gundo|nerd_tree|startify|tagbar|undotree|vimfiler'
@@ -71,6 +66,8 @@ let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.xml'
 let g:closetag_filetypes = 'html,xhtml,phtml,xml'
 
 let g:user_emmet_leader_key='<C-Z>'
+
+let g:mkdp_browserfunc = "MkdpOpenInNewWindow"
 
 " CHADtree config
 source ~/.config/nvim/chadtree-config.vim
@@ -84,8 +81,6 @@ Plug 'vim-scripts/TagHighlight'
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'ap/vim-css-color'
-Plug 'scrooloose/nerdtree'
-Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
@@ -101,9 +96,9 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 " THEMES
 Plug 'rakr/vim-one'
 Plug 'ayu-theme/ayu-vim'
@@ -126,7 +121,6 @@ Plug 'neoclide/coc-pairs', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile'}
-Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
 Plug 'iamcco/coc-vimlsp', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
@@ -155,11 +149,20 @@ xnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 xnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 xnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
 xnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
-inoremap <DOWN> <C-\><C-O>gj
-inoremap <UP> <C-\><C-O>gk
+inoremap <expr> <DOWN> pumvisible() ? '<DOWN>' : '<C-\><C-O>gj'
+inoremap <expr> <UP> pumvisible() ? '<UP>' : '<C-\><C-O>gk'
+
+" Home moves to first non-whitespace on display line
+nnoremap <expr> <Home> v:count == 0 ? "g^" : "^"
+nnoremap <expr> <End> v:count == 0 ? "g$" : "$"
+xnoremap <expr> <Home> v:count == 0 ? "g^" : "^"
+xnoremap <expr> <End> v:count == 0 ? "g$" : "$"
+inoremap <Home> <C-\><C-O>g^
+inoremap <End> <C-\><C-O>g$
 
 " Copy, cut and paste to/from system clipboard
-vnoremap <S-Y> "+y
+vnoremap <expr> y v:register == '"' ? '"+y' : 'y'
+vnoremap <expr> <S-Y> v:register == '"' ? '"+Y' : 'Y'
 vnoremap <C-x> "+d
 nnoremap <S-P> "+p
 
@@ -168,6 +171,7 @@ map <silent> <Leader>e :call CHADtreeFocus()<CR>
 map <silent> <Leader>b :call CHADtreeToggle()<CR>
 
 nnoremap <silent> <Leader>q :q<CR>
+inoremap <M-Space> <Esc>
 
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR> 
@@ -178,6 +182,9 @@ nnoremap <silent> <leader>w :call CloseBufferAndGoToAlt()<CR>
 " Navigate tabs
 map <silent> <Leader><Tab> :tabn<CR>
 map <silent> <Leader><S-Tab> :tabp<CR>
+
+" Remap jump forward
+nnoremap <C-S> <C-I>
 
 " Navigate windows
 tnoremap <A-h> <C-\><C-N><C-w>h
@@ -192,10 +199,6 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
-
-" Home moves to first non-whitespace char
-noremap <Home> ^
-inoremap <Home> <Esc>^i
 
 " Move lines up/down
 nnoremap <A-UP> :m-2<CR>==
@@ -256,6 +259,27 @@ nnoremap <silent> <C-L> :call ToggleTerminalSplit()<CR>
 inoremap <silent> <C-L> <Esc>:call ToggleTerminalSplit()<CR>
 tnoremap <silent> <C-L> <C-\><C-N>:call ToggleTerminalSplit()<CR>
 
+" Use <c-space> for trigger completion.
+inoremap <silent><expr> <c-space> coc#refresh()
+
+" Notify coc.nvim that <CR> has been pressed.
+inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
+            \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> <leader>rn <PLug>(coc-rename)
+nmap <silent> <F2> <Plug>(coc-rename)
+nmap <silent> <leader>f :call CocAction("format")<CR>
+nmap <leader>. :CocAction<CR>
+
+" Use K for show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
+
 " Neovim Terminal Colors
 " black
 let g:terminal_color_0 =   "#222222"
@@ -282,26 +306,13 @@ let g:terminal_color_14 =  "#42717b"
 let g:terminal_color_7 =   "#cccccc"
 let g:terminal_color_15 =  "#ffffff"
 
-" Use <c-space> for trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+command! -nargs=+ Rnew call ReadNew(<q-args>)
+command! Synsync syntax sync minlines=3000
 
-" Notify coc.nvim that <CR> has been pressed.
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-            \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
-
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-nmap <silent> <leader>rn <PLug>(coc-rename)
-nmap <silent> <F2> <Plug>(coc-rename)
-nmap <silent> <leader>f :call CocAction("format")<CR>
-nmap <leader>. :CocAction<CR>
-
-" Use K for show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
+" Wrapper function to allow exec calls from expressions
+function! Exec(cmd)
+    exec a:cmd
+endfunction
 
 function! ExecuteMacroOverVisualRange()
   echo "@".getcmdline()
@@ -313,8 +324,6 @@ function! ReadNew(expr)
     enew | set ft=log
     exec "r! " . a:expr
 endfunction
-
-command! -nargs=+ Rnew call ReadNew(<q-args>)
 
 function! WorkspaceFiles()
     if !empty(glob("./.git"))
@@ -430,6 +439,10 @@ function! CHADtreeToggle()
     else
         call CHADtreeFocus()
     endif
+endfunction
+
+function! MkdpOpenInNewWindow(url)
+    exec system("$BROWSER --new-window " . a:url)
 endfunction
 
 " AutoCommands

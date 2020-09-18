@@ -33,6 +33,8 @@ export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
 export GIT_DIRECTORY="$HOME/Documents/git"
 
+eval `dircolors "$HOME/.dir_colors"`
+
 # --- Plugins ---
 source /usr/share/zsh/share/antigen.zsh
 
@@ -64,6 +66,7 @@ bindkey '^x^e' edit-command-line
 [ -f "$HOME/.bashrc.aliases" ] && source "$HOME/.bashrc.aliases"
 
 alias ls='ls --color=auto'
+alias la='ls -a'
 alias ll="ls -lh"
 alias lla="ls -lha"
 alias grep="grep --color"

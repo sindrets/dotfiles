@@ -1,0 +1,28 @@
+#!/usr/bin/sh
+# Project initializer for a simple java ant project.
+
+project_name=""
+script_dir="$(realpath -m "$0/..")"
+
+if [ -n "$1" ]; then
+    project_name="$1"
+else
+    project_name="$(basename $(realpath .))"
+fi
+
+# remove whitespace from name
+project_name="$(printf "$project_name" | awk '{ gsub(/\s/, "-"); print }')"
+echo "Project name: $project_name"
+
+# extract template
+tar -xf "$script_dir/java-project-template.tar.gz"
+
+# replace template strings
+for FILE in $(find . -not -path "./lib/*" -type f); do
+    sed -i "s/__name__/$project_name/g" "$FILE"
+done
+
+# rename template file names
+for FILE in $(find . -path "*/__name__"); do
+    mv "$FILE" "$(realpath -m "$FILE/../$project_name")"
+done
