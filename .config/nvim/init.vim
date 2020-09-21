@@ -112,6 +112,7 @@ Plug 'gruvbox-community/gruvbox'
 Plug 'cocopon/iceberg.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'drewtempelmeyer/palenight.vim'
+Plug 'arzg/vim-colors-xcode'
 " CoC
 Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
@@ -125,7 +126,7 @@ Plug 'iamcco/coc-vimlsp', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
 " Theme settings
-let g:airline_theme = "palenight"
+let g:airline_theme = "xcodedark"
 let ayucolor="dark"
 let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
@@ -136,7 +137,7 @@ let base16colorspace = 256
 let g:seoul256_background = 234
 let g:palenight_terminal_italics=1
 set background=dark
-colorscheme palenight
+colorscheme xcodedark
 " Override ruler column from theme
 " highlight ColorColumn guibg=#282a2e
 
