@@ -1,42 +1,54 @@
 let g:lightline = {
-            \   'colorscheme': 'one',
-            \   'active': {
-            \       'left': [
-            \           [ 'mode', 'paste' ],
-            \           [ 'gitbranch', 'readonly', 'filename' ] 
+            \   "colorscheme": "one",
+            \   "active": {
+            \       "left": [
+            \           [ "mode", "paste" ],
+            \           [ "gitbranch", "readonly", "filename" ] 
             \       ],
-            \       'right': [
-            \           [ 'lineinfo' ],
-            \           [ 'percent' ],
-            \           [ 'filetype', 'fileencoding' ]
+            \       "right": [
+            \           [ "lineinfo" ],
+            \           [ "percent" ],
+            \           [ "filetype", "fileencoding" ]
             \       ]
             \   },
-            \   'component': {
+            \   "tabline": {
+            \       "left": [ ["buffers"] ],
+            \       "right": [ ["time"] ]
             \   },
-            \   'component_function': {
+            \   "component": {
+            \   },
+            \   "component_function": {
             \       "mode": "LightlineMode",
-            \       'gitbranch': 'LightlineGitbranch',
+            \       "filename": "LightlineFilename",
+            \       "gitbranch": "LightlineGitbranch",
             \       "fileencoding": "LightlineFileencoding",
+            \       "time": "LightlineTime",
             \   },
-            \   'component_expand': {
+            \   "component_expand": {
             \       "buffers": "lightline#bufferline#buffers",
             \       "lineinfo": "LightlineLineinfo",
             \       "percent": "LightlinePercent",
+            \       "filetype": "LightlineFiletype",
             \   },
-            \   'component_type': {
-            \       'buffers': 'tabsel'
+            \   "component_type": {
+            \       "buffers": "tabsel"
+            \   },
+            \   "component_raw": {
+            \       "buffers": 1
             \   },
             \   "separator": {
-            \       'left': '', 'right': ''
+            \       "left": "", "right": ""
             \   },
             \   "subseparator": {
-            \       'left': '', 'right': '' 
+            \       "left": "", "right": "" 
             \   },
-            \   "tabline": {
-            \       'left': [ ['buffers'] ],
-            \       "right": []
-            \   }
             \ }
+
+let g:lightline#bufferline#modified = " +"
+let g:lightline#bufferline#unnamed = "[No Name]"
+let g:lightline#bufferline#enable_devicons = 1
+let g:lightline#bufferline#unicode_symbols = 1
+let g:lightline#bufferline#clickable = 1
 
 function! LightlineShouldIgnore()
     return &ft == "CHADTree"
@@ -47,19 +59,25 @@ function! LightlineMode()
 endfunction
 
 function! LightlineGitbranch()
-    return LightlineShouldIgnore() ? "" : FugitiveHead()
+    return LightlineShouldIgnore()
+                \ || winwidth(0) < 70 ? "" : FugitiveHead()
+endfunction
+
+function! LightlineFilename()
+    return LightlineShouldIgnore() ? "" : expand("%:t")
 endfunction
 
 function! LightlineLineinfo()
-    return LightlineShouldIgnore() ? "" : '%L  %l:%-2v'
+    return "%L  %l:%-2v"
 endfunction
 
 function! LightlinePercent()
-    return LightlineShouldIgnore() ? "" : '%p%%'
+    return "%p%%"
 endfunction
 
 function! LightlineFiletype()
-    return LightlineShouldIgnore() ? "" : '%{&ft!=#""?&ft:"no ft"}'
+    return LightlineShouldIgnore()
+                \ || winwidth(0) < 50 ? "" : "%{&ft!=#''?&ft:'no ft'}"
 endfunction
 
 function! LightlineFileencoding()
@@ -78,6 +96,17 @@ function! LightlineFileencoding()
 
     return result
 endfunction
+
+function! LightlineTime()
+    return strftime("%H:%M")
+endfunction
+
+function! TablineUpdate(timer_id)
+    exec "set showtabline=" . &showtabline
+endfunction
+
+" Update tabline every minute
+call timer_start(1000 * 60, "TablineUpdate", {"repeat": -1})
 
 set showtabline=2  " Show tabline
 
