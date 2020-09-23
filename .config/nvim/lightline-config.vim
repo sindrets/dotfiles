@@ -68,7 +68,7 @@ function! LightlineFilename()
 endfunction
 
 function! LightlineLineinfo()
-    return "%L  %l:%-2v"
+    return "%{GetSelectionRangeString()}%L  %l:%-2v"
 endfunction
 
 function! LightlinePercent()
@@ -107,6 +107,16 @@ endfunction
 
 " Update tabline every minute
 call timer_start(1000 * 60, "TablineUpdate", {"repeat": -1})
+
+function! GetSelectionRangeString()
+    let range = sort([line("."), line("v")])
+    let m = mode()
+    if (m ==? "v" || m ==# "\<C-V>")
+        return '<' . range[0] . ',' . range[1] . '> '
+    else
+        return ""
+    endif
+endfunction
 
 set showtabline=2  " Show tabline
 
