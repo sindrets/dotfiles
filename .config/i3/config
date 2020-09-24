@@ -163,23 +163,20 @@ bindsym $mod+Shift+KP_Subtract move container to workspace $wsTrash; workspace $
 for_window [class=".*"] title_format " %title"
 for_window [title="alsamixer"] floating enable border pixel 1
 for_window [title="File Transfer*"] floating enable
-for_window [class="GParted"] floating enable border normal
 for_window [title="i3_help"] floating enable sticky enable border normal
 for_window [class="Lightdm-gtk-greeter-settings"] floating enable
 for_window [class="Lxappearance"] floating enable sticky enable border normal
-for_window [class="Nitrogen"] floating enable sticky enable border normal
-for_window [class="Pamac-manager"] floating enable
+for_window [class="Nitrogen"] floating enable border normal
 for_window [class="Pavucontrol"] floating enable
 for_window [class="qt5ct"] floating enable sticky enable border normal
 for_window [class="Subl3"] floating enable border pixel 1
-for_window [class="Insync"] floating enable border pixel 1
+for_window [class="Insync"] floating enable border normal
 for_window [class="kitty_FLOAT"] floating enable border pixel 1
 for_window [class="Headset" title="Headset"] floating enable border none
 for_window [class="Headset" title="Headset - Player"] move container to workspace $wsTrash
 for_window [class="VirtualBox Machine"] move container to workspace $vm fullscreen enable
 for_window [instance="fam-strom.1password.com"] floating enable border pixel 1
 for_window [class="SpeedCrunch"] floating enable border pixel 1
-for_window [class="firefox"] border none
 for_window [class="Steam" title="Friends List"] floating enable
 
 # switch to workspace with urgent window automatically
@@ -265,8 +262,8 @@ set_from_resource $cyan color6
 set_from_resource $cyanBright color14
 set_from_resource $white color7
 set_from_resource $whiteBright color15
-set $borderActive #6b6b6bc0
-set $borderInactive #282a2ec0
+set $borderActive #b1b1b1
+set $borderInactive #333333
 
 client.focused $borderActive $background $white $green $borderActive
 client.focused_inactive $borderInactive $background $white $blue $borderInactive

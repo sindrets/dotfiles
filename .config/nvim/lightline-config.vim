@@ -8,7 +8,7 @@ let g:lightline = {
             \       "right": [
             \           [ "lineinfo" ],
             \           [ "percent" ],
-            \           [ "filetype", "fileencoding" ]
+            \           [ "filetype", "fileencoding", "indentinfo" ]
             \       ]
             \   },
             \   "tabline": {
@@ -22,6 +22,7 @@ let g:lightline = {
             \       "filename": "LightlineFilename",
             \       "gitbranch": "LightlineGitbranch",
             \       "fileencoding": "LightlineFileencoding",
+            \       "indentinfo": "LightlineIndentInfo",
             \       "time": "LightlineTime",
             \   },
             \   "component_expand": {
@@ -81,7 +82,7 @@ function! LightlineFiletype()
 endfunction
 
 function! LightlineFileencoding()
-    if LightlineShouldIgnore() || winwidth(0) < 70
+    if LightlineShouldIgnore() || winwidth(0) < 80
         return ""
     endif
 
@@ -95,6 +96,17 @@ function! LightlineFileencoding()
     endif
 
     return result
+endfunction
+
+function! LightlineIndentInfo()
+    if LightlineShouldIgnore() || winwidth(0) < 70
+        return ""
+    endif
+    if &expandtab
+        return "spaces " . &shiftwidth
+    else
+        return "tabs " . &tabstop
+    endif
 endfunction
 
 function! LightlineTime()
