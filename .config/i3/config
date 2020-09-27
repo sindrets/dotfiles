@@ -265,11 +265,12 @@ set_from_resource $whiteBright color15
 set $borderActive #b1b1b1
 set $borderInactive #333333
 
-client.focused $borderActive $background $white $green $borderActive
-client.focused_inactive $borderInactive $background $white $blue $borderInactive
-client.unfocused $borderInactive $background $white $blue $borderInactive
-client.urgent $borderActive $background $white $blue $borderActive
-client.placeholder $borderActive $background $white $blue $borderActive
+# class    border    backgr.    text    indicator    child_border
+client.focused $borderActive $background $white $borderActive $borderActive
+client.focused_inactive $borderInactive $background $white $borderInactive $borderInactive
+client.unfocused $borderInactive $background $white $borderInactive $borderInactive
+client.urgent $borderActive $background $white $borderActive $borderActive
+client.placeholder $borderActive $background $white $borderActive $borderActive
 
 client.background $background
 

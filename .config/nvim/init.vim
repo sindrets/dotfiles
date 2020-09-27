@@ -11,6 +11,7 @@ set autoindent
 set shiftwidth=4
 set tabstop=4
 set softtabstop=4
+set expandtab
 set ignorecase
 set smartcase
 set wildignorecase
@@ -107,6 +108,7 @@ Plug 'cocopon/iceberg.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'arzg/vim-colors-xcode'
+Plug 'haishanh/night-owl.vim'
 " CoC
 Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}

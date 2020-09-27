@@ -40,7 +40,7 @@ font-5 = "GothamRounded:style=semi-light:size=10;1"
 
 modules-left = i3 player
 modules-center = date
-modules-right = cpu-temp wlan eth 1password redshift insync update-indicator battery pulseaudio-tail powermenu
+modules-right = cpu-temp wlan eth 1password redshift insync update-indicator battery pulseaudio-tail xkeyboard powermenu
 
 tray-position = none
 ;tray-padding = 10
@@ -184,6 +184,24 @@ menu-3-0 = log off
 menu-3-0-exec = pkill -KILL -u $USER
 menu-3-1 = cancel
 menu-3-1-exec = menu-open-0
+
+[module/xkeyboard]
+type = internal/xkeyboard
+; Available tokens:
+;   %layout%
+;   %name%
+;   %number%
+;   %icon%
+; Default: %layout%
+label-layout = %layout%
+
+layout-icon-0 = no;🇳🇴
+layout-icon-1 = us;🇺🇸
+
+; List of indicators to ignore
+blacklist-0 = num lock
+blacklist-1 = scroll lock
+blacklist-2 = caps lock
 
 [module/update-indicator]
 type = custom/script

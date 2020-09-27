@@ -33,6 +33,11 @@ export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
 export GIT_DIRECTORY="$HOME/Documents/git"
 
+# use nvim as man pager
+export PAGER="/bin/sh -c \"unset PAGER;col -b -x | \
+    nvim -R -c 'set ft=man nomod nolist' \
+    -c 'nmap K :Man <C-R>=expand(\\\"<cword>\\\")<CR><CR>' -\""
+
 eval `dircolors "$HOME/.dir_colors"`
 
 # --- Plugins ---
@@ -89,7 +94,6 @@ alias daddy="systemctl"
 alias kys="systemctl poweroff"
 alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save /etc/pacman.d/mirrorlist"
 alias mdv="mdvless"
-alias man="man-color"
 alias nvminit="source /usr/share/nvm/init-nvm.sh"
 alias diff='diff -tW $(tput cols) --color=always'
 alias ts-node='/bin/ts-node --project "$HOME/.config/ts-node/tsconfig.json"'
@@ -98,65 +102,65 @@ alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compili
 alias dfcp="dotfiles status && dotfiles commit -am Update && dotfiles push"
 
 function chpwd() {
-	emulate -L zsh
-	updateKittyTabTitle
-	eval ls
+    emulate -L zsh
+    updateKittyTabTitle
+    eval ls
 }
 
 function updateKittyTabTitle() {
-	if [ "$term" = "kitty" ]; then
-		kitty @ set-tab-title `basename "$(pwd)"`
-	fi
+    if [ "$term" = "kitty" ]; then
+        kitty @ set-tab-title `basename "$(pwd)"`
+    fi
 }
 
 # Resolve and print path
 function rpath () {
-	local RELATIVE_PATH="${@: -1}"
-	printf "$(realpath -ms "$RELATIVE_PATH")"
-	[ "$1" != "-n" ] && printf "\n"
+    local RELATIVE_PATH="${@: -1}"
+    printf "$(realpath -ms "$RELATIVE_PATH")"
+    [ "$1" != "-n" ] && printf "\n"
 }
 
 # Get current terminal emulator
 function getTerm () {
-	local sid=$(ps -o sid= -p "$$")
-	local sid_int=$((sid)) # strips blanks if any
-	local session_leader_parent=$(ps -o ppid= -p "$sid_int")
-	local session_leader_parent_int=$((session_leader_parent))
-	echo $(ps -o comm= -p "$session_leader_parent_int")
+    local sid=$(ps -o sid= -p "$$")
+    local sid_int=$((sid)) # strips blanks if any
+    local session_leader_parent=$(ps -o ppid= -p "$sid_int")
+    local session_leader_parent_int=$((session_leader_parent))
+    echo $(ps -o comm= -p "$session_leader_parent_int")
 }
 
 # Toggle VPN
 function vpn () {
-	if nordvpn status | grep -iq disconnected; then
-		nordvpn c no
-	else
-		nordvpn d
-	fi
+    if nordvpn status | grep -iq disconnected; then
+        nordvpn c no
+    else
+        nordvpn d
+    fi
 }
 
 function mdvless () {
-	/usr/bin/mdv $@ | less
+    /usr/bin/mdv $@ | less
 }
 
 # calculator
 function = () {
-	python -c "from math import *; print($*)"
+    python -c "from math import *; print($*)"
 }
 
 # create dir and cd
 function mkcd (){
-	mkdir -p "$1" && cd "$1"
+    mkdir -p "$1" && cd "$1"
 }
 
 function man-color () {
-	LESS_TERMCAP_mb=$'\e[1;32m' \
-	LESS_TERMCAP_md=$'\e[1;32m' \
-	LESS_TERMCAP_me=$'\e[0m' \
-	LESS_TERMCAP_se=$'\e[0m' \
-	LESS_TERMCAP_so=$'\e[1;30;46m' \
-	LESS_TERMCAP_ue=$'\e[0m' \
-	LESS_TERMCAP_us=$'\e[1;4;33m' \
-	/usr/bin/man $@
+    LESS_TERMCAP_mb=$'\e[1;32m' \
+    LESS_TERMCAP_md=$'\e[1;32m' \
+    LESS_TERMCAP_me=$'\e[0m' \
+    LESS_TERMCAP_se=$'\e[0m' \
+    LESS_TERMCAP_so=$'\e[1;30;46m' \
+    LESS_TERMCAP_ue=$'\e[0m' \
+    LESS_TERMCAP_us=$'\e[1;4;33m' \
+    /usr/bin/man $@
 }
 
 # init fzf
@@ -173,10 +177,10 @@ f3:execute(bat -n {} || less -f {}),\
 f2:toggle-preview,ctrl-d:half-page-down,ctrl-u:half-page-up'"
 
 _fzf_compgen_path() {
-	fd --hidden --follow --exclude ".git" . "$1"
+    fd --hidden --follow --exclude ".git" . "$1"
 }
 _fzf_compgen_dir() {
-	fd --type d --hidden --follow --exclude ".git" . "$1"
+    fd --type d --hidden --follow --exclude ".git" . "$1"
 }
 
 # source .sh_extra if it exists
@@ -193,30 +197,30 @@ prompt pure
 term="$(getTerm)"
 case $term in
 
-	"konsole") ;;
+    "konsole") ;;
 
-	"kitty") 
-		# Enable blurred transparency for Kitty
-		if [[ $(ps --no-header -p $PPID -o comm | grep -Ev '^(yakuake|konsole)$' ) ]]; then
-			for wid in $(xdotool search --pid $PPID); do
-				xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -id $wid; done
-		fi
+    "kitty") 
+        # Enable blurred transparency for Kitty
+        if [[ $(ps --no-header -p $PPID -o comm | grep -Ev '^(yakuake|konsole)$' ) ]]; then
+            for wid in $(xdotool search --pid $PPID); do
+                xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -id $wid; done
+        fi
 
-		# Change neofetch img backend and source
-		if [[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]]; then
-			alias neofetch='printf %$(tput lines)s | tr " " "\n"; /bin/neofetch --backend kitty --source "$NEOFETCH_IMG" && printf "\e[2A"'
-		fi
-		;;
+        # Change neofetch img backend and source
+        if [[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]]; then
+            alias neofetch='printf %$(tput lines)s | tr " " "\n"; /bin/neofetch --backend kitty --source "$NEOFETCH_IMG" && printf "\e[2A"'
+        fi
+        ;;
 
 esac
 
 # post init
 updateKittyTabTitle
-if	[ ! $UID = 0 ] &&
-	[ ! $term = "init" ] &&  # WSL
-	[ ! $term = "code" ];   # vscode
+if  [ ! $UID = 0 ] &&
+    [ ! $term = "init" ] &&  # WSL
+    [ ! $term = "code" ];   # vscode
 then
-	eval neofetch
+    eval neofetch
 fi
 
 
