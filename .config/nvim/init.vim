@@ -10,7 +10,7 @@ set rnu
 set autoindent
 set shiftwidth=4
 set tabstop=4
-set softtabstop=4
+set softtabstop=-1
 set expandtab
 set ignorecase
 set smartcase

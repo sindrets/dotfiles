@@ -32,11 +32,8 @@ export LESS=-r # scroll pager with mouse wheel.
 export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
 export GIT_DIRECTORY="$HOME/Documents/git"
-
-# use nvim as man pager
-export PAGER="/bin/sh -c \"unset PAGER;col -b -x | \
-    nvim -R -c 'set ft=man nomod nolist' \
-    -c 'nmap K :Man <C-R>=expand(\\\"<cword>\\\")<CR><CR>' -\""
+export MANPAGER="nvim -c 'set ft=man nomod nolist' \
+    -c 'nmap K :Man <C-R>=expand(\"<cword>\")<CR><CR>'"
 
 eval `dircolors "$HOME/.dir_colors"`
 
@@ -223,4 +220,4 @@ then
     eval neofetch
 fi
 
-
+# vim: sw=4
