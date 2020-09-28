@@ -53,6 +53,7 @@ let g:lightline#bufferline#clickable = 1
 
 function! LightlineShouldIgnore()
     return &ft == "CHADTree"
+                \ || buffer_name() =~ "\\[coc-explorer\\]"
 endfunction
 
 function! LightlineMode()

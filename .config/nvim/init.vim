@@ -38,7 +38,7 @@ highlight ColorColumn ctermbg=0
 
 " render whitespace
 set list
-set listchars=tab:\ ―►,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:»
+set listchars=tab:\ ――,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:»
 set showbreak=⤷\ 
 
 syntax on
@@ -57,6 +57,9 @@ let g:python_recommended_style = 0
 let g:slime_target = "tmux"
 let g:slime_default_config = {"socket_name": get(split($TMUX, ","), 0), "target_pane": ":.2"}
 
+let g:NERDSpaceDelims = 1
+let g:NERDDefaultAlign = 'left'
+
 let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.xml'
 let g:closetag_filetypes = 'html,xhtml,phtml,xml'
 
@@ -65,7 +68,7 @@ let g:user_emmet_leader_key='<C-Z>'
 let g:mkdp_browserfunc = "MkdpOpenInNewWindow"
 
 source ~/.config/nvim/lightline-config.vim
-source ~/.config/nvim/chadtree-config.vim
+" source ~/.config/nvim/chadtree-config.vim
 
 call plug#begin("~/.vim/bundle")
 " SYNTAX
@@ -119,6 +122,7 @@ Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile'}
 Plug 'iamcco/coc-vimlsp', {'do': 'yarn install --frozen-lockfile'}
+Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
 " Theme settings
@@ -163,8 +167,8 @@ vnoremap <C-x> "+d
 nnoremap <S-P> "+p
 
 " File explorer
-map <silent> <Leader>e :call CHADtreeFocus()<CR>
-map <silent> <Leader>b :call CHADtreeToggle()<CR>
+map <silent> <Leader>e :call CocExplorerFocus()<CR>
+map <silent> <Leader>b :call CocExplorerToggle()<CR>
 
 nnoremap <silent> <Leader>q :q<CR>
 inoremap <M-Space> <Esc>
@@ -181,6 +185,9 @@ map <silent> <Leader><S-Tab> :tabp<CR>
 
 " Remap jump forward
 nnoremap <C-S> <C-I>
+
+" Search for selected text
+vnoremap // "vy/\V<C-R>=escape(@",'/\')<CR><CR>
 
 " Navigate windows
 tnoremap <A-h> <C-\><C-N><C-w>h
@@ -263,7 +270,7 @@ inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
             \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gv <C-W>v<Plug>(coc-definition)
+nmap <silent> gV <C-W>v<Plug>(coc-definition)
 nmap <silent> gs <C-W>s<Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
@@ -361,7 +368,10 @@ function! FocusTerminalSplit()
         belowright split | term
         set nobuflisted | file! term_split
         let g:term_split_winid = win_getid()
-        au WinClosed <buffer> let g:term_split_height = winheight("%")
+        augroup term_split
+            au!
+            au WinClosed <buffer> let g:term_split_height = winheight("%")
+        augroup END
         exec "res " . min([g:term_split_height, float2nr(&lines / 2)])
         startinsert
     endif
@@ -429,6 +439,10 @@ function! CHADtreeFocus()
             sleep 1m
         endwhile
         let g:chadtree_winid = win_getid()
+        augroup chadtree_focus
+            au!
+            au WinClosed <buffer> unlet g:chadtree_winid
+        augroup END
     endif
 endfunction
 
@@ -438,6 +452,32 @@ function! CHADtreeToggle()
         wincmd q
     else
         call CHADtreeFocus()
+    endif
+endfunction
+
+function! CocExplorerFocus()
+    if exists("g:cocexplorer_winid") && win_id2win(g:cocexplorer_winid) > 0
+        call win_gotoid(g:cocexplorer_winid)
+    else
+        let cur_winid = win_getid()
+        CocCommand explorer
+        while win_getid() == cur_winid
+            sleep 1m
+        endwhile
+        let g:cocexplorer_winid = win_getid()
+        augroup coc_explorer_focus
+            au!
+            au WinClosed <buffer> unlet g:cocexplorer_winid
+        augroup END
+    endif
+endfunction
+
+function! CocExplorerToggle()
+    if exists("g:cocexplorer_winid") && win_id2win(g:cocexplorer_winid) > 0
+        call win_gotoid(g:cocexplorer_winid)
+        wincmd q
+    else
+        call CocExplorerFocus()
     endif
 endfunction
 

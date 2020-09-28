@@ -1,0 +1,3 @@
+#!/usr/bin/sh
+
+eval $(realpath -m "$0"/../term-key-tester-src/term_key_tester)
