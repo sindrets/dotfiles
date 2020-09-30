@@ -167,8 +167,8 @@ vnoremap <C-x> "+d
 nnoremap <S-P> "+p
 
 " File explorer
-map <silent> <Leader>e :call CocExplorerFocus()<CR>
-map <silent> <Leader>b :call CocExplorerToggle()<CR>
+map <silent> <Leader>e :CocCommand explorer --no-toggle<CR>
+map <silent> <Leader>b :CocCommand explorer --toggle<CR>
 
 nnoremap <silent> <Leader>q :q<CR>
 inoremap <M-Space> <Esc>
@@ -452,32 +452,6 @@ function! CHADtreeToggle()
         wincmd q
     else
         call CHADtreeFocus()
-    endif
-endfunction
-
-function! CocExplorerFocus()
-    if exists("g:cocexplorer_winid") && win_id2win(g:cocexplorer_winid) > 0
-        call win_gotoid(g:cocexplorer_winid)
-    else
-        let cur_winid = win_getid()
-        CocCommand explorer
-        while win_getid() == cur_winid
-            sleep 1m
-        endwhile
-        let g:cocexplorer_winid = win_getid()
-        augroup coc_explorer_focus
-            au!
-            au WinClosed <buffer> unlet g:cocexplorer_winid
-        augroup END
-    endif
-endfunction
-
-function! CocExplorerToggle()
-    if exists("g:cocexplorer_winid") && win_id2win(g:cocexplorer_winid) > 0
-        call win_gotoid(g:cocexplorer_winid)
-        wincmd q
-    else
-        call CocExplorerFocus()
     endif
 endfunction
 

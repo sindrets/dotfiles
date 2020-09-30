@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+
+# dotfiles log | grep -Po "(?<=commit )[a-zA-Z0-9]{40}"
+
+# GIT_CMD="dotfiles" git-file-history <FILE> <NUM-COMMITS> [START-COMMIT]
+
+GIT_CMD=$([ ! -z "$GIT_CMD" ] && echo "$GIT_CMD" || echo "git")
+file_path="$1"
+file_name="$(basename "$file_path")"
+num_commits="$2"
+start_commit=$([ ! -z "$3" ] && echo "$3" || echo "")
+output="$(realpath -m "./file-history")"
+
+start_found=$([ ! -z "$start_commit" ] && echo 1 || echo 0)
+commit_count=0
+
+mkdir -p "$output"
+
+while read HASH; do
+    if [ $start_found -eq 1 ]; then
+        if [ "$HASH" = "$start_commit"]; then
+            start_found=0
+        else
+            continue
+        fi
+    fi
+
+    eval "$GIT_CMD show $HASH:$file_path > '$output/${commit_count}_${HASH}_$file_name'"
+    ((commit_count+=1))
+    [ $commit_count -ge $num_commits ] && break
+done <<< $(eval "$GIT_CMD log | grep -Po '(?<=commit )[a-zA-Z0-9]{40}'")
+
+echo " ✅ $commit_count files emitted to '$output'."
