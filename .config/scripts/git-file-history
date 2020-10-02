@@ -1,8 +1,9 @@
 #!/usr/bin/env sh
 
-# dotfiles log | grep -Po "(?<=commit )[a-zA-Z0-9]{40}"
-
-# GIT_CMD="dotfiles" git-file-history <FILE> <NUM-COMMITS> [START-COMMIT]
+if [ "$#" -eq 0 ]; then
+    echo "usage: git-file-history <FILE> <NUM-COMMITS> [START-COMMIT]"
+    exit
+fi
 
 GIT_CMD=$([ ! -z "$GIT_CMD" ] && echo "$GIT_CMD" || echo "git")
 file_path="$1"
