@@ -22,7 +22,8 @@ set cursorline
 set splitbelow
 set splitright
 set wrap linebreak
-set updatetime=1000
+set noswapfile
+set updatetime=100
 set backspace=indent,eol,start
 set pyx=3
 set pyxversion=3
@@ -282,6 +283,8 @@ nmap <leader>. :CocAction<CR>
 
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+nnoremap <silent> <leader>k :GitGutterPreviewHunk<CR>
 
 xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
 

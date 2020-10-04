@@ -35,7 +35,7 @@ font-1 = "Noto Color Emoji:scale=10"
 font-2 = "Material Design Icons:size=12;1"
 font-3 = "Source Han Sans:size=10;1"
 font-4 = "Font Awesome 5 Brands:size=10;1"
-font-5 = "GothamRounded:style=semi-light:size=10;1"
+font-5 = "Rounded M+ 1p:style=heavy:size=10;1"
 #font-1 = "Font Awesome 5 Free:style=Solid:size=10;1"
 
 modules-left = i3 player

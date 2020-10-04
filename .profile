@@ -54,6 +54,7 @@ eval `dircolors "$HOME/.dir_colors"`
 
 if [ -z "$SSH_AUTH_SOCK" ] ; then
   eval `ssh-agent -s`
+  ssh-add
 fi
 
 if [ -e "$HOME/.profile_extra" ]; then

@@ -10,7 +10,7 @@
 configuration {
     font:                           "Noto Sans 10";
     show-icons:                     true;
-	icon-theme: 					"Flat-Remix-Blue";
+	icon-theme:                     "Reversal-blue";
     display-drun: 					"";
 	display-run:					"";
 	display-window:					"";
