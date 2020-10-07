@@ -13,7 +13,7 @@ bindsym $mod+u border none
 bindsym $mod+y border pixel 1
 bindsym $mod+n border normal 1
 
-font pango:Iosevka Term Semi-Bold 10
+font pango:Noto Sans Bold 10
 
 floating_modifier $mod
 
@@ -167,7 +167,7 @@ for_window [title="i3_help"] floating enable sticky enable border normal
 for_window [class="Lightdm-gtk-greeter-settings"] floating enable
 for_window [class="Lxappearance"] floating enable sticky enable border normal
 for_window [class="Nitrogen"] floating enable border normal
-for_window [class="Pavucontrol"] floating enable
+for_window [class="pavucontrol-qt"] floating enable border normal
 for_window [class="qt5ct"] floating enable sticky enable border normal
 for_window [class="Subl3"] floating enable border pixel 1
 for_window [class="Insync"] floating enable border normal

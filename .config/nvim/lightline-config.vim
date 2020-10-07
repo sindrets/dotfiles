@@ -1,5 +1,5 @@
 let g:lightline = {
-            \   "colorscheme": "one",
+            \   "colorscheme": "codedark",
             \   "active": {
             \       "left": [
             \           [ "mode", "paste" ],
@@ -53,7 +53,7 @@ let g:lightline#bufferline#clickable = 1
 
 function! LightlineShouldIgnore()
     return &ft == "CHADTree"
-                \ || buffer_name() =~ "\\[coc-explorer\\]"
+                \ || bufname("%") =~ "\\[coc-explorer\\]"
 endfunction
 
 function! LightlineMode()
@@ -61,8 +61,9 @@ function! LightlineMode()
 endfunction
 
 function! LightlineGitbranch()
+    let branch = FugitiveHead()
     return LightlineShouldIgnore()
-                \ || winwidth(0) < 70 ? "" : FugitiveHead()
+                \ || winwidth(0) < 70 || branch == "" ? "" : " " . branch
 endfunction
 
 function! LightlineFilename()

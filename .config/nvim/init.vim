@@ -113,6 +113,8 @@ Plug 'junegunn/seoul256.vim'
 Plug 'drewtempelmeyer/palenight.vim'
 Plug 'arzg/vim-colors-xcode'
 Plug 'haishanh/night-owl.vim'
+Plug 'KeitaNakamura/neodark.vim'
+Plug 'dim13/smyck.vim'
 " CoC
 Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
@@ -131,13 +133,33 @@ let ayucolor="dark"
 let g:material_terminal_italics = 1
 let g:material_theme_style = 'darker'
 let g:gruvbox_italic = 1
-let g:gruvbox_contrast_dark = "hard"
+let g:gruvbox_contrast_dark = "medium"
 let g:gruvbox_invert_selection = 0
 let base16colorspace = 256
 let g:seoul256_background = 234
 let g:palenight_terminal_italics=1
+let g:neodark#background = '#202020'
+let g:neodark#use_256color = 0
+let g:neodark#solid_vertsplit = 1
 set background=dark
-colorscheme xcodedark
+colorscheme codedark
+hi NonText guibg=NONE
+hi DiffAdd    ctermbg=4 guifg=#acf2e4 guibg=#243330
+hi DiffChange ctermbg=5 guifg=#ffa14f guibg=NONE
+hi DiffDelete ctermfg=12 ctermbg=6 guifg=#ff8170 guibg=#3b2d2b
+hi DiffText   ctermbg=9 guifg=#ffa14f guibg=#382e27
+hi link diffAdded       DiffAdd
+hi link diffChanged     DiffChange
+hi link diffRemoved     DiffDelete
+hi link diffBDiffer     WarningMsg
+hi link diffCommon      WarningMsg
+hi link diffDiffer      WarningMsg
+hi link diffFile        Directory
+hi link diffIdentical   WarningMsg
+hi link diffIndexLine   Number
+hi link diffIsA         WarningMsg
+hi link diffNoEOL       WarningMsg
+hi link diffOnly        WarningMsg
 " Override ruler column from theme
 " highlight ColorColumn guibg=#282a2e
 
