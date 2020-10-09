@@ -35,7 +35,6 @@ endif
 
 " ruler
 set colorcolumn=100
-highlight ColorColumn ctermbg=0
 
 " render whitespace
 set list
@@ -115,6 +114,8 @@ Plug 'arzg/vim-colors-xcode'
 Plug 'haishanh/night-owl.vim'
 Plug 'KeitaNakamura/neodark.vim'
 Plug 'dim13/smyck.vim'
+Plug 'barlog-m/oceanic-primal-vim', {'branch': 'main'}
+Plug 'jacoborus/tender.vim'
 " CoC
 Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
@@ -129,39 +130,7 @@ Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
 " Theme settings
-let ayucolor="dark"
-let g:material_terminal_italics = 1
-let g:material_theme_style = 'darker'
-let g:gruvbox_italic = 1
-let g:gruvbox_contrast_dark = "medium"
-let g:gruvbox_invert_selection = 0
-let base16colorspace = 256
-let g:seoul256_background = 234
-let g:palenight_terminal_italics=1
-let g:neodark#background = '#202020'
-let g:neodark#use_256color = 0
-let g:neodark#solid_vertsplit = 1
-set background=dark
-colorscheme codedark
-hi NonText guibg=NONE
-hi DiffAdd    ctermbg=4 guifg=#acf2e4 guibg=#243330
-hi DiffChange ctermbg=5 guifg=#ffa14f guibg=NONE
-hi DiffDelete ctermfg=12 ctermbg=6 guifg=#ff8170 guibg=#3b2d2b
-hi DiffText   ctermbg=9 guifg=#ffa14f guibg=#382e27
-hi link diffAdded       DiffAdd
-hi link diffChanged     DiffChange
-hi link diffRemoved     DiffDelete
-hi link diffBDiffer     WarningMsg
-hi link diffCommon      WarningMsg
-hi link diffDiffer      WarningMsg
-hi link diffFile        Directory
-hi link diffIdentical   WarningMsg
-hi link diffIndexLine   Number
-hi link diffIsA         WarningMsg
-hi link diffNoEOL       WarningMsg
-hi link diffOnly        WarningMsg
-" Override ruler column from theme
-" highlight ColorColumn guibg=#282a2e
+source ~/.config/nvim/color-config.vim
 
 " Allow movement through display lines (wrapped lines)
 nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
@@ -309,32 +278,6 @@ nnoremap <silent> K :call <SID>show_documentation()<CR>
 nnoremap <silent> <leader>k :GitGutterPreviewHunk<CR>
 
 xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
-
-" Neovim Terminal Colors
-" black
-let g:terminal_color_0 =   "#222222"
-let g:terminal_color_8 =   "#666666"
-" red
-let g:terminal_color_1 =   "#e84f4f"
-let g:terminal_color_9 =   "#d23d3d"
-" green
-let g:terminal_color_2 =   "#b7ce42"
-let g:terminal_color_10 =  "#bde077"
-" yellow
-let g:terminal_color_3 =   "#fea63c"
-let g:terminal_color_11 =  "#ffe863"
-" blue
-let g:terminal_color_4 =   "#66a9b9"
-let g:terminal_color_12 =  "#aaccbb"
-" magenta
-let g:terminal_color_5 =   "#b7416e"
-let g:terminal_color_13 =  "#e16a98"
-" cyan
-let g:terminal_color_6 =   "#6dc1b6"
-let g:terminal_color_14 =  "#42717b"
-" white
-let g:terminal_color_7 =   "#cccccc"
-let g:terminal_color_15 =  "#ffffff"
 
 command! -nargs=+ Rnew call ReadNew(<q-args>)
 command! Synsync syntax sync minlines=3000
