@@ -116,6 +116,7 @@ Plug 'KeitaNakamura/neodark.vim'
 Plug 'dim13/smyck.vim'
 Plug 'barlog-m/oceanic-primal-vim', {'branch': 'main'}
 Plug 'jacoborus/tender.vim'
+Plug 'ntk148v/vim-horizon'
 " CoC
 Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}

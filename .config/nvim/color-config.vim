@@ -1,4 +1,4 @@
-let g:colorscheme = "tender"
+let g:colorscheme = "horizon"
 
 let ayucolor="dark"
 let g:material_terminal_italics = 1
@@ -69,5 +69,9 @@ elseif g:colorscheme ==# "tender"
     hi Visual cterm=NONE ctermbg=237 gui=NONE guibg=#293b44
     hi VertSplit ctermfg=234 ctermbg=234 guifg=#202020 guibg=NONE
     hi Search cterm=bold ctermfg=15 gui=bold ctermfg=250 ctermbg=242 guifg=#dddddd guibg=#7a6a24
+    call SaneDiffDefaults()
+elseif g:colorscheme ==# "horizon"
+    hi NonText guibg=NONE
+    hi VertSplit cterm=bold ctermfg=233 ctermbg=NONE gui=bold guifg=#0f1117 guibg=NONE
     call SaneDiffDefaults()
 endif
