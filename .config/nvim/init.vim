@@ -78,7 +78,6 @@ Plug 'vim-scripts/TagHighlight'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
-Plug 'ap/vim-css-color'
 Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
@@ -128,6 +127,7 @@ Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
 Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile'}
 Plug 'iamcco/coc-vimlsp', {'do': 'yarn install --frozen-lockfile'}
 Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile'}
 call plug#end()
 
 " Theme settings
@@ -280,8 +280,10 @@ nnoremap <silent> <leader>k :GitGutterPreviewHunk<CR>
 
 xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
 
+inoremap <silent> <Tab> <C-\><C-O>:call FullIndent()<CR>
+
 command! -nargs=+ Rnew call ReadNew(<q-args>)
-command! Synsync syntax sync minlines=3000
+command! Ssync syntax sync minlines=3000
 
 " Wrapper function to allow exec calls from expressions
 function! Exec(cmd)
@@ -398,6 +400,59 @@ function! s:show_documentation()
     call CocAction('doHover')
 endfunction
 
+function! GetIndentLevel()
+    let l:lnum = line(".")
+    if l:lnum ==# 0
+        return 0
+    endif
+    let l:indent = cindent(l:lnum)
+    return l:indent
+endfunction
+
+" Insert the appropriate number of indent chars if there is no text on the
+" line, the cursor is on the last column of the line, and current indentation
+" level is less than appropriate.
+function! FullIndent()
+    let [_, l:lnum, l:col, _, _] = getcurpos()
+    let l:cur_view = winsaveview()
+    normal $
+    let l:lastCol = getcurpos()[2]
+    normal 0
+    let l:first_nonspace = searchpos("\S", "nc", l:lnum)[1]
+    call winrestview(l:cur_view)
+
+    if l:first_nonspace > 0 || l:col < l:lastCol
+        call feedkeys("\<Tab>", "n")
+        return
+    endif
+
+    let l:indent = GetIndentLevel()
+
+    if &et
+        if l:indent == 0
+            let l:indent = &sw > 0 ? &sw : 4
+        endif
+        if l:indent < l:col
+            call feedkeys("\<Tab>", "n")
+            return
+        endif
+        normal d0x
+        execute("call feedkeys('" . repeat(" ", l:indent) . "', 'n')")
+    else
+        if l:indent == 0
+            let l:indent = &ts > 0 ? &ts : 4
+        endif
+        if l:indent < l:col
+            call feedkeys("\<Tab>", "n")
+            return
+        endif
+        let l:ntabs = l:indent / &ts
+        let l:nspaces = l:indent - l:ntabs * &ts
+        normal d0x
+        execute("call feedkeys('" . repeat("\<Tab>", l:ntabs) . repeat(" ", l:nspaces) . "', 'n')")
+    endif
+endfunction
+
 function! CHADtreeFocus()
     if exists("g:chadtree_winid") && win_id2win(g:chadtree_winid) > 0
         call win_gotoid(g:chadtree_winid)
@@ -465,7 +520,7 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 function! s:filter_header(lines) abort
     let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
     let centered_lines = map(copy(a:lines),
-        \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
+                \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
     return centered_lines
 endfunction
 let s:startify_ascii_header = [
@@ -480,4 +535,4 @@ let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
 
 exec SourceProjectConfig()
 
-" vim: shiftwidth=4 tabstop=4 expandtab
+" vim: sw=4 ts=4 et

@@ -70,8 +70,50 @@ elseif g:colorscheme ==# "tender"
     hi VertSplit ctermfg=234 ctermbg=234 guifg=#202020 guibg=NONE
     hi Search cterm=bold ctermfg=15 gui=bold ctermfg=250 ctermbg=242 guifg=#dddddd guibg=#7a6a24
     call SaneDiffDefaults()
+
 elseif g:colorscheme ==# "horizon"
-    hi NonText guibg=NONE
+    hi NonText ctermfg=233 ctermbg=233 guifg=#343747 guibg=NONE
     hi VertSplit cterm=bold ctermfg=233 ctermbg=NONE gui=bold guifg=#0f1117 guibg=NONE
+    hi Pmenu ctermfg=255 ctermbg=240 guifg=#eff0f4 guibg=#5b6389
+    hi PmenuSel ctermbg=236 guibg=#272c42
+    hi PmenuSbar ctermbg=236 guibg=#3d425b
+    hi PmenuThumb ctermbg=233 guibg=#1c1e26
+    hi CursorLineNr cterm=bold gui=bold ctermfg=48 guifg=#09f7a0 ctermbg=NONE guibg=NONE
+    hi link vimVar NONE
+    hi link vimFuncVar NONE
+    hi link vimUserFunc NONE
     call SaneDiffDefaults()
+endif
+
+if g:lightline.colorscheme ==# "horizon"
+    let s:gray1 = [ '#2e303e', 235 ]
+    let s:gray2 = [ '#141414', 233 ]
+    let s:white = [ '#6c6f93', 242 ]
+    let s:cyan = [ '#25b0bc', 37 ]
+    let s:green = [ '#09f7a0', 48 ]
+    let s:purple = [ '#b877db', 171 ]
+    let s:red = [ '#e95678', 203 ]
+    let s:yellow = [ '#09f7a0', 150 ]
+    let s:salmon = [ '#fab795', 209 ]
+
+    let s:p = {'normal': {}, 'inactive': {}, 'insert': {}, 'replace': {}, 'visual': {}, 'tabline': {}}
+    let s:p.normal.left = [ [ s:gray1, s:salmon ], [ s:red, s:gray2 ] ]
+    let s:p.normal.right = [ [ s:gray1, s:salmon ], [ s:gray1, s:yellow ] ]
+    let s:p.inactive.right = [ [ s:gray1, s:gray2 ], [ s:white, s:gray1 ] ]
+    let s:p.inactive.left =  [ [ s:cyan, s:gray1 ], [ s:white, s:gray1 ] ]
+    let s:p.insert.left = [ [ s:gray1, s:purple ], [ s:green, s:gray2 ] ]
+    let s:p.insert.right = [ [ s:gray1, s:purple ], [ s:gray1, s:yellow ] ]
+    let s:p.replace.left = [ [ s:gray1, s:red ], [ s:cyan, s:gray2 ] ]
+    let s:p.visual.left = [ [ s:gray1, s:cyan ], [ s:purple, s:gray2 ] ]
+    let s:p.visual.right = [ [ s:gray1, s:cyan ], [ s:gray1, s:yellow ] ]
+    let s:p.normal.middle = [ [ s:white, s:gray2 ] ]
+    let s:p.inactive.middle = [ [ s:white, s:gray2 ] ]
+    let s:p.tabline.left = [ [ s:cyan, s:gray2 ] ]
+    let s:p.tabline.tabsel = [ [ s:green, s:gray1 ] ]
+    let s:p.tabline.middle = [ [ s:yellow, s:gray2 ] ]
+    let s:p.tabline.right = copy(s:p.normal.right)
+    let s:p.normal.error = [ [ s:red, s:gray1 ] ]
+    let s:p.normal.warning = [ [ s:yellow, s:gray1 ] ]
+
+    let g:lightline#colorscheme#horizon#palette = lightline#colorscheme#flatten(s:p)
 endif
