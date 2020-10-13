@@ -51,6 +51,7 @@ if filereadable(s:init_extra_path)
 endif
 
 let mapleader = " "                             " set the leader key
+let g:netrw_liststyle= 3
 let g:startify_session_dir="$HOME/.vim/session"
 let g:python_recommended_style = 0
 
@@ -117,17 +118,17 @@ Plug 'barlog-m/oceanic-primal-vim', {'branch': 'main'}
 Plug 'jacoborus/tender.vim'
 Plug 'ntk148v/vim-horizon'
 " CoC
-Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-java', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-pairs', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile'}
-Plug 'iamcco/coc-vimlsp', {'do': 'yarn install --frozen-lockfile'}
-Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile'}
-Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile'}
+Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+Plug 'neoclide/coc-java', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+Plug 'neoclide/coc-pairs', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+Plug 'iamcco/coc-vimlsp', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
 call plug#end()
 
 " Theme settings
@@ -488,34 +489,28 @@ function! CocJavaClearCache()
                 \ . '" | md5sum | awk "{print \$1}")')
 endfunction
 
+function! s:isdir(dir)
+    return !empty(a:dir) && (isdirectory(a:dir) ||
+                \ (!empty($SYSTEMDRIVE) && isdirectory('/'.tolower($SYSTEMDRIVE[0]).a:dir)))
+endfunction
+
 " AutoCommands
+augroup init_vim
+    au!
+    " nuke netrw brain damage
+    autocmd VimEnter * silent! au! FileExplorer *
+    autocmd BufEnter *
+                \ if <SID>isdir(expand('%')) | bd | endif
 
-"   Restore cursor pos
-autocmd BufReadPost *
-    \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-    \ |   exe "normal! g`\"zz"
-    \ | endif
+    " Restore cursor pos
+    autocmd BufReadPost *
+                \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+                \ |   exe "normal! g`\"zz"
+                \ | endif
 
-"   Highlight the symbol and its references when holding the cursor.
-autocmd CursorHold * silent call CocActionAsync('highlight')
-
-"   Update NERDtree dir on dir change
-" autocmd DirChanged *
-"     \ exec SourceProjectConfig()
-"     \ | NERDTreeCWD | wincmd p
-
-"   Update NERDtree when new file is written
-" let s:should_refresh_tree = 0
-" autocmd BufWrite *
-"     \ if !filereadable(expand("%:p"))
-"     \ |     let s:should_refresh_tree = 1
-"     \ | endif
-
-" autocmd BufWritePost *
-"     \ if s:should_refresh_tree
-"     \ |     NERDTreeRefreshRoot | NERDTreeRefreshRoot
-"     \ |     let s:should_refresh_tree = 0
-"     \ | endif
+    " Highlight the symbol and its references when holding the cursor.
+    autocmd CursorHold * silent call CocActionAsync('highlight')
+augroup END
 
 function! s:filter_header(lines) abort
     let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))

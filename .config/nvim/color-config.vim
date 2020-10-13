@@ -72,7 +72,7 @@ elseif g:colorscheme ==# "tender"
     call SaneDiffDefaults()
 
 elseif g:colorscheme ==# "horizon"
-    hi NonText ctermfg=233 ctermbg=233 guifg=#343747 guibg=NONE
+    hi NonText ctermfg=233 ctermbg=233 guifg=#414559 guibg=NONE
     hi VertSplit cterm=bold ctermfg=233 ctermbg=NONE gui=bold guifg=#0f1117 guibg=NONE
     hi Pmenu ctermfg=255 ctermbg=240 guifg=#eff0f4 guibg=#5b6389
     hi PmenuSel ctermbg=236 guibg=#272c42
