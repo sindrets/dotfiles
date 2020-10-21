@@ -74,10 +74,10 @@ elseif g:colorscheme ==# "tender"
 elseif g:colorscheme ==# "horizon"
     hi NonText ctermfg=233 ctermbg=233 guifg=#414559 guibg=NONE
     hi VertSplit cterm=bold ctermfg=233 ctermbg=NONE gui=bold guifg=#0f1117 guibg=NONE
-    hi Pmenu ctermfg=255 ctermbg=240 guifg=#eff0f4 guibg=#5b6389
-    hi PmenuSel ctermbg=236 guibg=#272c42
+    hi Pmenu ctermfg=255 ctermbg=236 guibg=#272c42 guifg=#eff0f4
+    hi PmenuSel ctermfg=255 ctermbg=240 guibg=#5b6389
     hi PmenuSbar ctermbg=236 guibg=#3d425b
-    hi PmenuThumb ctermbg=233 guibg=#1c1e26
+    hi PmenuThumb ctermbg=233 guibg=#0f1117
     hi CursorLineNr cterm=bold gui=bold ctermfg=48 guifg=#09f7a0 ctermbg=NONE guibg=NONE
     hi link vimVar NONE
     hi link vimFuncVar NONE

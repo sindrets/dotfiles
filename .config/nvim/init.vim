@@ -68,6 +68,10 @@ let g:user_emmet_leader_key='<C-Z>'
 
 let g:mkdp_browserfunc = "MkdpOpenInNewWindow"
 
+if executable('ag')
+    let g:ackprg = 'ag --vimgrep'
+endif
+
 source ~/.config/nvim/lightline-config.vim
 " source ~/.config/nvim/chadtree-config.vim
 
@@ -84,6 +88,7 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'mileszs/ack.vim'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-abolish'
 Plug 'alvan/vim-closetag'
@@ -498,18 +503,21 @@ endfunction
 augroup init_vim
     au!
     " nuke netrw brain damage
-    autocmd VimEnter * silent! au! FileExplorer *
-    autocmd BufEnter *
+    au VimEnter * silent! au! FileExplorer *
+    au BufEnter *
                 \ if <SID>isdir(expand('%')) | bd | endif
 
     " Restore cursor pos
-    autocmd BufReadPost *
+    au BufReadPost *
                 \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
                 \ |   exe "normal! g`\"zz"
                 \ | endif
 
     " Highlight the symbol and its references when holding the cursor.
-    autocmd CursorHold * silent call CocActionAsync('highlight')
+    au CursorHold * silent call CocActionAsync('highlight')
+
+    " Highlight yanks
+    au TextYankPost * silent! lua vim.highlight.on_yank{higroup="Visual", timeout=300}
 augroup END
 
 function! s:filter_header(lines) abort
