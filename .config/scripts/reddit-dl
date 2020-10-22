@@ -1,0 +1,72 @@
+#!/usr/bin/bash
+# Script for downloading reddit videos.
+# Dependencies: coreutils, wget, jq, yq
+# Usage: reddit-dl <URL> [OUTPUT_PATH]
+
+url="$1"
+output_path="$2"
+temp_name="$(printf "$url" | md5sum | awk '{print $1}')"
+temp_path="/tmp/reddit-dl/$temp_name"
+
+function usage() {
+    echo "Usage: reddit-dl <URL> [OUTPUT_PATH]"
+}
+
+if [ -z "$url" ]; then
+    echo "No URL was supplied!"
+    usage
+    exit 1
+fi
+url="$(echo $url | sed 's/www.reddit/old.reddit/')"
+
+if [ -z "$output_path" ]; then
+    output_path="$HOME/Videos/reddit-dl"
+    mkdir -p "$HOME/Videos/reddit-dl"
+fi
+if [ ! -d "$output_path" ]; then
+    echo "'$output_path' does not exist or is not a directory!"
+    usage
+    exit 1
+fi
+output_path="$(realpath -m "$output_path")"
+
+rm -rf "$temp_path"
+mkdir -p "$temp_path"
+cd "$temp_path"
+
+echo "Downloading page..."
+wget -nv -O "index.html" "$url"
+
+echo "Parsing page..."
+video_url=$(
+    sed -n -E "s/.*<script [^>]*?id=.config.[^>]*>r.setup\(([^<]*?)\)<\/script>.*/\1/p" index.html \
+        | jq -r ".event_target.target_url"
+)
+
+wget -nv "$video_url/DASHPlaylist.mpd"
+
+cat DASHPlaylist.mpd | xq "." > data.json
+audio_data="$(jq ".MPD.Period.AdaptationSet[0].Representation" data.json)"
+video_list_data="$(jq ".MPD.Period.AdaptationSet[1].Representation" data.json)"
+video_data=""
+
+max=0
+for ((i=0; i<$(echo "$video_list_data" | jq ". | length"); i++)); do
+    cur="$(echo "$video_list_data" | jq ".[$i]")"
+    cur_height=$(echo "$cur" | jq -r '."@height"')
+    if [ $cur_height -gt $max ]; then
+        max=$cur_height
+        video_data="$cur"
+    fi
+done
+
+echo "Downloading audio..."
+wget -nv "$(echo "$audio_data" | jq -r '.BaseURL')" -O audio.mp3
+
+echo "Downloading video..."
+wget -nv "$(echo "$video_data" | jq -r '.BaseURL')" -O video.mp4
+
+echo "Merging media..."
+ffmpeg -loglevel 16 -i video.mp4 -i audio.mp3 -c:v copy -c:a aac "$output_path/$temp_name.mp4"
+
+echo "Created '$output_path/$temp_name.mp4' successfully!"
