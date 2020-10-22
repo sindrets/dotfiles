@@ -12,6 +12,10 @@ function usage() {
     echo "Usage: reddit-dl <URL> [OUTPUT_PATH]"
 }
 
+function is_url() {
+    echo "$1" | grep -q '^http'
+}
+
 if [ -z "$url" ]; then
     echo "No URL was supplied!"
     usage
@@ -34,10 +38,10 @@ rm -rf "$temp_path"
 mkdir -p "$temp_path"
 cd "$temp_path"
 
-echo "Downloading page..."
+echo " • Downloading page..."
 wget -nv -O "index.html" "$url"
 
-echo "Parsing page..."
+echo " • Parsing page..."
 video_url=$(
     sed -n -E "s/.*<script [^>]*?id=.config.[^>]*>r.setup\(([^<]*?)\)<\/script>.*/\1/p" index.html \
         | jq -r ".event_target.target_url"
@@ -60,13 +64,21 @@ for ((i=0; i<$(echo "$video_list_data" | jq ". | length"); i++)); do
     fi
 done
 
-echo "Downloading audio..."
-wget -nv "$(echo "$audio_data" | jq -r '.BaseURL')" -O audio.mp3
+echo " • Downloading audio..."
+u="$(echo $audio_data"" | jq -r '.BaseURL')"
+if ! is_url "$u"; then
+    u="$video_url/$u"
+fi
+wget -nv "$u" -O audio.mp3
 
-echo "Downloading video..."
-wget -nv "$(echo "$video_data" | jq -r '.BaseURL')" -O video.mp4
+echo " • Downloading video..."
+u="$(echo "$video_data" | jq -r '.BaseURL')"
+if ! is_url "$u"; then
+    u="$video_url/$u"
+fi
+wget -nv "$u" -O video.mp4
 
-echo "Merging media..."
+echo " • Merging media..."
 ffmpeg -loglevel 16 -i video.mp4 -i audio.mp3 -c:v copy -c:a aac "$output_path/$temp_name.mp4"
 
-echo "Created '$output_path/$temp_name.mp4' successfully!"
+[ $? -eq 0 ] && echo " ✅ Created '$output_path/$temp_name.mp4' successfully!"
