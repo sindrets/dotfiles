@@ -75,6 +75,13 @@ endif
 source ~/.config/nvim/lightline-config.vim
 " source ~/.config/nvim/chadtree-config.vim
 
+function FuncCocPlug(repo)
+    execute "Plug '" . a:repo . "',  {'do': 'yarn install --frozen-lockfile && npm prune "
+                \ . "--production'}"
+endfunction
+
+command! -nargs=1 CocPlug call FuncCocPlug(<args>)
+
 call plug#begin("~/.vim/bundle")
 " SYNTAX
 Plug 'kevinoid/vim-jsonc'
@@ -102,6 +109,7 @@ Plug 'ryanoasis/vim-devicons'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
+Plug 'honza/vim-snippets'
 " THEMES
 Plug 'rakr/vim-one'
 Plug 'ayu-theme/ayu-vim'
@@ -123,17 +131,18 @@ Plug 'barlog-m/oceanic-primal-vim', {'branch': 'main'}
 Plug 'jacoborus/tender.vim'
 Plug 'ntk148v/vim-horizon'
 " CoC
-Plug 'neoclide/coc-css', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
-Plug 'neoclide/coc-html', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
-Plug 'neoclide/coc-java', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
-Plug 'neoclide/coc-json', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
-Plug 'neoclide/coc-pairs', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
-Plug 'neoclide/coc-python', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
-Plug 'neoclide/coc-tsserver', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
-Plug 'neoclide/coc-prettier', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
-Plug 'iamcco/coc-vimlsp', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
-Plug 'weirongxu/coc-explorer', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
-Plug 'neoclide/coc-highlight', {'do': 'yarn install --frozen-lockfile && npm prune --production'}
+CocPlug 'neoclide/coc-css'
+CocPlug 'neoclide/coc-html'
+CocPlug 'neoclide/coc-java'
+CocPlug 'neoclide/coc-json'
+CocPlug 'neoclide/coc-pairs'
+CocPlug 'neoclide/coc-python'
+CocPlug 'neoclide/coc-tsserver'
+CocPlug 'neoclide/coc-prettier'
+CocPlug 'neoclide/coc-highlight'
+CocPlug 'iamcco/coc-vimlsp'
+CocPlug 'weirongxu/coc-explorer'
+CocPlug 'neoclide/coc-snippets'
 call plug#end()
 
 " Theme settings
@@ -278,6 +287,7 @@ nmap <silent> <leader>rn <PLug>(coc-rename)
 nmap <silent> <F2> <Plug>(coc-rename)
 nmap <silent> <leader>f :call CocAction("format")<CR>
 nmap <leader>. :CocAction<CR>
+nmap <M-c> :call CocAction("pickColor")<CR>
 
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -518,6 +528,9 @@ augroup init_vim
 
     " Highlight yanks
     au TextYankPost * silent! lua vim.highlight.on_yank{higroup="Visual", timeout=300}
+
+    " Set quickfix buffer unlisted
+    au BufWinEnter quickfix set nobuflisted
 augroup END
 
 function! s:filter_header(lines) abort

@@ -33,15 +33,15 @@ currentPercent () {
 case $1 in
 	--inc)
 		# increase
-		echo `modValue $step`
 		echo `modValue $step` > $backlight
 		dunstify -r "$notif_id" "Brightness: $(currentPercent)%" -t 1000 -i notification-display-brightness-high
+		echo `currentPercent`
 		;;
 	--dec)
 		# decrease
-		echo `modValue -$step`
 		echo `modValue -$step` > $backlight
 		dunstify -r "$notif_id" "Brightness: $(currentPercent)%" -t 1000 -i notification-display-brightness-low
+		echo `currentPercent`
 		;;
 	--get)
 		# return current percent
