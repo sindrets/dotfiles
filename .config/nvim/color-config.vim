@@ -67,6 +67,7 @@ elseif g:colorscheme ==# "horizon"
     hi PmenuSbar ctermbg=236 guibg=#3d425b
     hi PmenuThumb ctermbg=233 guibg=#0f1117
     hi CursorLineNr cterm=bold gui=bold ctermfg=48 guifg=#09f7a0 ctermbg=NONE guibg=NONE
+    hi QuickFixLine ctermbg=235 ctermfg=NONE guibg=#335172 guifg=NONE
     hi link vimVar NONE
     hi link vimFuncVar NONE
     hi link vimUserFunc NONE

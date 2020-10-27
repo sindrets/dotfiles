@@ -191,12 +191,6 @@ nnoremap <silent> <leader>w :call CloseBufferAndGoToAlt()<CR>
 map <silent> <Leader><Tab> :tabn<CR>
 map <silent> <Leader><S-Tab> :tabp<CR>
 
-" Remap jump forward
-nnoremap <C-S> <C-I>
-
-" Search for selected text
-vnoremap // "vy/\V<C-R>=escape(@",'/\')<CR><CR>
-
 " Navigate windows
 tnoremap <A-h> <C-\><C-N><C-w>h
 tnoremap <A-j> <C-\><C-N><C-w>j
@@ -210,6 +204,13 @@ nnoremap <A-h> <C-w>h
 nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
+nnoremap <C-x> <C-w>p
+
+" Remap jump forward
+nnoremap <C-S> <C-I>
+
+" Search for selected text
+vnoremap // "vy/\V<C-R>=escape(@",'/\')<CR><CR>
 
 " Move lines up/down
 nnoremap <A-UP> :m-2<CR>==
@@ -260,7 +261,7 @@ vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 " FZF
 nnoremap <C-P> :call WorkspaceFiles()<CR>
 nnoremap <M-b> :Buffers<CR>
-nnoremap <C-F> :Ag 
+nnoremap <C-F> :Ack! 
 
 nnoremap <leader>rh :call FindAndReplaceInAll()<CR>
 
