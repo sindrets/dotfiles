@@ -44,8 +44,20 @@ let g:terminal_color_15 =  "#ffffff"
 function! SaneDiffDefaults()
     hi DiffAdd    ctermbg=4 guifg=#acf2e4 guibg=#243330
     hi DiffChange ctermbg=5 guifg=#cfdae6 guibg=#335172
-    hi DiffDelete ctermfg=12 ctermbg=6 guifg=#ff8170 guibg=#5f2d2a
-    hi DiffText   ctermbg=9 gui=bold guifg=#49b6d8 guibg=#335172
+    hi DiffDelete ctermfg=12 ctermbg=6 guifg=#d9b4b4 guibg=#5f2d2a
+    hi DiffText   ctermbg=9 gui=bold guibg=#609bdd guifg=#162332
+    hi! link diffAdded       DiffAdd
+    hi! link diffChanged     DiffChange
+    hi! link diffRemoved     DiffDelete
+    hi! link diffBDiffer     WarningMsg
+    hi! link diffCommon      WarningMsg
+    hi! link diffDiffer      WarningMsg
+    hi! link diffFile        Directory
+    hi! link diffIdentical   WarningMsg
+    hi! link diffIndexLine   Number
+    hi! link diffIsA         WarningMsg
+    hi! link diffNoEOL       WarningMsg
+    hi! link diffOnly        WarningMsg
 endfunction
 
 " Colorscheme overrides
@@ -71,6 +83,7 @@ elseif g:colorscheme ==# "horizon"
     hi link vimVar NONE
     hi link vimFuncVar NONE
     hi link vimUserFunc NONE
+    hi link jsonQuote NONE
     call SaneDiffDefaults()
 endif
 

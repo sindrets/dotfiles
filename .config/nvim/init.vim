@@ -293,11 +293,16 @@ nmap <M-c> :call CocAction("pickColor")<CR>
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
 
-nnoremap <silent> <leader>k :GitGutterPreviewHunk<CR>
+nnoremap <silent> <leader>d :GitGutterPreviewHunk<CR>
 
 xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
 
 inoremap <silent> <Tab> <C-\><C-O>:call FullIndent()<CR>
+
+" Show highlight group under cursor
+nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
+            \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
+            \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
 command! -nargs=+ Rnew call ReadNew(<q-args>)
 command! Ssync syntax sync minlines=3000
@@ -531,7 +536,9 @@ augroup init_vim
     au TextYankPost * silent! lua vim.highlight.on_yank{higroup="Visual", timeout=300}
 
     " Set quickfix buffer unlisted
-    au BufWinEnter quickfix set nobuflisted
+    au BufWinEnter quickfix set nobuflisted | set nowrap
+
+    au WinClosed * wincmd p
 augroup END
 
 function! s:filter_header(lines) abort
