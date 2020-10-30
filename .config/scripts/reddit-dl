@@ -47,11 +47,18 @@ video_url=$(
         | jq -r ".event_target.target_url"
 )
 
+echo " • Downloading metadata..."
 wget -nv "$video_url/DASHPlaylist.mpd"
 
 cat DASHPlaylist.mpd | xq "." > data.json
-audio_data="$(jq ".MPD.Period.AdaptationSet[0].Representation" data.json)"
-video_list_data="$(jq ".MPD.Period.AdaptationSet[1].Representation" data.json)"
+if ! jq -r '.MPD.Period.AdaptationSet[1].Representation."@mimeType"' data.json 2> /dev/null \
+        | grep -q '^audio'; then
+    audio_data="$(jq ".MPD.Period.AdaptationSet[0].Representation" data.json)"
+    video_list_data="$(jq ".MPD.Period.AdaptationSet[1].Representation" data.json)"
+else
+    audio_data="$(jq ".MPD.Period.AdaptationSet[1].Representation" data.json)"
+    video_list_data="$(jq ".MPD.Period.AdaptationSet[0].Representation" data.json)"
+fi
 video_data=""
 
 max=0

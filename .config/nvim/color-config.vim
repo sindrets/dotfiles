@@ -44,7 +44,7 @@ let g:terminal_color_15 =  "#ffffff"
 function! SaneDiffDefaults()
     hi DiffAdd    ctermbg=4 guifg=#acf2e4 guibg=#243330
     hi DiffChange ctermbg=5 guifg=#cfdae6 guibg=#335172
-    hi DiffDelete ctermfg=12 ctermbg=6 guifg=#d9b4b4 guibg=#5f2d2a
+    hi DiffDelete ctermfg=12 ctermbg=6 guifg=#f1c4c4 guibg=#5f2d2a
     hi DiffText   ctermbg=9 gui=bold guibg=#609bdd guifg=#162332
     hi! link diffAdded       DiffAdd
     hi! link diffChanged     DiffChange

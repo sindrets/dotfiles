@@ -306,6 +306,7 @@ nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> 
 
 command! -nargs=+ Rnew call ReadNew(<q-args>)
 command! Ssync syntax sync minlines=3000
+command! DiffSaved call FuncDiffSaved()
 
 " Wrapper function to allow exec calls from expressions
 function! Exec(cmd)
@@ -321,6 +322,14 @@ endfunction
 function! ReadNew(expr)
     enew | set ft=log
     exec "r! " . a:expr
+endfunction
+
+function! FuncDiffSaved()
+    let filetype=&ft
+    diffthis
+    vnew | r # | normal! 1Gdd
+    diffthis
+    exe "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype
 endfunction
 
 function! WorkspaceFiles()
