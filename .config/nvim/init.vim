@@ -120,6 +120,7 @@ Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
 Plug 'nanotech/jellybeans.vim'
 Plug 'gruvbox-community/gruvbox'
+Plug 'shinchu/lightline-gruvbox.vim'
 Plug 'cocopon/iceberg.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'drewtempelmeyer/palenight.vim'
@@ -130,6 +131,7 @@ Plug 'dim13/smyck.vim'
 Plug 'barlog-m/oceanic-primal-vim', {'branch': 'main'}
 Plug 'jacoborus/tender.vim'
 Plug 'ntk148v/vim-horizon'
+Plug 'ajh17/Spacegray.vim'
 " CoC
 CocPlug 'neoclide/coc-css'
 CocPlug 'neoclide/coc-html'
@@ -372,7 +374,7 @@ function! FocusTerminalSplit()
         let g:term_split_winid = win_getid()
         augroup term_split
             au!
-            au WinClosed <buffer> let g:term_split_height = winheight("%")
+            au QuitPre <buffer> let g:term_split_height = winheight("%")
         augroup END
         exec "res " . min([g:term_split_height, float2nr(&lines / 2)])
         startinsert
@@ -545,7 +547,7 @@ augroup init_vim
     au TextYankPost * silent! lua vim.highlight.on_yank{higroup="Visual", timeout=300}
 
     " Set quickfix buffer unlisted
-    au BufWinEnter quickfix set nobuflisted | set nowrap
+    au BufWinEnter quickfix set nobuflisted | setlocal nowrap
 
     au WinClosed * wincmd p
 augroup END

@@ -12,6 +12,8 @@ let g:palenight_terminal_italics=1
 let g:neodark#background = '#202020'
 let g:neodark#use_256color = 0
 let g:neodark#solid_vertsplit = 1
+let g:spacegray_use_italics = 1
+let g:spacegray_low_contrast = 1
 set background=dark
 execute("colorscheme " . g:colorscheme)
 

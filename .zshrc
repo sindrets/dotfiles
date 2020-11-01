@@ -205,7 +205,7 @@ case $term in
 
         # Change neofetch img backend and source
         if [[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]]; then
-            alias neofetch='printf %$(tput lines)s | tr " " "\n"; /bin/neofetch --backend kitty --source "$NEOFETCH_IMG" && printf "\e[2A"'
+            alias neofetch='printf %$(tput lines)s | tr " " "\n"; /usr/bin/neofetch --backend kitty --source "$NEOFETCH_IMG" && printf "\e[2A"'
         fi
         ;;
 

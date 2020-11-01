@@ -1,10 +1,13 @@
-#!/bin/env sh
+#!/usr/bin/env sh
 
 pkill polybar
 
 sleep 1;
 
 export monitor_primary="`xrandr | grep primary | cut -d " " -f 1`"
+if [ -z "$monitor_primary" ]; then
+    export monitor_primary="`xrandr | grep connected | cut -d " " -f 1`"
+fi
 export ETH="`ip route | grep -P '^default( .*){3} en' | awk '{print $5}' | head -n1`"
 export WLAN="`ip route | grep -P '^default( .*){3} wl' | awk '{print $5}' | head -n1`"
 
