@@ -25,6 +25,7 @@ set wrap linebreak
 set noswapfile
 set updatetime=100
 set backspace=indent,eol,start
+set inccommand=split
 set pyx=3
 set pyxversion=3
 set shada=!,'10,/100,:100,<0,@1,f1,h,s1
@@ -142,9 +143,9 @@ CocPlug 'neoclide/coc-python'
 CocPlug 'neoclide/coc-tsserver'
 CocPlug 'neoclide/coc-prettier'
 CocPlug 'neoclide/coc-highlight'
+CocPlug 'neoclide/coc-snippets'
 CocPlug 'iamcco/coc-vimlsp'
 CocPlug 'weirongxu/coc-explorer'
-CocPlug 'neoclide/coc-snippets'
 call plug#end()
 
 " Theme settings
@@ -550,6 +551,10 @@ augroup init_vim
     au BufWinEnter quickfix set nobuflisted | setlocal nowrap
 
     au WinClosed * wincmd p
+
+    au TermEnter * setlocal nonu nornu
+
+    au TermLeave * setlocal nu rnu
 augroup END
 
 function! s:filter_header(lines) abort

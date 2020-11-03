@@ -16,6 +16,11 @@ function is_url() {
     echo "$1" | grep -q '^http'
 }
 
+function err() {
+    echo "$1"
+    exit 1
+}
+
 if [ -z "$url" ]; then
     echo "No URL was supplied!"
     usage
@@ -40,6 +45,7 @@ cd "$temp_path"
 
 echo " • Downloading page..."
 wget -nv -O "index.html" "$url"
+[ $? -ne 0 ] && err "Download failed!"
 
 echo " • Parsing page..."
 video_url=$(
@@ -49,6 +55,7 @@ video_url=$(
 
 echo " • Downloading metadata..."
 wget -nv "$video_url/DASHPlaylist.mpd"
+[ $? -ne 0 ] && err "Download failed!"
 
 cat DASHPlaylist.mpd | xq "." > data.json
 if ! jq -r '.MPD.Period.AdaptationSet[1].Representation."@mimeType"' data.json 2> /dev/null \
@@ -77,6 +84,7 @@ if ! is_url "$u"; then
     u="$video_url/$u"
 fi
 wget -nv "$u" -O audio.mp3
+[ $? -ne 0 ] && err "Download failed!"
 
 echo " • Downloading video..."
 u="$(echo "$video_data" | jq -r '.BaseURL')"
@@ -84,6 +92,7 @@ if ! is_url "$u"; then
     u="$video_url/$u"
 fi
 wget -nv "$u" -O video.mp4
+[ $? -ne 0 ] && err "Download failed!"
 
 echo " • Merging media..."
 ffmpeg -loglevel 16 -i video.mp4 -i audio.mp3 -c:v copy -c:a aac "$output_path/$temp_name.mp4"
