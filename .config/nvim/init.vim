@@ -184,6 +184,9 @@ map <silent> <Leader>b :CocCommand explorer --toggle<CR>
 nnoremap <silent> <Leader>q :q<CR>
 inoremap <M-Space> <Esc>
 
+" Begin new line above from insert mode
+inoremap <M-Return> <C-\><C-O>O
+
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR> 
 nnoremap  <silent> <s-tab> :bp<CR>

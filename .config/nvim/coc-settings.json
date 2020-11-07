@@ -31,7 +31,7 @@
 	"explorer.icon.enableNerdfont": true,
 	"explorer.previewAction.onHover": false,
 	"explorer.file.showHiddenFiles": true,
-	"explorer.keyMappings": {
+	"explorer.keyMappings.global": {
 		"<cr>": [
 			"expandable?", [
 				"expanded?", "collapse", "expand"
