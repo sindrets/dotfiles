@@ -56,5 +56,6 @@
 		">>": "gitUnstage",
 
 		"<C-v>": "toggleSelection"
-	}
+	},
+	"highlight.colorNames.enable": false
 }

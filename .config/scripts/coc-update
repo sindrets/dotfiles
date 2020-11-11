@@ -1,0 +1,21 @@
+#!/usr/bin/bash
+# Update all coc extensions if needed.
+
+pushd "$HOME/.vim/plug" > /dev/null
+for DIR in $(fd -d 1 'coc'); do
+    (
+        cd "$DIR" > /dev/null
+        echo "Looking for updates in '$DIR'..."
+        git remote update > /dev/null
+        if git status -sb | grep -q behind; then
+            echo "\nUPDATING '$DIR'..."
+            git pull
+            if [ ! "$DIR" = "coc.nvim" ]; then
+                yarn install --frozen-lockfile && npm prune --production
+            fi
+        fi
+    )
+done
+popd > /dev/null
+
+echo "Everything is up to-date!"

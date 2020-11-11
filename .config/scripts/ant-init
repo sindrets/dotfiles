@@ -4,6 +4,24 @@
 project_name=""
 script_dir="$(realpath -m "$0/..")"
 
+if [ "$1" = "--update" ]; then
+    pushd "$script_dir"
+    if [ ! -d "java-project-template" ]; then
+        echo "Could not find java-project-template!" > /dev/stderr
+        exit 1
+    fi
+
+    echo "Updating archive..."
+    rm ./java-project-template.tar.gz
+    (
+        cd java-project-template
+        tar -czvf ../java-project-template.tar.gz .
+    )
+    echo "Done!"
+    popd
+    exit
+fi
+
 if [ -n "$1" ]; then
     project_name="$1"
 else

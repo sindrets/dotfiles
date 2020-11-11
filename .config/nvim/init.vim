@@ -83,7 +83,7 @@ endfunction
 
 command! -nargs=1 CocPlug call FuncCocPlug(<args>)
 
-call plug#begin("~/.vim/bundle")
+call plug#begin("~/.vim/plug")
 " SYNTAX
 Plug 'kevinoid/vim-jsonc'
 Plug 'sheerun/vim-polyglot'
