@@ -1,4 +1,4 @@
-let g:colorscheme = "horizon"
+let g:colorscheme = "gruvbox-material"
 
 let ayucolor="dark"
 let g:material_terminal_italics = 1
@@ -6,6 +6,9 @@ let g:material_theme_style = 'darker'
 let g:gruvbox_italic = 1
 let g:gruvbox_contrast_dark = "medium"
 let g:gruvbox_invert_selection = 0
+let g:gruvbox_material_background = 'medium'
+let g:gruvbox_material_enable_italic = 1
+let g:gruvbox_material_diagnostic_line_highlight = 1
 let base16colorspace = 256
 let g:seoul256_background = 234
 let g:palenight_terminal_italics=1
@@ -87,6 +90,10 @@ elseif g:colorscheme ==# "horizon"
     hi link vimUserFunc NONE
     hi link jsonQuote NONE
     call SaneDiffDefaults()
+
+elseif g:colorscheme ==# "gruvbox-material"
+    hi CursorLineNr gui=bold guifg=#a9b665
+
 endif
 
 if g:lightline.colorscheme ==# "horizon"

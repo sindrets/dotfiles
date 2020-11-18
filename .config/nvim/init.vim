@@ -133,6 +133,7 @@ Plug 'barlog-m/oceanic-primal-vim', {'branch': 'main'}
 Plug 'jacoborus/tender.vim'
 Plug 'ntk148v/vim-horizon'
 Plug 'ajh17/Spacegray.vim'
+Plug 'sainnhe/gruvbox-material'
 " CoC
 CocPlug 'neoclide/coc-css'
 CocPlug 'neoclide/coc-html'
@@ -552,8 +553,6 @@ augroup init_vim
 
     " Set quickfix buffer unlisted
     au BufWinEnter quickfix set nobuflisted | setlocal nowrap
-
-    au WinClosed * wincmd p
 
     au TermEnter * setlocal nonu nornu
 
