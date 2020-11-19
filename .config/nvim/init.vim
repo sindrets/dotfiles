@@ -5,6 +5,8 @@
 "  /_/_/ /_/_/\__(_)___/_/_/ /_/ /_/ 
 "                                    
 
+": SETTINGS {{{
+
 set nu
 set rnu
 set autoindent
@@ -51,6 +53,10 @@ if filereadable(s:init_extra_path)
     exec "source " . s:init_extra_path
 endif
 
+": }}}
+
+": PLUGIN CONFIG {{{
+
 let mapleader = " "                             " set the leader key
 let g:netrw_liststyle= 3
 let g:startify_session_dir="$HOME/.vim/session"
@@ -75,6 +81,10 @@ endif
 
 source ~/.config/nvim/lightline-config.vim
 " source ~/.config/nvim/chadtree-config.vim
+
+": }}}
+
+": PLUG {{{
 
 function FuncCocPlug(repo)
     execute "Plug '" . a:repo . "',  {'do': 'yarn install --frozen-lockfile && npm prune "
@@ -151,6 +161,10 @@ call plug#end()
 
 " Theme settings
 source ~/.config/nvim/color-config.vim
+
+": }}}
+
+": MAPPINGS {{{
 
 " Allow movement through display lines (wrapped lines)
 nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
@@ -311,10 +325,19 @@ nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> 
             \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
             \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
 
+": }}}
+
+": COMMANDS {{{
+
 command! -nargs=+ Rnew call ReadNew(<q-args>)
 command! Ssync syntax sync minlines=3000
 command! DiffSaved call FuncDiffSaved()
+command! CocJavaClearCache call CocJavaClearCacheFunc()
+command! CocJavaExploreCache call CocJavaExploreCacheFunc()
 
+": }}}
+
+": FUNCTIONS {{{
 " Wrapper function to allow exec calls from expressions
 function! Exec(cmd)
     exec a:cmd
@@ -521,9 +544,15 @@ function! MkdpOpenInNewWindow(url)
     exec system("$BROWSER --new-window " . a:url)
 endfunction
 
-function! CocJavaClearCache()
+function! CocJavaClearCacheFunc()
     exec system('rm -rf ~/.config/coc/extensions/coc-java-data/jdt_ws_$(printf "' . getcwd()
                 \ . '" | md5sum | awk "{print \$1}")')
+endfunction
+
+function! CocJavaExploreCacheFunc()
+    let name = system('printf jdt_ws_$(printf "' . getcwd() . '" | md5sum | awk "{print \$1}")')
+    echom 'Calculated coc-java cache dir name: ' . name
+    exec 'CocCommand explorer --position floating ~/.config/coc/extensions/coc-java-data/' . name
 endfunction
 
 function! s:isdir(dir)
@@ -531,7 +560,10 @@ function! s:isdir(dir)
                 \ (!empty($SYSTEMDRIVE) && isdirectory('/'.tolower($SYSTEMDRIVE[0]).a:dir)))
 endfunction
 
-" AutoCommands
+": }}}
+
+": AUTO COMMANDS {{{
+
 augroup init_vim
     au!
     " nuke netrw brain damage
@@ -559,6 +591,10 @@ augroup init_vim
     au TermLeave * setlocal nu rnu
 augroup END
 
+": }}}
+
+": MISC {{{
+
 function! s:filter_header(lines) abort
     let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
     let centered_lines = map(copy(a:lines),
@@ -577,4 +613,6 @@ let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
 
 exec SourceProjectConfig()
 
-" vim: sw=4 ts=4 et
+": }}}
+
+" vim: sw=4 ts=4 et foldmethod=marker
