@@ -162,12 +162,13 @@ function man-color () {
 # Commit and push changes to dotfiles
 # @param $1 Optional commit message
 function dfcp () {
-    if ! dotfiles diff-index --quiet HEAD; then
+    if ! eval dotfiles diff-index --quiet HEAD; then
         local commit_msg="Update"
         if [ ! -z "$1" ]; then
             commit_msg="$1"
         fi
-        dotfiles add -u && dotfiles status && dotfiles commit -m "$commit_msg" && dotfiles push
+        eval dotfiles add -u && eval dotfiles status && \
+            eval dotfiles commit -m "$commit_msg" && eval dotfiles push
     else
         echo "No dotfiles have been modified."
     fi
