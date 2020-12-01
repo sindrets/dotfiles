@@ -8,10 +8,10 @@ for DIR in $(fd -d 1 'coc'); do
         echo "Looking for updates in '$DIR'..."
         git remote update > /dev/null
         if git status -sb | grep -q behind; then
-            echo "\nUPDATING '$DIR'..."
+            echo -e "\nUPDATING '$DIR'..."
             git pull
             if [ ! "$DIR" = "coc.nvim" ]; then
-                yarn install --frozen-lockfile && npm prune --production
+                yarn install --frozen-lockfile
             fi
         fi
     )

@@ -96,6 +96,8 @@ alias diff='diff -tW $(tput cols) --color=always'
 alias ts-node='/bin/ts-node --project "$HOME/.config/ts-node/tsconfig.json"'
 alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/storage.json" | fzf --height 10` && [ ! -z "$code_dir" ] && code --folder-uri $code_dir'
 alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compiling for {}...\" && tsc -p {}' \\;"
+alias nvim-pager="nvim -R -c 'set nomod nolist' \
+    -c 'nmap K :Man <C-R>=expand(\"<cword>\")<CR><CR>'"
 
 function chpwd() {
     emulate -L zsh
@@ -140,7 +142,7 @@ function mdvless () {
 
 # calculator
 function = () {
-    python -c "from math import *; print($*)"
+    python3 -c "from math import *; print($*)"
 }
 
 # create dir and cd
