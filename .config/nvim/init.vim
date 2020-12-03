@@ -87,8 +87,7 @@ source ~/.config/nvim/lightline-config.vim
 ": PLUG {{{
 
 function FuncCocPlug(repo)
-    execute "Plug '" . a:repo . "',  {'do': 'yarn install --frozen-lockfile && npm prune "
-                \ . "--production'}"
+    execute "Plug '" . a:repo . "',  {'do': 'yarn install --frozen-lockfile'}"
 endfunction
 
 command! -nargs=1 CocPlug call FuncCocPlug(<args>)
@@ -101,6 +100,7 @@ Plug 'vim-scripts/TagHighlight'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
@@ -161,6 +161,8 @@ call plug#end()
 
 " Theme settings
 source ~/.config/nvim/color-config.vim
+
+source ~/.config/nvim/treesitter-config.vim
 
 ": }}}
 
