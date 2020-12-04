@@ -21,7 +21,8 @@ floating_modifier $mod
 bindsym $mod+Return exec $terminal
 bindsym $mod+Shift+Return exec $terminal --class kitty_FLOAT
 # AltGr+3
-bindsym Mod5+sterling exec google-chrome-stable --app="https://fam-strom.1password.com/vaults/all/allitems/"
+bindsym Mod5+sterling exec 1password
+bindsym Mod1+3 exec 1password
 bindsym $mod+e exec dolphin
 bindsym $mod+s exec fsearch
 bindsym $mod+g exec --no-startup-id ~/.config/i3/scripts/goto-workspace.sh
@@ -177,6 +178,7 @@ for_window [class="Headset" title="Headset"] floating enable border none
 for_window [class="Headset" title="Headset - Player"] move container to workspace $wsTrash
 for_window [class="VirtualBox Machine"] move container to workspace $vm fullscreen enable
 for_window [instance="fam-strom.1password.com"] floating enable border pixel 1
+for_window [class="1Password"] floating enable border pixel 1
 for_window [class="SpeedCrunch"] floating enable border pixel 1
 for_window [class="Steam" title="Friends List"] floating enable
 

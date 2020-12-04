@@ -231,7 +231,7 @@ exec = echo ""
 
 [module/1password]
 type = custom/script
-click-left = exec google-chrome-stable --app="https://fam-strom.1password.com/vaults/all/allitems/" &
+click-left = exec 1password &
 exec = echo ""
 
 [module/cpu-temp]
