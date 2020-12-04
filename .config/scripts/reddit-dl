@@ -1,15 +1,15 @@
 #!/usr/bin/bash
 # Script for downloading reddit videos.
-# Dependencies: coreutils, wget, jq, yq
-# Usage: reddit-dl <URL> [OUTPUT_PATH]
+# Dependencies: coreutils, wget, ffmpeg, jq, yq
+# Usage: reddit-dl <URL> [OUTPUT_DIR]
 
 url="$1"
-output_path="$2"
+output_dir="$2"
 temp_name="$(printf "$url" | md5sum | awk '{print $1}')"
 temp_path="/tmp/reddit-dl/$temp_name"
 
 function usage() {
-    echo "Usage: reddit-dl <URL> [OUTPUT_PATH]"
+    echo "Usage: reddit-dl <URL> [OUTPUT_DIR]"
 }
 
 function is_url() {
@@ -17,7 +17,7 @@ function is_url() {
 }
 
 function err() {
-    echo "$1"
+    echo "$1" > /dev/stderr
     exit 1
 }
 
@@ -28,16 +28,21 @@ if [ -z "$url" ]; then
 fi
 url="$(echo $url | sed 's/www.reddit/old.reddit/')"
 
-if [ -z "$output_path" ]; then
-    output_path="$HOME/Videos/reddit-dl"
+if [ -z "$output_dir" ]; then
+    output_dir="$HOME/Videos/reddit-dl"
     mkdir -p "$HOME/Videos/reddit-dl"
 fi
-if [ ! -d "$output_path" ]; then
-    echo "'$output_path' does not exist or is not a directory!"
+if [ ! -d "$output_dir" ]; then
+    echo "'$output_dir' does not exist or is not a directory!"
     usage
     exit 1
 fi
-output_path="$(realpath -m "$output_path")"
+output_dir="$(realpath -m "$output_dir")"
+output_path="$output_dir/$temp_name.mp4"
+
+if [ -e "$output_path" ]; then
+    err "Target '$output_path' already exists!"
+fi
 
 rm -rf "$temp_path"
 mkdir -p "$temp_path"
@@ -95,6 +100,6 @@ wget -nv "$u" -O video.mp4
 [ $? -ne 0 ] && err "Download failed!"
 
 echo " • Merging media..."
-ffmpeg -loglevel 16 -i video.mp4 -i audio.mp3 -c:v copy -c:a aac "$output_path/$temp_name.mp4"
+ffmpeg -loglevel 16 -i video.mp4 -i audio.mp3 -c:v copy -c:a aac "$output_path"
 
-[ $? -eq 0 ] && echo " ✅ Created '$output_path/$temp_name.mp4' successfully!"
+[ $? -eq 0 ] && echo " ✅ Created '$output_path' successfully!"
