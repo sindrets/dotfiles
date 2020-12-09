@@ -64,32 +64,32 @@ highlight = #2f2f2f
 foreground      = #eceff1
 foreground_bold = #eceff1
 cursor          = #eceff1
-background      = #1c1c1c
+background      = #101112
 
 # black
-color0 = #222222
-color8 = #666666
+color0    = #222222
+color8    = #666666
 # red
-color1 = #e84f4f
-color9 = #d23d3d
+color1    = #e84f4f
+color9    = #d23d3d
 # green
-color2 = #b7ce42
-color10= #bde077
+color2    = #b7ce42
+color10   = #bde077
 # yellow
-color3 = #fea63c
-color11= #ffe863
+color3    = #fea63c
+color11   = #ffe863
 # blue
-color4 = #66a9b9
-color12= #aaccbb
+color4    = #66a9b9
+color12   = #aaccbb
 # magenta
-color5 = #b7416e
-color13= #e16a98
+color5    = #b7416e
+color13   = #e16a98
 # cyan
-color6 = #6dc1b6
-color14= #42717b
+color6    = #42717b
+color14   = #6dc1b6
 # white
-color7 = #cccccc
-color15= #ffffff
+color7    = #cccccc
+color15   = #ffffff
 
 [hints]
 #font = Monospace 12

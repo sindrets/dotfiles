@@ -246,34 +246,34 @@ exec --no-startup-id redshift -l 59.89:10.75
 exec --no-startup-id wal -sntR; /$HOME/.config/polybar/launch.sh
 
 # Theme colors
-set_from_resource $background background
-set_from_resource $foreground foreground
-set_from_resource $cursorColor cursorColor
-set_from_resource $black color0
-set_from_resource $blackBright color8
-set_from_resource $red color1
-set_from_resource $redBright color9
-set_from_resource $green color2
-set_from_resource $greenBright color10
-set_from_resource $yellow color3
-set_from_resource $yellowBright color11
-set_from_resource $blue color4
-set_from_resource $blueBright color12
-set_from_resource $magenta color5
-set_from_resource $magentaBright color13
-set_from_resource $cyan color6
-set_from_resource $cyanBright color14
-set_from_resource $white color7
-set_from_resource $whiteBright color15
-set $borderActive #b1b1b1
-set $borderInactive #333333
+set_from_resource $background     background
+set_from_resource $foreground     foreground
+set_from_resource $cursorColor    cursorColor
+set_from_resource $black          color0
+set_from_resource $blackBright    color8
+set_from_resource $red            color1
+set_from_resource $redBright      color9
+set_from_resource $green          color2
+set_from_resource $greenBright    color10
+set_from_resource $yellow         color3
+set_from_resource $yellowBright   color11
+set_from_resource $blue           color4
+set_from_resource $blueBright     color12
+set_from_resource $magenta        color5
+set_from_resource $magentaBright  color13
+set_from_resource $cyan           color6
+set_from_resource $cyanBright     color14
+set_from_resource $white          color7
+set_from_resource $whiteBright    color15
+set               $borderActive   #b1b1b1
+set               $borderInactive #333333
 
-# class    border    backgr.    text    indicator    child_border
-client.focused $borderActive $background $white $borderActive $borderActive
+#class                  border          backgr.     text   indicator       child_border
+client.focused          $borderActive   $background $white $borderActive   $borderActive
 client.focused_inactive $borderInactive $background $white $borderInactive $borderInactive
-client.unfocused $borderInactive $background $white $borderInactive $borderInactive
-client.urgent $borderActive $background $white $borderActive $borderActive
-client.placeholder $borderActive $background $white $borderActive $borderActive
+client.unfocused        $borderInactive $background $white $borderInactive $borderInactive
+client.urgent           $borderActive   $background $white $borderActive   $borderActive
+client.placeholder      $borderActive   $background $white $borderActive   $borderActive
 
 client.background $background
 
@@ -283,7 +283,10 @@ gaps outer 0
 
 #smart_gaps on
 
-# Press $mod+Shift+g to enter the gap mode. Choose o or i for modifying outer/inner gaps. Press one of + / - (in-/decrement for current workspace) or 0 (remove gaps for current workspace). If you also press Shift with these keys, the change will be global for all workspaces.
+# Press $mod+Shift+g to enter the gap mode. Choose o or i for modifying
+# outer/inner gaps. Press one of + / - (in-/decrement for current workspace) or
+# 0 (remove gaps for current workspace). If you also press Shift with these
+# keys, the change will be global for all workspaces.
 set $mode_gaps Gaps: (o) outer, (i) inner
 set $mode_gaps_outer Outer Gaps: +|-|0 (local), Shift + +|-|0 (global)
 set $mode_gaps_inner Inner Gaps: +|-|0 (local), Shift + +|-|0 (global)

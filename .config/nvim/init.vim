@@ -121,6 +121,7 @@ Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'honza/vim-snippets'
+Plug 'godlygeek/tabular'
 " THEMES
 Plug 'rakr/vim-one'
 Plug 'ayu-theme/ayu-vim'

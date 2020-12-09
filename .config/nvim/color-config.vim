@@ -22,47 +22,47 @@ execute("colorscheme " . g:colorscheme)
 
 " Neovim Terminal Colors
 " black
-let g:terminal_color_0 =   "#222222"
-let g:terminal_color_8 =   "#666666"
+let g:terminal_color_0  = "#222222"
+let g:terminal_color_8  = "#666666"
 " red
-let g:terminal_color_1 =   "#e84f4f"
-let g:terminal_color_9 =   "#d23d3d"
+let g:terminal_color_1  = "#e84f4f"
+let g:terminal_color_9  = "#d23d3d"
 " green
-let g:terminal_color_2 =   "#b7ce42"
-let g:terminal_color_10 =  "#bde077"
+let g:terminal_color_2  = "#b7ce42"
+let g:terminal_color_10 = "#bde077"
 " yellow
-let g:terminal_color_3 =   "#fea63c"
-let g:terminal_color_11 =  "#ffe863"
+let g:terminal_color_3  = "#fea63c"
+let g:terminal_color_11 = "#ffe863"
 " blue
-let g:terminal_color_4 =   "#66a9b9"
-let g:terminal_color_12 =  "#aaccbb"
+let g:terminal_color_4  = "#66a9b9"
+let g:terminal_color_12 = "#aaccbb"
 " magenta
-let g:terminal_color_5 =   "#b7416e"
-let g:terminal_color_13 =  "#e16a98"
+let g:terminal_color_5  = "#b7416e"
+let g:terminal_color_13 = "#e16a98"
 " cyan
-let g:terminal_color_6 =   "#6dc1b6"
-let g:terminal_color_14 =  "#42717b"
+let g:terminal_color_6  = "#6dc1b6"
+let g:terminal_color_14 = "#42717b"
 " white
-let g:terminal_color_7 =   "#cccccc"
-let g:terminal_color_15 =  "#ffffff"
+let g:terminal_color_7  = "#cccccc"
+let g:terminal_color_15 = "#ffffff"
 
 function! SaneDiffDefaults()
-    hi DiffAdd    ctermbg=4 guifg=#acf2e4 guibg=#243330
-    hi DiffChange ctermbg=5 guifg=#cfdae6 guibg=#335172
-    hi DiffDelete ctermfg=12 ctermbg=6 guifg=#f1c4c4 guibg=#5f2d2a
-    hi DiffText   ctermbg=9 gui=bold guibg=#609bdd guifg=#162332
-    hi! link diffAdded       DiffAdd
-    hi! link diffChanged     DiffChange
-    hi! link diffRemoved     DiffDelete
-    hi! link diffBDiffer     WarningMsg
-    hi! link diffCommon      WarningMsg
-    hi! link diffDiffer      WarningMsg
-    hi! link diffFile        Directory
-    hi! link diffIdentical   WarningMsg
-    hi! link diffIndexLine   Number
-    hi! link diffIsA         WarningMsg
-    hi! link diffNoEOL       WarningMsg
-    hi! link diffOnly        WarningMsg
+    hi  DiffAdd    ctermbg=4     guifg=#acf2e4 guibg=#243330
+    hi  DiffChange ctermbg=5     guifg=#cfdae6 guibg=#335172
+    hi  DiffDelete ctermfg=12    ctermbg=6     guifg=#f1c4c4 guibg=#5f2d2a
+    hi  DiffText   ctermbg=9     gui=bold      guibg=#609bdd guifg=#162332
+    hi! link       diffAdded     DiffAdd
+    hi! link       diffChanged   DiffChange
+    hi! link       diffRemoved   DiffDelete
+    hi! link       diffBDiffer   WarningMsg
+    hi! link       diffCommon    WarningMsg
+    hi! link       diffDiffer    WarningMsg
+    hi! link       diffFile      Directory
+    hi! link       diffIdentical WarningMsg
+    hi! link       diffIndexLine Number
+    hi! link       diffIsA       WarningMsg
+    hi! link       diffNoEOL     WarningMsg
+    hi! link       diffOnly      WarningMsg
 endfunction
 
 " Colorscheme overrides
@@ -71,28 +71,29 @@ if g:colorscheme ==# "codedark"
     call SaneDiffDefaults()
 
 elseif g:colorscheme ==# "tender"
-    hi Visual cterm=NONE ctermbg=237 gui=NONE guibg=#293b44
-    hi VertSplit ctermfg=234 ctermbg=234 guifg=#202020 guibg=NONE
-    hi Search cterm=bold ctermfg=15 gui=bold ctermfg=250 ctermbg=242 guifg=#dddddd guibg=#7a6a24
+    hi   Visual             cterm=NONE  ctermbg=237 gui=NONE      guibg=#293b44
+    hi   VertSplit          ctermfg=234 ctermbg=234 guifg=#202020 guibg=NONE
+    hi   Search             cterm=bold  ctermfg=15  gui=bold      ctermfg=250   ctermbg=242 guifg=#dddddd guibg=#7a6a24
     call SaneDiffDefaults()
 
 elseif g:colorscheme ==# "horizon"
-    hi NonText ctermfg=233 ctermbg=233 guifg=#414559 guibg=NONE
-    hi VertSplit cterm=bold ctermfg=233 ctermbg=NONE gui=bold guifg=#0f1117 guibg=NONE
-    hi Pmenu ctermfg=255 ctermbg=236 guibg=#272c42 guifg=#eff0f4
-    hi PmenuSel ctermfg=255 ctermbg=240 guibg=#5b6389
-    hi PmenuSbar ctermbg=236 guibg=#3d425b
-    hi PmenuThumb ctermbg=233 guibg=#0f1117
-    hi CursorLineNr cterm=bold gui=bold ctermfg=48 guifg=#09f7a0 ctermbg=NONE guibg=NONE
-    hi QuickFixLine ctermbg=235 ctermfg=NONE guibg=#335172 guifg=NONE
-    hi link vimVar NONE
-    hi link vimFuncVar NONE
-    hi link vimUserFunc NONE
-    hi link jsonQuote NONE
+    hi NonText      ctermfg=233 ctermbg=233   guifg=#414559 guibg=NONE
+    hi VertSplit    cterm=bold  ctermfg=233   ctermbg=NONE  gui=bold      guifg=#0f1117 guibg=NONE
+    hi Pmenu        ctermfg=255 ctermbg=236   guibg=#272c42 guifg=#eff0f4
+    hi PmenuSel     ctermfg=255 ctermbg=240   guibg=#5b6389
+    hi PmenuSbar    ctermbg=236 guibg=#3d425b
+    hi PmenuThumb   ctermbg=233 guibg=#0f1117
+    hi CursorLineNr cterm=bold  gui=bold      ctermfg=48    guifg=#09f7a0 ctermbg=NONE  guibg=NONE
+    hi QuickFixLine ctermbg=235 ctermfg=NONE  guibg=#335172 guifg=NONE
+    hi link         vimVar      NONE
+    hi link         vimFuncVar  NONE
+    hi link         vimUserFunc NONE
+    hi link         jsonQuote   NONE
     call SaneDiffDefaults()
 
 elseif g:colorscheme ==# "gruvbox-material"
     hi CursorLineNr gui=bold guifg=#a9b665
+    call SaneDiffDefaults()
 
 endif
 
