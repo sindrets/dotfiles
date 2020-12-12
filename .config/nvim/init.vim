@@ -163,7 +163,7 @@ call plug#end()
 " Theme settings
 source ~/.config/nvim/color-config.vim
 
-source ~/.config/nvim/treesitter-config.vim
+lua require("treesitter-config")
 
 ": }}}
 
