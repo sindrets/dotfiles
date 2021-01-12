@@ -572,7 +572,11 @@ augroup init_vim
     " nuke netrw brain damage
     au VimEnter * silent! au! FileExplorer *
     au BufEnter *
-                \ if <SID>isdir(expand('%')) | bd | endif
+                \ if <SID>isdir(expand('%'))
+                \ |     let cwd = expand("%")
+                \ |     exec "cd " . cwd | bd
+                \ |     exec "CocCommand explorer " . cwd
+                \ | endif
 
     " Restore cursor pos
     au BufReadPost *
