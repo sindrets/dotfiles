@@ -28,6 +28,9 @@ set noswapfile
 set updatetime=100
 set backspace=indent,eol,start
 set inccommand=split
+set foldmethod=expr
+set foldexpr=nvim_treesitter#foldexpr()
+set foldlevelstart=99
 set pyx=3
 set pyxversion=3
 set shada=!,'10,/100,:100,<0,@1,f1,h,s1
@@ -145,6 +148,7 @@ Plug 'jacoborus/tender.vim'
 Plug 'ntk148v/vim-horizon'
 Plug 'ajh17/Spacegray.vim'
 Plug 'sainnhe/gruvbox-material'
+Plug 'kjssad/quantum.vim'
 " CoC
 CocPlug 'neoclide/coc-css'
 CocPlug 'neoclide/coc-html'
@@ -313,6 +317,7 @@ nmap <silent> <F2> <Plug>(coc-rename)
 nmap <silent> <leader>f :call CocAction("format")<CR>
 nmap <leader>. :CocAction<CR>
 nmap <M-c> :call CocAction("pickColor")<CR>
+nnoremap <M-O> :CocCommand editor.action.organizeImport<CR>
 
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -622,4 +627,4 @@ exec SourceProjectConfig()
 
 ": }}}
 
-" vim: sw=4 ts=4 et foldmethod=marker
+" vim: sw=4 ts=4 et foldmethod=marker foldlevel=0
