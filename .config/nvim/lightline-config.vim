@@ -1,5 +1,5 @@
 let g:lightline = {
-            \   "colorscheme": "gruvbox_material",
+            \   "colorscheme": "quantum",
             \   "active": {
             \       "left": [
             \           [ "mode", "paste" ],

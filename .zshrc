@@ -231,7 +231,8 @@ esac
 updateKittyTabTitle
 if  [ ! $UID = 0 ] &&
     [ ! $term = "init" ] &&  # WSL
-    [ ! $term = "code" ];   # vscode
+    [ ! $term = "code" ]   # vscode
+    [ ! $term = "nvim" ];
 then
     eval neofetch
 fi

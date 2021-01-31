@@ -1,4 +1,4 @@
-let g:colorscheme = "gruvbox-material"
+let g:colorscheme = "quantum"
 
 let ayucolor="dark"
 let g:material_terminal_italics = 1
