@@ -1,4 +1,4 @@
-let g:colorscheme = "quantum"
+let g:colorscheme = "monokai_pro"
 
 let ayucolor="dark"
 let g:material_terminal_italics = 1
@@ -65,7 +65,7 @@ function! SaneDiffDefaults()
     hi! link       diffOnly      WarningMsg
 endfunction
 
-" Colorscheme overrides
+" Colorscheme tweaks
 if g:colorscheme ==# "codedark"
     hi NonText guibg=NONE
     call SaneDiffDefaults()
@@ -91,9 +91,36 @@ elseif g:colorscheme ==# "horizon"
     hi link         jsonQuote   NONE
     call SaneDiffDefaults()
 
+elseif g:colorscheme ==# "monokai_pro"
+    hi NonText ctermfg=240 ctermbg=236 guifg=#5b595c guibg=None
+    hi Pmenu          ctermfg=150 guifg=#a9dc76 guibg=#252226
+    hi PmenuSel       ctermbg=59 guibg=#403e41
+    hi PmenuSbar      ctermbg=248 guibg=Grey
+    hi PmenuThumb     ctermbg=15 guibg=White
+    hi CursorLineNr   ctermfg=11 gui=bold guifg=Yellow ctermbg=None guibg=#423f42
+    hi SignColumn     ctermbg=237 guibg=#423f42
+    hi FoldColumn     ctermfg=14 ctermbg=242 guifg=Cyan guibg=#423f42
+    hi link         vimVar      NONE
+    hi link         vimFuncVar  NONE
+    hi link         vimUserFunc NONE
+    hi link         jsonQuote   NONE
+    call SaneDiffDefaults()
+
 elseif g:colorscheme ==# "gruvbox-material"
     hi CursorLineNr gui=bold guifg=#a9b665
     call SaneDiffDefaults()
+
+elseif g:colorscheme ==# "predawn"
+    hi NonText     ctermfg=235 ctermbg=235 guifg=#3c3c3c guibg=None
+    hi CursorLine  ctermbg=237 guibg=#303030
+    hi SignColumn  ctermfg=14 ctermbg=242 guifg=#8c8c8c guibg=#3c3c3c
+    hi link         vimVar      NONE
+    hi link         vimFuncVar  NONE
+    hi link         vimUserFunc NONE
+    hi link         jsonQuote   NONE
+    hi GitGutterAdd   ctermfg=231 ctermbg=242 guifg=#46830d guibg=None
+    hi GitGutterChange ctermfg=231 ctermbg=242 guifg=#243958 guibg=None
+    hi GitGutterDelete ctermfg=88 ctermbg=242 guifg=#8b0808 guibg=None
 
 endif
 

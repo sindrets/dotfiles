@@ -82,6 +82,10 @@ if executable('ag')
     let g:ackprg = 'ag --vimgrep'
 endif
 
+if isdirectory(expand('%'))
+    exec "cd " . expand("%")
+endif
+
 source ~/.config/nvim/lightline-config.vim
 " source ~/.config/nvim/chadtree-config.vim
 
@@ -149,6 +153,7 @@ Plug 'ntk148v/vim-horizon'
 Plug 'ajh17/Spacegray.vim'
 Plug 'sainnhe/gruvbox-material'
 Plug 'kjssad/quantum.vim'
+Plug 'juanedi/predawn.vim'
 " CoC
 CocPlug 'neoclide/coc-css'
 CocPlug 'neoclide/coc-html'
@@ -318,6 +323,7 @@ nmap <silent> <leader>f :call CocAction("format")<CR>
 nmap <leader>. :CocAction<CR>
 nmap <M-c> :call CocAction("pickColor")<CR>
 nnoremap <M-O> :CocCommand editor.action.organizeImport<CR>
+nnoremap <M-t> :CocList symbols<CR>
 
 " Use K for show documentation in preview window
 nnoremap <silent> K :call <SID>show_documentation()<CR>
@@ -578,9 +584,7 @@ augroup init_vim
     au VimEnter * silent! au! FileExplorer *
     au BufEnter *
                 \ if <SID>isdir(expand('%'))
-                \ |     let cwd = expand("%")
-                \ |     exec "cd " . cwd | bd
-                \ |     exec "CocCommand explorer " . cwd
+                \ |     bd
                 \ | endif
 
     " Restore cursor pos
