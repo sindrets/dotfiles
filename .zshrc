@@ -73,6 +73,7 @@ alias ll="ls -lh"
 alias lla="ls -lha"
 alias grep="grep --color"
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
+alias gs="git status -sb"
 alias setclip="xclip -selection c"
 alias getclip="xclip -selection c -o"
 alias tree="tree -C"
@@ -231,7 +232,7 @@ esac
 updateKittyTabTitle
 if  [ ! $UID = 0 ] &&
     [ ! $term = "init" ] &&  # WSL
-    [ ! $term = "code" ]   # vscode
+    [ ! $term = "code" ] &&   # vscode
     [ ! $term = "nvim" ];
 then
     eval neofetch

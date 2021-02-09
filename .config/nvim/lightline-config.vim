@@ -1,5 +1,5 @@
 let g:lightline = {
-            \   "colorscheme": "quantum",
+            \   "colorscheme": "monokai_pro",
             \   "active": {
             \       "left": [
             \           [ "mode", "paste" ],
