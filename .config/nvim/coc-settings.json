@@ -58,5 +58,6 @@
 		"<C-v>": "toggleSelection"
 	},
 	"highlight.colors.enable": true,
-	"highlight.colorNames.enable": false
+	"highlight.colorNames.enable": false,
+	"diagnostic.warningSign": "△"
 }
