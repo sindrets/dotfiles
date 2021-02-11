@@ -93,6 +93,7 @@ elseif g:colorscheme ==# "horizon"
 
 elseif g:colorscheme ==# "monokai_pro"
     hi NonText ctermfg=240 ctermbg=236 guifg=#5b595c guibg=None
+    hi VertSplit      ctermfg=59 ctermbg=None guifg=#696769 guibg=None
     hi Pmenu          ctermfg=150 guifg=#a9dc76 guibg=#252226
     hi PmenuSel       ctermbg=59 guibg=#403e41
     hi PmenuSbar      ctermbg=248 guibg=Grey
