@@ -111,11 +111,11 @@ label-connected = %{A1:kitty --class kitty_FLOAT sudo wifi-menu:}%essid%%{A}
 
 format-disconnected =
 
-ramp-signal-0 = 冷
-ramp-signal-1 = 爛
-ramp-signal-2 = 嵐
-ramp-signal-3 = 襤
-ramp-signal-4 = 蠟
+ramp-signal-0 = 󰤯
+ramp-signal-1 = 󰤟
+ramp-signal-2 = 󰤢
+ramp-signal-3 = 󰤥
+ramp-signal-4 = 󰤨
 ramp-signal-foreground = ${color.c1}
 
 [module/eth]
@@ -142,7 +142,7 @@ date-alt = " %Y.%m.%d"
 time = %H:%M
 time-alt = %H:%M:%S
 
-format-prefix = 肋
+format-prefix = 󰥔
 format-foreground = ${color.c1}
 format-background = ${color.c2}
 format-padding = 2
@@ -156,9 +156,9 @@ expand-right = true
 
 format-spacing = 1
 
-label-open = 
+label-open = 󰐥
 label-open-foreground = ${color.c4}
-label-close =  cancel
+label-close = 󰅗 cancel
 label-close-foreground = ${color.c4}
 label-separator = |
 label-separator-foreground = ${color.c4}
@@ -207,7 +207,7 @@ blacklist-2 = caps lock
 type = custom/script
 exec = ~/.config/polybar/scripts/update-indicator.sh
 interval = 300
-format-prefix = " "
+format-prefix = "󰃨 "
 click-left = pamac-manager --updates &
 
 [module/pulseaudio-tail]
@@ -222,22 +222,22 @@ scroll-down = ~/.config/polybar/scripts/pulseaudio-tail.sh --down
 [module/insync]
 type = custom/script
 click-left = exec insync show
-exec = echo ""
+exec = echo "󰘿"
 
 [module/redshift]
 type = custom/script
 click-left = exec killall -USR1 redshift
-exec = echo ""
+exec = echo "󰌵"
 
 [module/1password]
 type = custom/script
 click-left = exec 1password &
-exec = echo ""
+exec = echo "󰢁"
 
 [module/cpu-temp]
 type = custom/script
 exec = ~/.config/polybar/scripts/cpu-temp.sh
-format-prefix = " "
+format-prefix = "󰔏 "
 format-padding = 2
 format-foreground = ${color.c1}
 format-background = ${color.c4}
