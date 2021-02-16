@@ -52,6 +52,7 @@ include-file = ~/.config/polybar/custom.ini
 
 [module/i3]
 type = internal/i3
+pin-workspaces = true
 format = <label-state> <label-mode>
 index-sort = true
 wrapping-scroll = false
@@ -126,7 +127,7 @@ interval = 3.0
 format-connected-padding = 2
 format-connected-foreground = ${color.c1}
 format-connected-background = ${color.c4}
-format-connected-prefix = " "
+format-connected-prefix = "󰈁 "
 format-connected-prefix-foreground = ${color.c1}
 label-connected = %local_ip%
 

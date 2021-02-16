@@ -117,6 +117,7 @@ Plug 'mileszs/ack.vim'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-abolish'
 Plug 'alvan/vim-closetag'
+Plug 'Rasukarusan/nvim-block-paste'
 " MISC
 Plug 'itchyny/lightline.vim'
 Plug 'mengelbrecht/lightline-bufferline'
@@ -167,6 +168,7 @@ CocPlug 'neoclide/coc-highlight'
 CocPlug 'neoclide/coc-snippets'
 CocPlug 'iamcco/coc-vimlsp'
 CocPlug 'weirongxu/coc-explorer'
+CocPlug 'josa42/coc-go'
 call plug#end()
 
 " Theme settings
@@ -187,22 +189,22 @@ xnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 xnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 xnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
 xnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
-inoremap <expr> <DOWN> pumvisible() ? '<DOWN>' : '<C-\><C-O>gj'
-inoremap <expr> <UP> pumvisible() ? '<UP>' : '<C-\><C-O>gk'
+inoremap <expr> <DOWN> pumvisible() ? '<DOWN>' : '<Cmd>normal gj<CR>'
+inoremap <expr> <UP> pumvisible() ? '<UP>' : '<Cmd>normal gk<CR>'
 
 " Home moves to first non-whitespace on display line
 nnoremap <expr> <Home> v:count == 0 ? "g^" : "^"
 nnoremap <expr> <End> v:count == 0 ? "g$" : "$"
 xnoremap <expr> <Home> v:count == 0 ? "g^" : "^"
 xnoremap <expr> <End> v:count == 0 ? "g$" : "$"
-inoremap <Home> <C-\><C-O>g^
+inoremap <Home> <Cmd>normal g^<CR>
 inoremap <End> <C-\><C-O>g$
 
 " Copy, cut and paste to/from system clipboard
-vnoremap <expr> y v:register == '"' ? '"+y' : 'y'
-vnoremap <expr> <S-Y> v:register == '"' ? '"+Y' : 'Y'
-vnoremap <C-x> "+d
-nnoremap <S-P> "+p
+xnoremap <expr> y v:register == '"' ? '"+y' : 'y'
+xnoremap <expr> <S-Y> v:register == '"' ? '"+Y' : 'Y'
+nnoremap <expr> yy v:register == '"' ? '"+yy' : 'yy'
+nnoremap <M-p> "+p
 
 " File explorer
 map <silent> <Leader>e :CocCommand explorer --no-toggle<CR>
@@ -212,7 +214,7 @@ nnoremap <silent> <Leader>q :q<CR>
 inoremap <M-Space> <Esc>
 
 " Begin new line above from insert mode
-inoremap <M-Return> <C-\><C-O>O
+inoremap <M-Return> <Cmd>normal O<CR>
 
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR> 
@@ -246,12 +248,16 @@ nnoremap <C-S> <C-I>
 vnoremap // "vy/\V<C-R>=escape(@",'/\')<CR><CR>
 
 " Move lines up/down
-nnoremap <A-UP> :m-2<CR>==
-nnoremap <A-DOWN> :m+<CR>==
-inoremap <A-UP> <ESC>:m-2<CR>==gi
-inoremap <A-DOWN> <ESC>:m+<CR>==gi
+nnoremap <A-UP> <Cmd>m-2<CR>==
+nnoremap <A-DOWN> <Cmd>m+<CR>==
+inoremap <A-UP> <Cmd>m-2 \| normal! ==<CR>
+inoremap <A-DOWN> <Cmd>m+ \| normal! ==<CR>
 vnoremap <A-UP> :m '<-2<CR>gv=gv
 vnoremap <A-DOWN> :m '>+<CR>gv=gv
+" vnoremap <A-UP> <Cmd>call MoveSelection("up")<CR>
+" vnoremap <A-DOWN> <Cmd>call MoveSelection("down")<CR>
+" vnoremap <A-UP> <Cmd>'<,'>m '<-2 \| normal! gv=gv<CR>
+" vnoremap <A-DOWN> <Cmd>'<,'>m '>+ \| normal! gv=gv<CR>
 
 " Select all
 nnoremap <C-A> ggVG
@@ -273,8 +279,8 @@ imap <S-Left> <Esc>v
 imap <S-Right> <Esc><Right>v
 
 " Ctrl+backspace to delete prev word, ctrl+del to delete next word
-inoremap <C-H> <C-\><C-O>db
-inoremap <C-Del> <C-\><C-O>dw
+inoremap <C-H> <Cmd>normal db<CR>
+inoremap <C-Del> <Cmd>normal dw<CR>
 
 " Indentation
 vmap <lt> <gv
@@ -332,7 +338,7 @@ nnoremap <silent> <leader>d :GitGutterPreviewHunk<CR>
 
 xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
 
-inoremap <silent> <Tab> <C-\><C-O>:call FullIndent()<CR>
+inoremap <silent> <Tab> <Cmd>call FullIndent()<CR>
 
 " Show highlight group under cursor
 nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
@@ -381,6 +387,16 @@ function! WorkspaceFiles()
         GFiles --cached --others --exclude-standard
     else
         Files
+    endif
+endfunction
+
+function! MoveSelection(direction)
+    if a:direction ==# "up"
+        exec "'<,'> m-2"
+        normal! gv=gv
+    elseif a:direction ==# "down"
+        exec "'<,'>  m+"
+        normal! gv=gv
     endif
 endfunction
 
@@ -618,12 +634,12 @@ function! s:filter_header(lines) abort
     return centered_lines
 endfunction
 let s:startify_ascii_header = [
-\ '     _   __         _    ___          ',
-\ '    / | / /__  ____| |  / (_)___ ___  ',
-\ '   /  |/ / _ \/ __ \ | / / / __ `__ \ ',
-\ '  / /|  /  __/ /_/ / |/ / / / / / / / ',
-\ ' /_/ |_/\___/\____/|___/_/_/ /_/ /_/  ',
-\ '                                      ',
+\ '  ⣠⣾⣄⠀⠀⠀⢰⣄⠀                                 ',
+\ '⠀⣾⣿⣿⣿⣆⠀⠀⢸⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+\ ' ⣿⣿⡟⢿⣿⣧⡀⢸⣿⣿⠀⣠⠴⠶⠦⡄⠀⢀⡤⠶⠶⣤⡀⣶⣦⠀⠀⢠⣶⡖⣶⣶⠀⣶⣦⣶⣶⣦⣠⣶⣶⣶⡄',
+\ ' ⣿⣿⡇⠈⢻⣿⣷⣼⣿⣿⢸⣇⣀⣀⣀⣹⢠⡟⠀⠀⠀⠈⣷⠘⣿⣇⠀⣾⡿⠀⣿⣿⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿',
+\ ' ⢿⣿⡇⠀⠀⠹⣿⣿⣿⡿⢸⡄⠀⠀⠀⠀⠸⣇⠀⠀⠀⠀⣿⠀⠹⣿⣼⣿⠁⠀⣿⣿⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿',
+\ ' ⠀⠙⠇⠀⠀⠀⠘⠿⠋⠀⠀⠛⠦⠤⠴⠖⠀⠙⠦⠤⠤⠞⠁⠀⠀⠻⠿⠃⠀⠀⠿⠿⠀⠿⠿⠀⠀⠿⠿⠀⠀⠿⠿',
 \ ]
 let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
 
