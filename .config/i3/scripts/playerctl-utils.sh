@@ -84,7 +84,7 @@ duration () {
 
     local n=`echo $1 | cut -d . -f1` # remove decimal point
     local t=$[ $n / 1000000 ]
-    
+
     local h=$[ $t / 3600 ]
     local m=$[ ($t % 3600) / 60 ]
     local s=$[ $t % 60 ]
