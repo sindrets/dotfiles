@@ -139,11 +139,9 @@ Plug 'tomasiser/vim-code-dark'
 Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
 Plug 'nanotech/jellybeans.vim'
-Plug 'gruvbox-community/gruvbox'
 Plug 'shinchu/lightline-gruvbox.vim'
 Plug 'cocopon/iceberg.vim'
 Plug 'junegunn/seoul256.vim'
-Plug 'drewtempelmeyer/palenight.vim'
 Plug 'arzg/vim-colors-xcode'
 Plug 'haishanh/night-owl.vim'
 Plug 'KeitaNakamura/neodark.vim'
@@ -155,6 +153,7 @@ Plug 'ajh17/Spacegray.vim'
 Plug 'sainnhe/gruvbox-material'
 Plug 'kjssad/quantum.vim'
 Plug 'juanedi/predawn.vim'
+Plug 'christianchiarulli/nvcode-color-schemes.vim'
 " CoC
 CocPlug 'neoclide/coc-css'
 CocPlug 'neoclide/coc-html'
@@ -189,8 +188,8 @@ xnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 xnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 xnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
 xnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
-inoremap <expr> <DOWN> pumvisible() ? '<DOWN>' : '<Cmd>normal gj<CR>'
-inoremap <expr> <UP> pumvisible() ? '<UP>' : '<Cmd>normal gk<CR>'
+inoremap <expr> <DOWN> pumvisible() ? '<DOWN>' : '<C-\><C-o>gj'
+inoremap <expr> <UP> pumvisible() ? '<UP>' : '<C-\><C-o>gk'
 
 " Home moves to first non-whitespace on display line
 nnoremap <expr> <Home> v:count == 0 ? "g^" : "^"
@@ -205,6 +204,8 @@ xnoremap <expr> y v:register == '"' ? '"+y' : 'y'
 xnoremap <expr> <S-Y> v:register == '"' ? '"+Y' : 'Y'
 nnoremap <expr> yy v:register == '"' ? '"+yy' : 'yy'
 nnoremap <M-p> "+p
+inoremap <M-p> <Cmd>set paste \| exec 'normal "+p' \| set nopaste<CR><RIGHT>
+inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
 
 " File explorer
 map <silent> <Leader>e :CocCommand explorer --no-toggle<CR>
@@ -217,7 +218,7 @@ inoremap <M-Space> <Esc>
 inoremap <M-Return> <Cmd>normal O<CR>
 
 " Navigate buffers
-nnoremap  <silent>   <tab> :bn<CR> 
+nnoremap  <silent>   <tab> :bn<CR>
 nnoremap  <silent> <s-tab> :bp<CR>
 nnoremap <leader><leader> <C-^>zz
 nnoremap <silent> <leader>w :call CloseBufferAndGoToAlt()<CR>
@@ -279,8 +280,8 @@ imap <S-Left> <Esc>v
 imap <S-Right> <Esc><Right>v
 
 " Ctrl+backspace to delete prev word, ctrl+del to delete next word
-inoremap <C-H> <Cmd>normal db<CR>
-inoremap <C-Del> <Cmd>normal dw<CR>
+inoremap <C-H> <C-\><C-o>db
+inoremap <C-Del> <C-\><C-o>dw
 
 " Indentation
 vmap <lt> <gv
@@ -354,6 +355,8 @@ command! Ssync syntax sync minlines=3000
 command! DiffSaved call FuncDiffSaved()
 command! CocJavaClearCache call CocJavaClearCacheFunc()
 command! CocJavaExploreCache call CocJavaExploreCacheFunc()
+command! -nargs=1 SplitOn call SplitLineOnPattern(<args>)
+command! ExecuteSelection call execute(GetVisualSelection())
 
 ": }}}
 
@@ -372,6 +375,19 @@ endfunction
 function! ReadNew(expr)
     enew | set ft=log
     exec "r! " . a:expr
+endfunction
+
+function! GetVisualSelection()
+    " Why is this not a built-in Vim script function?!
+    let [line_start, column_start] = getpos("'<")[1:2]
+    let [line_end, column_end] = getpos("'>")[1:2]
+    let lines = getline(line_start, line_end)
+    if len(lines) == 0
+        return ''
+    endif
+    let lines[-1] = lines[-1][: column_end - (&selection == 'inclusive' ? 1 : 2)]
+    let lines[0] = lines[0][column_start - 1:]
+    return join(lines, "\n")
 endfunction
 
 function! FuncDiffSaved()
@@ -509,7 +525,7 @@ function! FullIndent()
     normal $
     let l:lastCol = getcurpos()[2]
     normal 0
-    let l:first_nonspace = searchpos("\S", "nc", l:lnum)[1]
+    let l:first_nonspace = searchpos("\\S", "nc", l:lnum)[1]
     call winrestview(l:cur_view)
 
     if l:first_nonspace > 0 || l:col < l:lastCol
@@ -585,6 +601,13 @@ function! CocJavaExploreCacheFunc()
     exec 'CocCommand explorer --position floating ~/.config/coc/extensions/coc-java-data/' . name
 endfunction
 
+function SplitLineOnPattern(pattern)
+    let curLine = line(".")
+    let escapedPattern = substitute(a:pattern, "/", "\\\\/", "g")
+    exec curLine . "," . curLine . "s/" . escapedPattern . "/" . escapedPattern . "\\r/g"
+    noh
+endfunction
+
 function! s:isdir(dir)
     return !empty(a:dir) && (isdirectory(a:dir) ||
                 \ (!empty($SYSTEMDRIVE) && isdirectory('/'.tolower($SYSTEMDRIVE[0]).a:dir)))
@@ -634,12 +657,12 @@ function! s:filter_header(lines) abort
     return centered_lines
 endfunction
 let s:startify_ascii_header = [
-\ '  ⣠⣾⣄⠀⠀⠀⢰⣄⠀                                 ',
-\ '⠀⣾⣿⣿⣿⣆⠀⠀⢸⣿⣷⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
-\ ' ⣿⣿⡟⢿⣿⣧⡀⢸⣿⣿⠀⣠⠴⠶⠦⡄⠀⢀⡤⠶⠶⣤⡀⣶⣦⠀⠀⢠⣶⡖⣶⣶⠀⣶⣦⣶⣶⣦⣠⣶⣶⣶⡄',
-\ ' ⣿⣿⡇⠈⢻⣿⣷⣼⣿⣿⢸⣇⣀⣀⣀⣹⢠⡟⠀⠀⠀⠈⣷⠘⣿⣇⠀⣾⡿⠀⣿⣿⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿',
-\ ' ⢿⣿⡇⠀⠀⠹⣿⣿⣿⡿⢸⡄⠀⠀⠀⠀⠸⣇⠀⠀⠀⠀⣿⠀⠹⣿⣼⣿⠁⠀⣿⣿⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿',
-\ ' ⠀⠙⠇⠀⠀⠀⠘⠿⠋⠀⠀⠛⠦⠤⠴⠖⠀⠙⠦⠤⠤⠞⠁⠀⠀⠻⠿⠃⠀⠀⠿⠿⠀⠿⠿⠀⠀⠿⠿⠀⠀⠿⠿',
+\ '  ⣠⣾⣄⠀⠀⠀⢰⣄⠀                                  ',
+\ '⠀⣾⣿⣿⣿⣆⠀⠀⢸⣿⣷ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+\ ' ⣿⣿⡟⢿⣿⣧⡀⢸⣿⣿ ⠀⣠⠴⠶⠦⡄⠀⢀⡤⠶⠶⣤⡀⣶⣦⠀⠀⢠⣶⡖⣶⣶⠀⣶⣦⣶⣶⣦⣠⣶⣶⣶⡄',
+\ ' ⣿⣿⡇⠈⢻⣿⣷⣼⣿⣿ ⢸⣇⣀⣀⣀⣹⢠⡟⠀⠀⠀⠈⣷⠘⣿⣇⠀⣾⡿⠀⣿⣿⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿',
+\ ' ⢿⣿⡇⠀⠀⠹⣿⣿⣿⡿ ⢸⡄⠀⠀⠀⠀⠸⣇⠀⠀⠀⠀⣿⠀⠹⣿⣼⣿⠁⠀⣿⣿⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿',
+\ ' ⠀⠙⠇⠀⠀⠀⠘⠿⠋⠀ ⠀⠛⠦⠤⠴⠖⠀⠙⠦⠤⠤⠞⠁⠀⠀⠻⠿⠃⠀⠀⠿⠿⠀⠿⠿⠀⠀⠿⠿⠀⠀⠿⠿',
 \ ]
 let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
 

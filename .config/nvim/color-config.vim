@@ -1,4 +1,4 @@
-let g:colorscheme = "monokai_pro"
+let g:colorscheme = "nvcode"
 
 let ayucolor="dark"
 let g:material_terminal_italics = 1
@@ -101,6 +101,8 @@ elseif g:colorscheme ==# "monokai_pro"
     hi CursorLineNr   ctermfg=11 gui=bold guifg=Yellow ctermbg=None guibg=#423f42
     hi SignColumn     ctermbg=237 guibg=#423f42
     hi FoldColumn     ctermfg=14 ctermbg=242 guifg=Cyan guibg=#423f42
+    hi QuickFixLine   guibg=#714754 guifg=NONE
+    hi Search         guifg=#ffd866 gui=bold,underline
     hi link         vimVar      NONE
     hi link         vimFuncVar  NONE
     hi link         vimUserFunc NONE
@@ -122,6 +124,15 @@ elseif g:colorscheme ==# "predawn"
     hi GitGutterAdd   ctermfg=231 ctermbg=242 guifg=#46830d guibg=None
     hi GitGutterChange ctermfg=231 ctermbg=242 guifg=#243958 guibg=None
     hi GitGutterDelete ctermfg=88 ctermbg=242 guifg=#8b0808 guibg=None
+
+elseif g:colorscheme ==# "nvcode"
+    hi CocExplorerGitIgnored ctermfg=241 guifg=#5C6370
+    hi! link GitGutterAdd diffAdded
+    hi! link GitGutterRemoved diffRemoved
+    hi! link GitGutterChange diffChanged
+    hi link         vimVar      NONE
+    hi link         vimFuncVar  NONE
+    hi link         vimUserFunc NONE
 
 endif
 

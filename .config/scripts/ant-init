@@ -8,6 +8,7 @@ if [ "$1" = "--update" ]; then
     pushd "$script_dir"
     if [ ! -d "java-project-template" ]; then
         echo "Could not find java-project-template!" > /dev/stderr
+        popd
         exit 1
     fi
 
