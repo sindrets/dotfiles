@@ -103,7 +103,6 @@ call plug#begin("~/.vim/plug")
 " SYNTAX
 Plug 'kevinoid/vim-jsonc'
 Plug 'sheerun/vim-polyglot'
-Plug 'vim-scripts/TagHighlight'
 " BEHAVIOUR
 Plug 'terryma/vim-multiple-cursors'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
@@ -113,6 +112,11 @@ Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim'
+Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'mileszs/ack.vim'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-abolish'
@@ -174,6 +178,7 @@ call plug#end()
 source ~/.config/nvim/color-config.vim
 
 luafile ~/.config/nvim/lua/treesitter-config.lua
+luafile ~/.config/nvim/lua/telescope-config.lua
 
 ": }}}
 
@@ -204,6 +209,7 @@ xnoremap <expr> y v:register == '"' ? '"+y' : 'y'
 xnoremap <expr> <S-Y> v:register == '"' ? '"+Y' : 'Y'
 nnoremap <expr> yy v:register == '"' ? '"+yy' : 'yy'
 nnoremap <M-p> "+p
+nnoremap <M-P> "+P
 inoremap <M-p> <Cmd>set paste \| exec 'normal "+p' \| set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
 
@@ -214,8 +220,11 @@ map <silent> <Leader>b :CocCommand explorer --toggle<CR>
 nnoremap <silent> <Leader>q :q<CR>
 inoremap <M-Space> <Esc>
 
+" Make session
+nnoremap <silent> <M-S> <Cmd>call MakeSession()<CR>
+
 " Begin new line above from insert mode
-inoremap <M-Return> <Cmd>normal O<CR>
+inoremap <M-Return> <Esc>O
 
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR>
@@ -298,10 +307,13 @@ nnoremap <C-\> :call NERDComment(0, "toggle")<CR>
 inoremap <C-\> <Esc>:call NERDComment(0, "toggle")<CR>i
 vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 
-" FZF
-nnoremap <C-P> :call WorkspaceFiles()<CR>
-nnoremap <M-b> :Buffers<CR>
-nnoremap <C-F> :Ack! 
+" Telescope
+nnoremap <C-P> <Cmd>call WorkspaceFiles()<CR>
+nnoremap <M-b> <Cmd>Telescope buffers<CR>
+nnoremap <C-F> <Cmd>Telescope live_grep<CR>
+" nnoremap <C-P> :call WorkspaceFiles()<CR>
+" nnoremap <M-b> :Buffers<CR>
+" nnoremap <C-F> :Ack! 
 
 nnoremap <leader>rh :call FindAndReplaceInAll()<CR>
 
@@ -400,18 +412,18 @@ endfunction
 
 function! WorkspaceFiles()
     if !empty(glob("./.git"))
-        GFiles --cached --others --exclude-standard
+        Telescope git_files
     else
-        Files
+        lua require("telescope.builtin").find_files({ hidden=true })
     endif
 endfunction
 
 function! MoveSelection(direction)
     if a:direction ==# "up"
-        exec "'<,'> m-2"
+        exec "'<,'> m'<-2"
         normal! gv=gv
     elseif a:direction ==# "down"
-        exec "'<,'>  m+"
+        exec "'<,'>  m'>+"
         normal! gv=gv
     endif
 endfunction
@@ -470,6 +482,12 @@ function! ToggleTerminalSplit()
     endif
 endfunction
 
+function! MakeSession()
+    silent !mkdir -p .vim
+    silent mks! .vim/Session.vim
+    echom 'Session saved!'
+endfunction
+
 function! FindAndReplaceInAll()
     call inputsave()
     let find_string = substitute(input("Find: "), "/", "\\\\/", "g")
@@ -499,6 +517,17 @@ function! SourceProjectConfig()
             source .vim/init.vim
             let s:last_sourced_config = project_config_path
             echom "Sourced project config: " . project_config_path
+        endif
+    endif
+endfunction
+
+let s:last_sourced_session = ""
+function! SourceProjectSession()
+    if filereadable(".vim/Session.vim")
+        let project_session_path = system('realpath -m .vim/Session.vim')
+        if s:last_sourced_session != project_session_path
+            source .vim/Session.vim
+            let s:last_sourced_session = project_session_path
         endif
     endif
 endfunction
@@ -601,7 +630,7 @@ function! CocJavaExploreCacheFunc()
     exec 'CocCommand explorer --position floating ~/.config/coc/extensions/coc-java-data/' . name
 endfunction
 
-function SplitLineOnPattern(pattern)
+function! SplitLineOnPattern(pattern)
     let curLine = line(".")
     let escapedPattern = substitute(a:pattern, "/", "\\\\/", "g")
     exec curLine . "," . curLine . "s/" . escapedPattern . "/" . escapedPattern . "\\r/g"
@@ -625,6 +654,9 @@ augroup init_vim
                 \ if <SID>isdir(expand('%'))
                 \ |     bd
                 \ | endif
+
+    au VimEnter * exec SourceProjectConfig() | exec SourceProjectSession()
+
 
     " Restore cursor pos
     au BufReadPost *
@@ -667,6 +699,7 @@ let s:startify_ascii_header = [
 let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
 
 exec SourceProjectConfig()
+exec SourceProjectSession()
 
 ": }}}
 
