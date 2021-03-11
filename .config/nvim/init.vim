@@ -117,14 +117,16 @@ Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'akinsho/nvim-bufferline.lua'
 Plug 'mileszs/ack.vim'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-abolish'
 Plug 'alvan/vim-closetag'
 Plug 'Rasukarusan/nvim-block-paste'
+Plug 'godlygeek/tabular'
+Plug 'tpope/vim-surround'
 " MISC
 Plug 'itchyny/lightline.vim'
-Plug 'mengelbrecht/lightline-bufferline'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
@@ -133,7 +135,6 @@ Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'honza/vim-snippets'
-Plug 'godlygeek/tabular'
 " THEMES
 Plug 'rakr/vim-one'
 Plug 'ayu-theme/ayu-vim'
@@ -179,6 +180,7 @@ source ~/.config/nvim/color-config.vim
 
 luafile ~/.config/nvim/lua/treesitter-config.lua
 luafile ~/.config/nvim/lua/telescope-config.lua
+luafile ~/.config/nvim/lua/nvim-bufferline-config.lua
 
 ": }}}
 
@@ -310,7 +312,7 @@ vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 " Telescope
 nnoremap <C-P> <Cmd>call WorkspaceFiles()<CR>
 nnoremap <M-b> <Cmd>Telescope buffers<CR>
-nnoremap <C-F> <Cmd>Telescope live_grep<CR>
+nnoremap <M-f> <Cmd>Telescope live_grep<CR>
 " nnoremap <C-P> :call WorkspaceFiles()<CR>
 " nnoremap <M-b> :Buffers<CR>
 " nnoremap <C-F> :Ack! 
@@ -331,8 +333,8 @@ inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
             \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gV <C-W>v<Plug>(coc-definition)
-nmap <silent> gs <C-W>s<Plug>(coc-definition)
+nmap <silent> gV <C-W>v<Plug>(coc-definition)zz
+nmap <silent> gs <C-W>s<Plug>(coc-definition)zz
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
@@ -690,7 +692,7 @@ function! s:filter_header(lines) abort
 endfunction
 let s:startify_ascii_header = [
 \ '  ⣠⣾⣄⠀⠀⠀⢰⣄⠀                                  ',
-\ '⠀⣾⣿⣿⣿⣆⠀⠀⢸⣿⣷ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀',
+\ '⠀⣾⣿⣿⣿⣆⠀⠀⢸⣿⣷ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡿⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀',
 \ ' ⣿⣿⡟⢿⣿⣧⡀⢸⣿⣿ ⠀⣠⠴⠶⠦⡄⠀⢀⡤⠶⠶⣤⡀⣶⣦⠀⠀⢠⣶⡖⣶⣶⠀⣶⣦⣶⣶⣦⣠⣶⣶⣶⡄',
 \ ' ⣿⣿⡇⠈⢻⣿⣷⣼⣿⣿ ⢸⣇⣀⣀⣀⣹⢠⡟⠀⠀⠀⠈⣷⠘⣿⣇⠀⣾⡿⠀⣿⣿⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿',
 \ ' ⢿⣿⡇⠀⠀⠹⣿⣿⣿⡿ ⢸⡄⠀⠀⠀⠀⠸⣇⠀⠀⠀⠀⣿⠀⠹⣿⣼⣿⠁⠀⣿⣿⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿',
