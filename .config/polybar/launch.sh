@@ -9,7 +9,8 @@ if [ -z "$monitor_primary" ]; then
     export monitor_primary="$(xrandr | grep -E '\bconnected\b' | cut -d " " -f 1)"
 fi
 export monitor_secondary="$(xrandr | grep -E '\bconnected\b' | grep -v 'primary' | cut -d " " -f 1)"
-if [ $(wc -w <<< "$monitor_secondary") -gt 1 ] || [ "$monitor_secondary" = "$monitor_primary"]; then
+if [ $(wc -w <<< "$monitor_secondary") -gt 1 ] \
+    || [ "$monitor_secondary" = "$monitor_primary" ]; then
     unset monitor_secondary
 fi
 

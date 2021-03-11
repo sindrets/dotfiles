@@ -1,4 +1,4 @@
-let g:colorscheme = "nvcode"
+let g:colorscheme = "onedark"
 
 let ayucolor="dark"
 let g:material_terminal_italics = 1

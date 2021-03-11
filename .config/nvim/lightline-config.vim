@@ -1,5 +1,6 @@
 let g:lightline = {
             \   "colorscheme": "one",
+            \   "enable": { "tabline": 0 },
             \   "active": {
             \       "left": [
             \           [ "mode", "paste" ],
@@ -123,7 +124,7 @@ endfunction
 call timer_start(1000 * 60, "TablineUpdate", {"repeat": -1})
 
 function! GetSelectionRangeString()
-    let range = sort([line("."), line("v")])
+    let range = sort([line("."), line("v")], "n")
     let m = mode()
     if (m ==? "v" || m ==# "\<C-V>")
         return '<' . range[0] . ',' . range[1] . '> '
