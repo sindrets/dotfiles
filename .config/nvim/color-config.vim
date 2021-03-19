@@ -134,6 +134,13 @@ elseif g:colorscheme ==# "nvcode"
     hi link         vimFuncVar  NONE
     hi link         vimUserFunc NONE
 
+elseif g:colorscheme ==# "onedark"
+    hi! link GitGutterAdd diffAdded
+    hi! link GitGutterRemoved diffRemoved
+    hi! link GitGutterChange diffChanged
+    hi link         vimFuncVar  NONE
+    hi link         vimUserFunc NONE
+
 endif
 
 if g:lightline.colorscheme ==# "horizon"
