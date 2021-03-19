@@ -165,14 +165,15 @@ CocPlug 'neoclide/coc-html'
 CocPlug 'neoclide/coc-java'
 CocPlug 'neoclide/coc-json'
 CocPlug 'neoclide/coc-pairs'
-CocPlug 'neoclide/coc-python'
 CocPlug 'neoclide/coc-tsserver'
 CocPlug 'neoclide/coc-prettier'
 CocPlug 'neoclide/coc-highlight'
 CocPlug 'neoclide/coc-snippets'
+CocPlug 'fannheyward/coc-pyright'
 CocPlug 'iamcco/coc-vimlsp'
 CocPlug 'weirongxu/coc-explorer'
 CocPlug 'josa42/coc-go'
+CocPlug 'iamcco/coc-diagnostic'
 call plug#end()
 
 " Theme settings
@@ -233,6 +234,7 @@ nnoremap  <silent>   <tab> :bn<CR>
 nnoremap  <silent> <s-tab> :bp<CR>
 nnoremap <leader><leader> <C-^>zz
 nnoremap <silent> <leader>w :call CloseBufferAndGoToAlt()<CR>
+nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 
 " Navigate tabs
 map <silent> <Leader><Tab> :tabn<CR>
@@ -252,6 +254,10 @@ nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 nnoremap <C-x> <C-w>p
+
+" Window splits
+nnoremap <leader>v <Cmd>vnew<CR>
+nnoremap <leader>s <Cmd>sp<CR>
 
 " Remap jump forward
 nnoremap <C-S> <C-I>
@@ -332,17 +338,17 @@ inoremap <silent><expr> <c-space> coc#refresh()
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
             \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
 
-nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gd <Plug>(coc-definition)zz
 nmap <silent> gV <C-W>v<Plug>(coc-definition)zz
 nmap <silent> gs <C-W>s<Plug>(coc-definition)zz
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gy <Plug>(coc-type-definition)zz
+nmap <silent> gi <Plug>(coc-implementation)zz
+nmap <silent> gr <Plug>(coc-references)zz
 nmap <silent> <leader>rn <PLug>(coc-rename)
 nmap <silent> <F2> <Plug>(coc-rename)
-nmap <silent> <leader>f :call CocAction("format")<CR>
-nmap <leader>. :CocAction<CR>
-nmap <M-c> :call CocAction("pickColor")<CR>
+nnoremap <silent> <leader>f :call CocAction("format")<CR>
+nnoremap <leader>. :CocAction<CR>
+nnoremap <M-c> :call CocAction("pickColor")<CR>
 nnoremap <M-O> :CocCommand editor.action.organizeImport<CR>
 nnoremap <M-t> :CocList symbols<CR>
 
@@ -525,7 +531,7 @@ endfunction
 
 let s:last_sourced_session = ""
 function! SourceProjectSession()
-    if filereadable(".vim/Session.vim")
+    if len(v:argv) == 1 && filereadable(".vim/Session.vim")
         let project_session_path = system('realpath -m .vim/Session.vim')
         if s:last_sourced_session != project_session_path
             source .vim/Session.vim
