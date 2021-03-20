@@ -256,7 +256,7 @@ nnoremap <A-l> <C-w>l
 nnoremap <C-x> <C-w>p
 
 " Window splits
-nnoremap <leader>v <Cmd>vnew<CR>
+nnoremap <leader>v <Cmd>vsp<CR>
 nnoremap <leader>s <Cmd>sp<CR>
 
 " Remap jump forward
@@ -317,6 +317,7 @@ vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 
 " Telescope
 nnoremap <C-P> <Cmd>call WorkspaceFiles()<CR>
+nnoremap <leader>p <Cmd>call WorkspaceFiles('-a')<CR>
 nnoremap <M-b> <Cmd>Telescope buffers<CR>
 nnoremap <M-f> <Cmd>Telescope live_grep<CR>
 " nnoremap <C-P> :call WorkspaceFiles()<CR>
@@ -418,8 +419,14 @@ function! FuncDiffSaved()
     exe "setlocal bt=nofile bh=wipe nobl noswf ro ft=" . filetype
 endfunction
 
-function! WorkspaceFiles()
-    if !empty(glob("./.git"))
+function! WorkspaceFiles(...)
+    if get(a:, 1, '0') ==# "-a"
+        " if '-a': show all files including ignored
+        call luaeval("require('telescope.builtin').find_files({
+                    \ hidden=true,
+                    \ find_command={ 'fd', '--type', 'f', '--no-ignore' }
+                    \ })")
+    elseif !empty(glob("./.git"))
         Telescope git_files
     else
         lua require("telescope.builtin").find_files({ hidden=true })
