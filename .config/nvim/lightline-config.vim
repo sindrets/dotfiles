@@ -62,9 +62,13 @@ function! LightlineMode()
 endfunction
 
 function! LightlineGitbranch()
-    let branch = FugitiveHead()
+    let branch = get(b:,'gitsigns_head','')
+    let status = get(b:,'gitsigns_status','')
+    if len(status) > 0
+        let status = " " . status
+    endif
     return LightlineShouldIgnore()
-                \ || winwidth(0) < 70 || branch == "" ? "" : " " . branch
+                \ || winwidth(0) < 70 || branch == "" ? "" : " " . branch . status
 endfunction
 
 function! LightlineFilename()

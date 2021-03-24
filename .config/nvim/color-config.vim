@@ -65,6 +65,12 @@ function! SaneDiffDefaults()
     hi! link       diffOnly      WarningMsg
 endfunction
 
+
+" Lsp
+hi! link LspReferenceText CursorLine
+hi! link LspReferenceRead CursorLine
+hi! link LspReferenceWrite CursorLine
+
 " Colorscheme tweaks
 if g:colorscheme ==# "codedark"
     hi NonText guibg=NONE
