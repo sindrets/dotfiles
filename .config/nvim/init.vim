@@ -35,6 +35,7 @@ set completeopt=menuone,noselect
 set signcolumn=auto:1
 set grepprg=ag\ --vimgrep\ $*
 set grepformat=%f:%l:%c:%m
+set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize
 set pyx=3
 set pyxversion=3
 set shada=!,'10,/100,:100,<0,@1,f1,h,s1
@@ -90,7 +91,7 @@ if isdirectory(expand('%'))
     exec "cd " . expand("%")
 endif
 
-source ~/.config/nvim/lightline-config.vim
+" source ~/.config/nvim/lightline-config.vim
 " source ~/.config/nvim/chadtree-config.vim
 
 ": }}}
@@ -138,7 +139,8 @@ Plug 'Rasukarusan/nvim-block-paste'
 Plug 'godlygeek/tabular'
 Plug 'tpope/vim-surround'
 " MISC
-Plug 'itchyny/lightline.vim'
+" Plug 'itchyny/lightline.vim'
+Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 Plug 'lewis6991/gitsigns.nvim'
 " Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
@@ -188,6 +190,7 @@ luafile ~/.config/nvim/lua/lspkind-config.lua
 luafile ~/.config/nvim/lua/telescope-config.lua
 luafile ~/.config/nvim/lua/nvim-bufferline-config.lua
 luafile ~/.config/nvim/lua/gitsigns-config.lua
+luafile ~/.config/nvim/lua/galaxyline-config.lua
 
 ": }}}
 
@@ -223,7 +226,7 @@ inoremap <M-p> <Cmd>set paste \| exec 'normal "+p' \| set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
 
 " File explorer
-map <silent> <Leader>e <Cmd>NvimTreeFindFile<CR>
+map <silent> <Leader>e <Cmd>NvimTreeFocus<CR>
 map <silent> <Leader>b <Cmd>NvimTreeToggle<CR>
 
 nnoremap <silent> <Leader>q :q<CR>
@@ -326,6 +329,8 @@ nnoremap <C-P> <Cmd>call WorkspaceFiles()<CR>
 nnoremap <leader>p <Cmd>call WorkspaceFiles('-a')<CR>
 nnoremap <M-b> <Cmd>Telescope buffers<CR>
 nnoremap <M-f> <Cmd>Telescope live_grep<CR>
+nnoremap <M-t> <Cmd>Telescope lsp_workspace_symbols<CR>
+nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
 " nnoremap <C-P> :call WorkspaceFiles()<CR>
 " nnoremap <M-b> :Buffers<CR>
 " nnoremap <C-F> :Ack! 
@@ -343,7 +348,7 @@ nnoremap <M-q> <Cmd>call ToggleQuickFix()<CR>
 
 " Trigger completion
 inoremap <silent><expr> <C-Space> compe#complete()
-inoremap <silent><expr> <Cr> compe#confirm("<Cr>")
+" inoremap <silent><expr> <Cr> compe#confirm("<Cr>")
 
 " Navigate snippet placeholders
 imap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
@@ -540,7 +545,14 @@ endfunction
 
 function! MakeSession()
     silent !mkdir -p .vim
+    let wasOpen = luaeval("require('nvim-tree.lib').win_open()")
+    if wasOpen == v:true
+        silent NvimTreeClose
+    endif
     silent mks! .vim/Session.vim
+    if wasOpen == v:true
+        silent NvimTreeOpen
+    endif
     echom 'Session saved!'
 endfunction
 

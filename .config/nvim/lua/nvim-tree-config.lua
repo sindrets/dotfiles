@@ -1,6 +1,7 @@
 vim.g.nvim_tree_indent_markers = 1
 vim.g.nvim_tree_git_hl = 0
 vim.g.nvim_tree_width = 30
+vim.g.nvim_tree_group_empty = 1
 
 local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 vim.g.nvim_tree_bindings = {
@@ -36,12 +37,12 @@ vim.g.nvim_tree_icons = {
     default = "",
     symlink = "",
     git = {
-        unstaged = "ﰂ",
-        staged = "",
+        unstaged = "柳",
+        staged = "",
         unmerged = "",
         renamed = "➜",
-        untracked = "★",
-        deleted = ""
+        untracked = "",
+        deleted = ""
     },
     folder = {
         default = "",

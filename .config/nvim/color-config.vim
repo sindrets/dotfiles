@@ -149,35 +149,35 @@ elseif g:colorscheme ==# "onedark"
 
 endif
 
-if g:lightline.colorscheme ==# "horizon"
-    let s:gray1 = [ '#2e303e', 235 ]
-    let s:gray2 = [ '#141414', 233 ]
-    let s:white = [ '#6c6f93', 242 ]
-    let s:cyan = [ '#25b0bc', 37 ]
-    let s:green = [ '#09f7a0', 48 ]
-    let s:purple = [ '#b877db', 171 ]
-    let s:red = [ '#e95678', 203 ]
-    let s:yellow = [ '#09f7a0', 150 ]
-    let s:salmon = [ '#fab795', 209 ]
+" if g:lightline.colorscheme ==# "horizon"
+"     let s:gray1 = [ '#2e303e', 235 ]
+"     let s:gray2 = [ '#141414', 233 ]
+"     let s:white = [ '#6c6f93', 242 ]
+"     let s:cyan = [ '#25b0bc', 37 ]
+"     let s:green = [ '#09f7a0', 48 ]
+"     let s:purple = [ '#b877db', 171 ]
+"     let s:red = [ '#e95678', 203 ]
+"     let s:yellow = [ '#09f7a0', 150 ]
+"     let s:salmon = [ '#fab795', 209 ]
 
-    let s:p = {'normal': {}, 'inactive': {}, 'insert': {}, 'replace': {}, 'visual': {}, 'tabline': {}}
-    let s:p.normal.left = [ [ s:gray1, s:salmon ], [ s:red, s:gray2 ] ]
-    let s:p.normal.right = [ [ s:gray1, s:salmon ], [ s:gray1, s:yellow ] ]
-    let s:p.inactive.right = [ [ s:gray1, s:gray2 ], [ s:white, s:gray1 ] ]
-    let s:p.inactive.left =  [ [ s:cyan, s:gray1 ], [ s:white, s:gray1 ] ]
-    let s:p.insert.left = [ [ s:gray1, s:purple ], [ s:green, s:gray2 ] ]
-    let s:p.insert.right = [ [ s:gray1, s:purple ], [ s:gray1, s:yellow ] ]
-    let s:p.replace.left = [ [ s:gray1, s:red ], [ s:cyan, s:gray2 ] ]
-    let s:p.visual.left = [ [ s:gray1, s:cyan ], [ s:purple, s:gray2 ] ]
-    let s:p.visual.right = [ [ s:gray1, s:cyan ], [ s:gray1, s:yellow ] ]
-    let s:p.normal.middle = [ [ s:white, s:gray2 ] ]
-    let s:p.inactive.middle = [ [ s:white, s:gray2 ] ]
-    let s:p.tabline.left = [ [ s:cyan, s:gray2 ] ]
-    let s:p.tabline.tabsel = [ [ s:green, s:gray1 ] ]
-    let s:p.tabline.middle = [ [ s:yellow, s:gray2 ] ]
-    let s:p.tabline.right = copy(s:p.normal.right)
-    let s:p.normal.error = [ [ s:red, s:gray1 ] ]
-    let s:p.normal.warning = [ [ s:yellow, s:gray1 ] ]
+"     let s:p = {'normal': {}, 'inactive': {}, 'insert': {}, 'replace': {}, 'visual': {}, 'tabline': {}}
+"     let s:p.normal.left = [ [ s:gray1, s:salmon ], [ s:red, s:gray2 ] ]
+"     let s:p.normal.right = [ [ s:gray1, s:salmon ], [ s:gray1, s:yellow ] ]
+"     let s:p.inactive.right = [ [ s:gray1, s:gray2 ], [ s:white, s:gray1 ] ]
+"     let s:p.inactive.left =  [ [ s:cyan, s:gray1 ], [ s:white, s:gray1 ] ]
+"     let s:p.insert.left = [ [ s:gray1, s:purple ], [ s:green, s:gray2 ] ]
+"     let s:p.insert.right = [ [ s:gray1, s:purple ], [ s:gray1, s:yellow ] ]
+"     let s:p.replace.left = [ [ s:gray1, s:red ], [ s:cyan, s:gray2 ] ]
+"     let s:p.visual.left = [ [ s:gray1, s:cyan ], [ s:purple, s:gray2 ] ]
+"     let s:p.visual.right = [ [ s:gray1, s:cyan ], [ s:gray1, s:yellow ] ]
+"     let s:p.normal.middle = [ [ s:white, s:gray2 ] ]
+"     let s:p.inactive.middle = [ [ s:white, s:gray2 ] ]
+"     let s:p.tabline.left = [ [ s:cyan, s:gray2 ] ]
+"     let s:p.tabline.tabsel = [ [ s:green, s:gray1 ] ]
+"     let s:p.tabline.middle = [ [ s:yellow, s:gray2 ] ]
+"     let s:p.tabline.right = copy(s:p.normal.right)
+"     let s:p.normal.error = [ [ s:red, s:gray1 ] ]
+"     let s:p.normal.warning = [ [ s:yellow, s:gray1 ] ]
 
-    let g:lightline#colorscheme#horizon#palette = lightline#colorscheme#flatten(s:p)
-endif
+"     let g:lightline#colorscheme#horizon#palette = lightline#colorscheme#flatten(s:p)
+" endif

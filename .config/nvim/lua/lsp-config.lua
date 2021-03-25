@@ -130,7 +130,14 @@ lspconfig.sumneko_lua.setup{
     cmd = {
         "lua-language-server"
     },
-    filetypes = { "lua" }
+    filetypes = { "lua" },
+    settings = {
+        Lua = {
+            diagnostics = {
+                globals = { "vim" }
+            }
+        }
+    }
 }
 
 -- Highlight references on cursor hold
