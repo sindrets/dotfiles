@@ -149,7 +149,7 @@ elseif g:colorscheme ==# "onedark"
 
 endif
 
-" if g:lightline.colorscheme ==# "horizon"
+" if exists('g:lightline.colorscheme') && g:lightline.colorscheme ==# "horizon"
 "     let s:gray1 = [ '#2e303e', 235 ]
 "     let s:gray2 = [ '#141414', 233 ]
 "     let s:white = [ '#6c6f93', 242 ]

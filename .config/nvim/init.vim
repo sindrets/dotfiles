@@ -91,9 +91,6 @@ if isdirectory(expand('%'))
     exec "cd " . expand("%")
 endif
 
-" source ~/.config/nvim/lightline-config.vim
-" source ~/.config/nvim/chadtree-config.vim
-
 ": }}}
 
 ": PLUG {{{
@@ -139,10 +136,8 @@ Plug 'Rasukarusan/nvim-block-paste'
 Plug 'godlygeek/tabular'
 Plug 'tpope/vim-surround'
 " MISC
-" Plug 'itchyny/lightline.vim'
 Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 Plug 'lewis6991/gitsigns.nvim'
-" Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
@@ -356,6 +351,7 @@ smap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
 imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
 smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
 
+" LSP
 nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>zz
 nmap <silent> gV <C-W>v<Cmd>lua vim.lsp.buf.definition()<CR>zz
 nmap <silent> gs <C-W>s<Cmd>lua vim.lsp.buf.definition()<CR>zz
@@ -370,6 +366,7 @@ nnoremap <leader>. <Cmd>Lspsaga code_action<CR>
 vnoremap <leader>. <Cmd>Lspsaga range_code_action<CR>
 nnoremap <silent> <C-f> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>
 nnoremap <silent> <C-b> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>
+nnoremap <silent> <leader>ld <Cmd>Lspsaga show_cursor_diagnostics<CR>
 " nnoremap <M-c> :call CocAction("pickColor")<CR>
 " nnoremap <M-O> <Cmd>lua vim.lsp.buf.organize_imports()<CR>
 " nnoremap <M-t> :CocList symbols<CR>
@@ -379,9 +376,7 @@ xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
 inoremap <silent> <Tab> <Cmd>call FullIndent()<CR>
 
 " Show highlight group under cursor
-nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-            \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-            \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+nnoremap <F10> <Cmd>call SynStack() \| call SynGroup()<CR>
 
 ": }}}
 
@@ -699,6 +694,18 @@ function! SplitLineOnPattern(pattern)
     let escapedPattern = substitute(a:pattern, "/", "\\\\/", "g")
     exec curLine . "," . curLine . "s/" . escapedPattern . "/" . escapedPattern . "\\r/g"
     noh
+endfunction
+
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echom map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunction
+
+function! SynGroup()
+    let l:s = synID(line('.'), col('.'), 1)
+    echom synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
 endfunction
 
 function! s:isdir(dir)

@@ -73,4 +73,41 @@ function M.lsp_organize_imports()
   end
 end
 
+function M.right_pad_string(s, min_size, fill)
+  local result = s
+  if not fill then fill = " " end
+
+  while #result < min_size do
+    result = result .. fill
+  end
+
+  return result
+end
+
+function M.left_pad_string(s, min_size, fill)
+  local result = s
+  if not fill then fill = " " end
+
+  while #result < min_size do
+    result = fill .. result
+  end
+
+  return result
+end
+
+function M.center_pad_string(s, min_size, fill)
+  local result = s
+  if not fill then fill = " " end
+
+  while #result < min_size do
+    if #result % 2 == 0 then
+      result = result .. fill
+    else
+      result = fill .. result
+    end
+  end
+
+  return result
+end
+
 return M

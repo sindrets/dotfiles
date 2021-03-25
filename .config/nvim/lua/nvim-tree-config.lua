@@ -37,12 +37,12 @@ vim.g.nvim_tree_icons = {
     default = "",
     symlink = "",
     git = {
-        unstaged = "柳",
-        staged = "",
+        unstaged = "",
+        staged = "",
         unmerged = "",
         renamed = "➜",
-        untracked = "",
-        deleted = ""
+        untracked = "ﰂ",
+        deleted = "ﯰ"
     },
     folder = {
         default = "",
@@ -52,3 +52,8 @@ vim.g.nvim_tree_icons = {
         symlink = "",
     }
 }
+
+vim.cmd([[hi! link NvimTreeGitNew diffAdded]])
+vim.cmd([[hi! link NvimTreeGitDeleted diffRemoved]])
+vim.cmd([[hi! link NvimTreeGitDirty diffRemoved]])
+vim.cmd([[hi! link NvimTreeGitStaged diffAdded]])
