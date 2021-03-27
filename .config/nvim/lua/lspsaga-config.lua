@@ -1,16 +1,16 @@
 require("lspsaga").init_lsp_saga{
     use_saga_diagnostic_sign = true,
-    error_sign = '✗',
-    warn_sign = '△',
-    hint_sign = '',
-    infor_sign = 'ℹ',
+    error_sign = '',
+    warn_sign = '',
+    hint_sign = '',
+    infor_sign = '',
     dianostic_header_icon = '   ',
     code_action_icon = '💡',
     code_action_prompt = {
       enable = true,
-      sign = true,
+      sign = false,
       sign_priority = 20,
-      virtual_text = false,
+      virtual_text = true,
     },
     finder_definition_icon = '   ',
     finder_reference_icon = '   ',
@@ -36,4 +36,5 @@ require("lspsaga").init_lsp_saga{
     -- }
 }
 
+vim.cmd([[hi! link LspSagaLightBulb CursorLine]])
 vim.cmd([[autocmd User CompeConfirmDone :Lspsaga signature_help]])

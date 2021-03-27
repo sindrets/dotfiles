@@ -32,13 +32,16 @@ set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 set foldlevelstart=99
 set completeopt=menuone,noselect
-set signcolumn=auto:1
-set grepprg=ag\ --vimgrep\ $*
-set grepformat=%f:%l:%c:%m
+set signcolumn=auto:2
 set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize
 set pyx=3
 set pyxversion=3
 set shada=!,'10,/100,:100,<0,@1,f1,h,s1
+
+if executable("ag")
+    set grepprg=ag\ --vimgrep\ $*
+    set grepformat=%f:%l:%c:%m
+endif
 
 if has("termguicolors")
     set termguicolors
@@ -83,10 +86,6 @@ let g:user_emmet_leader_key='<C-Z>'
 
 let g:mkdp_browserfunc = "MkdpOpenInNewWindow"
 
-if executable('ag')
-    let g:ackprg = 'ag --vimgrep'
-endif
-
 if isdirectory(expand('%'))
     exec "cd " . expand("%")
 endif
@@ -94,12 +93,6 @@ endif
 ": }}}
 
 ": PLUG {{{
-
-function FuncCocPlug(repo)
-    execute "Plug '" . a:repo . "',  {'do': 'yarn install --frozen-lockfile'}"
-endfunction
-
-command! -nargs=1 CocPlug call FuncCocPlug(<args>)
 
 call plug#begin("~/.vim/plug")
 " SYNTAX
@@ -138,6 +131,7 @@ Plug 'tpope/vim-surround'
 " MISC
 Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 Plug 'lewis6991/gitsigns.nvim'
+Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
@@ -154,7 +148,6 @@ Plug 'tomasiser/vim-code-dark'
 Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
 Plug 'nanotech/jellybeans.vim'
-Plug 'shinchu/lightline-gruvbox.vim'
 Plug 'cocopon/iceberg.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'arzg/vim-colors-xcode'
@@ -174,6 +167,7 @@ call plug#end()
 " Theme settings
 source ~/.config/nvim/color-config.vim
 
+luafile ~/.config/nvim/lua/nvim-web-devicons-config.lua
 luafile ~/.config/nvim/lua/treesitter-config.lua
 luafile ~/.config/nvim/lua/lspsaga-config.lua
 luafile ~/.config/nvim/lua/lsp-config.lua
@@ -186,6 +180,7 @@ luafile ~/.config/nvim/lua/telescope-config.lua
 luafile ~/.config/nvim/lua/nvim-bufferline-config.lua
 luafile ~/.config/nvim/lua/gitsigns-config.lua
 luafile ~/.config/nvim/lua/galaxyline-config.lua
+luafile ~/.config/nvim/lua/indent-blankline-config.lua
 
 ": }}}
 
@@ -366,7 +361,7 @@ nnoremap <leader>. <Cmd>Lspsaga code_action<CR>
 vnoremap <leader>. <Cmd>Lspsaga range_code_action<CR>
 nnoremap <silent> <C-f> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>
 nnoremap <silent> <C-b> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>
-nnoremap <silent> <leader>ld <Cmd>Lspsaga show_cursor_diagnostics<CR>
+nnoremap <silent> <leader>ld <Cmd>Lspsaga show_line_diagnostics<CR>
 " nnoremap <M-c> :call CocAction("pickColor")<CR>
 " nnoremap <M-O> <Cmd>lua vim.lsp.buf.organize_imports()<CR>
 " nnoremap <M-t> :CocList symbols<CR>

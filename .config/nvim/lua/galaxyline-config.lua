@@ -150,7 +150,7 @@ table.insert(cur_section, {
   DiffAdd = {
     provider = 'DiffAdd',
     condition = condition.hide_in_width,
-    icon = 'ﰂ ',
+    icon = ' ',
     separator = '',
     highlight = {colors.green,colors.bg},
   }
@@ -169,7 +169,7 @@ table.insert(cur_section, {
   DiffRemove = {
     provider = 'DiffRemove',
     condition = condition.hide_in_width,
-    icon = 'ﯰ ',
+    icon = ' ',
     separator = '',
     highlight = {colors.red,colors.bg},
   }
@@ -187,9 +187,9 @@ table.insert(cur_section, {
       if tbl[vim.bo.filetype] then
         return false
       end
-      return true
+      return vim.fn.winwidth(0) > 90
     end,
-    icon = ' LSP:',
+    icon = '  LSP:',
     highlight = {colors.cyan,colors.bg,'bold'}
   }
 })
@@ -274,6 +274,16 @@ table.insert(cur_section, {
 })
 
 table.insert(cur_section, {
+  NumLines = {
+    provider = function ()
+      return '  '.. vim.fn.line("$") .. " "
+    end,
+    separator_highlight = {'NONE',colors.bg},
+    highlight = {colors.fg,colors.bg},
+  }
+})
+
+table.insert(cur_section, {
   IndentInfo = {
     provider = function ()
       if vim.bo.expandtab then
@@ -282,6 +292,7 @@ table.insert(cur_section, {
         return "TABS " .. vim.bo.tabstop
       end
     end,
+    condition = condition.hide_in_width,
     icon = " ",
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
@@ -290,8 +301,18 @@ table.insert(cur_section, {
 })
 
 table.insert(cur_section, {
-  FileEncode = {
-    provider = 'FileEncode',
+  FileFormat = {
+    provider = function ()
+      local format = vim.bo.fileformat
+      if format == "unix" then
+        return "  "
+      elseif format == "dos" then
+        return "  "
+      elseif format == "mac" then
+        return "  "
+      end
+      return " " .. format:upper()
+    end,
     condition = condition.hide_in_width,
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
@@ -300,10 +321,9 @@ table.insert(cur_section, {
 })
 
 table.insert(cur_section, {
-  FileFormat = {
-    provider = 'FileFormat',
+  FileEncode = {
+    provider = "FileEncode",
     condition = condition.hide_in_width,
-    separator = ' ',
     separator_highlight = {'NONE',colors.bg},
     highlight = {colors.green,colors.bg,'bold'}
   }
@@ -326,6 +346,8 @@ table.insert(cur_section, {
     highlight = {colors.violet,colors.bg,'bold'},
   }
 })
+
+table.insert(cur_section, filler_section(3))
 
 -- SHORT LINE LEFT
 

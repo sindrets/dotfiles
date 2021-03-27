@@ -133,9 +133,24 @@ lspconfig.sumneko_lua.setup{
     filetypes = { "lua" },
     settings = {
         Lua = {
+            runtime = {
+                path = vim.split(package.path, ";"),
+                fileEncoding = "utf8",
+                unicodeName = true
+            },
             diagnostics = {
                 globals = { "vim" }
-            }
+            },
+            workspace = {
+                -- Make the server aware of Neovim runtime files
+                library = {
+                    [vim.fn.expand('$VIMRUNTIME/lua')] = true,
+                    [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
+                },
+            },
+            telemetry = {
+                enable = false,
+            },
         }
     }
 }

@@ -2,6 +2,7 @@ vim.g.nvim_tree_indent_markers = 1
 vim.g.nvim_tree_git_hl = 0
 vim.g.nvim_tree_width = 30
 vim.g.nvim_tree_group_empty = 1
+-- vim.g.nvim_tree_disable_keybindings = 1     -- Disable default keybindings
 
 local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 vim.g.nvim_tree_bindings = {
@@ -10,10 +11,10 @@ vim.g.nvim_tree_bindings = {
     ["<2-LeftMouse>"]  = tree_cb("edit"),
     ["<2-RightMouse>"] = tree_cb("cd"),
     ["<C-]>"]          = tree_cb("cd"),
-    ["v"]          = tree_cb("vsplit"),
-    ["s"]          = tree_cb("split"),
+    ["v"]              = tree_cb("vsplit"),
+    ["s"]              = tree_cb("split"),
     -- ["<C-x>"]          = tree_cb("split"),
-    -- ["<C-t>"]          = tree_cb("tabnew"),
+    -- ["<C-t>"]          = tree_cb("split"),
     ["<BS>"]           = tree_cb("close_node"),
     ["<S-CR>"]         = tree_cb("close_node"),
     ["<Tab>"]          = tree_cb("preview"),
@@ -30,7 +31,7 @@ vim.g.nvim_tree_bindings = {
     ["[c"]             = tree_cb("prev_git_item"),
     ["]c"]             = tree_cb("next_git_item"),
     ["-"]              = tree_cb("dir_up"),
-    -- ["q"]              = tree_cb("close"),
+    ["q"]              = tree_cb("close"),
 }
 
 vim.g.nvim_tree_icons = {
@@ -40,9 +41,9 @@ vim.g.nvim_tree_icons = {
         unstaged = "",
         staged = "",
         unmerged = "",
-        renamed = "➜",
-        untracked = "ﰂ",
-        deleted = "ﯰ"
+        renamed = "",
+        untracked = "",
+        deleted = ""
     },
     folder = {
         default = "",
