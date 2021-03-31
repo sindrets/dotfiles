@@ -1,28 +1,28 @@
 require("lspsaga").init_lsp_saga{
     use_saga_diagnostic_sign = true,
-    error_sign = '',
+    error_sign = '',
     warn_sign = '',
-    hint_sign = '',
+    hint_sign = '▶',
     infor_sign = '',
     dianostic_header_icon = '   ',
     code_action_icon = '💡',
     code_action_prompt = {
-      enable = true,
-      sign = false,
-      sign_priority = 20,
-      virtual_text = true,
+        enable = true,
+        sign = false,
+        sign_priority = 20,
+        virtual_text = true,
     },
     finder_definition_icon = '   ',
     finder_reference_icon = '   ',
     max_preview_lines = 10, -- preview lines of lsp_finder and definition preview
     finder_action_keys = {
-      open = '<CR>', vsplit = 's',split = 'i',quit = 'q',scroll_down = '<C-f>', scroll_up = '<C-b>' -- quit can be a table
+        open = '<CR>', vsplit = 's',split = 'i',quit = 'q',scroll_down = '<C-f>', scroll_up = '<C-b>' -- quit can be a table
     },
     code_action_keys = {
-      quit = 'q',exec = '<CR>'
+        quit = 'q',exec = '<CR>'
     },
     rename_action_keys = {
-      quit = '<C-c>',exec = '<CR>'  -- quit can be a table
+        quit = '<C-c>',exec = '<CR>'  -- quit can be a table
     },
     definition_preview_icon = '   ',
     -- 1: thin border | 2: rounded border | 3: thick border | 4: ascii border
@@ -36,5 +36,5 @@ require("lspsaga").init_lsp_saga{
     -- }
 }
 
-vim.cmd([[hi! link LspSagaLightBulb CursorLine]])
-vim.cmd([[autocmd User CompeConfirmDone :Lspsaga signature_help]])
+vim.api.nvim_command([[hi! link LspSagaLightBulb CursorLine]])
+-- vim.cmd([[autocmd User CompeConfirmDone :Lspsaga signature_help]])

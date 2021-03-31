@@ -54,7 +54,7 @@ vim.g.nvim_tree_icons = {
     }
 }
 
-vim.cmd([[hi! link NvimTreeGitNew diffAdded]])
-vim.cmd([[hi! link NvimTreeGitDeleted diffRemoved]])
-vim.cmd([[hi! link NvimTreeGitDirty diffRemoved]])
-vim.cmd([[hi! link NvimTreeGitStaged diffAdded]])
+vim.api.nvim_command([[hi! link NvimTreeGitNew diffAdded]])
+vim.api.nvim_command([[hi! link NvimTreeGitDeleted diffRemoved]])
+vim.api.nvim_command([[hi! link NvimTreeGitDirty diffRemoved]])
+vim.api.nvim_command([[hi! link NvimTreeGitStaged diffAdded]])

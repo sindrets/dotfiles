@@ -120,6 +120,7 @@ Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'nvim-telescope/telescope-media-files.nvim'
 Plug 'akinsho/nvim-bufferline.lua'
 Plug 'mileszs/ack.vim'
 Plug 'mattn/emmet-vim'
@@ -187,7 +188,7 @@ luafile ~/.config/nvim/lua/indent-blankline-config.lua
 ": MAPPINGS {{{
 
 " Allow movement through display lines (wrapped lines)
-nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+" nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
 nnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
@@ -197,6 +198,7 @@ xnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
 xnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
 inoremap <expr> <DOWN> pumvisible() ? '<DOWN>' : '<C-\><C-o>gj'
 inoremap <expr> <UP> pumvisible() ? '<UP>' : '<C-\><C-o>gk'
+
 
 " Home moves to first non-whitespace on display line
 nnoremap <expr> <Home> v:count == 0 ? "g^" : "^"
@@ -216,7 +218,7 @@ inoremap <M-p> <Cmd>set paste \| exec 'normal "+p' \| set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
 
 " File explorer
-map <silent> <Leader>e <Cmd>NvimTreeFocus<CR>
+map <silent> <Leader>e <Cmd>lua require("nvim-tree.lib").win_focus(nil, true)<CR>
 map <silent> <Leader>b <Cmd>NvimTreeToggle<CR>
 
 nnoremap <silent> <Leader>q :q<CR>
@@ -273,8 +275,8 @@ vnoremap <A-UP> :m '<-2<CR>gv=gv
 vnoremap <A-DOWN> :m '>+<CR>gv=gv
 " vnoremap <A-UP> <Cmd>call MoveSelection("up")<CR>
 " vnoremap <A-DOWN> <Cmd>call MoveSelection("down")<CR>
-" vnoremap <A-UP> <Cmd>'<,'>m '<-2 \| normal! gv=gv<CR>
-" vnoremap <A-DOWN> <Cmd>'<,'>m '>+ \| normal! gv=gv<CR>
+" vnoremap <A-UP> <Cmd>'<,'>m '<-2<CR>gv=gv
+" vnoremap <A-DOWN> <Cmd>'<,'>m '>+<CR>gv=gv
 
 " Select all
 nnoremap <C-A> ggVG
@@ -321,6 +323,7 @@ nnoremap <M-b> <Cmd>Telescope buffers<CR>
 nnoremap <M-f> <Cmd>Telescope live_grep<CR>
 nnoremap <M-t> <Cmd>Telescope lsp_workspace_symbols<CR>
 nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
+nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
 " nnoremap <C-P> :call WorkspaceFiles()<CR>
 " nnoremap <M-b> :Buffers<CR>
 " nnoremap <C-F> :Ack! 
@@ -384,14 +387,16 @@ command! CocJavaClearCache call CocJavaClearCacheFunc()
 command! CocJavaExploreCache call CocJavaExploreCacheFunc()
 command! -nargs=1 SplitOn call SplitLineOnPattern(<args>)
 command! ExecuteSelection call execute(GetVisualSelection())
+command! HiNew execute('redir=>a | silent hi | redir END | enew | put=a '
+            \ . '| set nomod | f Highlights | execute("normal! gg") | ColorizerAttachToBuffer')
 
 ": }}}
 
 ": FUNCTIONS {{{
 
 function! ExecuteMacroOverVisualRange()
-  echo "@".getcmdline()
-  execute ":'<,'>normal @".nr2char(getchar())
+    echo "@".getcmdline()
+    execute ":'<,'>normal @".nr2char(getchar())
 endfunction
 
 " Read the output of a command into a new buffer
@@ -562,6 +567,11 @@ function! FindAndReplaceInAll()
 endfunction
 
 function! CloseBufferAndGoToAlt(...)
+    if &modified
+        echohl ErrorMsg | echo "No write since last change!"
+        return
+    endif
+
     let cur_buf = get(a:000, 0, bufnr("%"))
     if bufnr("#") != -1 | edit # | else | bp | endif
     exec "bw " . cur_buf

@@ -37,5 +37,5 @@ require('gitsigns').setup {
   use_internal_diff = true,  -- If luajit is present
 }
 
-vim.cmd([[hi! GitSignsChange gui=NONE]])
-vim.cmd([[hi! link GitSignsDelete diffRemoved]])
+vim.api.nvim_command([[hi! GitSignsChange gui=NONE]])
+vim.api.nvim_command([[hi! link GitSignsDelete diffRemoved]])

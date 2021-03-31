@@ -1,5 +1,6 @@
 USER = vim.fn.expand("$USER")
 HOME = vim.fn.expand("$HOME")
+PID = vim.fn.getpid()
 local utils = require("nvim-utils")
 local ts_utils = require("nvim-treesitter.ts_utils")
 local lspconfig = require("lspconfig")
@@ -117,7 +118,7 @@ function Start_jdtls()
     -- end
 end
 
-vim.cmd([[au FileType java lua Start_jdtls()]])
+vim.api.nvim_command([[au FileType java lua Start_jdtls()]])
 
 -- Typescript
 lspconfig.tsserver.setup{}
@@ -126,6 +127,15 @@ lspconfig.tsserver.setup{}
 lspconfig.pyright.setup{}
 
 -- Lua
+local lua_path = {
+    "?.lua",
+    "?/init.lua",
+    "?/?.lua"
+}
+for _, v in ipairs(vim.split(package.path, ";")) do
+    table.insert(lua_path, v)
+end
+
 lspconfig.sumneko_lua.setup{
     cmd = {
         "lua-language-server"
@@ -134,7 +144,7 @@ lspconfig.sumneko_lua.setup{
     settings = {
         Lua = {
             runtime = {
-                path = vim.split(package.path, ";"),
+                path = lua_path,
                 fileEncoding = "utf8",
                 unicodeName = true
             },
@@ -154,6 +164,24 @@ lspconfig.sumneko_lua.setup{
         }
     }
 }
+
+-- C#
+require'lspconfig'.omnisharp.setup{
+    cmd = { "/usr/bin/omnisharp", "--languageserver" , "--hostPID", tostring(PID) },
+    filetypes = { "cs", "vb" },
+    init_options = {},
+    -- root_dir = lspconfig.util.root_pattern(".csproj", ".sln"),
+    -- root_dir = vim.fn.getcwd
+}
+
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+    vim.lsp.diagnostic.on_publish_diagnostics, {
+        virtual_text = false,
+        underline = true,
+        signs = true,
+        update_in_insert = true
+    }
+)
 
 -- Highlight references on cursor hold
 
@@ -196,13 +224,33 @@ function Highlight_cursor_clear()
         lastTsNodeId = nil
     end
 end
-
-vim.cmd([[au ColorScheme * :hi def link LspReferenceText CursorLine]])
-vim.cmd([[au ColorScheme * :hi def link LspReferenceRead CursorLine]])
-vim.cmd([[au ColorScheme * :hi def link LspReferenceWrite CursorLine]])
-vim.cmd([[au CursorHold   * lua Highlight_cursor_symbol()]])
-vim.cmd([[au CursorHoldI  * lua Highlight_cursor_symbol()]])
-vim.cmd([[au CursorMoved  * lua Highlight_cursor_clear()]])
-vim.cmd([[au CursorMovedI * lua Highlight_cursor_clear()]])
-
 ---------------------------------
+
+-- Only show diagnostics if cur line is not the same as last call.
+local last_diagnostics_line = nil
+function Show_line_diagnostics()
+    local cur_line = vim.api.nvim_eval("line('.')")
+    if last_diagnostics_line and last_diagnostics_line == cur_line then
+        return
+    end
+    last_diagnostics_line = cur_line
+
+    require("lspsaga.diagnostic").show_line_diagnostics()
+end
+
+-- LSP auto commands
+vim.api.nvim_exec([[
+    augroup init_lsp
+        au!
+        au ColorScheme * :hi def link LspReferenceText CursorLine
+        au ColorScheme * :hi def link LspReferenceRead CursorLine
+        au ColorScheme * :hi def link LspReferenceWrite CursorLine
+        au CursorHold   * silent! lua Highlight_cursor_symbol()
+        au CursorHoldI  * silent! lua Highlight_cursor_symbol()
+        au CursorMoved  * silent! lua Highlight_cursor_clear()
+        au CursorMovedI * silent! lua Highlight_cursor_clear()
+
+        au CursorHold * silent! lua Show_line_diagnostics()
+        au CursorHoldI * silent! lua require('lspsaga.signaturehelp').signature_help()
+    augroup END
+]], false)

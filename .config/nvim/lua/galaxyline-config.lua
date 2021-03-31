@@ -341,7 +341,9 @@ table.insert(cur_section, {
 
 table.insert(cur_section, {
   GitBranch = {
-    provider = 'GitBranch',
+    provider = function ()
+      return vim.fn.getbufvar(0, "gitsigns_head", "") .. " "
+    end,
     condition = condition.check_git_workspace,
     highlight = {colors.violet,colors.bg,'bold'},
   }
@@ -388,4 +390,4 @@ table.insert(cur_section, {
   }
 })
 
-vim.cmd([[hi! link StatusLine GalaxySFileName]])
+vim.api.nvim_command([[hi! link StatusLine GalaxySFileName]])

@@ -110,4 +110,60 @@ function M.center_pad_string(s, min_size, fill)
   return result
 end
 
+function M.get_git_branch()
+  if vim.bo.filetype == 'help' then return end
+  local current_file = vim.fn.expand('%:p')
+  local current_dir
+
+  -- If file is a symlinks
+  if vim.fn.getftype(current_file) == 'link' then
+    local real_file = vim.fn.resolve(current_file)
+    current_dir = vim.fn.fnamemodify(real_file,':h')
+  else
+    current_dir = vim.fn.expand('%:p:h')
+  end
+
+  local _,gitbranch_pwd = pcall(vim.api.nvim_buf_get_var, 0, 'utils_gitbranch_pwd')
+  local _,gitbranch_path = pcall(vim.api.nvim_buf_get_var, 0, 'utils_gitbranch_path')
+  if gitbranch_path and gitbranch_pwd then
+    if current_dir:find(gitbranch_path, 1, true) and string.len(gitbranch_pwd) ~= 0 then
+      return  gitbranch_pwd
+    end
+  end
+
+  local git_dir = require("galaxyline.provider_vcs").get_git_dir(current_dir)
+  if not git_dir then return end
+
+  local branch_name = io.popen('git branch --show-current'):read("*a")
+  if #branch_name > 0 then branch_name = branch_name:sub(0, #branch_name - 1) end -- remove newline
+
+  if #branch_name == 0 then
+    -- assume detached head
+    branch_name = io.popen(
+      'sh -c \"git branch --remote --verbose --no-abbrev --contains | head -n1 | '
+      .. 'sed -Erne \'s/^\\s*([^\\s]*? -> )?(\\w+\\/\\w+).*$/\\2/p\'\"'
+    ):read("*a")
+
+    if #branch_name > 0 then
+      branch_name = "remotes/" .. branch_name:sub(0, #branch_name - 1)
+    end
+  end
+
+  -- The function get_git_dir should return the root git path with '.git'
+  -- appended to it. Otherwise if a different gitdir is set this substitution
+  -- doesn't change the root.
+  local git_root = git_dir:gsub('/.git/?$','')
+
+  if #git_root > 0 then
+    vim.api.nvim_buf_set_var(0,'utils_gitbranch_path', git_root)
+  end
+
+  if #branch_name > 0 then
+    vim.api.nvim_buf_set_var(0,'utils_gitbranch_pwd', branch_name)
+    return branch_name
+  end
+
+  return ""
+end
+
 return M
