@@ -342,7 +342,7 @@ bindsym $mod+Next exec --no-startup-id $HOME/.config/i3/scripts/volume-utils.sh 
 bindsym $mod+Insert exec --no-startup-id $HOME/.config/i3/scripts/playerctl-utils.sh --use-active play-pause
 bindsym $mod+Home exec --no-startup-id $HOME/.config/i3/scripts/playerctl-utils.sh --use-active previous
 bindsym $mod+End exec --no-startup-id $HOME/.config/i3/scripts/playerctl-utils.sh --use-active next
-bindsym $mod+Delete exec --no-startup-id $HOME/.config/i3/scripts/playerctl-utils.sh --use-active stop
+bindsym $mod+Delete exec --no-startup-id $HOME/.config/i3/scripts/volume-utils.sh --mute
 
 # Sreen brightness controls
 bindsym XF86MonBrightnessUp exec --no-startup-id ~/.config/i3/scripts/brightness.sh --inc

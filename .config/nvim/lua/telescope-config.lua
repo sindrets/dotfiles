@@ -43,7 +43,7 @@ require('telescope').setup{
         results_height = 1,
         results_width = 0.8,
         border = {},
-        borderchars = { '─', '│', '─', '│', '╭', '╮', '╯', '╰' },
+        borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
         color_devicons = true,
         use_less = true,
         set_env = { ['COLORTERM'] = 'truecolor' }, -- default = nil,
@@ -59,8 +59,19 @@ require('telescope').setup{
             },
             n = {},
         },
+    },
+    extensions = {
+        media_files = {
+            -- filetypes whitelist
+            -- defaults to {"png", "jpg", "mp4", "webm", "pdf"}
+            filetypes = { "png", "webp", "jpg", "jpeg", "mp4", "webm", "pdf" },
+            find_cmd = "fd"
+            -- find_cmd = "rg" -- find command (defaults to `fd`)
+        }
     }
 }
 
 -- This will load fzy_native and have it override the default file sorter
 require('telescope').load_extension('fzy_native')
+
+require('telescope').load_extension('media_files')

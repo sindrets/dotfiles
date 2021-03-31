@@ -31,9 +31,17 @@ set inccommand=split
 set foldmethod=expr
 set foldexpr=nvim_treesitter#foldexpr()
 set foldlevelstart=99
+set completeopt=menuone,noselect
+set signcolumn=auto:2
+set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize
 set pyx=3
 set pyxversion=3
 set shada=!,'10,/100,:100,<0,@1,f1,h,s1
+
+if executable("ag")
+    set grepprg=ag\ --vimgrep\ $*
+    set grepformat=%f:%l:%c:%m
+endif
 
 if has("termguicolors")
     set termguicolors
@@ -78,45 +86,41 @@ let g:user_emmet_leader_key='<C-Z>'
 
 let g:mkdp_browserfunc = "MkdpOpenInNewWindow"
 
-if executable('ag')
-    let g:ackprg = 'ag --vimgrep'
-endif
-
 if isdirectory(expand('%'))
     exec "cd " . expand("%")
 endif
 
-source ~/.config/nvim/lightline-config.vim
-" source ~/.config/nvim/chadtree-config.vim
-
 ": }}}
 
 ": PLUG {{{
-
-function FuncCocPlug(repo)
-    execute "Plug '" . a:repo . "',  {'do': 'yarn install --frozen-lockfile'}"
-endfunction
-
-command! -nargs=1 CocPlug call FuncCocPlug(<args>)
 
 call plug#begin("~/.vim/plug")
 " SYNTAX
 Plug 'kevinoid/vim-jsonc'
 Plug 'sheerun/vim-polyglot'
 " BEHAVIOUR
-Plug 'terryma/vim-multiple-cursors'
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'nvim-lua/popup.nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
-Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
+Plug 'nvim-treesitter/playground'
+Plug 'neovim/nvim-lspconfig'
+Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
+Plug 'mfussenegger/nvim-jdtls'
+Plug 'hrsh7th/nvim-compe'
+Plug 'kyazdani42/nvim-tree.lua'
+Plug 'windwp/nvim-autopairs'
+Plug 'onsails/lspkind-nvim'
+Plug 'norcalli/nvim-colorizer.lua'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
 Plug 'scrooloose/nerdcommenter'
 Plug 'tpope/vim-sleuth'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug 'kyazdani42/nvim-web-devicons'
-Plug 'nvim-lua/popup.nvim'
-Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
+Plug 'nvim-telescope/telescope-media-files.nvim'
 Plug 'akinsho/nvim-bufferline.lua'
 Plug 'mileszs/ack.vim'
 Plug 'mattn/emmet-vim'
@@ -126,8 +130,9 @@ Plug 'Rasukarusan/nvim-block-paste'
 Plug 'godlygeek/tabular'
 Plug 'tpope/vim-surround'
 " MISC
-Plug 'itchyny/lightline.vim'
-Plug 'airblade/vim-gitgutter'
+Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
+Plug 'lewis6991/gitsigns.nvim'
+Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-startify'
 Plug 'ryanoasis/vim-devicons'
@@ -144,7 +149,6 @@ Plug 'tomasiser/vim-code-dark'
 Plug 'w0ng/vim-hybrid'
 Plug 'chriskempson/base16-vim'
 Plug 'nanotech/jellybeans.vim'
-Plug 'shinchu/lightline-gruvbox.vim'
 Plug 'cocopon/iceberg.vim'
 Plug 'junegunn/seoul256.vim'
 Plug 'arzg/vim-colors-xcode'
@@ -159,36 +163,32 @@ Plug 'sainnhe/gruvbox-material'
 Plug 'kjssad/quantum.vim'
 Plug 'juanedi/predawn.vim'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
-" CoC
-CocPlug 'neoclide/coc-css'
-CocPlug 'neoclide/coc-html'
-CocPlug 'neoclide/coc-java'
-CocPlug 'neoclide/coc-json'
-CocPlug 'neoclide/coc-pairs'
-CocPlug 'neoclide/coc-tsserver'
-CocPlug 'neoclide/coc-prettier'
-CocPlug 'neoclide/coc-highlight'
-CocPlug 'neoclide/coc-snippets'
-CocPlug 'fannheyward/coc-pyright'
-CocPlug 'iamcco/coc-vimlsp'
-CocPlug 'weirongxu/coc-explorer'
-CocPlug 'josa42/coc-go'
-CocPlug 'iamcco/coc-diagnostic'
 call plug#end()
 
 " Theme settings
 source ~/.config/nvim/color-config.vim
 
+luafile ~/.config/nvim/lua/nvim-web-devicons-config.lua
 luafile ~/.config/nvim/lua/treesitter-config.lua
+luafile ~/.config/nvim/lua/lspsaga-config.lua
+luafile ~/.config/nvim/lua/lsp-config.lua
+luafile ~/.config/nvim/lua/nvim-compe-config.lua
+luafile ~/.config/nvim/lua/nvim-tree-config.lua
+luafile ~/.config/nvim/lua/nvim-autopairs-config.lua
+luafile ~/.config/nvim/lua/nvim-colorizer-config.lua
+luafile ~/.config/nvim/lua/lspkind-config.lua
 luafile ~/.config/nvim/lua/telescope-config.lua
 luafile ~/.config/nvim/lua/nvim-bufferline-config.lua
+luafile ~/.config/nvim/lua/gitsigns-config.lua
+luafile ~/.config/nvim/lua/galaxyline-config.lua
+luafile ~/.config/nvim/lua/indent-blankline-config.lua
 
 ": }}}
 
 ": MAPPINGS {{{
 
 " Allow movement through display lines (wrapped lines)
-nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+" nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
 nnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
@@ -217,8 +217,8 @@ inoremap <M-p> <Cmd>set paste \| exec 'normal "+p' \| set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
 
 " File explorer
-map <silent> <Leader>e :CocCommand explorer --no-toggle<CR>
-map <silent> <Leader>b :CocCommand explorer --toggle<CR>
+map <silent> <Leader>e <Cmd>lua require("nvim-tree.lib").win_focus(nil, true)<CR>
+map <silent> <Leader>b <Cmd>NvimTreeToggle<CR>
 
 nnoremap <silent> <Leader>q :q<CR>
 inoremap <M-Space> <Esc>
@@ -274,8 +274,8 @@ vnoremap <A-UP> :m '<-2<CR>gv=gv
 vnoremap <A-DOWN> :m '>+<CR>gv=gv
 " vnoremap <A-UP> <Cmd>call MoveSelection("up")<CR>
 " vnoremap <A-DOWN> <Cmd>call MoveSelection("down")<CR>
-" vnoremap <A-UP> <Cmd>'<,'>m '<-2 \| normal! gv=gv<CR>
-" vnoremap <A-DOWN> <Cmd>'<,'>m '>+ \| normal! gv=gv<CR>
+" vnoremap <A-UP> <Cmd>'<,'>m '<-2<CR>gv=gv
+" vnoremap <A-DOWN> <Cmd>'<,'>m '>+<CR>gv=gv
 
 " Select all
 nnoremap <C-A> ggVG
@@ -312,7 +312,7 @@ nmap , @@
 
 " Toggle comments
 nnoremap <C-\> :call NERDComment(0, "toggle")<CR>
-inoremap <C-\> <Esc>:call NERDComment(0, "toggle")<CR>i
+inoremap <C-\> <Esc>:call NERDComment(0, "toggle")<CR>a
 vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 
 " Telescope
@@ -320,6 +320,9 @@ nnoremap <C-P> <Cmd>call WorkspaceFiles()<CR>
 nnoremap <leader>p <Cmd>call WorkspaceFiles('-a')<CR>
 nnoremap <M-b> <Cmd>Telescope buffers<CR>
 nnoremap <M-f> <Cmd>Telescope live_grep<CR>
+nnoremap <M-t> <Cmd>Telescope lsp_workspace_symbols<CR>
+nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
+nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
 " nnoremap <C-P> :call WorkspaceFiles()<CR>
 " nnoremap <M-b> :Buffers<CR>
 " nnoremap <C-F> :Ack! 
@@ -332,40 +335,45 @@ nnoremap <silent> <C-L> :call ToggleTerminalSplit()<CR>
 inoremap <silent> <C-L> <Esc>:call ToggleTerminalSplit()<CR>
 tnoremap <silent> <C-L> <C-\><C-N>:call ToggleTerminalSplit()<CR>
 
-" Use <c-space> for trigger completion.
-inoremap <silent><expr> <c-space> coc#refresh()
+" Toggle quickfix
+nnoremap <M-q> <Cmd>call ToggleQuickFix()<CR>
 
-" Notify coc.nvim that <CR> has been pressed.
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm()
-            \: "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"
+" Trigger completion
+inoremap <silent><expr> <C-Space> compe#complete()
+" inoremap <silent><expr> <Cr> compe#confirm("<Cr>")
 
-nmap <silent> gd <Plug>(coc-definition)zz
-nmap <silent> gV <C-W>v<Plug>(coc-definition)zz
-nmap <silent> gs <C-W>s<Plug>(coc-definition)zz
-nmap <silent> gy <Plug>(coc-type-definition)zz
-nmap <silent> gi <Plug>(coc-implementation)zz
-nmap <silent> gr <Plug>(coc-references)zz
-nmap <silent> <leader>rn <PLug>(coc-rename)
-nmap <silent> <F2> <Plug>(coc-rename)
-nnoremap <silent> <leader>f :call CocAction("format")<CR>
-nnoremap <leader>. :CocAction<CR>
-nnoremap <M-c> :call CocAction("pickColor")<CR>
-nnoremap <M-O> :CocCommand editor.action.organizeImport<CR>
-nnoremap <M-t> :CocList symbols<CR>
+" Navigate snippet placeholders
+imap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
+smap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
+imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
 
-" Use K for show documentation in preview window
-nnoremap <silent> K :call <SID>show_documentation()<CR>
-
-nnoremap <silent> <leader>d :GitGutterPreviewHunk<CR>
+" LSP
+nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>zz
+nmap <silent> gV <C-W>v<Cmd>lua vim.lsp.buf.definition()<CR>zz
+nmap <silent> gs <C-W>s<Cmd>lua vim.lsp.buf.definition()<CR>zz
+nmap <silent> gy <Cmd>lua vim.lsp.buf.type_definition()<CR>zz
+nmap <silent> gi <Cmd>lua vim.lsp.buf.implementation()<CR>zz
+nmap <silent> gr <Cmd>Lspsaga lsp_finder<CR>
+nmap <silent> <leader>rn <Cmd>Lspsaga rename<CR>
+nmap <silent> <F2> <Cmd>Lspsaga rename<CR>
+nnoremap <silent> <leader>f <Cmd>lua vim.lsp.buf.formatting()<CR>
+nnoremap <silent> K <Cmd>Lspsaga hover_doc<CR>
+nnoremap <leader>. <Cmd>Lspsaga code_action<CR>
+vnoremap <leader>. <Cmd>Lspsaga range_code_action<CR>
+nnoremap <silent> <C-f> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>
+nnoremap <silent> <C-b> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>
+nnoremap <silent> <leader>ld <Cmd>Lspsaga show_line_diagnostics<CR>
+" nnoremap <M-c> :call CocAction("pickColor")<CR>
+" nnoremap <M-O> <Cmd>lua vim.lsp.buf.organize_imports()<CR>
+" nnoremap <M-t> :CocList symbols<CR>
 
 xnoremap @ :<C-u>call ExecuteMacroOverVisualRange()<CR>
 
 inoremap <silent> <Tab> <Cmd>call FullIndent()<CR>
 
 " Show highlight group under cursor
-nnoremap <F10> :echo "hi<" . synIDattr(synID(line("."),col("."),1),"name") . '> trans<'
-            \ . synIDattr(synID(line("."),col("."),0),"name") . "> lo<"
-            \ . synIDattr(synIDtrans(synID(line("."),col("."),1)),"name") . ">"<CR>
+nnoremap <F10> <Cmd>call SynStack() \| call SynGroup()<CR>
 
 ": }}}
 
@@ -378,18 +386,16 @@ command! CocJavaClearCache call CocJavaClearCacheFunc()
 command! CocJavaExploreCache call CocJavaExploreCacheFunc()
 command! -nargs=1 SplitOn call SplitLineOnPattern(<args>)
 command! ExecuteSelection call execute(GetVisualSelection())
+command! HiNew execute('redir=>a | silent hi | redir END | enew | put=a '
+            \ . '| set nomod | f Highlights | execute("normal! gg") | ColorizerAttachToBuffer')
 
 ": }}}
 
 ": FUNCTIONS {{{
-" Wrapper function to allow exec calls from expressions
-function! Exec(cmd)
-    exec a:cmd
-endfunction
 
 function! ExecuteMacroOverVisualRange()
-  echo "@".getcmdline()
-  execute ":'<,'>normal @".nr2char(getchar())
+    echo "@".getcmdline()
+    execute ":'<,'>normal @".nr2char(getchar())
 endfunction
 
 " Read the output of a command into a new buffer
@@ -455,6 +461,19 @@ function! GetBufferWithPattern(pattern)
     return -1
 endfunction
 
+function! GetBufferWithVar(var, value)
+    let i = 0
+    let n = bufnr("$")
+    while i < n
+        let i = i + 1
+        let v = getbufvar(i, a:var)
+        if !empty(v) && v == a:value
+            return i
+        endif
+    endwhile
+    return -1
+endfunction
+
 let g:term_split_height = 16
 function! FocusTerminalSplit()
     let term_buf_id = GetBufferWithPattern("term_split")
@@ -497,9 +516,37 @@ function! ToggleTerminalSplit()
     endif
 endfunction
 
+function! ToggleQuickFix()
+    let qf_buf_id = GetBufferWithVar("&filetype", "qf")
+    if qf_buf_id == -1
+        cope
+        return
+    endif
+
+    let qf_win_ids = win_findbuf(qf_buf_id)
+    if empty(qf_win_ids)
+        cope
+    else
+        if qf_win_ids[0] == win_getid()
+            " quickfix is current window: close it
+            cclose
+        else
+            " quickfix is not current window: focus it
+            cope
+        endif
+    endif
+endfunction
+
 function! MakeSession()
     silent !mkdir -p .vim
+    let wasOpen = luaeval("require('nvim-tree.lib').win_open()")
+    if wasOpen == v:true
+        silent NvimTreeClose
+    endif
     silent mks! .vim/Session.vim
+    if wasOpen == v:true
+        silent NvimTreeOpen
+    endif
     echom 'Session saved!'
 endfunction
 
@@ -519,6 +566,11 @@ function! FindAndReplaceInAll()
 endfunction
 
 function! CloseBufferAndGoToAlt(...)
+    if &modified
+        echohl ErrorMsg | echo "No write since last change!"
+        return
+    endif
+
     let cur_buf = get(a:000, 0, bufnr("%"))
     if bufnr("#") != -1 | edit # | else | bp | endif
     exec "bw " . cur_buf
@@ -545,10 +597,6 @@ function! SourceProjectSession()
             let s:last_sourced_session = project_session_path
         endif
     endif
-endfunction
-
-function! s:show_documentation()
-    call CocAction('doHover')
 endfunction
 
 function! GetIndentLevel()
@@ -652,6 +700,18 @@ function! SplitLineOnPattern(pattern)
     noh
 endfunction
 
+function! SynStack()
+  if !exists("*synstack")
+    return
+  endif
+  echom map(synstack(line('.'), col('.')), 'synIDattr(v:val, "name")')
+endfunction
+
+function! SynGroup()
+    let l:s = synID(line('.'), col('.'), 1)
+    echom synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
+endfunction
+
 function! s:isdir(dir)
     return !empty(a:dir) && (isdirectory(a:dir) ||
                 \ (!empty($SYSTEMDRIVE) && isdirectory('/'.tolower($SYSTEMDRIVE[0]).a:dir)))
@@ -678,9 +738,6 @@ augroup init_vim
                 \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
                 \ |   exe "normal! g`\"zz"
                 \ | endif
-
-    " Highlight the symbol and its references when holding the cursor.
-    au CursorHold * silent call CocActionAsync('highlight')
 
     " Highlight yanks
     au TextYankPost * silent! lua vim.highlight.on_yank{higroup="Visual", timeout=300}
