@@ -15,7 +15,8 @@ vim.g.indent_blankline_filetype_exclude = {
     'sagasignature',
     'sagahover',
     'lspsagafinder',
-    'LspSagaCodeAction'
+    'LspSagaCodeAction',
+    'TelescopePrompt'
 }
 vim.g.indent_blankline_context_patterns = {
     'class', 'return', 'function', 'method', '^if', '^while', 'jsx_element', '^for', '^object', '^table', 'block',

@@ -1,8 +1,10 @@
 vim.g.nvim_tree_indent_markers = 1
-vim.g.nvim_tree_git_hl = 0
+vim.g.nvim_tree_git_hl = 1
+vim.g.nvim_tree_gitignore = 0
 vim.g.nvim_tree_width = 30
 vim.g.nvim_tree_group_empty = 1
 -- vim.g.nvim_tree_disable_keybindings = 1     -- Disable default keybindings
+vim.g.nvim_tree_ignore = {"*.png", "*.jpg"}
 
 local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 vim.g.nvim_tree_bindings = {
@@ -43,7 +45,8 @@ vim.g.nvim_tree_icons = {
         unmerged = "",
         renamed = "",
         untracked = "",
-        deleted = ""
+        deleted = "",
+        -- ignored = "!"
     },
     folder = {
         default = "",
@@ -54,7 +57,9 @@ vim.g.nvim_tree_icons = {
     }
 }
 
-vim.api.nvim_command([[hi! link NvimTreeGitNew diffAdded]])
-vim.api.nvim_command([[hi! link NvimTreeGitDeleted diffRemoved]])
-vim.api.nvim_command([[hi! link NvimTreeGitDirty diffRemoved]])
-vim.api.nvim_command([[hi! link NvimTreeGitStaged diffAdded]])
+vim.api.nvim_command([[
+    hi! link NvimTreeGitNew diffAdded
+    hi! link NvimTreeGitDeleted diffRemoved
+    hi! link NvimTreeGitDirty GitDirty
+    hi! link NvimTreeGitStaged diffAdded
+    ]])

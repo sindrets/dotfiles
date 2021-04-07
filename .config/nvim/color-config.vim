@@ -1,4 +1,4 @@
-let g:colorscheme = "onedark"
+let g:colorscheme = "zephyr"
 
 let ayucolor="dark"
 let g:material_terminal_italics = 1
@@ -47,10 +47,10 @@ let g:terminal_color_7  = "#cccccc"
 let g:terminal_color_15 = "#ffffff"
 
 function! SaneDiffDefaults()
-    hi  DiffAdd    ctermbg=4     guifg=#acf2e4 guibg=#243330
-    hi  DiffChange ctermbg=5     guifg=#cfdae6 guibg=#335172
-    hi  DiffDelete ctermfg=12    ctermbg=6     guifg=#f1c4c4 guibg=#5f2d2a
-    hi  DiffText   ctermbg=9     gui=bold      guibg=#609bdd guifg=#162332
+    hi DiffAdd    ctermfg=234 ctermbg=114 guifg=#1e1e1e guibg=#98c379
+    hi DiffChange cterm=underline ctermfg=180 gui=underline guifg=#e5c07b
+    hi DiffDelete ctermfg=234 ctermbg=168 guifg=#1e1e1e guibg=#e06c75
+    hi DiffText   ctermfg=234 ctermbg=180 guifg=#1e1e1e guibg=#e5c07b
     hi! link       diffAdded     DiffAdd
     hi! link       diffChanged   DiffChange
     hi! link       diffRemoved   DiffDelete
@@ -65,6 +65,7 @@ function! SaneDiffDefaults()
     hi! link       diffOnly      WarningMsg
 endfunction
 
+hi! def GitDirty guifg=#e2c08d
 hi! NonText gui=nocombine
 
 " Lsp
@@ -147,6 +148,9 @@ elseif g:colorscheme ==# "onedark"
     hi! link GitGutterChange diffChanged
     " hi link         vimFuncVar  NONE
     " hi link         vimUserFunc NONE
+
+elseif g:colorscheme ==# "zephyr"
+    hi! Visual guifg=NONE guibg=#393e49
 
 endif
 

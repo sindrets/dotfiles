@@ -176,7 +176,7 @@ for_window [class="Insync"] floating enable border normal
 for_window [class="kitty_FLOAT"] floating enable border pixel 1
 for_window [class="Headset" title="Headset"] floating enable border none
 for_window [class="Headset" title="Headset - Player"] move container to workspace $wsTrash
-for_window [class="VirtualBox Machine"] move container to workspace $vm fullscreen enable
+for_window [class="VirtualBox Machine"] move container to workspace $vm
 for_window [instance="fam-strom.1password.com"] floating enable border pixel 1
 for_window [class="1Password"] floating enable border pixel 1
 for_window [class="SpeedCrunch"] floating enable border pixel 1

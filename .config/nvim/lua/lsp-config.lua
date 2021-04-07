@@ -69,47 +69,47 @@ function Start_jdtls()
     end
 
     jdtls.start_or_attach({
-            capabilities = capabilities,
-            init_options = {
-                extendedClientCapabilities = extendedClientCapabilities
+        capabilities = capabilities,
+        init_options = {
+            extendedClientCapabilities = extendedClientCapabilities
+        },
+        cmd = {
+            "jdtls", "-data", HOME .. "/.cache/jdtls"
+        },
+        filetypes = { "java" }, -- Not used by jdtls, but used by lspsaga
+        on_attach = jdtls_on_attch,
+        root_dir = require("jdtls.setup").find_root({ ".git", "gradlew", "build.xml" }),
+        -- root_dir = vim.fn.getcwd(),
+        flags = {
+            allow_incremental_sync = true,
+            server_side_fuzzy_completion = true,
+        },
+        handlers = {
+            ["workspace/executeCommand"] = on_execute_command
+        },
+        settings = {
+            ["java.project.referencedLibraries"] = {
+                "lib/**/*.jar",
+                "lib/*.jar"
             },
-            cmd = {
-                "jdtls", "-data", HOME .. "/.cache/jdtls"
-            },
-            filetypes = { "java" }, -- Not used by jdtls, but used by lspsaga
-            on_attach = jdtls_on_attch,
-            root_dir = require("jdtls.setup").find_root({ ".git", "gradlew", "build.xml" }),
-            -- root_dir = vim.fn.getcwd(),
-            flags = {
-                allow_incremental_sync = true,
-                server_side_fuzzy_completion = true,
-            },
-            handlers = {
-                ["workspace/executeCommand"] = on_execute_command
-            },
-            settings = {
-                ["java.project.referencedLibraries"] = {
-                    "lib/**/*.jar",
-                    "lib/*.jar"
-                },
-                -- ["java.format.settings.url"] = "eclipse-formatter.xml"
-                java = {
-                    signatureHelp = { enabled = true };
-                    contentProvider = { preferred = 'fernflower' };
-                    completion = {
-                        favoriteStaticMembers = {
-                            "org.hamcrest.MatcherAssert.assertThat",
-                            "org.hamcrest.Matchers.*",
-                            "org.hamcrest.CoreMatchers.*",
-                            "org.junit.jupiter.api.Assertions.*",
-                            "java.util.Objects.requireNonNull",
-                            "java.util.Objects.requireNonNullElse",
-                            "org.mockito.Mockito.*"
-                        }
-                    };
-                }
+            -- ["java.format.settings.url"] = "eclipse-formatter.xml"
+            java = {
+                signatureHelp = { enabled = true };
+                contentProvider = { preferred = 'fernflower' };
+                completion = {
+                    favoriteStaticMembers = {
+                        "org.hamcrest.MatcherAssert.assertThat",
+                        "org.hamcrest.Matchers.*",
+                        "org.hamcrest.CoreMatchers.*",
+                        "org.junit.jupiter.api.Assertions.*",
+                        "java.util.Objects.requireNonNull",
+                        "java.util.Objects.requireNonNullElse",
+                        "org.mockito.Mockito.*"
+                    }
+                };
             }
-        })
+        }
+    })
 
     -- if not lspsaga_codeaction.action_handlers["jdt.ls"] then
         --     lspsaga_codeaction.add_code_action_handler("jdt.ls", function(action)

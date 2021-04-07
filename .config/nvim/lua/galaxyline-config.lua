@@ -70,6 +70,12 @@ local function filler_section(size)
   }
 end
 
+local function width_condition(min_width)
+  return function()
+    return vim.fn.winwidth(0) > min_width
+  end
+end
+
 -- LEFT
 
 cur_section = gls.left
@@ -187,7 +193,7 @@ table.insert(cur_section, {
       if tbl[vim.bo.filetype] then
         return false
       end
-      return vim.fn.winwidth(0) > 90
+      return vim.fn.winwidth(0) > 150
     end,
     icon = '  LSP:',
     highlight = {colors.cyan,colors.bg,'bold'}
@@ -292,7 +298,7 @@ table.insert(cur_section, {
         return "TABS " .. vim.bo.tabstop
       end
     end,
-    condition = condition.hide_in_width,
+    condition = width_condition(110),
     icon = " ",
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
@@ -313,7 +319,7 @@ table.insert(cur_section, {
       end
       return " " .. format:upper()
     end,
-    condition = condition.hide_in_width,
+    condition = width_condition(100),
     separator = ' ',
     separator_highlight = {'NONE',colors.bg},
     highlight = {colors.green,colors.bg,'bold'}
@@ -341,9 +347,7 @@ table.insert(cur_section, {
 
 table.insert(cur_section, {
   GitBranch = {
-    provider = function ()
-      return vim.fn.getbufvar(0, "gitsigns_head", "") .. " "
-    end,
+    provider = "GitBranch",
     condition = condition.check_git_workspace,
     highlight = {colors.violet,colors.bg,'bold'},
   }

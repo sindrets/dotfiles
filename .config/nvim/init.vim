@@ -34,6 +34,7 @@ set foldlevelstart=99
 set completeopt=menuone,noselect
 set signcolumn=auto:2
 set sessionoptions=blank,buffers,curdir,folds,help,tabpages,winsize
+set diffopt=internal,filler,closeoff,iwhite
 set pyx=3
 set pyxversion=3
 set shada=!,'10,/100,:100,<0,@1,f1,h,s1
@@ -163,6 +164,7 @@ Plug 'sainnhe/gruvbox-material'
 Plug 'kjssad/quantum.vim'
 Plug 'juanedi/predawn.vim'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
+Plug 'glepnir/zephyr-nvim'
 call plug#end()
 
 " Theme settings
@@ -188,7 +190,7 @@ luafile ~/.config/nvim/lua/indent-blankline-config.lua
 ": MAPPINGS {{{
 
 " Allow movement through display lines (wrapped lines)
-" nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
+nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
 nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
 nnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
 nnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
