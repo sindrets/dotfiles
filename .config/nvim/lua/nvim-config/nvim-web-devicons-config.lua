@@ -15,5 +15,10 @@ require("nvim-web-devicons").setup {
       color = "#0d5786",
       name = "Cs",
     },
+    ["m"] = {
+      icon = "",
+      color = "#599eff",
+      name = "CModule"
+    },
   },
 }

@@ -1,3 +1,5 @@
+local luv = vim.loop
+
 local M = {}
 
 function M.within_range(outer, inner)
@@ -141,12 +143,47 @@ function M.union(...)
   return result
 end
 
+---Merge two tables.
+---@param a table
+---@param b table
+function M.merge(a, b)
+  for k, v in pairs(b) do
+    a[k] = v
+  end
+end
+
+---Deep merge two tables. Recursively merge all tables and sub-tables of a and b.
+---@param a table
+---@param b table
+---@return table
+function M.deep_merge(a, b)
+  for k, v in pairs(b) do
+    if a[k] ~= nil and type(a[k]) == "table" and type(v) == "table" then
+      M.deep_merge(a[k], v)
+    else
+      a[k] = v
+    end
+  end
+
+  return a
+end
+
 function M.ternary(condition, if_true, if_false)
   if condition then
     return if_true
   end
 
   return if_false
+end
+
+function M.file_readable(path)
+  local fd = luv.fs_open(path, "r", 438)
+  if fd then
+    luv.fs_close(fd)
+    return true
+  end
+
+  return false
 end
 
 return M

@@ -170,20 +170,20 @@ call plug#end()
 " Theme settings
 source ~/.config/nvim/color-config.vim
 
-luafile ~/.config/nvim/lua/nvim-web-devicons-config.lua
-luafile ~/.config/nvim/lua/treesitter-config.lua
-luafile ~/.config/nvim/lua/lspsaga-config.lua
-luafile ~/.config/nvim/lua/lsp-config.lua
-luafile ~/.config/nvim/lua/nvim-compe-config.lua
-luafile ~/.config/nvim/lua/nvim-tree-config.lua
-luafile ~/.config/nvim/lua/nvim-autopairs-config.lua
-luafile ~/.config/nvim/lua/nvim-colorizer-config.lua
-luafile ~/.config/nvim/lua/lspkind-config.lua
-luafile ~/.config/nvim/lua/telescope-config.lua
-luafile ~/.config/nvim/lua/nvim-bufferline-config.lua
-luafile ~/.config/nvim/lua/gitsigns-config.lua
-luafile ~/.config/nvim/lua/galaxyline-config.lua
-luafile ~/.config/nvim/lua/indent-blankline-config.lua
+luafile ~/.config/nvim/lua/nvim-config/nvim-web-devicons-config.lua
+luafile ~/.config/nvim/lua/nvim-config/treesitter-config.lua
+luafile ~/.config/nvim/lua/nvim-config/lspsaga-config.lua
+luafile ~/.config/nvim/lua/nvim-config/lsp-config.lua
+luafile ~/.config/nvim/lua/nvim-config/nvim-compe-config.lua
+luafile ~/.config/nvim/lua/nvim-config/nvim-tree-config.lua
+luafile ~/.config/nvim/lua/nvim-config/nvim-autopairs-config.lua
+luafile ~/.config/nvim/lua/nvim-config/nvim-colorizer-config.lua
+luafile ~/.config/nvim/lua/nvim-config/lspkind-config.lua
+luafile ~/.config/nvim/lua/nvim-config/telescope-config.lua
+luafile ~/.config/nvim/lua/nvim-config/nvim-bufferline-config.lua
+luafile ~/.config/nvim/lua/nvim-config/gitsigns-config.lua
+luafile ~/.config/nvim/lua/nvim-config/galaxyline-config.lua
+luafile ~/.config/nvim/lua/nvim-config/indent-blankline-config.lua
 
 ": }}}
 
@@ -336,6 +336,7 @@ nnoremap <Leader>t :call FocusTerminalSplit()<CR>
 nnoremap <silent> <C-L> :call ToggleTerminalSplit()<CR>
 inoremap <silent> <C-L> <Esc>:call ToggleTerminalSplit()<CR>
 tnoremap <silent> <C-L> <C-\><C-N>:call ToggleTerminalSplit()<CR>
+tnoremap <silent> <Esc> <C-\><C-n>
 
 " Toggle quickfix
 nnoremap <M-q> <Cmd>call ToggleQuickFix()<CR>
@@ -388,7 +389,7 @@ command! CocJavaClearCache call CocJavaClearCacheFunc()
 command! CocJavaExploreCache call CocJavaExploreCacheFunc()
 command! -nargs=1 SplitOn call SplitLineOnPattern(<args>)
 command! ExecuteSelection call execute(GetVisualSelection())
-command! HiNew execute('redir=>a | silent hi | redir END | enew | put=a '
+command! HiShow execute('redir=>a | silent hi | redir END | enew | put=a '
             \ . '| set nomod | f Highlights | execute("normal! gg") | ColorizerAttachToBuffer')
 
 ": }}}
@@ -719,6 +720,17 @@ function! s:isdir(dir)
                 \ (!empty($SYSTEMDRIVE) && isdirectory('/'.tolower($SYSTEMDRIVE[0]).a:dir)))
 endfunction
 
+function! NvimTreeChangeDir(path)
+lua << EOF
+    local path = vim.api.nvim_exec("echo a:path", true)
+    print("path:", path)
+    local nv_lib = require'nvim-tree.lib'
+    if nv_lib.win_open() then
+        nv_lib.change_dir(path)
+    end
+EOF
+endfunction
+
 ": }}}
 
 ": AUTO COMMANDS {{{
@@ -750,6 +762,11 @@ augroup init_vim
     au TermEnter * setlocal nonu nornu
 
     au TermLeave * setlocal nu rnu
+
+    au DirChanged * lua
+                \ if vim.g.nvim_tree_ready == 1 then
+                \ local nt_lib = require'nvim-tree.lib';
+                \ if nt_lib.win_open() then nt_lib.change_dir(vim.v.event.cwd) end end
 augroup END
 
 ": }}}

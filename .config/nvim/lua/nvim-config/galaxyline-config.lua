@@ -1,4 +1,4 @@
-local utils = require('nvim-utils')
+local utils = require('nvim-config.utils')
 local gl = require('galaxyline')
 local condition = require('galaxyline.condition')
 local gls = gl.section
@@ -195,7 +195,7 @@ table.insert(cur_section, {
       end
       return vim.fn.winwidth(0) > 150
     end,
-    icon = '  LSP:',
+    icon = ' LSP:',
     highlight = {colors.cyan,colors.bg,'bold'}
   }
 })

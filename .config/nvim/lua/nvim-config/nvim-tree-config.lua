@@ -3,8 +3,16 @@ vim.g.nvim_tree_git_hl = 1
 vim.g.nvim_tree_gitignore = 0
 vim.g.nvim_tree_width = 30
 vim.g.nvim_tree_group_empty = 1
+vim.g.nvim_tree_lsp_diagnostics = 1
+vim.g.nvim_tree_auto_open = 0
+vim.g.nvim_tree_folder_devicons = 1
 -- vim.g.nvim_tree_disable_keybindings = 1     -- Disable default keybindings
-vim.g.nvim_tree_ignore = {"*.png", "*.jpg"}
+-- vim.g.nvim_tree_ignore = {"*.png", "*.jpg"}
+vim.g.nvim_tree_show_icons = {
+   git = 1,
+   folders = 1,
+   files = 1,
+}
 
 local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 vim.g.nvim_tree_bindings = {
