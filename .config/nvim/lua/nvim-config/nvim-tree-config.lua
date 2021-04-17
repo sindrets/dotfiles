@@ -75,14 +75,21 @@ vim.g.nvim_tree_icons = {
   },
 }
 
-vim.api.nvim_command([[
+vim.api.nvim_exec([[
   hi! link NvimTreeGitNew diffAdded
   hi! link NvimTreeGitDeleted diffRemoved
   hi! link NvimTreeGitDirty GitDirty
   hi! link NvimTreeGitStaged diffAdded
-  ]])
+  ]], false)
 
 vim.api.nvim_command([[hi! link NvimTreeFolderIcon NvimTreeFolderName]])
+
+vim.api.nvim_exec([[
+  augroup InitNvimTree
+    au!
+    au DirChanged * lua NvimTreeUpdateCwd()
+  augroup END
+  ]], false)
 
 function NvimTreeFocus()
   local view = require'nvim-tree.view'
@@ -91,6 +98,16 @@ function NvimTreeFocus()
     view.focus()
   else
     lib.open()
+  end
+end
+
+function NvimTreeUpdateCwd()
+  if vim.g.nvim_tree_ready == 1 then
+    local view = require'nvim-tree.view'
+    local lib = require'nvim-tree.lib'
+    if view.win_open() then
+      lib.change_dir(vim.fn.getcwd())
+    end
   end
 end
 

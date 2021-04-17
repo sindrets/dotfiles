@@ -86,7 +86,6 @@ endif
 
 let mapleader = " "                             " set the leader key
 let g:netrw_liststyle= 3
-let g:startify_session_dir="$HOME/.vim/session"
 let g:python_recommended_style = 0
 
 let g:slime_target = "tmux"
@@ -101,8 +100,6 @@ let g:closetag_filetypes = 'html,xhtml,phtml,xml'
 let g:user_emmet_leader_key='<C-Z>'
 
 let g:mkdp_browserfunc = "MkdpOpenInNewWindow"
-
-let g:dashboard_default_executive ='telescope'
 
 if isdirectory(expand('%'))
     exec "cd " . expand("%")
@@ -152,7 +149,6 @@ Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 Plug 'tpope/vim-fugitive'
-" Plug 'mhinz/vim-startify'
 Plug 'glepnir/dashboard-nvim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'kevinhwang91/rnvimr'
@@ -203,6 +199,7 @@ luafile ~/.config/nvim/lua/nvim-config/nvim-bufferline-config.lua
 luafile ~/.config/nvim/lua/nvim-config/gitsigns-config.lua
 luafile ~/.config/nvim/lua/nvim-config/galaxyline-config.lua
 luafile ~/.config/nvim/lua/nvim-config/indent-blankline-config.lua
+luafile ~/.config/nvim/lua/nvim-config/dashboard-config.lua
 
 ": }}}
 
@@ -469,6 +466,17 @@ function! MoveSelection(direction)
         exec "'<,'>  m'>+"
         normal! gv=gv
     endif
+endfunction
+
+function! WipeAll()
+    let i = 0
+    let n = bufnr("$")
+    while i < n
+        let i = i + 1
+        if bufexists(i)
+            execute("bw " . i)
+        endif
+    endwhile
 endfunction
 
 function! GetBufferWithPattern(pattern)
@@ -792,22 +800,6 @@ augroup END
 ": }}}
 
 ": MISC {{{
-
-function! s:filter_header(lines) abort
-    let longest_line   = max(map(copy(a:lines), 'strwidth(v:val)'))
-    let centered_lines = map(copy(a:lines),
-                \ 'repeat(" ", (&columns / 2) - (longest_line / 2)) . v:val')
-    return centered_lines
-endfunction
-let s:startify_ascii_header = [
-\ '  ⣠⣾⣄⠀⠀⠀⢰⣄⠀                                  ',
-\ '⠀⣾⣿⣿⣿⣆⠀⠀⢸⣿⣷ ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢿⡿⠀⠀⠀⠀⠀⠀⠀ ⠀⠀⠀',
-\ ' ⣿⣿⡟⢿⣿⣧⡀⢸⣿⣿ ⠀⣠⠴⠶⠦⡄⠀⢀⡤⠶⠶⣤⡀⣶⣦⠀⠀⢠⣶⡖⣶⣶⠀⣶⣦⣶⣶⣦⣠⣶⣶⣶⡄',
-\ ' ⣿⣿⡇⠈⢻⣿⣷⣼⣿⣿ ⢸⣇⣀⣀⣀⣹⢠⡟⠀⠀⠀⠈⣷⠘⣿⣇⠀⣾⡿⠀⣿⣿⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿',
-\ ' ⢿⣿⡇⠀⠀⠹⣿⣿⣿⡿ ⢸⡄⠀⠀⠀⠀⠸⣇⠀⠀⠀⠀⣿⠀⠹⣿⣼⣿⠁⠀⣿⣿⠀⣿⣿⠀⠀⣿⣿⠀⠀⣿⣿',
-\ ' ⠀⠙⠇⠀⠀⠀⠘⠿⠋⠀ ⠀⠛⠦⠤⠴⠖⠀⠙⠦⠤⠤⠞⠁⠀⠀⠻⠿⠃⠀⠀⠿⠿⠀⠿⠿⠀⠀⠿⠿⠀⠀⠿⠿',
-\ ]
-let g:startify_custom_header = s:filter_header(s:startify_ascii_header)
 
 exec SourceProjectConfig()
 exec SourceProjectSession()
