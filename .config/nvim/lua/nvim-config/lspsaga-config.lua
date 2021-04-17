@@ -2,7 +2,7 @@ require("lspsaga").init_lsp_saga{
     use_saga_diagnostic_sign = true,
     error_sign = '',
     warn_sign = '',
-    hint_sign = '',
+    hint_sign = '',
     infor_sign = '',
     dianostic_header_icon = '   ',
     code_action_icon = '💡',
@@ -36,5 +36,5 @@ require("lspsaga").init_lsp_saga{
     -- }
 }
 
-vim.api.nvim_command([[hi! link LspSagaLightBulb CursorLine]])
+vim.api.nvim_command([[hi! LspSagaLightBulb gui=NONE guibg=NONE]])
 -- vim.cmd([[autocmd User CompeConfirmDone :Lspsaga signature_help]])

@@ -13,9 +13,23 @@ require'bufferline'.setup{
     max_prefix_length = 15, -- prefix used when a buffer is deduplicated
     tab_size = 18,
     diagnostics = "nvim_lsp",
-    diagnostics_indicator = function(count, level)
-      local icon = level:match("error") and " " or " "
-      return " " .. icon .. count
+    diagnostics_indicator = function(count, level, diagnostics_dict)
+      local s = ""
+      for e, n in pairs(diagnostics_dict) do
+        local sym = ""
+        print(e)
+        if e == "error" then
+          sym = "  "
+        elseif e == "warning" then
+          sym = "  "
+        elseif e == "info" then
+          sym = "  "
+        elseif e == "other" then
+          sym = "  "
+        end
+        s = s .. sym .. n
+      end
+      return s
     end,
     show_buffer_close_icons = true,
     show_close_icon = false,

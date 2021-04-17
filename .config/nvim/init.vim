@@ -38,6 +38,21 @@ set diffopt=internal,filler,closeoff,iwhite
 set pyx=3
 set pyxversion=3
 set shada=!,'10,/100,:100,<0,@1,f1,h,s1
+set writebackup
+set undofile
+
+let g:data_backup = stdpath("data") . "/backup"
+let g:data_undo = stdpath("data") . "/undo"
+execute("set backupdir=" . g:data_backup)
+execute("set undodir=" . g:data_undo)
+
+if ! isdirectory(g:data_backup)
+    call system("mkdir " . g:data_backup)
+endif
+
+if ! isdirectory(g:data_undo)
+    call system("mkdir " . g:data_undo)
+endif
 
 if executable("ag")
     set grepprg=ag\ --vimgrep\ $*
@@ -87,6 +102,8 @@ let g:user_emmet_leader_key='<C-Z>'
 
 let g:mkdp_browserfunc = "MkdpOpenInNewWindow"
 
+let g:dashboard_default_executive ='telescope'
+
 if isdirectory(expand('%'))
     exec "cd " . expand("%")
 endif
@@ -135,8 +152,10 @@ Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 Plug 'tpope/vim-fugitive'
-Plug 'mhinz/vim-startify'
+" Plug 'mhinz/vim-startify'
+Plug 'glepnir/dashboard-nvim'
 Plug 'ryanoasis/vim-devicons'
+Plug 'kevinhwang91/rnvimr'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
@@ -219,7 +238,7 @@ inoremap <M-p> <Cmd>set paste \| exec 'normal "+p' \| set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
 
 " File explorer
-map <silent> <Leader>e <Cmd>lua require("nvim-tree.lib").win_focus(nil, true)<CR>
+map <silent> <Leader>e <Cmd>lua NvimTreeFocus()<CR>
 map <silent> <Leader>b <Cmd>NvimTreeToggle<CR>
 
 nnoremap <silent> <Leader>q :q<CR>
@@ -542,13 +561,14 @@ endfunction
 
 function! MakeSession()
     silent !mkdir -p .vim
-    let wasOpen = luaeval("require('nvim-tree.lib').win_open()")
+    let wasOpen = luaeval("require('nvim-tree.view').win_open()")
     if wasOpen == v:true
         silent NvimTreeClose
     endif
     silent mks! .vim/Session.vim
     if wasOpen == v:true
         silent NvimTreeOpen
+        wincmd p
     endif
     echom 'Session saved!'
 endfunction
@@ -765,8 +785,8 @@ augroup init_vim
 
     au DirChanged * lua
                 \ if vim.g.nvim_tree_ready == 1 then
-                \ local nt_lib = require'nvim-tree.lib';
-                \ if nt_lib.win_open() then nt_lib.change_dir(vim.v.event.cwd) end end
+                \ if require'nvim-tree.view'.win_open() then
+                \ require'nvim-tree.lib'.change_dir(vim.v.event.cwd) end end
 augroup END
 
 ": }}}

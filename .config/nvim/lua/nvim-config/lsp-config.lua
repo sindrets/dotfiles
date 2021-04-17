@@ -120,11 +120,11 @@ function Start_jdtls()
       settings = settings
     })
 
-    -- if not lspsaga_codeaction.action_handlers["jdt.ls"] then
-      --     lspsaga_codeaction.add_code_action_handler("jdt.ls", function(action)
-          --         jdtls.do_code_action(action)
-        --     end)
-    -- end
+  -- if not lspsaga_codeaction.action_handlers["jdt.ls"] then
+  --   lspsaga_codeaction.add_code_action_handler("jdt.ls", function(action)
+  --     jdtls.do_code_action(action)
+  --   end)
+  -- end
 end
 
 vim.api.nvim_command([[au FileType java lua Start_jdtls()]])
@@ -197,40 +197,49 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     update_in_insert = true
   })
 
+-- Go
+require'lspconfig'.gopls.setup{}
+
 -- Highlight references on cursor hold
 
 local lastTsNodeId = nil
 
 function Highlight_cursor_symbol()
   if vim.lsp.buf.server_ready() then
-    local node = ts_utils.get_node_at_cursor()
-    local curTsNodeId
-    if node then
-      curTsNodeId = node.id(node)
-    end
-
-    if lastTsNodeId and curTsNodeId then
-      if lastTsNodeId == curTsNodeId then
-        return
+    local mode = vim.fn.mode()
+    if mode == "n" or mode == "i" then
+      local node = ts_utils.get_node_at_cursor()
+      local curTsNodeId
+      if node then
+        curTsNodeId = node.id(node)
       end
-    end
 
-    vim.lsp.buf.document_highlight()
-    lastTsNodeId = curTsNodeId
+      if lastTsNodeId and curTsNodeId then
+        if lastTsNodeId == curTsNodeId then
+          return
+        end
+      end
+
+      vim.lsp.buf.document_highlight()
+      lastTsNodeId = curTsNodeId
+    end
   end
 end
 
 function Highlight_cursor_clear()
   if vim.lsp.buf.server_ready() then
-    local node = ts_utils.get_node_at_cursor()
-    local curTsNodeId
-    if node then
-      curTsNodeId = node.id(node)
-    end
+    local mode = vim.fn.mode()
+    if mode == "n" or mode == "i" then
+      local node = ts_utils.get_node_at_cursor()
+      local curTsNodeId
+      if node then
+        curTsNodeId = node.id(node)
+      end
 
-    if lastTsNodeId and curTsNodeId then
-      if lastTsNodeId == curTsNodeId then
-        return
+      if lastTsNodeId and curTsNodeId then
+        if lastTsNodeId == curTsNodeId then
+          return
+        end
       end
     end
 
