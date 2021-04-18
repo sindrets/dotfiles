@@ -26,7 +26,8 @@ require("lspsaga").init_lsp_saga{
     },
     definition_preview_icon = '   ',
     -- 1: thin border | 2: rounded border | 3: thick border | 4: ascii border
-    border_style = 1,
+    -- "single" "double" "round" "plus"
+    border_style = "single",
     rename_prompt_prefix = '➤',
     -- if you don't use nvim-lspconfig you must pass your server name and
     -- the related filetypes into this table

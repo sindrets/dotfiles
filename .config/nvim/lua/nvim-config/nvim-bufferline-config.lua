@@ -17,7 +17,6 @@ require'bufferline'.setup{
       local s = ""
       for e, n in pairs(diagnostics_dict) do
         local sym = ""
-        print(e)
         if e == "error" then
           sym = "  "
         elseif e == "warning" then

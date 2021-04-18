@@ -38,7 +38,7 @@ volume_print() {
 
     if echo "$active_port" | grep -q speaker; then
         # icon=""
-        icon="󰓃"
+        icon="󰕾"
     elif echo "$active_port" | grep -Pq "headphones|lineout"; then
         icon="󰋋"
     else
