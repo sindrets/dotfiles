@@ -180,6 +180,7 @@ Plug 'kjssad/quantum.vim'
 Plug 'juanedi/predawn.vim'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
 Plug 'glepnir/zephyr-nvim'
+Plug 'folke/tokyonight.nvim'
 call plug#end()
 
 " Theme settings
@@ -748,13 +749,14 @@ function! s:isdir(dir)
                 \ (!empty($SYSTEMDRIVE) && isdirectory('/'.tolower($SYSTEMDRIVE[0]).a:dir)))
 endfunction
 
-function! NvimTreeChangeDir(path)
+function! NvimTreeToggleNoFocus()
 lua << EOF
-    local path = vim.api.nvim_exec("echo a:path", true)
-    print("path:", path)
-    local nv_lib = require'nvim-tree.lib'
-    if nv_lib.win_open() then
-        nv_lib.change_dir(path)
+    local view = require'nvim-tree.view'
+    if view.win_open() then
+        view.close()
+    else
+        view.open()
+        vim.cmd("wincmd p")
     end
 EOF
 endfunction
@@ -790,11 +792,6 @@ augroup init_vim
     au TermEnter * setlocal nonu nornu
 
     au TermLeave * setlocal nu rnu
-
-    au DirChanged * lua
-                \ if vim.g.nvim_tree_ready == 1 then
-                \ if require'nvim-tree.view'.win_open() then
-                \ require'nvim-tree.lib'.change_dir(vim.v.event.cwd) end end
 augroup END
 
 ": }}}

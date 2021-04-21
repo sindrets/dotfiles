@@ -7,7 +7,10 @@ vim.g.nvim_tree_width = 30
 vim.g.nvim_tree_group_empty = 1
 vim.g.nvim_tree_lsp_diagnostics = 1
 vim.g.nvim_tree_auto_open = 0
+vim.g.nvim_tree_hijack_netrw = 0
+vim.g.nvim_tree_disable_netrw = 0
 vim.g.nvim_tree_folder_devicons = 1
+vim.g.nvim_tree_follow = 1
 vim.g.nvim_tree_special_files = {}
 -- vim.g.nvim_tree_disable_keybindings = 1     -- Disable default keybindings
 -- vim.g.nvim_tree_ignore = {"*.png", "*.jpg"}
@@ -20,7 +23,7 @@ vim.g.nvim_tree_show_icons = {
 local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 vim.g.nvim_tree_bindings = {
   ["<CR>"]           = tree_cb("edit"),
-  ["o"]              = tree_cb("edit"),
+  ["o"]              = ":lua NvimTreeXdgOpen()<CR>",
   ["<2-LeftMouse>"]  = tree_cb("edit"),
   ["<2-RightMouse>"] = tree_cb("cd"),
   ["<C-]>"]          = tree_cb("cd"),
@@ -80,9 +83,8 @@ vim.api.nvim_exec([[
   hi! link NvimTreeGitDeleted diffRemoved
   hi! link NvimTreeGitDirty GitDirty
   hi! link NvimTreeGitStaged diffAdded
+  hi! link NvimTreeFolderIcon NvimTreeFolderName
   ]], false)
-
-vim.api.nvim_command([[hi! link NvimTreeFolderIcon NvimTreeFolderName]])
 
 vim.api.nvim_exec([[
   augroup InitNvimTree
@@ -101,6 +103,17 @@ function NvimTreeFocus()
   end
 end
 
+function NvimTreeToggleNoFocus()
+  local lib = require'nvim-tree.lib'
+  local view = require'nvim-tree.view'
+  if view.win_open() then
+    view.close()
+  else
+    lib.open()
+    vim.cmd("wincmd p")
+  end
+end
+
 function NvimTreeUpdateCwd()
   if vim.g.nvim_tree_ready == 1 then
     local view = require'nvim-tree.view'
@@ -108,6 +121,14 @@ function NvimTreeUpdateCwd()
     if view.win_open() then
       lib.change_dir(vim.fn.getcwd())
     end
+  end
+end
+
+function NvimTreeXdgOpen()
+  local lib = require'nvim-tree.lib'
+  local node = lib.get_node_at_cursor()
+  if node then
+    vim.fn.jobstart("xdg-open '" .. node.absolute_path .. "' &", { detach = true })
   end
 end
 

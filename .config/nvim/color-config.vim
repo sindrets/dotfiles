@@ -1,4 +1,4 @@
-let g:colorscheme = "zephyr"
+let g:colorscheme = "tokyonight"
 
 let ayucolor="dark"
 let g:material_terminal_italics = 1
@@ -17,6 +17,7 @@ let g:neodark#use_256color = 0
 let g:neodark#solid_vertsplit = 1
 let g:spacegray_use_italics = 1
 let g:spacegray_low_contrast = 1
+" let g:tokyonight_sidebars = [ "terminal" ]
 set background=dark
 execute("colorscheme " . g:colorscheme)
 
@@ -75,9 +76,9 @@ hi! NonText gui=nocombine
 hi! link LspReferenceText Visual
 hi! link LspReferenceRead Visual
 hi! link LspReferenceWrite Visual
-hi! LspDiagnosticsSignHint guifg=#36d0e0
-hi! LspDiagnosticsVirtualTextHint guifg=#36d0e0
-hi! LspDiagnosticsUnderlineHint cterm=underline gui=undercurl guisp=#36d0e0
+" hi! LspDiagnosticsSignHint guifg=#36d0e0
+" hi! LspDiagnosticsVirtualTextHint guifg=#36d0e0
+" hi! LspDiagnosticsUnderlineHint cterm=underline gui=undercurl guisp=#36d0e0
 
 " Colorscheme tweaks
 if g:colorscheme ==# "codedark"
@@ -157,6 +158,12 @@ elseif g:colorscheme ==# "onedark"
 
 elseif g:colorscheme ==# "zephyr"
     hi! Visual guifg=NONE guibg=#393e49
+
+elseif g:colorscheme ==# "tokyonight"
+    hi! link ColorColumn CursorLine
+    hi! link NvimTreeRootFolder String
+    hi! link NvimTreeFolderIcon NormalFloat
+    hi! link NvimTreeFolderName Directory
 
 endif
 

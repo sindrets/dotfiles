@@ -6,6 +6,7 @@ require('nvim-autopairs').setup({
       ['['] = ']',
       ['{'] = '}',
       ['`'] = '`',
+      ['<'] = '>',
     },
     disable_filetype = { "TelescopePrompt" },
     break_line_filetype = nil, -- mean all file type

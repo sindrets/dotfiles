@@ -264,16 +264,16 @@ end
 -- LSP auto commands
 vim.api.nvim_exec([[
   augroup init_lsp
-  au!
-  au ColorScheme * :hi def link LspReferenceText CursorLine
-  au ColorScheme * :hi def link LspReferenceRead CursorLine
-  au ColorScheme * :hi def link LspReferenceWrite CursorLine
-  au CursorHold   * silent! lua Highlight_cursor_symbol()
-  au CursorHoldI  * silent! lua Highlight_cursor_symbol()
-  au CursorMoved  * silent! lua Highlight_cursor_clear()
-  au CursorMovedI * silent! lua Highlight_cursor_clear()
+    au!
+    au ColorScheme * :hi def link LspReferenceText CursorLine
+    au ColorScheme * :hi def link LspReferenceRead CursorLine
+    au ColorScheme * :hi def link LspReferenceWrite CursorLine
+    au CursorHold   * silent! lua Highlight_cursor_symbol()
+    au CursorHoldI  * silent! lua Highlight_cursor_symbol()
+    au CursorMoved  * silent! lua Highlight_cursor_clear()
+    au CursorMovedI * silent! lua Highlight_cursor_clear()
 
-  au CursorHold * silent! lua Show_line_diagnostics()
-  au CursorHoldI * silent! lua require('lspsaga.signaturehelp').signature_help()
+    au CursorHold * silent! lua Show_line_diagnostics()
+    au CursorHoldI * silent! lua require('lspsaga.signaturehelp').signature_help()
   augroup END
   ]], false)
