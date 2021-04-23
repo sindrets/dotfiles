@@ -2,6 +2,190 @@ local luv = vim.loop
 
 local M = {}
 
+function M.right_pad_string(s, min_size, fill)
+  local result = s
+  if not fill then fill = " " end
+
+  while #result < min_size do
+    result = result .. fill
+  end
+
+  return result
+end
+
+function M.left_pad_string(s, min_size, fill)
+  local result = s
+  if not fill then fill = " " end
+
+  while #result < min_size do
+    result = fill .. result
+  end
+
+  return result
+end
+
+function M.center_pad_string(s, min_size, fill)
+  local result = s
+  if not fill then fill = " " end
+
+  while #result < min_size do
+    if #result % 2 == 0 then
+      result = result .. fill
+    else
+      result = fill .. result
+    end
+  end
+
+  return result
+end
+
+function M.find_buf_with_pattern(pattern)
+  for _, id in ipairs(vim.api.nvim_list_bufs()) do
+    local m = vim.fn.bufname(id):match(pattern)
+    if m then return id end
+  end
+
+  return nil
+end
+
+function M.find_buf_with_var(var, value)
+  for _, id in ipairs(vim.api.nvim_list_bufs()) do
+    local success, v = pcall(vim.api.nvim_buf_get_var, id, var)
+    if success and v == value then return id end
+  end
+
+  return nil
+end
+
+function M.find_buf_with_option(option, value)
+  for _, id in ipairs(vim.api.nvim_list_bufs()) do
+    local success, v = pcall(vim.api.nvim_buf_get_option, id, option)
+    if success and v == value then return id end
+  end
+
+  return nil
+end
+
+function M.wipe_all_buffers()
+  for _, id in ipairs(vim.api.nvim_list_bufs()) do
+    pcall(vim.api.nvim_buf_delete, id)
+  end
+end
+
+---Create a function that toggles a window with an identifiable buffer of some
+---kind. The toggle logic works as follows:
+--- * Open if
+---   - The buffer is not found
+---   - No window with the buffer is found
+--- * Close if:
+---   - The buffer is active in the current window.
+--- * Focus if:
+---   - The buffer exists, the window exists, but the window is not active.
+---@param buf_finder function A function that should return the buffer id of
+  --the wanted buffer if it exists, otherwise nil.
+---@param cb_open function Callback when the window should open.
+---@param cb_close function Callback when the window should close.
+---@return function
+function M.create_buf_toggler(buf_finder, cb_open, cb_close)
+  return function ()
+    local buf_id = buf_finder()
+
+    if not buf_id then
+      cb_open()
+      return
+    end
+
+    local win_ids = vim.fn.win_findbuf(buf_id)
+    if vim.tbl_isempty(win_ids) then
+      cb_open()
+    else
+      local cur_winid = vim.fn.win_getid()
+      for _, id in ipairs(win_ids) do
+        if id == cur_winid then
+          -- It is the current window: close it.
+          cb_close()
+          return
+        end
+      end
+
+      -- The window is not active: focus it.
+      vim.api.nvim_set_current_win(win_ids[1])
+    end
+  end
+end
+
+---Create a new table that represents the union of the values in a and b.
+---@return table
+function M.union(...)
+  local seen = {}
+  local result = {}
+
+  for _, t in ipairs({...}) do
+    for _, v in ipairs(t) do
+      if not seen[v] then
+        seen[v] = true
+        table.insert(result, v)
+      end
+    end
+  end
+
+  return result
+end
+
+function M.ternary(condition, if_true, if_false)
+  if condition then
+    return if_true
+  end
+
+  return if_false
+end
+
+function M.file_readable(path)
+  local fd = luv.fs_open(path, "r", 438)
+  if fd then
+    luv.fs_close(fd)
+    return true
+  end
+
+  return false
+end
+
+function M.git_get_detached_head()
+  local git_branches_file = io.popen("git branch -a --no-abbrev --contains", "r")
+  if not git_branches_file then return end
+  local git_branches_data = git_branches_file:read("*l")
+  io.close(git_branches_file)
+  if not git_branches_data then return end
+
+  local branch_name = git_branches_data:match('.*HEAD detached %w+ ([%w/-]+)')
+  if branch_name and string.len(branch_name) > 0 then
+    return branch_name
+  end
+end
+
+function M.lsp_organize_imports()
+  local context = { source = { organizeImports = true } }
+
+  local params = vim.lsp.util.make_range_params()
+  params.context = context
+
+  local method = "textDocument/codeAction"
+  local timeout = 1000 -- ms
+
+  local resp = vim.lsp.buf_request_sync(0, method, params, timeout)
+  if not resp then return end
+
+  for _, client in ipairs(vim.lsp.get_active_clients()) do
+    if resp[client.id] then
+      local result = resp[client.id].result
+      if not result or not result[1] then return end
+
+      local edit = result[1].edit
+      vim.lsp.util.apply_workspace_edit(edit)
+    end
+  end
+end
+
 function M.within_range(outer, inner)
   local o1y = outer.start.line
   local o1x = outer.start.character
@@ -50,140 +234,6 @@ function M.get_diagnostics_for_range(bufnr, range)
     end
   end
   return line_diagnostics
-end
-
-function M.lsp_organize_imports()
-  local context = { source = { organizeImports = true } }
-
-  local params = vim.lsp.util.make_range_params()
-  params.context = context
-
-  local method = "textDocument/codeAction"
-  local timeout = 1000 -- ms
-
-  local resp = vim.lsp.buf_request_sync(0, method, params, timeout)
-  if not resp then return end
-
-  for _, client in ipairs(vim.lsp.get_active_clients()) do
-    if resp[client.id] then
-      local result = resp[client.id].result
-      if not result or not result[1] then return end
-
-      local edit = result[1].edit
-      vim.lsp.util.apply_workspace_edit(edit)
-    end
-  end
-end
-
-function M.right_pad_string(s, min_size, fill)
-  local result = s
-  if not fill then fill = " " end
-
-  while #result < min_size do
-    result = result .. fill
-  end
-
-  return result
-end
-
-function M.left_pad_string(s, min_size, fill)
-  local result = s
-  if not fill then fill = " " end
-
-  while #result < min_size do
-    result = fill .. result
-  end
-
-  return result
-end
-
-function M.center_pad_string(s, min_size, fill)
-  local result = s
-  if not fill then fill = " " end
-
-  while #result < min_size do
-    if #result % 2 == 0 then
-      result = result .. fill
-    else
-      result = fill .. result
-    end
-  end
-
-  return result
-end
-
-function M.git_get_detached_head()
-  local git_branches_file = io.popen("git branch -a --no-abbrev --contains", "r")
-  if not git_branches_file then return end
-  local git_branches_data = git_branches_file:read("*l")
-  io.close(git_branches_file)
-  if not git_branches_data then return end
-
-  local branch_name = git_branches_data:match('.*HEAD detached at ([%w/-]+)')
-  if branch_name and string.len(branch_name) > 0 then
-    return branch_name
-  end
-end
-
----Create a new table that represents the union of the values in a and b.
----@return table
-function M.union(...)
-  local seen = {}
-  local result = {}
-
-  for _, t in ipairs({...}) do
-    for _, v in ipairs(t) do
-      if not seen[v] then
-        seen[v] = true
-        table.insert(result, v)
-      end
-    end
-  end
-
-  return result
-end
-
----Merge two tables.
----@param a table
----@param b table
-function M.merge(a, b)
-  for k, v in pairs(b) do
-    a[k] = v
-  end
-end
-
----Deep merge two tables. Recursively merge all tables and sub-tables of a and b.
----@param a table
----@param b table
----@return table
-function M.deep_merge(a, b)
-  for k, v in pairs(b) do
-    if a[k] ~= nil and type(a[k]) == "table" and type(v) == "table" then
-      M.deep_merge(a[k], v)
-    else
-      a[k] = v
-    end
-  end
-
-  return a
-end
-
-function M.ternary(condition, if_true, if_false)
-  if condition then
-    return if_true
-  end
-
-  return if_false
-end
-
-function M.file_readable(path)
-  local fd = luv.fs_open(path, "r", 438)
-  if fd then
-    luv.fs_close(fd)
-    return true
-  end
-
-  return false
 end
 
 return M

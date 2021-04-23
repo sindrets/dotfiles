@@ -68,7 +68,7 @@ set colorcolumn=100
 
 " render whitespace
 set list
-set listchars=tab:\ ――,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:»
+set listchars=tab:\ ──,space:·,nbsp:␣,trail:•,eol:↵,precedes:«,extends:»
 set showbreak=⤷\ 
 
 syntax on
@@ -130,9 +130,6 @@ Plug 'norcalli/nvim-colorizer.lua'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
 Plug 'scrooloose/nerdcommenter'
-Plug 'tpope/vim-sleuth'
-Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
-Plug 'junegunn/fzf.vim'
 Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'nvim-telescope/telescope-media-files.nvim'
@@ -148,12 +145,11 @@ Plug 'tpope/vim-surround'
 Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
+Plug 'folke/lsp-trouble.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'glepnir/dashboard-nvim'
 Plug 'ryanoasis/vim-devicons'
 Plug 'kevinhwang91/rnvimr'
-Plug 'junegunn/goyo.vim'
-Plug 'junegunn/limelight.vim'
 Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 Plug 'honza/vim-snippets'
 " THEMES
@@ -200,6 +196,7 @@ luafile ~/.config/nvim/lua/nvim-config/nvim-bufferline-config.lua
 luafile ~/.config/nvim/lua/nvim-config/gitsigns-config.lua
 luafile ~/.config/nvim/lua/nvim-config/galaxyline-config.lua
 luafile ~/.config/nvim/lua/nvim-config/indent-blankline-config.lua
+luafile ~/.config/nvim/lua/nvim-config/lsp-trouble-config.lua
 luafile ~/.config/nvim/lua/nvim-config/dashboard-config.lua
 
 ": }}}
@@ -345,6 +342,9 @@ nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
 " nnoremap <C-P> :call WorkspaceFiles()<CR>
 " nnoremap <M-b> :Buffers<CR>
 " nnoremap <C-F> :Ack! 
+
+" LspTrouble
+nnoremap <A-S-D> <Cmd>lua LspTroubleCustomToggle()<CR>
 
 nnoremap <leader>rh :call FindAndReplaceInAll()<CR>
 

@@ -76,7 +76,7 @@ function Start_jdtls()
     end
   end
 
-  local settings = utils.deep_merge({
+  local settings = vim.tbl_deep_extend("force", {
     ["java.project.referencedLibraries"] = {
       "lib/**/*.jar",
       "lib/*.jar"

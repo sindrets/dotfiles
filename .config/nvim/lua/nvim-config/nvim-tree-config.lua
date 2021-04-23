@@ -20,6 +20,9 @@ vim.g.nvim_tree_show_icons = {
   files = 1,
 }
 
+-- Remove all default bindings.
+require'nvim-tree.view'.View.bindings = {}
+
 local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 vim.g.nvim_tree_bindings = {
   ["<CR>"]           = tree_cb("edit"),
@@ -29,8 +32,8 @@ vim.g.nvim_tree_bindings = {
   ["<C-]>"]          = tree_cb("cd"),
   ["v"]              = tree_cb("vsplit"),
   ["s"]              = tree_cb("split"),
-  ["<C-x>"]          = "",
-  ["<C-t>"]          = "",
+  -- ["<C-x>"]          = "",
+  -- ["<C-t>"]          = "",
   ["<BS>"]           = tree_cb("close_node"),
   ["<S-CR>"]         = tree_cb("close_node"),
   ["<Tab>"]          = tree_cb("preview"),
@@ -60,7 +63,7 @@ vim.g.nvim_tree_icons = {
     renamed = "",
     untracked = "",
     deleted = "",
-    -- ignored = "!"
+    ignored = "◌"
   },
   folder = {
     default = "",
