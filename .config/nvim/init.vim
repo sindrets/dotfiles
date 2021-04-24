@@ -86,6 +86,7 @@ endif
 
 let mapleader = " "                             " set the leader key
 let g:netrw_liststyle= 3
+let g:netrw_bufsettings = "noma nomod nonu nowrap ro nornu"
 let g:python_recommended_style = 0
 
 let g:slime_target = "tmux"
@@ -101,9 +102,9 @@ let g:user_emmet_leader_key='<C-Z>'
 
 let g:mkdp_browserfunc = "MkdpOpenInNewWindow"
 
-if isdirectory(expand('%'))
-    exec "cd " . expand("%")
-endif
+" if isdirectory(expand('%'))
+"     exec "cd " . expand("%")
+" endif
 
 ": }}}
 
@@ -134,6 +135,7 @@ Plug 'nvim-telescope/telescope.nvim'
 Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'nvim-telescope/telescope-media-files.nvim'
 Plug 'akinsho/nvim-bufferline.lua'
+Plug 'karb94/neoscroll.nvim'
 Plug 'mileszs/ack.vim'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-abolish'
@@ -193,6 +195,7 @@ luafile ~/.config/nvim/lua/nvim-config/nvim-colorizer-config.lua
 luafile ~/.config/nvim/lua/nvim-config/lspkind-config.lua
 luafile ~/.config/nvim/lua/nvim-config/telescope-config.lua
 luafile ~/.config/nvim/lua/nvim-config/nvim-bufferline-config.lua
+luafile ~/.config/nvim/lua/nvim-config/neoscroll-config.lua
 luafile ~/.config/nvim/lua/nvim-config/gitsigns-config.lua
 luafile ~/.config/nvim/lua/nvim-config/galaxyline-config.lua
 luafile ~/.config/nvim/lua/nvim-config/indent-blankline-config.lua
@@ -233,7 +236,7 @@ inoremap <M-p> <Cmd>set paste \| exec 'normal "+p' \| set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
 
 " File explorer
-map <silent> <Leader>e <Cmd>lua NvimTreeFocus()<CR>
+map <silent> <Leader>e <Cmd>lua NvimTreeConfig.focus()<CR>
 map <silent> <Leader>b <Cmd>NvimTreeToggle<CR>
 
 nnoremap <silent> <Leader>q :q<CR>
@@ -767,15 +770,15 @@ endfunction
 
 augroup init_vim
     au!
+
     " nuke netrw brain damage
     au VimEnter * silent! au! FileExplorer *
     au BufEnter *
-                \ if <SID>isdir(expand('%'))
+                \ if isdirectory(expand('%'))
                 \ |     bd
                 \ | endif
 
     au VimEnter * exec SourceProjectConfig() | exec SourceProjectSession()
-
 
     " Restore cursor pos
     au BufReadPost *

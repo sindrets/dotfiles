@@ -42,5 +42,6 @@ LspTroubleCustomToggle = utils.create_buf_toggler(
   end,
   function ()
     vim.api.nvim_command("wincmd p | LspTroubleClose")
-  end
+  end,
+  true
   )

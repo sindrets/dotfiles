@@ -85,31 +85,33 @@ end
   --the wanted buffer if it exists, otherwise nil.
 ---@param cb_open function Callback when the window should open.
 ---@param cb_close function Callback when the window should close.
+---@param focus boolean|nil Focus the window if it exists but is unfocused.
 ---@return function
-function M.create_buf_toggler(buf_finder, cb_open, cb_close)
+function M.create_buf_toggler(buf_finder, cb_open, cb_close, focus)
   return function ()
-    local buf_id = buf_finder()
+    local target_bufid = buf_finder()
 
-    if not buf_id then
+    if not target_bufid then
       cb_open()
       return
     end
 
-    local win_ids = vim.fn.win_findbuf(buf_id)
+    local win_ids = vim.fn.win_findbuf(target_bufid)
     if vim.tbl_isempty(win_ids) then
       cb_open()
     else
-      local cur_winid = vim.fn.win_getid()
-      for _, id in ipairs(win_ids) do
-        if id == cur_winid then
-          -- It is the current window: close it.
-          cb_close()
-          return
-        end
+      if target_bufid == vim.api.nvim_get_current_buf() then
+        -- It's the current window: close it.
+        cb_close()
+        return
       end
 
-      -- The window is not active: focus it.
-      vim.api.nvim_set_current_win(win_ids[1])
+      if focus then
+        -- The window exists, but is not active: focus it.
+        vim.api.nvim_set_current_win(win_ids[1])
+      else
+        cb_close()
+      end
     end
   end
 end
