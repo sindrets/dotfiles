@@ -1,6 +1,10 @@
 local events = require'nvim-tree.events'
 local M = {}
 
+M.cfwob_whitelist = {
+  ".git"
+}
+
 vim.g.nvim_tree_indent_markers = 1
 vim.g.nvim_tree_git_hl = 1
 vim.g.nvim_tree_gitignore = 0
@@ -14,9 +18,9 @@ vim.g.nvim_tree_folder_devicons = 1
 vim.g.nvim_tree_follow = 1
 vim.g.nvim_tree_special_files = {}
 vim.g.nvim_tree_disable_keybindings = 1     -- Disable default keybindings
-vim.g.nvim_tree_highlight_opened_files = false
+vim.g.nvim_tree_side = "left"
 -- vim.g.nvim_tree_window_picker_chars = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
-vim.g.nvim_tree_window_picker_chars = "aoeuidhtnsgcrld;qjkxbmwv"
+-- vim.g.nvim_tree_window_picker_chars = "aoeuidhtnsgcrld;qjkxbmwv"
 vim.g.nvim_tree_show_icons = {
   git = 1,
   folders = 1,
@@ -42,7 +46,7 @@ vim.g.nvim_tree_icons = {
     empty = "",
     empty_open = "",
     symlink = "",
-    symlink_open = "",
+    symlink_open = "",
   },
   lsp = {
     hint = "",
@@ -55,7 +59,7 @@ vim.g.nvim_tree_icons = {
 local tree_cb = require'nvim-tree.config'.nvim_tree_callback
 local bindings = {
   ["<CR>"]           = tree_cb("edit"),
-  ["o"]              = ":lua NvimTreeXdgOpen()<CR>",
+  ["o"]              = ":lua NvimTreeConfig.xdg_open()<CR>",
   ["<2-LeftMouse>"]  = tree_cb("edit"),
   ["<2-RightMouse>"] = tree_cb("cd"),
   ["<C-]>"]          = tree_cb("cd"),
@@ -63,6 +67,9 @@ local bindings = {
   ["s"]              = tree_cb("split"),
   ["<BS>"]           = tree_cb("close_node"),
   ["<S-CR>"]         = tree_cb("close_node"),
+  ["P"]              = tree_cb("parent_node"),
+  ["h"]              = tree_cb("close_node"),
+  ["l"]              = tree_cb("edit"),
   ["K"]              = tree_cb("first_sibling"),
   ["J"]              = tree_cb("last_sibling"),
   ["<Tab>"]          = tree_cb("preview"),
@@ -139,6 +146,62 @@ function M.xdg_open()
   end
 end
 
+function M.close_folders_without_open_buffers(use_whitelist)
+  if vim.g.nvim_tree_ready ~= 1 then return end
+
+  vim.schedule(function ()
+    local nt = require'nvim-tree'
+    local lib = require'nvim-tree.lib'
+    local buffers = vim.api.nvim_list_bufs()
+    local buf_map = {}
+    local whitelist_map = {}
+
+    for _, id in ipairs(buffers) do
+      if vim.api.nvim_buf_is_loaded(id) and vim.api.nvim_buf_get_option(id, "buflisted") then
+        buf_map[vim.api.nvim_buf_get_name(id)] = true
+      end
+    end
+
+    if use_whitelist then
+      for _, k in ipairs(M.cfwob_whitelist) do
+        whitelist_map[k] = true
+      end
+    end
+
+    local did_close = false
+    local _m = {}
+    function _m.recurse(parent)
+      local close = true
+      for _, node in ipairs(parent.entries) do
+        if node.open and #node.entries > 0 then
+          _m.recurse(node)
+        end
+
+        if buf_map[node.absolute_path] then
+          close = false
+          break
+        end
+      end
+
+      if close and parent ~= lib.Tree then
+        if not use_whitelist or whitelist_map[parent.name] then
+          lib.close_node(parent)
+          did_close = true
+        end
+        return true
+      end
+
+      return false
+    end
+
+    _m.recurse(lib.Tree)
+
+    if did_close then
+      nt.find_file(false)
+    end
+  end)
+end
+
 function M.global_bufenter()
   local buf_path = vim.fn.expand('%')
   if vim.fn.isdirectory(buf_path) == 1 then
@@ -171,6 +234,7 @@ vim.api.nvim_exec([[
     au FileType NvimTree lua NvimTreeConfig.custom_setup()
     au DirChanged * lua NvimTreeConfig.update_cwd()
     au BufEnter * lua NvimTreeConfig.global_bufenter()
+    au BufDelete * lua NvimTreeConfig.close_folders_without_open_buffers(true)
   augroup END
   ]], false)
 

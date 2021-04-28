@@ -148,6 +148,7 @@ Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 Plug 'folke/lsp-trouble.nvim'
+Plug 'sindrets/difftool.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'glepnir/dashboard-nvim'
 Plug 'ryanoasis/vim-devicons'
@@ -607,7 +608,7 @@ function! CloseBufferAndGoToAlt(...)
     endif
 
     let cur_buf = get(a:000, 0, bufnr("%"))
-    if bufnr("#") != -1 | edit # | else | bp | endif
+    if bufnr("#") != -1 | edit # | else | silent! bp | endif
     exec "bw " . cur_buf
 endfunction
 

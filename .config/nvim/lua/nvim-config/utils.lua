@@ -82,10 +82,10 @@ end
 --- * Focus if:
 ---   - The buffer exists, the window exists, but the window is not active.
 ---@param buf_finder function A function that should return the buffer id of
-  --the wanted buffer if it exists, otherwise nil.
+---the wanted buffer if it exists, otherwise nil.
 ---@param cb_open function Callback when the window should open.
 ---@param cb_close function Callback when the window should close.
----@param focus boolean|nil Focus the window if it exists but is unfocused.
+---@param focus boolean|nil Focus the window if it exists and is unfocused.
 ---@return function
 function M.create_buf_toggler(buf_finder, cb_open, cb_close, focus)
   return function ()
