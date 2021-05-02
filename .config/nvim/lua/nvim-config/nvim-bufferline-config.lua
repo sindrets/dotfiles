@@ -1,6 +1,6 @@
 require'bufferline'.setup{
   options = {
-    view = "multiwindow",
+    view = "default",
     numbers = "none",
     number_style = "superscript",
     mappings = false,

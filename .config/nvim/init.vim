@@ -148,7 +148,7 @@ Plug 'glepnir/galaxyline.nvim' , {'branch': 'main'}
 Plug 'lewis6991/gitsigns.nvim'
 Plug 'lukas-reineke/indent-blankline.nvim', { 'branch': 'lua' }
 Plug 'folke/lsp-trouble.nvim'
-Plug 'sindrets/difftool.nvim'
+Plug 'sindrets/diffview.nvim'
 Plug 'tpope/vim-fugitive'
 Plug 'glepnir/dashboard-nvim'
 Plug 'ryanoasis/vim-devicons'
@@ -199,6 +199,7 @@ luafile ~/.config/nvim/lua/nvim-config/nvim-bufferline-config.lua
 luafile ~/.config/nvim/lua/nvim-config/neoscroll-config.lua
 luafile ~/.config/nvim/lua/nvim-config/gitsigns-config.lua
 luafile ~/.config/nvim/lua/nvim-config/galaxyline-config.lua
+luafile ~/.config/nvim/lua/nvim-config/diffview-config.lua
 luafile ~/.config/nvim/lua/nvim-config/indent-blankline-config.lua
 luafile ~/.config/nvim/lua/nvim-config/lsp-trouble-config.lua
 luafile ~/.config/nvim/lua/nvim-config/dashboard-config.lua
@@ -454,7 +455,7 @@ function! WorkspaceFiles(...)
         " if '-a': show all files including ignored
         call luaeval("require('telescope.builtin').find_files({
                     \ hidden=true,
-                    \ find_command={ 'fd', '--type', 'f', '--no-ignore' }
+                    \ find_command={ 'fd', '--type', 'f', '-uu' }
                     \ })")
     elseif !empty(glob("./.git"))
         Telescope git_files

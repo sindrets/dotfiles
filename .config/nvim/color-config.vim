@@ -17,7 +17,7 @@ let g:neodark#use_256color = 0
 let g:neodark#solid_vertsplit = 1
 let g:spacegray_use_italics = 1
 let g:spacegray_low_contrast = 1
-" let g:tokyonight_sidebars = [ "terminal" ]
+let g:tokyonight_sidebars = [ "DiffviewFiles" ]
 set background=dark
 
 " Neovim Terminal Colors
@@ -174,7 +174,12 @@ function! ApplyColorTweaks()
         hi! link NvimTreeRootFolder String
         hi! link NvimTreeFolderIcon NormalFloat
         hi! link NvimTreeFolderName Directory
-        call SaneDiffDefaults()
+        hi DiffAdd    guibg=#283B4D guifg=NONE
+        hi DiffChange guibg=#283B4D guifg=NONE
+        hi DiffDelete guibg=#3C2C3C guifg=#4d384d
+        hi DiffText   guibg=#365069 guifg=NONE
+        hi! DiffviewNormal guifg=#a9b1d6 guibg=#1f2335
+        " call SaneDiffDefaults()
 
     endif
 endfunction

@@ -97,9 +97,9 @@ end
 
 function M.custom_setup()
   local buf_id = vim.api.nvim_get_current_buf()
-  local success, custom_setup_done = pcall(vim.api.nvim_buf_get_var, buf_id, "custom_setup_done")
+  local ok, custom_setup_done = pcall(vim.api.nvim_buf_get_var, buf_id, "custom_setup_done")
 
-  if success and custom_setup_done == 1 then
+  if ok and custom_setup_done == 1 then
     return
   end
 
