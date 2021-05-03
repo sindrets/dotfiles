@@ -118,7 +118,8 @@ Plug 'sheerun/vim-polyglot'
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'kyazdani42/nvim-web-devicons'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" TODO Change branch when this is fixed.
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'revert-1252-comment-combined'}
 Plug 'nvim-treesitter/playground'
 Plug 'neovim/nvim-lspconfig'
 Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
@@ -253,7 +254,7 @@ inoremap <M-Return> <Esc>O
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR>
 nnoremap  <silent> <s-tab> :bp<CR>
-nnoremap <leader><leader> <C-^>zz
+nnoremap <leader><leader> <Cmd>:buffer #<CR>
 nnoremap <silent> <leader>w :call CloseBufferAndGoToAlt()<CR>
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 
@@ -609,7 +610,7 @@ function! CloseBufferAndGoToAlt(...)
     endif
 
     let cur_buf = get(a:000, 0, bufnr("%"))
-    if bufnr("#") != -1 | edit # | else | silent! bp | endif
+    if bufnr("#") != -1 | buffer # | else | silent! bp | endif
     exec "bw " . cur_buf
 endfunction
 

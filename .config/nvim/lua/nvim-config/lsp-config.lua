@@ -2,7 +2,6 @@ USER = vim.fn.expand("$USER")
 HOME = vim.fn.expand("$HOME")
 PID = vim.fn.getpid()
 local utils = require("nvim-config.utils")
-local ts_utils = require("nvim-treesitter.ts_utils")
 local lspconfig = require("lspconfig")
 local jdtls = require("jdtls")
 -- local lspsaga_codeaction = require("lspsaga.codeaction")
@@ -202,49 +201,17 @@ require'lspconfig'.gopls.setup{}
 
 -- Highlight references on cursor hold
 
-local lastTsNodeId = nil
-
 function Highlight_cursor_symbol()
   if vim.lsp.buf.server_ready() then
-    local mode = vim.fn.mode()
-    if mode == "n" or mode == "i" then
-      local node = ts_utils.get_node_at_cursor()
-      local curTsNodeId
-      if node then
-        curTsNodeId = node.id(node)
-      end
-
-      if lastTsNodeId and curTsNodeId then
-        if lastTsNodeId == curTsNodeId then
-          return
-        end
-      end
-
+    if vim.fn.mode() ~= "i" then
       vim.lsp.buf.document_highlight()
-      lastTsNodeId = curTsNodeId
     end
   end
 end
 
 function Highlight_cursor_clear()
   if vim.lsp.buf.server_ready() then
-    local mode = vim.fn.mode()
-    if mode == "n" or mode == "i" then
-      local node = ts_utils.get_node_at_cursor()
-      local curTsNodeId
-      if node then
-        curTsNodeId = node.id(node)
-      end
-
-      if lastTsNodeId and curTsNodeId then
-        if lastTsNodeId == curTsNodeId then
-          return
-        end
-      end
-    end
-
     vim.lsp.buf.clear_references()
-    lastTsNodeId = nil
   end
 end
 ---------------------------------
