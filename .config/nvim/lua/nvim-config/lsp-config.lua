@@ -7,6 +7,15 @@ local jdtls = require("jdtls")
 -- local lspsaga_codeaction = require("lspsaga.codeaction")
 -- local root_pattern = lspconfig.util.root_pattern
 
+local M = {}
+
+local diagnostic_signs = {
+  error = "",
+  warn = "",
+  hint = "",
+  info = ""
+}
+
 local local_settings = {}
 if utils.file_readable(".vim/lsp-settings.lua") then
   local code_chunk = loadfile(".vim/lsp-settings.lua")
@@ -28,7 +37,7 @@ capabilities.workspace.configuration = true
 
 -- Java
 
-function Start_jdtls()
+function M.start_jdtls()
   local extendedClientCapabilities = jdtls.extendedClientCapabilities
   extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 
@@ -54,6 +63,7 @@ function Start_jdtls()
 
   -- function(err, method, result, client_id, bufnr, config)
   local function on_execute_command(_, _, params, _, _)
+    print("executeCommand:", vim.inspect(params))
     local code_action_params = make_code_action_params(false)
     if not params then
       return
@@ -114,7 +124,7 @@ function Start_jdtls()
         server_side_fuzzy_completion = true,
       },
       handlers = {
-        ["workspace/executeCommand"] = on_execute_command
+        ["workspace/executeCommand"] = on_execute_command,
       },
       settings = settings
     })
@@ -126,7 +136,11 @@ function Start_jdtls()
   -- end
 end
 
-vim.api.nvim_command([[au FileType java lua Start_jdtls()]])
+vim.api.nvim_command([[au FileType java lua LspConfig.start_jdtls()]])
+
+--[[
+--BEGIN LSP CONFIG
+--]]
 
 -- Typescript
 lspconfig.tsserver.setup{}
@@ -136,13 +150,26 @@ lspconfig.pyright.setup{}
 
 -- Lua
 local lua_path = {
-  "?.lua",
-  "?/init.lua",
-  "?/?.lua"
+  "lua/?.lua",
+  "lua/?/init.lua",
 }
+
 for _, v in ipairs(vim.split(package.path, ";")) do
   table.insert(lua_path, v)
 end
+
+local lua_lib = {}
+
+local function lua_add_lib(lib)
+  for _, p in pairs(vim.fn.expand(lib, false, true)) do
+    p = vim.loop.fs_realpath(p)
+    lua_lib[p] = true
+  end
+end
+
+lua_add_lib("$VIMRUNTIME")
+lua_add_lib("~/.config/nvim")
+lua_add_lib("~/.vim/plug/*")
 
 lspconfig.sumneko_lua.setup{
   cmd = {
@@ -160,11 +187,9 @@ lspconfig.sumneko_lua.setup{
         globals = { "vim" }
       },
       workspace = {
-        -- Make the server aware of Neovim runtime files
-        library = {
-          [vim.fn.expand('$VIMRUNTIME/lua')] = true,
-          [vim.fn.expand('$VIMRUNTIME/lua/vim/lsp')] = true,
-        },
+        library = lua_lib,
+        maxPreload = 2000,
+        preloadFileSize = 50000
       },
       telemetry = {
         enable = false,
@@ -188,20 +213,62 @@ require'lspconfig'.clangd.setup{}
 -- Vim
 require'lspconfig'.vimls.setup{}
 
+-- Go
+require'lspconfig'.gopls.setup{}
+
+--[[
+--END LSP-CONFIG
+--]]
+
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
     virtual_text = false,
     underline = true,
     signs = true,
     update_in_insert = true
-  })
+  }
+)
 
--- Go
-require'lspconfig'.gopls.setup{}
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+  vim.lsp.handlers.signature_help, {
+    -- Use a sharp border with `FloatBorder` highlights
+    border = "single"
+  }
+)
+
+function M.define_diagnostic_signs(opts)
+  local group = {
+    err_group = {
+      highlight = 'LspDiagnosticsSignError',
+      sign = opts.error
+    },
+    warn_group = {
+      highlight = 'LspDiagnosticsSignWarning',
+      sign = opts.warn
+    },
+    hint_group = {
+      highlight = 'LspDiagnosticsSignHint',
+      sign = opts.hint
+    },
+    infor_group = {
+      highlight = 'LspDiagnosticsSignInformation',
+      sign = opts.info
+    },
+  }
+
+  for _,g in pairs(group) do
+    vim.fn.sign_define(
+    g.highlight,
+    {text=g.sign,texthl=g.highlight,linehl='',numhl=''}
+    )
+  end
+end
+
+M.define_diagnostic_signs(diagnostic_signs)
 
 -- Highlight references on cursor hold
 
-function Highlight_cursor_symbol()
+function M.highlight_cursor_symbol()
   if vim.lsp.buf.server_ready() then
     if vim.fn.mode() ~= "i" then
       vim.lsp.buf.document_highlight()
@@ -209,7 +276,7 @@ function Highlight_cursor_symbol()
   end
 end
 
-function Highlight_cursor_clear()
+function M.highlight_cursor_clear()
   if vim.lsp.buf.server_ready() then
     vim.lsp.buf.clear_references()
   end
@@ -218,14 +285,14 @@ end
 
 -- Only show diagnostics if cur line is not the same as last call.
 local last_diagnostics_line = nil
-function Show_line_diagnostics()
+function M.show_line_diagnostics()
   local cur_line = vim.api.nvim_eval("line('.')")
   if last_diagnostics_line and last_diagnostics_line == cur_line then
     return
   end
   last_diagnostics_line = cur_line
 
-  require("lspsaga.diagnostic").show_line_diagnostics()
+  vim.lsp.diagnostic.show_line_diagnostics()
 end
 
 -- LSP auto commands
@@ -235,12 +302,15 @@ vim.api.nvim_exec([[
     au ColorScheme * :hi def link LspReferenceText CursorLine
     au ColorScheme * :hi def link LspReferenceRead CursorLine
     au ColorScheme * :hi def link LspReferenceWrite CursorLine
-    au CursorHold   * silent! lua Highlight_cursor_symbol()
-    au CursorHoldI  * silent! lua Highlight_cursor_symbol()
-    au CursorMoved  * silent! lua Highlight_cursor_clear()
-    au CursorMovedI * silent! lua Highlight_cursor_clear()
+    au CursorHold   * silent! lua LspConfig.highlight_cursor_symbol()
+    au CursorHoldI  * silent! lua LspConfig.highlight_cursor_symbol()
+    au CursorMoved  * silent! lua LspConfig.highlight_cursor_clear()
+    au CursorMovedI * silent! lua LspConfig.highlight_cursor_clear()
 
-    au CursorHold * silent! lua Show_line_diagnostics()
-    au CursorHoldI * silent! lua require('lspsaga.signaturehelp').signature_help()
+    au CursorHold * silent! lua LspConfig.show_line_diagnostics()
+    au CursorHoldI * silent! lua vim.lsp.buf.signature_help()
   augroup END
   ]], false)
+
+_G.LspConfig = M
+return M

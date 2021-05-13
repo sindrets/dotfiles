@@ -44,3 +44,8 @@ require'bufferline'.setup{
     -- end
   }
 }
+
+vim.api.nvim_exec([[
+  hi! BufferLineDiagnostic gui=bold
+  hi! BufferLineDiagnosticVisible gui=bold
+  ]], false)

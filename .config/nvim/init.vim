@@ -114,6 +114,7 @@ call plug#begin("~/.vim/plug")
 " SYNTAX
 Plug 'kevinoid/vim-jsonc'
 Plug 'sheerun/vim-polyglot'
+Plug 'teal-language/vim-teal'
 " BEHAVIOUR
 Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
@@ -122,7 +123,7 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate', 'branch': 'revert-1252-comment-combined'}
 Plug 'nvim-treesitter/playground'
 Plug 'neovim/nvim-lspconfig'
-Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
+" Plug 'glepnir/lspsaga.nvim', { 'branch': 'main' }
 Plug 'mfussenegger/nvim-jdtls'
 Plug 'hrsh7th/nvim-compe'
 Plug 'kyazdani42/nvim-tree.lua'
@@ -137,6 +138,7 @@ Plug 'nvim-telescope/telescope-fzy-native.nvim'
 Plug 'nvim-telescope/telescope-media-files.nvim'
 Plug 'akinsho/nvim-bufferline.lua'
 Plug 'karb94/neoscroll.nvim'
+Plug 'windwp/nvim-spectre'
 Plug 'mileszs/ack.vim'
 Plug 'mattn/emmet-vim'
 Plug 'tpope/vim-abolish'
@@ -188,7 +190,7 @@ source ~/.config/nvim/color-config.vim
 
 luafile ~/.config/nvim/lua/nvim-config/nvim-web-devicons-config.lua
 luafile ~/.config/nvim/lua/nvim-config/treesitter-config.lua
-luafile ~/.config/nvim/lua/nvim-config/lspsaga-config.lua
+" luafile ~/.config/nvim/lua/nvim-config/lspsaga-config.lua
 luafile ~/.config/nvim/lua/nvim-config/lsp-config.lua
 luafile ~/.config/nvim/lua/nvim-config/nvim-compe-config.lua
 luafile ~/.config/nvim/lua/nvim-config/nvim-tree-config.lua
@@ -198,6 +200,7 @@ luafile ~/.config/nvim/lua/nvim-config/lspkind-config.lua
 luafile ~/.config/nvim/lua/nvim-config/telescope-config.lua
 luafile ~/.config/nvim/lua/nvim-config/nvim-bufferline-config.lua
 luafile ~/.config/nvim/lua/nvim-config/neoscroll-config.lua
+luafile ~/.config/nvim/lua/nvim-config/spectre-config.lua
 luafile ~/.config/nvim/lua/nvim-config/gitsigns-config.lua
 luafile ~/.config/nvim/lua/nvim-config/galaxyline-config.lua
 luafile ~/.config/nvim/lua/nvim-config/diffview-config.lua
@@ -375,21 +378,25 @@ imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
 smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
 
 " LSP
-nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>zz
-nmap <silent> gV <C-W>v<Cmd>lua vim.lsp.buf.definition()<CR>zz
-nmap <silent> gs <C-W>s<Cmd>lua vim.lsp.buf.definition()<CR>zz
-nmap <silent> gy <Cmd>lua vim.lsp.buf.type_definition()<CR>zz
-nmap <silent> gi <Cmd>lua vim.lsp.buf.implementation()<CR>zz
-nmap <silent> gr <Cmd>Lspsaga lsp_finder<CR>
-nmap <silent> <leader>rn <Cmd>Lspsaga rename<CR>
-nmap <silent> <F2> <Cmd>Lspsaga rename<CR>
+nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>
+nmap <silent> gV <C-W>v<Cmd>lua vim.lsp.buf.definition()<CR>
+nmap <silent> gs <C-W>s<Cmd>lua vim.lsp.buf.definition()<CR>
+nmap <silent> gy <Cmd>lua vim.lsp.buf.type_definition()<CR>
+nmap <silent> gi <Cmd>lua vim.lsp.buf.implementation()<CR>
+nmap <silent> gr <Cmd>Telescope lsp_references<CR>
+nmap <silent> <leader>rn <Cmd>lua vim.lsp.buf.rename()<CR>
+nmap <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> <leader>f <Cmd>lua vim.lsp.buf.formatting()<CR>
-nnoremap <silent> K <Cmd>Lspsaga hover_doc<CR>
-nnoremap <leader>. <Cmd>Lspsaga code_action<CR>
-vnoremap <leader>. <Cmd>Lspsaga range_code_action<CR>
-nnoremap <silent> <C-f> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>
-nnoremap <silent> <C-b> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>
-nnoremap <silent> <leader>ld <Cmd>Lspsaga show_line_diagnostics<CR>
+nnoremap <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <leader>. <Cmd>Telescope lsp_code_actions theme=get_dropdown<CR>
+vnoremap <leader>. <Cmd>Telescope lsp_range_code_actions theme=get_dropdown<CR>
+nnoremap <silent> <leader>ld <Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
+" nnoremap <silent> K <Cmd>Lspsaga hover_doc<CR>
+" nnoremap <leader>. <Cmd>Lspsaga code_action<CR>
+" vnoremap <leader>. <Cmd>Lspsaga range_code_action<CR>
+" nnoremap <silent> <C-f> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>
+" nnoremap <silent> <C-b> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>
+" nnoremap <silent> <leader>ld <Cmd>Lspsaga show_line_diagnostics<CR>
 " nnoremap <M-c> :call CocAction("pickColor")<CR>
 " nnoremap <M-O> <Cmd>lua vim.lsp.buf.organize_imports()<CR>
 " nnoremap <M-t> :CocList symbols<CR>
@@ -412,6 +419,7 @@ command! CocJavaClearCache call CocJavaClearCacheFunc()
 command! CocJavaExploreCache call CocJavaExploreCacheFunc()
 command! -nargs=1 SplitOn call SplitLineOnPattern(<args>)
 command! ExecuteSelection call execute(GetVisualSelection())
+command! Spectre lua require'spectre'.open()
 command! HiShow execute('redir=>a | silent hi | redir END | enew | put=a '
             \ . '| set nomod | f Highlights | execute("normal! gg") | ColorizerAttachToBuffer')
 
@@ -556,20 +564,20 @@ endfunction
 function! ToggleQuickFix()
     let qf_buf_id = GetBufferWithVar("&filetype", "qf")
     if qf_buf_id == -1
-        cope
+        belowright cope
         return
     endif
 
     let qf_win_ids = win_findbuf(qf_buf_id)
     if empty(qf_win_ids)
-        cope
+        belowright cope
     else
         if qf_win_ids[0] == win_getid()
             " quickfix is current window: close it
             cclose
         else
             " quickfix is not current window: focus it
-            cope
+            belowright cope
         endif
     endif
 endfunction

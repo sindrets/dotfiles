@@ -17,6 +17,7 @@ let g:neodark#use_256color = 0
 let g:neodark#solid_vertsplit = 1
 let g:spacegray_use_italics = 1
 let g:spacegray_low_contrast = 1
+let g:tokyonight_style = "night"
 let g:tokyonight_sidebars = [ "DiffviewFiles" ]
 set background=dark
 
@@ -89,6 +90,11 @@ hi! link LspReferenceWrite Visual
 " Colorscheme tweaks
 function! ApplyColorTweaks()
     let g:colorscheme = g:colors_name
+
+    hi! LspDiagnosticsDefaultError gui=bold
+    hi! LspDiagnosticsDefaultWarning gui=bold
+    hi! LspDiagnosticsDefaultHint gui=bold
+    hi! LspDiagnosticsDefaultInformation gui=bold
 
     if g:colorscheme ==# "codedark"
         hi NonText guibg=NONE
@@ -171,14 +177,14 @@ function! ApplyColorTweaks()
 
     elseif g:colorscheme ==# "tokyonight"
         hi! link ColorColumn CursorLine
-        hi! link NvimTreeRootFolder String
         hi! link NvimTreeFolderIcon NormalFloat
         hi! link NvimTreeFolderName Directory
         hi DiffAdd    guibg=#283B4D guifg=NONE
         hi DiffChange guibg=#283B4D guifg=NONE
         hi DiffDelete guibg=#3C2C3C guifg=#4d384d
         hi DiffText   guibg=#365069 guifg=NONE
-        hi! DiffviewNormal guifg=#a9b1d6 guibg=#1f2335
+        hi! link DiffviewNormal NormalSB
+        hi! BufferlineFill guibg=#131620
         " call SaneDiffDefaults()
 
     endif

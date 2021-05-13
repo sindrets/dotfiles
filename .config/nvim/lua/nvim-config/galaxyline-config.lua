@@ -6,8 +6,8 @@ local cur_section
 gl.short_line_list = {'NvimTree','vista','dbui','packer','fugitiveblame','LspTrouble','DiffviewFiles'}
 
 local colors = {
-  bg = '#1c1e23',
-  fg = '#bbc2cf',
+  bg = utils.get_bg("StatusLine") or '#1c1e23',
+  fg = utils.get_fg("StatusLine") or '#bbc2cf',
   yellow = '#ECBE7B',
   cyan = '#008080',
   darkblue = '#081633',
@@ -208,7 +208,7 @@ table.insert(cur_section, {
   DiagnosticError = {
     provider = 'DiagnosticError',
     icon = '  ',
-    highlight = {colors.red,colors.bg}
+    highlight = {colors.red,colors.bg,'bold'}
   }
 })
 
@@ -216,7 +216,7 @@ table.insert(cur_section, {
   DiagnosticWarn = {
     provider = 'DiagnosticWarn',
     icon = '  ',
-    highlight = {colors.yellow,colors.bg},
+    highlight = {colors.yellow,colors.bg,'bold'},
   }
 })
 
@@ -224,7 +224,7 @@ table.insert(cur_section, {
   DiagnosticHint = {
     provider = 'DiagnosticHint',
     icon = '  ',
-    highlight = {colors.cyan,colors.bg},
+    highlight = {colors.cyan,colors.bg,'bold'},
   }
 })
 
@@ -232,7 +232,7 @@ table.insert(cur_section, {
   DiagnosticInfo = {
     provider = 'DiagnosticInfo',
     icon = '  ',
-    highlight = {colors.blue,colors.bg},
+    highlight = {colors.blue,colors.bg,'bold'},
   }
 })
 

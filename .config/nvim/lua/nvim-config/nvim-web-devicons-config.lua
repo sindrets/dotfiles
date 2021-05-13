@@ -21,4 +21,5 @@ require("nvim-web-devicons").setup {
       name = "CModule"
     },
   },
+  default = true
 }

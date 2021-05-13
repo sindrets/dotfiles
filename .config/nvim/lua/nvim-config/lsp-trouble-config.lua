@@ -38,10 +38,10 @@ LspTroubleCustomToggle = utils.create_buf_toggler(
     return utils.find_buf_with_option("filetype", "LspTrouble")
   end,
   function ()
-    vim.api.nvim_command("LspTroubleOpen")
+    vim.cmd("LspTroubleOpen")
   end,
   function ()
-    vim.api.nvim_command("wincmd p | LspTroubleClose")
+    vim.cmd("wincmd p | LspTroubleClose")
   end,
-  true
+  { focus = true, remember_height = true }
   )

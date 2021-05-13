@@ -67,10 +67,10 @@ bindkey '^x^e' edit-command-line
 
 [ -f "$HOME/.bashrc.aliases" ] && source "$HOME/.bashrc.aliases"
 
-alias ls='ls --color=auto'
-alias la='ls -a'
-alias ll="ls -lh"
-alias lla="ls -lha"
+alias ls='exa'
+alias la='exa -a'
+alias ll="exa -lh"
+alias lla="exa -lha"
 alias grep="grep --color"
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 alias gs="git status -sb"
@@ -79,7 +79,7 @@ alias dgs="dotfiles status -sb"
 alias dgd="dotfiles diff"
 alias setclip="xclip -selection c"
 alias getclip="xclip -selection c -o"
-alias tree="tree -C"
+alias tree="exa --tree --icons"
 alias h="cd ~"
 alias g="cd $GIT_DIRECTORY"
 alias m="cd ~/Documents/misc"

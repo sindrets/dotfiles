@@ -32,7 +32,7 @@ bindsym $mod+period exec ~/.config/scripts/rofi-emoji.sh
 bindsym $mod+F1 exec $terminal $EDITOR ~/.config/i3/config
 bindsym $mod+F2 exec $terminal $EDITOR ~/.config/polybar/config
 bindsym $mod+F3 exec $terminal $EDITOR ~/.config/kitty/kitty.conf
-bindsym $mod+F4 exec $terminal $EDITOR ~/.config/nvim/init.vim
+bindsym $mod+F4 exec $terminal $EDITOR -c 'cd ~/.config/nvim' ~/.config/nvim/init.vim
 
 # Window kill command
 bindsym $mod+Shift+q kill
