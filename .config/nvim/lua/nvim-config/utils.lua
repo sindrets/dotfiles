@@ -3,6 +3,29 @@ local api = vim.api
 
 local M = {}
 
+function M._echo_multiline(msg)
+  for _, s in ipairs(vim.fn.split(msg, "\n")) do
+    vim.cmd("echom '" .. s:gsub("'", "''").."'")
+  end
+end
+
+function M.info(msg)
+  vim.cmd('echohl Directory')
+  M._echo_multiline(msg)
+  vim.cmd('echohl None')
+end
+
+function M.warn(msg)
+  vim.cmd('echohl WarningMsg')
+  M._echo_multiline(msg)
+  vim.cmd('echohl None')
+end
+
+function M.err(msg)
+  vim.cmd('echohl ErrorMsg')
+  M._echo_multiline(msg)
+  vim.cmd('echohl None')
+end
 function M.right_pad_string(s, min_size, fill)
   local result = s
   if not fill then fill = " " end
@@ -38,6 +61,14 @@ function M.center_pad_string(s, min_size, fill)
   end
 
   return result
+end
+
+function M.str_repeat(s, count)
+  local result = ""
+  for _ = 1, count do
+    result = result .. s
+  end
+  return s
 end
 
 function M.get_hl_attr(hl_group_name, attr)
@@ -92,91 +123,6 @@ end
 function M.wipe_all_buffers()
   for _, id in ipairs(api.nvim_list_bufs()) do
     pcall(api.nvim_buf_delete, id)
-  end
-end
-
----@class BufToggleEntry
----@field bufid integer
----@field height integer|nil
-local BufToggleEntry = {}
-BufToggleEntry.__index = BufToggleEntry
-
----BufToggleEntry constructor.
----@param opts table
----@return BufToggleEntry
-function BufToggleEntry:new(opts)
-  opts = opts or {}
-  local this = {
-    height = opts.height
-  }
-  setmetatable(this, self)
-  return this
-end
-
----@class BufTogglerOpts
----@field focus boolean Focus the window if it exists and is unfocused.
----@field height integer
----@field remember_height boolean Remember the height of the window when it was
-    --closed, and restore it the next time its opened.
-
----Create a function that toggles a window with an identifiable buffer of some
----kind. The toggle logic works as follows:
---- * Open if
----   - The buffer is not found
----   - No window with the buffer is found
---- * Close if:
----   - The buffer is active in the current window.
---- * Focus if (only if the `focus` option is enabled):
----   - The buffer exists, the window exists, but the window is not active.
----@param buf_finder function A function that should return the buffer id of
----the wanted buffer if it exists, otherwise nil.
----@param cb_open function Callback when the window should open.
----@param cb_close function Callback when the window should close.
----@param opts BufTogglerOpts|nil
----@return function
-function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
-  opts = opts or {}
-  local toggler_entry = BufToggleEntry:new()
-
-  local function open()
-    local ok = pcall(cb_open)
-    if ok and toggler_entry.height then
-      vim.cmd("res " .. toggler_entry.height)
-    end
-  end
-
-  local function close()
-    if opts.remember_height then
-      toggler_entry.height = api.nvim_win_get_height(0)
-    end
-    pcall(cb_close)
-  end
-
-  return function ()
-    local target_bufid = buf_finder()
-
-    if not target_bufid then
-      open()
-      return
-    end
-
-    local win_ids = vim.fn.win_findbuf(target_bufid)
-    if vim.tbl_isempty(win_ids) then
-      open()
-    else
-      if target_bufid == api.nvim_get_current_buf() then
-        -- It's the current window: close it.
-        close()
-        return
-      end
-
-      if opts.focus then
-        -- The window exists, but is not active: focus it.
-        api.nvim_set_current_win(win_ids[1])
-      else
-        close()
-      end
-    end
   end
 end
 
@@ -302,5 +248,4 @@ function M.get_diagnostics_for_range(bufnr, range)
   return line_diagnostics
 end
 
-M.BufToggleEntry = BufToggleEntry
 return M

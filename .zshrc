@@ -67,10 +67,18 @@ bindkey '^x^e' edit-command-line
 
 [ -f "$HOME/.bashrc.aliases" ] && source "$HOME/.bashrc.aliases"
 
-alias ls='exa'
-alias la='exa -a'
-alias ll="exa -lh"
-alias lla="exa -lha"
+if [ -x "$(command -v exa)" ]; then
+    alias ls='exa --group-directories-first'
+    alias la='exa --group-directories-first -a'
+    alias ll="exa --group-directories-first -lh"
+    alias lla="exa --group-directories-first -lha"
+else
+    alias ls='ls --color=always'
+    alias la='ls -a'
+    alias ll="ls -lh"
+    alias lla="ls -lha"
+fi
+
 alias grep="grep --color"
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 alias gs="git status -sb"
@@ -84,7 +92,7 @@ alias h="cd ~"
 alias g="cd $GIT_DIRECTORY"
 alias m="cd ~/Documents/misc"
 alias r="source ~/.zshrc"
-alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' ~/.config/nvim/init.vim"
+alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' ~/.config/nvim/init.lua"
 alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"
 alias zsh-conf="$EDITOR ~/.zshrc"
