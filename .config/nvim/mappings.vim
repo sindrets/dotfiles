@@ -150,7 +150,7 @@ tnoremap <silent> <C-L> <Cmd>lua ToggleTermSplit()<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
 
 " Toggle quickfix
-nnoremap <M-q> <Cmd>call ToggleQuickFix()<CR>
+nnoremap <M-q> <Cmd>lua ToggleQF()<CR>
 
 " Trigger completion
 inoremap <silent><expr> <C-Space> compe#complete()

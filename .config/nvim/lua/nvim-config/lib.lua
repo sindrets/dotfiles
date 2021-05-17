@@ -7,7 +7,7 @@ local last_sourced_config = nil
 local last_sourced_session = nil
 
 ---@class BufToggleEntry
----@field bufid integer
+---@field last_winid integer
 ---@field height integer|nil
 local BufToggleEntry = {}
 BufToggleEntry.__index = BufToggleEntry
@@ -44,6 +44,7 @@ function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
   local toggler_entry = BufToggleEntry:new({ height = opts.height })
 
   local function open()
+    toggler_entry.last_winid = api.nvim_get_current_win()
     local ok = pcall(cb_open)
     if ok and toggler_entry.height then
       vim.cmd("res " .. toggler_entry.height)
@@ -55,6 +56,9 @@ function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
       toggler_entry.height = api.nvim_win_get_height(0)
     end
     pcall(cb_close)
+    if toggler_entry.last_winid then
+      api.nvim_set_current_win(toggler_entry.last_winid)
+    end
   end
 
   return function ()
@@ -77,6 +81,7 @@ function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
 
       if opts.focus then
         -- The window exists, but is not active: focus it.
+        toggler_entry.last_winid = api.nvim_get_current_win()
         api.nvim_set_current_win(win_ids[1])
       else
         close()
@@ -214,7 +219,7 @@ function M.full_indent()
     if indent == 0 then
       indent = sw > 0 and sw or 4
     end
-    if indent < col then
+    if indent <= col then
       api.nvim_feedkeys(tab_char, "n", false)
       return
     end
@@ -225,7 +230,7 @@ function M.full_indent()
     if indent == 0 then
       indent = ts > 0 and ts or 4
     end
-    if indent < col then
+    if indent <= col then
       api.nvim_feedkeys(tab_char, "n", false)
       return
     end

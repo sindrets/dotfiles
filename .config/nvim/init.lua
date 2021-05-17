@@ -8,6 +8,7 @@ ToggleTermSplit = lib.create_buf_toggler(
     return utils.find_buf_with_pattern("term_split")
   end,
   function ()
+    vim.cmd("100 wincmd j")
     vim.cmd("belowright sp")
     local bufid = utils.find_buf_with_pattern("term_split")
     if bufid then
@@ -29,4 +30,18 @@ ToggleTermSplit = lib.create_buf_toggler(
     end
   end,
   { focus = true, height = 16, remember_height = true }
-  )
+)
+
+ToggleQF = lib.create_buf_toggler(
+  function ()
+    return utils.find_buf_with_option("buftype", "quickfix")
+  end,
+  function ()
+    vim.cmd("100 wincmd j")
+    vim.cmd("belowright cope")
+  end,
+  function ()
+    vim.cmd("ccl")
+  end,
+  { focus = true, remember_height = true }
+)

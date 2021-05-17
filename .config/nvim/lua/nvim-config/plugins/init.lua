@@ -71,6 +71,7 @@ return require'packer'.startup {
     use { 'lukas-reineke/indent-blankline.nvim', branch = 'lua', setup = conf("indent-blankline") }
     use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble") }
     use { 'sindrets/diffview.nvim', config = conf("diffview") }
+    use { 'sindrets/diffview-api-test' }
     use { 'tpope/vim-fugitive' }
     use { 'glepnir/dashboard-nvim', setup = conf("dashboard") }
     use { 'ryanoasis/vim-devicons' }
@@ -110,8 +111,5 @@ return require'packer'.startup {
     use { 'christianchiarulli/nvcode-color-schemes.vim' }
     use { 'glepnir/zephyr-nvim' }
     use { 'sindrets/tokyonight.nvim' }
-
-    -- Colorscheme tweaks and settings
-    vim.cmd([[execute "source " . stdpath("config") . "/color-config.vim"]])
   end
 }

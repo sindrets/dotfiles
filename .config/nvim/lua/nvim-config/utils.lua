@@ -26,6 +26,7 @@ function M.err(msg)
   M._echo_multiline(msg)
   vim.cmd('echohl None')
 end
+
 function M.right_pad_string(s, min_size, fill)
   local result = s
   if not fill then fill = " " end
@@ -68,7 +69,7 @@ function M.str_repeat(s, count)
   for _ = 1, count do
     result = result .. s
   end
-  return s
+  return result
 end
 
 function M.get_hl_attr(hl_group_name, attr)
