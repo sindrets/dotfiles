@@ -27,7 +27,7 @@ function M.err(msg)
   vim.cmd('echohl None')
 end
 
-function M.right_pad_string(s, min_size, fill)
+function M.str_right_pad(s, min_size, fill)
   local result = s
   if not fill then fill = " " end
 
@@ -38,7 +38,7 @@ function M.right_pad_string(s, min_size, fill)
   return result
 end
 
-function M.left_pad_string(s, min_size, fill)
+function M.str_left_pad(s, min_size, fill)
   local result = s
   if not fill then fill = " " end
 
@@ -49,7 +49,7 @@ function M.left_pad_string(s, min_size, fill)
   return result
 end
 
-function M.center_pad_string(s, min_size, fill)
+function M.str_center_pad(s, min_size, fill)
   local result = s
   if not fill then fill = " " end
 
@@ -69,6 +69,22 @@ function M.str_repeat(s, count)
   for _ = 1, count do
     result = result .. s
   end
+  return result
+end
+
+function M.str_split(s, sep)
+  sep = sep or "%s+"
+  local iter = s:gmatch("()" .. sep .. "()")
+  local result = {}
+  local sep_start, sep_end
+
+  local i = 1
+  while i ~= nil do
+    sep_start, sep_end = iter()
+    table.insert(result, s:sub(i, (sep_start or 0) - 1))
+    i = sep_end
+  end
+
   return result
 end
 
@@ -143,14 +159,6 @@ function M.union(...)
   end
 
   return result
-end
-
-function M.ternary(condition, if_true, if_false)
-  if condition then
-    return if_true
-  end
-
-  return if_false
 end
 
 function M.file_readable(path)

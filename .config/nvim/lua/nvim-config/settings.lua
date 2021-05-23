@@ -52,6 +52,7 @@ opt.inccommand = "split"
 opt.foldmethod = "expr"
 opt.foldexpr = vim.fn.eval("nvim_treesitter#foldexpr()")
 opt.foldlevelstart = 99
+opt.scrolloff = 3
 opt.completeopt = list { "menuone", "noselect" }
 opt.signcolumn = "yes:2"
 opt.colorcolumn = list { "100" }
@@ -68,7 +69,8 @@ opt.diffopt = list {
   "internal",
   "filler",
   "closeoff",
-  "iwhite"
+  "iwhite",
+  "vertical"
 }
 opt.pyxversion = 3
 opt.shada = list {
@@ -91,6 +93,10 @@ opt.listchars = list {
   "eol:↵",
   "precedes:«",
   "extends:»"
+}
+opt.fillchars = list {
+  "vert:▏",
+  "diff:╱"
 }
 opt.showbreak = "⤷ "
 opt.writebackup = true

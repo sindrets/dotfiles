@@ -77,6 +77,13 @@ return function ()
     end
   end
 
+  -- RESET
+  gls.left = {}
+  gls.mid = {}
+  gls.right = {}
+  gls.short_line_left = {}
+  gls.short_line_right = {}
+
   -- LEFT
 
   cur_section = gls.left
@@ -242,12 +249,12 @@ return function ()
         provider = function ()
           local line = tostring(vim.fn.line("."))
           if #line % 2 ~= 0 then
-            line = utils.left_pad_string(line, #line + (2 - #line % 2))
+            line = utils.str_left_pad(line, #line + (2 - #line % 2))
           end
 
           local col = tostring(vim.fn.col("."))
           if #col % 2 ~= 0 then
-            col = utils.right_pad_string(col, #col + (2 - #col % 2))
+            col = utils.str_right_pad(col, #col + (2 - #col % 2))
           end
 
           local result = line .. ":" .. col
@@ -255,7 +262,7 @@ return function ()
           if min_size % 4 ~= 0 then min_size = #result + (4 - #result % 4) end
 
           if #result < min_size then
-            result = utils.center_pad_string(result, min_size)
+            result = utils.str_center_pad(result, min_size)
           end
 
           return result

@@ -13,6 +13,8 @@ return function ()
   vim.g.nvim_tree_group_empty = 1
   vim.g.nvim_tree_lsp_diagnostics = 1
   vim.g.nvim_tree_auto_open = 0
+  vim.g.nvim_tree_auto_close = 0
+  vim.g.nvim_tree_quit_on_open = 0
   vim.g.nvim_tree_hijack_netrw = 0
   vim.g.nvim_tree_disable_netrw = 0
   vim.g.nvim_tree_folder_devicons = 1
@@ -20,6 +22,7 @@ return function ()
   vim.g.nvim_tree_special_files = {}
   vim.g.nvim_tree_disable_keybindings = 1     -- Disable default keybindings
   vim.g.nvim_tree_side = "left"
+  vim.g.nvim_tree_tab_open = 0
   -- vim.g.nvim_tree_window_picker_chars = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
   -- vim.g.nvim_tree_window_picker_chars = "aoeuidhtnsgcrld;qjkxbmwv"
   vim.g.nvim_tree_show_icons = {
@@ -64,6 +67,7 @@ return function ()
     ["<2-LeftMouse>"]  = tree_cb("edit"),
     ["<2-RightMouse>"] = tree_cb("cd"),
     ["<C-]>"]          = tree_cb("cd"),
+    ["<C-t>"]          = tree_cb("tabnew"),
     ["v"]              = tree_cb("vsplit"),
     ["s"]              = tree_cb("split"),
     ["<BS>"]           = tree_cb("close_node"),

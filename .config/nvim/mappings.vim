@@ -200,7 +200,7 @@ command! DiffSaved lua require'nvim-config.lib'.diff_saved()
 command! CocJavaClearCache call CocJavaClearCacheFunc()
 command! CocJavaExploreCache call CocJavaExploreCacheFunc()
 command! -nargs=1 SplitOn call SplitLineOnPattern(<args>)
-command! ExecuteSelection lua vim.fn.execute(require'nvim-config.lib'.get_visual_selection())
+command! ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_visual_selection(), false)
 command! Spectre lua require'spectre'.open()
 command! HiShow execute('redir=>a | silent hi | redir END | enew | put=a '
             \ . '| set nomod | f Highlights | execute("normal! gg") | ColorizerAttachToBuffer')

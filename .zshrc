@@ -83,8 +83,10 @@ alias grep="grep --color"
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
 alias gs="git status -sb"
 alias gd="git diff"
+alias gl="git log"
 alias dgs="dotfiles status -sb"
 alias dgd="dotfiles diff"
+alias dgl="dotfiles log"
 alias setclip="xclip -selection c"
 alias getclip="xclip -selection c -o"
 alias tree="exa --tree --icons"
@@ -215,7 +217,7 @@ _fzf_compgen_dir() {
 autoload -U promptinit; promptinit
 zstyle :prompt:pure:git:stash show yes
 zstyle :prompt:pure:prompt:success color green
-export PURE_PROMPT_SYMBOL="▶"
+export PURE_PROMPT_SYMBOL="ᐅ"
 export PURE_PROMPT_VICMD_SYMBOL="λ"
 prompt pure
 

@@ -34,9 +34,9 @@ return require'packer'.startup {
     use { 'hrsh7th/nvim-compe', config = conf("nvim-compe") }
     use {
       'kyazdani42/nvim-tree.lua',
-       config = conf("nvim-tree"),
-       requires = "kyazdani42/nvim-web-devicons"
-     }
+      config = conf("nvim-tree"),
+      requires = "kyazdani42/nvim-web-devicons"
+    }
     use { 'windwp/nvim-autopairs', config = conf("nvim-autopairs") }
     use { 'onsails/lspkind-nvim', config = conf("lspkind") }
     use { 'norcalli/nvim-colorizer.lua', config = conf("nvim-colorizer") }
