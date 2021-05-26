@@ -181,7 +181,7 @@ function! ApplyColorTweaks()
         hi! link NvimTreeFolderName Directory
         hi DiffAdd    guibg=#283B4D guifg=NONE
         hi DiffChange guibg=#283B4D guifg=NONE
-        hi DiffDelete guibg=#3C2C3C guifg=#573f57
+        hi DiffDelete guibg=#3C2C3C guifg=#573f57 gui=bold
         hi DiffText   guibg=#365069 guifg=NONE
         hi! link DiffviewNormal NormalSB
         " hi! BufferlineFill guibg=#131620

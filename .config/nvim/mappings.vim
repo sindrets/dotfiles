@@ -203,4 +203,4 @@ command! -nargs=1 SplitOn call SplitLineOnPattern(<args>)
 command! ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_visual_selection(), false)
 command! Spectre lua require'spectre'.open()
 command! HiShow execute('redir=>a | silent hi | redir END | enew | put=a '
-            \ . '| set nomod | f Highlights | execute("normal! gg") | ColorizerAttachToBuffer')
+            \ . '| execute("normal! ggdj") | set nomod | f Highlights | ColorizerAttachToBuffer')
