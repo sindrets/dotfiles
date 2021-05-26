@@ -188,25 +188,25 @@ call plug#end()
 " Theme settings
 source ~/.config/nvim/color-config.vim
 
-luafile ~/.config/nvim/lua/nvim-config/nvim-web-devicons-config.lua
-luafile ~/.config/nvim/lua/nvim-config/treesitter-config.lua
-" luafile ~/.config/nvim/lua/nvim-config/lspsaga-config.lua
-luafile ~/.config/nvim/lua/nvim-config/lsp-config.lua
-luafile ~/.config/nvim/lua/nvim-config/nvim-compe-config.lua
-luafile ~/.config/nvim/lua/nvim-config/nvim-tree-config.lua
-luafile ~/.config/nvim/lua/nvim-config/nvim-autopairs-config.lua
-luafile ~/.config/nvim/lua/nvim-config/nvim-colorizer-config.lua
-luafile ~/.config/nvim/lua/nvim-config/lspkind-config.lua
-luafile ~/.config/nvim/lua/nvim-config/telescope-config.lua
-luafile ~/.config/nvim/lua/nvim-config/nvim-bufferline-config.lua
-luafile ~/.config/nvim/lua/nvim-config/neoscroll-config.lua
-luafile ~/.config/nvim/lua/nvim-config/spectre-config.lua
-luafile ~/.config/nvim/lua/nvim-config/gitsigns-config.lua
-luafile ~/.config/nvim/lua/nvim-config/galaxyline-config.lua
-luafile ~/.config/nvim/lua/nvim-config/diffview-config.lua
-luafile ~/.config/nvim/lua/nvim-config/indent-blankline-config.lua
-luafile ~/.config/nvim/lua/nvim-config/lsp-trouble-config.lua
-luafile ~/.config/nvim/lua/nvim-config/dashboard-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/nvim-web-devicons-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/treesitter-config.lua
+" luafile ~/.config/nvim/lua/nvim-config/plugins/lspsaga-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/lsp-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/nvim-compe-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/nvim-tree-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/nvim-autopairs-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/nvim-colorizer-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/lspkind-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/telescope-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/nvim-bufferline-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/neoscroll-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/spectre-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/gitsigns-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/galaxyline-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/diffview-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/indent-blankline-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/lsp-trouble-config.lua
+luafile ~/.config/nvim/lua/nvim-config/plugins/dashboard-config.lua
 
 ": }}}
 
