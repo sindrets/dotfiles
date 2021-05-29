@@ -96,7 +96,10 @@ return function ()
 
   local function setup_bindings(buf_id)
     for key, cb in pairs(bindings) do
-      vim.api.nvim_buf_set_keymap(buf_id, "n", key, cb, { noremap = true, silent = true })
+      vim.api.nvim_buf_set_keymap(
+        buf_id, "n", key, cb,
+        { noremap = true, silent = true, nowait = true }
+      )
     end
   end
 

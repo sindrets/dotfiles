@@ -72,6 +72,12 @@ return require'packer'.startup {
     use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble") }
     use { 'sindrets/diffview.nvim', config = conf("diffview") }
     use { 'sindrets/diffview-api-test' }
+    use { 'simrat39/symbols-outline.nvim', setup = conf("symbols-outline") }
+    use {
+      'p00f/nvim-ts-rainbow',
+      requires = { 'nvim-treesitter/nvim-treesitter' },
+      config = conf("nvim-ts-rainbow")
+    }
     use { 'tpope/vim-fugitive' }
     use { 'glepnir/dashboard-nvim', setup = conf("dashboard") }
     use { 'ryanoasis/vim-devicons' }

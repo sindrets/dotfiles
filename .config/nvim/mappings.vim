@@ -134,9 +134,6 @@ nnoremap <M-f> <Cmd>Telescope live_grep<CR>
 nnoremap <M-t> <Cmd>Telescope lsp_workspace_symbols<CR>
 nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
 nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
-" nnoremap <C-P> :call WorkspaceFiles()<CR>
-" nnoremap <M-b> :Buffers<CR>
-" nnoremap <C-F> :Ack! 
 
 " LspTrouble
 nnoremap <A-S-D> <Cmd>lua LspTroubleCustomToggle()<CR>
@@ -191,7 +188,7 @@ xnoremap @ :<C-u>lua require'nvim-config.lib'.execute_macro_over_visual_range()<
 inoremap <silent> <Tab> <Cmd>lua require'nvim-config.lib'.full_indent()<CR>
 
 " Show highlight group under cursor
-nnoremap <F10> <Cmd>call SynStack() \| call SynGroup()<CR>
+nnoremap <F10> <Cmd>lua require'nvim-config.lib'.print_syn_group()<CR>
 
 " COMMANDS
 command! -nargs=+ Rnew lua require'nvim-config.lib'.read_new(<q-args>)
@@ -201,6 +198,8 @@ command! CocJavaClearCache call CocJavaClearCacheFunc()
 command! CocJavaExploreCache call CocJavaExploreCacheFunc()
 command! -nargs=1 SplitOn call SplitLineOnPattern(<args>)
 command! ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_visual_selection(), false)
+command! -bang -bar Bd lua require'nvim-config.lib'.close_buffer_and_go_to_alt("<bang>" == "!")
+command! -nargs=1 Grep silent! grep! <args> | cope
 command! Spectre lua require'spectre'.open()
 command! HiShow execute('redir=>a | silent hi | redir END | enew | put=a '
             \ . '| execute("normal! ggdj") | set nomod | f Highlights | ColorizerAttachToBuffer')

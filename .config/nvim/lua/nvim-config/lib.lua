@@ -143,11 +143,13 @@ function M.workspace_files(opt)
   end
 end
 
-function M.close_buffer_and_go_to_alt(bufid)
-  local modified = api.nvim_buf_get_option(bufid or 0, "modified")
-  if modified then
-    utils.err("No write since last change!")
-    return
+function M.close_buffer_and_go_to_alt(force, bufid)
+  if not force then
+    local modified = vim.bo[0].modified
+    if modified then
+      utils.err("No write since last change!")
+      return
+    end
   end
 
   local cur_bufid = bufid or vim.api.nvim_get_current_buf()
@@ -158,7 +160,7 @@ function M.close_buffer_and_go_to_alt(bufid)
     vim.cmd("silent! bp")
   end
 
-  api.nvim_buf_delete(cur_bufid, {})
+  api.nvim_buf_delete(cur_bufid, { force = true })
 end
 
 function M.source_project_config()
@@ -178,7 +180,6 @@ function M.source_project_session()
     if last_sourced_session ~= project_config_path then
       vim.cmd("source .vim/Session.vim")
       last_sourced_session = project_config_path
-      utils.info("Sourced project config: " .. project_config_path)
     end
   end
 end
@@ -242,6 +243,20 @@ function M.full_indent()
       "n", false
     )
   end
+end
+
+function M.name_syn_stack()
+  local stack = vim.fn.synstack(vim.fn.line("."), vim.fn.col("."))
+  utils.map(stack, function (v)
+    return vim.fn.synIDattr(v, "name")
+  end)
+  return stack
+end
+
+function M.print_syn_group()
+  local id = vim.fn.synID(vim.fn.line("."), vim.fn.col("."), 1)
+  print("synstack:", vim.inspect(M.name_syn_stack()))
+  print(vim.fn.synIDattr(id, "name") .. " -> " .. vim.fn.synIDattr(vim.fn.synIDtrans(id), "name"))
 end
 
 function M.mkdp_open_in_new_window(url)

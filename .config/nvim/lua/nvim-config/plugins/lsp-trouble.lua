@@ -47,4 +47,11 @@ return function ()
     end,
     { focus = true, remember_height = true }
   )
+
+  vim.api.nvim_exec([[
+    augroup LspTroubleConfig
+      au!
+      au FileType Trouble setlocal cc=
+    augroup END
+    ]], false)
 end

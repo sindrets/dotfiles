@@ -27,6 +27,14 @@ function M.err(msg)
   vim.cmd('echohl None')
 end
 
+function M.printi(...)
+  local args = {...}
+  M.map(args, function (v)
+    return vim.inspect(v)
+  end)
+  print(M.tbl_unpack(args))
+end
+
 function M.str_right_pad(s, min_size, fill)
   local result = s
   if not fill then fill = " " end
@@ -86,6 +94,21 @@ function M.str_split(s, sep)
   end
 
   return result
+end
+
+function M.tbl_pack(...)
+  return {n=select('#',...); ...}
+end
+
+function M.tbl_unpack(t, i, j)
+  return unpack(t, i or 1, j or t.n or #t)
+end
+
+function M.map(tbl, cb)
+  for k, v in pairs(tbl) do
+    tbl[k] = cb(v)
+  end
+  return tbl
 end
 
 function M.get_hl_attr(hl_group_name, attr)

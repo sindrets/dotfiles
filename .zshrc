@@ -103,13 +103,16 @@ alias npmls="cat package.json | jq .scripts"
 alias pls="sudo "
 alias daddy="systemctl"
 alias kys="systemctl poweroff"
-alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save /etc/pacman.d/mirrorlist"
+alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save \
+    /etc/pacman.d/mirrorlist"
 alias mdv="mdvless"
 alias nvminit="source /usr/share/nvm/init-nvm.sh"
 alias diff='diff -tW $(tput cols) --color=always'
 alias ts-node='/bin/ts-node --project "$HOME/.config/ts-node/tsconfig.json"'
-alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/storage.json" | fzf --height 10` && [ ! -z "$code_dir" ] && code --folder-uri $code_dir'
-alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compiling for {}...\" && tsc -p {}' \\;"
+alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/storage.json" \
+    | fzf --height 10` && [ ! -z "$code_dir" ] && code --folder-uri $code_dir'
+alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compiling for {}...\" \
+    && tsc -p {}' \\;"
 alias nvim-pager="nvim -R -c 'set nomod nolist' \
     -c 'nmap K :Man <C-R>=expand(\"<cword>\")<CR><CR>'"
 
