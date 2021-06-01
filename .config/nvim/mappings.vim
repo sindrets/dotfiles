@@ -70,6 +70,12 @@ nnoremap <C-x> <C-w>p
 nnoremap <leader>v <Cmd>vsp<CR>
 nnoremap <leader>s <Cmd>sp<CR>
 
+" Resize windows
+nnoremap <C-M-h> <Cmd>vertical res -2<CR>
+nnoremap <C-M-l> <Cmd>vertical res +2<CR>
+nnoremap <C-M-j> <Cmd>res +1<CR>
+nnoremap <C-M-k> <Cmd>res -1<CR>
+
 " Remap jump forward
 nnoremap <C-S> <C-I>
 
@@ -135,16 +141,22 @@ nnoremap <M-t> <Cmd>Telescope lsp_workspace_symbols<CR>
 nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
 nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
 
+" Git
+nnoremap <leader>gl <Cmd>Git log<CR>
+nnoremap <leader>gcs <Cmd>Git commit<CR>
+nnoremap <leader>gcc <Cmd>Git commit -a<CR>
+nnoremap <leader>gb <Cmd>Git blame<CR>
+nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
+
 " LspTrouble
 nnoremap <A-S-D> <Cmd>lua LspTroubleCustomToggle()<CR>
-
-nnoremap <leader>rh :call FindAndReplaceInAll()<CR>
 
 " Open a terminal split
 nnoremap <silent> <C-L> <Cmd>lua ToggleTermSplit()<CR>
 inoremap <silent> <C-L> <Cmd>lua ToggleTermSplit()<CR>
 tnoremap <silent> <C-L> <Cmd>lua ToggleTermSplit()<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
+tnoremap <silent> <C-q> <Esc>
 
 " Toggle quickfix
 nnoremap <M-q> <Cmd>lua ToggleQF()<CR>

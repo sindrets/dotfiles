@@ -1,4 +1,4 @@
-augroup init_vim
+augroup NvimConfig
     au!
 
     " nuke netrw brain damage
@@ -14,16 +14,19 @@ augroup init_vim
     " Restore cursor pos
     au BufReadPost *
                 \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
-                \ |   exe "normal! g`\"zz"
+                \ |     exe "normal! g`\"zz"
                 \ | endif
 
     " Highlight yanks
     au TextYankPost * silent! lua vim.highlight.on_yank{higroup="Visual", timeout=300}
 
-    " Set quickfix buffer unlisted
-    au BufWinEnter quickfix set nobuflisted | setlocal nowrap
+    au BufWinEnter quickfix set nobuflisted | setlocal nowrap cc=
 
     au TermEnter * setlocal nonu nornu signcolumn=no
 
     au TermLeave * setlocal nu rnu
+
+    " Run PackerCompile when changes are made to plugin configs.
+    au BufWritePost */lua/nvim-config/plugins/*.lua execute 'PackerCompile' 
+                \ | lua require'nvim-config.utils'.info('Packer compiled!')
 augroup END
