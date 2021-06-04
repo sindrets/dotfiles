@@ -23,12 +23,14 @@ return function ()
   vim.g.nvim_tree_disable_keybindings = 1     -- Disable default keybindings
   vim.g.nvim_tree_side = "left"
   vim.g.nvim_tree_tab_open = 0
+  vim.g.nvim_tree_hijack_cursor = 0
   -- vim.g.nvim_tree_window_picker_chars = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
   -- vim.g.nvim_tree_window_picker_chars = "aoeuidhtnsgcrld;qjkxbmwv"
   vim.g.nvim_tree_show_icons = {
     git = 1,
     folders = 1,
     files = 1,
+    folder_arrows = 0
   }
   -- vim.g.nvim_tree_ignore = {"*.png", "*.jpg"}
 
@@ -45,6 +47,8 @@ return function ()
       ignored = "◌"
     },
     folder = {
+      arrow_open = "",
+      arrow_closed = "",
       default = "",
       open = "",
       empty = "",
@@ -238,11 +242,11 @@ return function ()
 
   vim.api.nvim_exec([[
     augroup NvimTreeConfig
-    au!
-    au FileType NvimTree lua NvimTreeConfig.custom_setup()
-    au DirChanged * lua NvimTreeConfig.update_cwd()
-    au BufEnter * lua NvimTreeConfig.global_bufenter()
-    au BufDelete * lua NvimTreeConfig.close_folders_without_open_buffers(true)
+      au!
+      au FileType NvimTree lua NvimTreeConfig.custom_setup()
+      au DirChanged * lua NvimTreeConfig.update_cwd()
+      au BufEnter * lua NvimTreeConfig.global_bufenter()
+      au BufDelete * lua NvimTreeConfig.close_folders_without_open_buffers(true)
     augroup END
     ]], false)
 

@@ -72,6 +72,11 @@ return require'packer'.startup {
     use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble") }
     use { 'sindrets/diffview.nvim', config = conf("diffview") }
     use { 'sindrets/diffview-api-test' }
+    use {
+      'sindrets/neogit',
+      config = conf("neogit"),
+      requires = { 'nvim-lua/plenary.nvim', 'sindrets/diffview.nvim' },
+    }
     use { 'simrat39/symbols-outline.nvim', setup = conf("symbols-outline") }
     use {
       'p00f/nvim-ts-rainbow',

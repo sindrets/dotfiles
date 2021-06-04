@@ -134,7 +134,7 @@ vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
 
 " Telescope
 nnoremap <C-P> <Cmd>lua require'nvim-config.lib'.workspace_files()<CR>
-nnoremap <leader>p <Cmd>lua require'nvim-config.lib'.workspace_files('-a')<CR>
+nnoremap <leader>p <Cmd>lua require'nvim-config.lib'.workspace_files({ all = true })<CR>
 nnoremap <M-b> <Cmd>Telescope buffers<CR>
 nnoremap <M-f> <Cmd>Telescope live_grep<CR>
 nnoremap <M-t> <Cmd>Telescope lsp_workspace_symbols<CR>

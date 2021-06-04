@@ -131,7 +131,8 @@ function M.diff_saved()
 end
 
 function M.workspace_files(opt)
-  if opt == "-a" then
+  opt = opt or {}
+  if opt.all then
     require'telescope.builtin'.find_files({
         hidden = true,
         find_command = { "fd", "--type", "f", "-uu" }
@@ -144,15 +145,15 @@ function M.workspace_files(opt)
 end
 
 function M.close_buffer_and_go_to_alt(force, bufid)
+  bufid = bufid or 0
   if not force then
-    local modified = vim.bo[0].modified
+    local modified = vim.bo[bufid].modified
     if modified then
       utils.err("No write since last change!")
       return
     end
   end
 
-  local cur_bufid = bufid or vim.api.nvim_get_current_buf()
   local alt_bufid = vim.fn.bufnr("#")
   if alt_bufid ~= -1 then
     api.nvim_set_current_buf(alt_bufid)
@@ -160,7 +161,7 @@ function M.close_buffer_and_go_to_alt(force, bufid)
     vim.cmd("silent! bp")
   end
 
-  api.nvim_buf_delete(cur_bufid, { force = true })
+  api.nvim_buf_delete(bufid, { force = true })
 end
 
 function M.source_project_config()
@@ -212,9 +213,9 @@ function M.full_indent()
   end
 
   local indent = M.get_indent_level()
-  local et = api.nvim_buf_get_option(0, "et")
-  local sw = api.nvim_buf_get_option(0, "sw")
-  local ts = api.nvim_buf_get_option(0, "ts")
+  local et = vim.bo[0].et
+  local sw = vim.bo[0].sw
+  local ts = vim.bo[0].ts
 
   if et then
     if indent == 0 then
