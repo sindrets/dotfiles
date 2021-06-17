@@ -109,11 +109,11 @@ opt.backupdir = data_backup
 opt.undodir = data_undo
 
 if vim.fn.isdirectory(data_backup) ~= 1 then
-  vim.cmd("system(mkdir " .. vim.fn.shellescape(data_backup) .. ")")
+  vim.fn.system("mkdir " .. vim.fn.shellescape(data_backup))
 end
 
 if vim.fn.isdirectory(data_undo) ~= 1 then
-  vim.cmd("system(mkdir " .. vim.fn.shellescape(data_undo) .. ")")
+  vim.fn.system("mkdir " .. vim.fn.shellescape(data_undo))
 end
 
 if vim.fn.executable("ag") == 1 then

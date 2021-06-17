@@ -213,5 +213,6 @@ command! ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_vis
 command! -bang -bar Bd lua require'nvim-config.lib'.close_buffer_and_go_to_alt("<bang>" == "!")
 command! -nargs=1 Grep silent! grep! <args> | cope
 command! Spectre lua require'spectre'.open()
+command! SpectreFile lua require'spectre'.open_file_search()
 command! HiShow execute('redir=>a | silent hi | redir END | enew | put=a '
             \ . '| execute("normal! ggdj") | set nomod | f Highlights | ColorizerAttachToBuffer')

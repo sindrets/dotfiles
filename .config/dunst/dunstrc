@@ -64,7 +64,7 @@
     frame_width = 1
 
     # Defines color of the frame around the notification window.
-    frame_color = "#212733"
+    frame_color = "#b1b1b1"
 
     # Define a color for the separator.
     # possible values are:
@@ -181,7 +181,7 @@
     ### Misc/Advanced ###
 
     # dmenu path.
-    dmenu = /usr/bin/dmenu -p dunst:
+    dmenu = /usr/bin/rofi -dmenu -p dunst
 
     # Browser for opening urls in context menu.
     browser = /usr/bin/google-chrome-stable

@@ -145,7 +145,7 @@ function M.workspace_files(opt)
 end
 
 function M.close_buffer_and_go_to_alt(force, bufid)
-  bufid = bufid or 0
+  bufid = bufid or api.nvim_get_current_buf()
   if not force then
     local modified = vim.bo[bufid].modified
     if modified then

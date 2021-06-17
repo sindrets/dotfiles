@@ -39,6 +39,7 @@ if [ ! -d "$output_dir" ]; then
 fi
 output_dir="$(realpath -m "$output_dir")"
 output_path="$output_dir/$temp_name.mp4"
+output_relpath="$(realpath -m --relative-to=. "$output_path")"
 
 if [ -e "$output_path" ]; then
     err "Target '$output_path' already exists!"
@@ -102,4 +103,4 @@ wget -nv "$u" -O video.mp4
 echo " • Merging media..."
 ffmpeg -loglevel 16 -i video.mp4 -i audio.mp3 -c:v copy -c:a aac "$output_path"
 
-[ $? -eq 0 ] && echo " ✅ Created '$output_path' successfully!"
+[ $? -eq 0 ] && echo " ✅ Created '$output_relpath' successfully!"

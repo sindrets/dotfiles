@@ -54,7 +54,7 @@ return function ()
       empty = "",
       empty_open = "",
       symlink = "",
-      symlink_open = "",
+      symlink_open = "",
     },
     lsp = {
       hint = "",
@@ -108,15 +108,11 @@ return function ()
   end
 
   function M.custom_setup()
-    local buf_id = vim.api.nvim_get_current_buf()
-    local ok, custom_setup_done = pcall(vim.api.nvim_buf_get_var, buf_id, "custom_setup_done")
-
-    if ok and custom_setup_done == 1 then
+    if vim.b.custom_setup_done == 1 then
       return
     end
-
-    vim.api.nvim_buf_set_var(buf_id, "custom_setup_done", 1)
-    setup_bindings(buf_id)
+    vim.b.custom_setup_done = 1
+    setup_bindings(vim.api.nvim_get_current_buf())
   end
 
   function M.focus()

@@ -8,6 +8,7 @@ return function ()
       use_icons = true
     },
     key_bindings = {
+      disable_defaults = false,
       view = {
         ["<tab>"]     = cb("select_next_entry"),
         ["<s-tab>"]   = cb("select_prev_entry"),

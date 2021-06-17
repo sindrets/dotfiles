@@ -29,4 +29,6 @@ augroup NvimConfig
     " Run PackerCompile when changes are made to plugin configs.
     au BufWritePost */lua/nvim-config/plugins/*.lua execute 'PackerCompile' 
                 \ | lua require'nvim-config.utils'.info('Packer compiled!')
+
+    au TabEnter * silent! NvimTreeRefresh
 augroup END

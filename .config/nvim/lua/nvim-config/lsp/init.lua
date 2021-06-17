@@ -51,6 +51,9 @@ lspconfig.pyright.setup{}
 -- Lua
 require'nvim-config.lsp.lua'
 
+-- Teal
+require'nvim-config.lsp.teal'
+
 -- C#
 require'lspconfig'.omnisharp.setup{
   cmd = { "/usr/bin/omnisharp", "--languageserver" , "--hostPID", tostring(PID) },
