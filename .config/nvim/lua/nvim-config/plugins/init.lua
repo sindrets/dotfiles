@@ -68,12 +68,13 @@ return require'packer'.startup {
     -- MISC
     use { 'glepnir/galaxyline.nvim', branch = 'main', config = conf("galaxyline") }
     use { 'lewis6991/gitsigns.nvim', config = conf("gitsigns") }
-    use { 'lukas-reineke/indent-blankline.nvim', branch = 'lua', setup = conf("indent-blankline") }
+    use { 'lukas-reineke/indent-blankline.nvim', setup = conf("indent-blankline") }
     use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble") }
     use { 'sindrets/diffview.nvim', config = conf("diffview") }
+    -- use { 'sindrets/diffview.nvim' }
     use { 'sindrets/diffview-api-test' }
     use {
-      'sindrets/neogit',
+      'TimUntersberger/neogit',
       config = conf("neogit"),
       requires = { 'nvim-lua/plenary.nvim', 'sindrets/diffview.nvim' },
     }

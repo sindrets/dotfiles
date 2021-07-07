@@ -12,7 +12,6 @@ return function ()
         '--column',
         '--smart-case'
       },
-      prompt_position = "top",
       prompt_prefix = "  ",
       selection_caret = "➤ ",
       entry_prefix = "  ",
@@ -20,7 +19,10 @@ return function ()
       selection_strategy = "reset",
       sorting_strategy = "ascending",
       layout_strategy = "horizontal",
-      layout_defaults = {
+      layout_config = {
+        prompt_position = "top",
+        preview_cutoff = 120,
+        width = 0.75,
         horizontal = {
           mirror = false,
         },
@@ -33,10 +35,6 @@ return function ()
       generic_sorter =  require'telescope.sorters'.get_generic_fuzzy_sorter,
       shorten_path = true,
       winblend = 0,
-      width = 0.75,
-      preview_cutoff = 120,
-      results_height = 1,
-      results_width = 0.8,
       border = {},
       borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
       color_devicons = true,
