@@ -24,6 +24,8 @@ return function ()
       nvim_lsp = true;
       nvim_lua = true;
       vsnip = true;
+      ultisnips = true;
+      luasnip = true;
     };
   }
 
@@ -31,14 +33,7 @@ return function ()
 
   function CompeConfig.compe_completion_confirm ()
     if vim.fn.pumvisible() ~= 0  then
-      if vim.fn.complete_info()["selected"] ~= -1 then
-        return vim.fn["compe#confirm"](npairs.esc("<c-r>"))
-      else
-        vim.defer_fn(function()
-          vim.fn["compe#confirm"]("<cr>")
-        end, 20)
-        return npairs.esc("<c-n>")
-      end
+      return vim.fn["compe#confirm"]({ keys = '<CR>', select = true })
     else
       return npairs.autopairs_cr()
     end

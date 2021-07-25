@@ -21,4 +21,10 @@ return function ()
       }
     }
   }
+
+  vim.api.nvim_exec([[
+    augroup neogit_config
+      au FileType NeogitStatus setlocal nolist
+    augroup END
+  ]], false)
 end
