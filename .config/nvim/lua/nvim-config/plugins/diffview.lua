@@ -1,5 +1,6 @@
 return function ()
   local cb = require'diffview.config'.diffview_callback
+  local M = {}
 
   require'diffview'.setup {
     diff_binaries = false,
@@ -14,6 +15,7 @@ return function ()
         ["<s-tab>"]   = cb("select_prev_entry"),
         ["<leader>e"] = cb("focus_files"),
         ["<leader>b"] = cb("toggle_files"),
+        ["-"]         = cb("toggle_stage_entry"),
       },
       file_panel = {
         ["j"]             = cb("next_entry"),
@@ -34,4 +36,28 @@ return function ()
       }
     }
   }
+
+  function M.apply_diff_tweaks()
+    vim.schedule(function ()
+      local view = require'diffview.lib'.get_current_diffview()
+      if view then
+        local curhl = vim.wo[view.left_winid].winhl
+        vim.wo[view.left_winid].winhl = table.concat({
+            "DiffAdd:DiffAddAsDelete",
+            curhl ~= "" and curhl or nil
+          }, ",")
+      end
+    end)
+  end
+
+  vim.api.nvim_exec([[
+    hi! def DiffAddAsDelete guibg=#3C2C3C
+
+    augroup diffview_config
+      au!
+      au TabNew * lua DiffviewConfig.apply_diff_tweaks()
+    augroup END
+  ]], false)
+
+  _G.DiffviewConfig = M
 end

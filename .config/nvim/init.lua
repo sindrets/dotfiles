@@ -33,15 +33,14 @@ ToggleTermSplit = lib.create_buf_toggler(
 )
 
 ToggleQF = lib.create_buf_toggler(
-  function ()
-    return utils.find_buf_with_option("buftype", "quickfix")
-  end,
-  function ()
-    vim.cmd("100 wincmd j")
-    vim.cmd("belowright cope")
-  end,
-  function ()
-    vim.cmd("ccl")
-  end,
+  function () return utils.find_buf_with_option("buftype", "quickfix") end,
+  function () vim.cmd("100 wincmd j | belowright cope") end,
+  function () vim.cmd("ccl") end,
   { focus = true, remember_height = true }
+)
+
+ToggleSymbolsOutline = lib.create_buf_toggler(
+  function () return utils.find_buf_with_pattern("OUTLINE") end,
+  function () vim.cmd("SymbolsOutlineOpen") end,
+  function () vim.cmd("SymbolsOutlineClose") end
 )

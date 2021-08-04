@@ -66,7 +66,9 @@ opt.sessionoptions = list {
   "winsize"
 }
 opt.diffopt = list {
+  "algorithm:histogram",
   "internal",
+  "indent-heuristic",
   "filler",
   "closeoff",
   "iwhite",

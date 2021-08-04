@@ -164,6 +164,15 @@ function M.close_buffer_and_go_to_alt(force, bufid)
   api.nvim_buf_delete(bufid, { force = true })
 end
 
+function M.split_on_pattern(pattern)
+  local epattern = pattern:gsub("/", "\\/")
+  vim.cmd(string.format(
+    "s/%s/%s\\r/g",
+    epattern, epattern
+  ))
+  vim.cmd("noh")
+end
+
 function M.source_project_config()
   if utils.file_readable(".vim/init.vim") then
     local project_config_path = vim.loop.fs_realpath(".vim/init.vim")

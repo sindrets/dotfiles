@@ -180,9 +180,10 @@ function! ApplyColorTweaks()
         hi! link NvimTreeFolderIcon NormalFloat
         hi! link NvimTreeFolderName Directory
         hi DiffAdd    guibg=#283B4D guifg=NONE
-        hi DiffChange guibg=#283B4D guifg=NONE
-        hi DiffDelete guibg=#3C2C3C guifg=#725272 gui=bold
-        hi DiffText   guibg=#365069 guifg=NONE
+        hi DiffChange guibg=#28304d guifg=NONE
+        hi DiffText   guibg=#36426b guifg=NONE
+        hi! link DiffDelete Comment
+        " hi DiffDelete guibg=#3C2C3C guifg=#725272 gui=bold
         hi! link DiffviewNormal NormalSB
         " hi! BufferlineFill guibg=#131620
         " call SaneDiffDefaults()

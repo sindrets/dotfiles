@@ -26,6 +26,13 @@ return function ()
   vim.g.nvim_tree_hijack_cursor = 0
   -- vim.g.nvim_tree_window_picker_chars = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
   -- vim.g.nvim_tree_window_picker_chars = "aoeuidhtnsgcrld;qjkxbmwv"
+  vim.g.nvim_tree_window_picker_exclude = {
+    filetype = {
+      "packer",
+      "qf",
+      "Outline"
+    }
+  }
   vim.g.nvim_tree_show_icons = {
     git = 1,
     folders = 1,

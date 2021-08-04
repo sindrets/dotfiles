@@ -11,7 +11,7 @@ return function ()
     'startify',
     'dashboard',
     'packer',
-    'neogitstatus',
+    'Neogit*',
     'man',
     'sagasignature',
     'sagahover',

@@ -142,14 +142,16 @@ nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
 nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
 
 " Git
+nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
 nnoremap <leader>gl <Cmd>Git log<CR>
 nnoremap <leader>gcs <Cmd>Git commit<CR>
 nnoremap <leader>gcc <Cmd>Git commit -a<CR>
 nnoremap <leader>gb <Cmd>Git blame<CR>
 nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 
-" LspTrouble
+" LspTrouble and Symbols outline
 nnoremap <A-S-D> <Cmd>lua LspTroubleCustomToggle()<CR>
+nnoremap <C-M-o> <Cmd>lua ToggleSymbolsOutline()<CR>
 
 " Open a terminal split
 nnoremap <silent> <C-L> <Cmd>lua ToggleTermSplit()<CR>
@@ -158,8 +160,16 @@ tnoremap <silent> <C-L> <Cmd>lua ToggleTermSplit()<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
 tnoremap <silent> <C-q> <Esc>
 
-" Toggle quickfix
+" Quickfix and Location list
 nnoremap <M-q> <Cmd>lua ToggleQF()<CR>
+nnoremap [q <Cmd>cp<CR>
+nnoremap ]q <Cmd>cn<CR>
+nnoremap [Q <Cmd>cfirst<CR>
+nnoremap ]Q <Cmd>clast<CR>
+nnoremap [l <Cmd>lprevious<CR>
+nnoremap ]l <Cmd>lnext<CR>
+nnoremap [L <Cmd>lfirst<CR>
+nnoremap ]L <Cmd>llast<CR>
 
 " Trigger completion
 inoremap <silent><expr> <C-Space> compe#complete()
@@ -208,10 +218,10 @@ command! Ssync syntax sync minlines=3000
 command! DiffSaved lua require'nvim-config.lib'.diff_saved()
 command! CocJavaClearCache call CocJavaClearCacheFunc()
 command! CocJavaExploreCache call CocJavaExploreCacheFunc()
-command! -nargs=1 SplitOn call SplitLineOnPattern(<args>)
+command! -nargs=1 SplitOn lua require'nvim-config.lib'.split_on_pattern(<args>)
 command! ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_visual_selection(), false)
 command! -bang -bar Bd lua require'nvim-config.lib'.close_buffer_and_go_to_alt("<bang>" == "!")
-command! -nargs=1 Grep silent! grep! <args> | cope
+command! -nargs=1 Grep silent! grep! <args> | belowright cope
 command! Spectre lua require'spectre'.open()
 command! SpectreFile lua require'spectre'.open_file_search()
 command! HiShow execute('redir=>a | silent hi | redir END | enew | put=a '
