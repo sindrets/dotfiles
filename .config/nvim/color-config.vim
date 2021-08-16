@@ -18,7 +18,15 @@ let g:neodark#solid_vertsplit = 1
 let g:spacegray_use_italics = 1
 let g:spacegray_low_contrast = 1
 let g:tokyonight_style = "night"
+let g:tokyonight_dark_sidebar = 1
 let g:tokyonight_sidebars = [ "DiffviewFiles" ]
+let g:tokyonight_colors = {
+            \   "bg_dark": "#16161F",
+            \   "bg_popup": "#16161F",
+            \   "bg_statusline": "#16161F",
+            \   "bg_sidebar": "#16161F",
+            \   "bg_float": "#16161F",
+            \ }
 set background=dark
 
 " Neovim Terminal Colors
@@ -184,8 +192,8 @@ function! ApplyColorTweaks()
         hi DiffText   guibg=#36426b guifg=NONE
         hi! link DiffDelete Comment
         " hi DiffDelete guibg=#3C2C3C guifg=#725272 gui=bold
+        hi! link GitsignsAdd String
         hi! link DiffviewNormal NormalSB
-        " hi! BufferlineFill guibg=#131620
         " call SaneDiffDefaults()
 
     endif

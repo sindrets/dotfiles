@@ -45,9 +45,13 @@ function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
 
   local function open()
     toggler_entry.last_winid = api.nvim_get_current_win()
-    local ok = pcall(cb_open)
-    if ok and toggler_entry.height then
-      vim.cmd("res " .. toggler_entry.height)
+    local ok, err = pcall(cb_open)
+    if ok then
+      if toggler_entry.height then
+        vim.cmd("res " .. toggler_entry.height)
+      end
+    else
+      utils.err("[BufToggler] Open callback failed: " .. err)
     end
   end
 
@@ -55,9 +59,14 @@ function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
     if opts.remember_height then
       toggler_entry.height = api.nvim_win_get_height(0)
     end
-    pcall(cb_close)
-    if toggler_entry.last_winid then
+    local ok, err = pcall(cb_close)
+    if not ok then
+      utils.err("[BufToggler] Close callback failed: " .. err)
+    end
+    if api.nvim_win_is_valid(toggler_entry.last_winid or -1) then
       api.nvim_set_current_win(toggler_entry.last_winid)
+    else
+      vim.cmd("wincmd p")
     end
   end
 

@@ -18,7 +18,7 @@ return function ()
   vim.api.nvim_exec([[
     augroup SymbolsOutlineConfig
       au!
-      au FileType Outline set nolist
+      au FileType Outline set nolist winfixwidth signcolumn=no
     augroup END
     ]], false)
 end

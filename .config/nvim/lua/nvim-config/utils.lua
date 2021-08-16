@@ -104,6 +104,49 @@ function M.tbl_unpack(t, i, j)
   return unpack(t, i or 1, j or t.n or #t)
 end
 
+---Create a shallow copy of a portion of a list.
+---@param t table
+---@param first integer First index, inclusive
+---@param last integer Last index, inclusive
+---@return any[]
+function M.tbl_slice(t, first, last)
+  local slice = {}
+  for i = first, last or #t do
+    table.insert(slice, t[i])
+  end
+
+  return slice
+end
+
+function M.tbl_concat(...)
+  local result = {}
+  local n = 0
+
+  for _, t in ipairs({...}) do
+    for i, v in ipairs(t) do
+      result[n + i] = v
+    end
+    n = n + #t
+  end
+
+  return result
+end
+
+function M.tbl_deep_clone(t)
+  if not t then return end
+  local clone = {}
+
+  for k, v in pairs(t) do
+    if type(v) == "table" then
+      clone[k] = M.tbl_deep_clone(v)
+    else
+      clone[k] = v
+    end
+  end
+
+  return clone
+end
+
 function M.map(tbl, cb)
   for k, v in pairs(tbl) do
     tbl[k] = cb(v)
@@ -144,8 +187,8 @@ end
 
 function M.find_buf_with_var(var, value)
   for _, id in ipairs(api.nvim_list_bufs()) do
-    local success, v = pcall(api.nvim_buf_get_var, id, var)
-    if success and v == value then return id end
+    local ok, v = pcall(api.nvim_buf_get_var, id, var)
+    if ok and v == value then return id end
   end
 
   return nil
@@ -153,8 +196,8 @@ end
 
 function M.find_buf_with_option(option, value)
   for _, id in ipairs(api.nvim_list_bufs()) do
-    local success, v = pcall(api.nvim_buf_get_option, id, option)
-    if success and v == value then return id end
+    local ok, v = pcall(api.nvim_buf_get_option, id, option)
+    if ok and v == value then return id end
   end
 
   return nil

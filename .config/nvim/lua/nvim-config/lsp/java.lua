@@ -111,7 +111,7 @@ function M.start_jdtls()
 end
 
 require('jdtls.ui').pick_one_async = function(items, prompt, label_fn, cb)
-  local opts = require'telescope.themes'.get_dropdown()
+  local opts = require'telescope.themes'.get_cursor()
   pickers.new(opts, {
     prompt_title = prompt,
     finder    = finders.new_table {

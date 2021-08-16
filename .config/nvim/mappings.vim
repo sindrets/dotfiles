@@ -11,8 +11,12 @@ inoremap <expr> <DOWN> pumvisible() ? '<DOWN>' : '<C-\><C-o>gj'
 inoremap <expr> <UP> pumvisible() ? '<UP>' : '<C-\><C-o>gk'
 
 " Home moves to first non-whitespace on display line
+nnoremap H g^
+nnoremap L g$
 nnoremap <expr> <Home> v:count == 0 ? "g^" : "^"
 nnoremap <expr> <End> v:count == 0 ? "g$" : "$"
+xnoremap H g^
+xnoremap L g$
 xnoremap <expr> <Home> v:count == 0 ? "g^" : "^"
 xnoremap <expr> <End> v:count == 0 ? "g$" : "$"
 inoremap <Home> <Cmd>normal g^<CR>
@@ -152,6 +156,7 @@ nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 " LspTrouble and Symbols outline
 nnoremap <A-S-D> <Cmd>lua LspTroubleCustomToggle()<CR>
 nnoremap <C-M-o> <Cmd>lua ToggleSymbolsOutline()<CR>
+nnoremap <M-CR> <Cmd>lua UpdateMessagesWin()<CR>
 
 " Open a terminal split
 nnoremap <silent> <C-L> <Cmd>lua ToggleTermSplit()<CR>
@@ -192,8 +197,8 @@ nmap <silent> <leader>rn <Cmd>lua vim.lsp.buf.rename()<CR>
 nmap <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> <leader>f <Cmd>lua vim.lsp.buf.formatting()<CR>
 nnoremap <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <leader>. <Cmd>Telescope lsp_code_actions theme=get_dropdown<CR>
-vnoremap <leader>. <Cmd>Telescope lsp_range_code_actions theme=get_dropdown<CR>
+nnoremap <leader>. <Cmd>Telescope lsp_code_actions theme=get_cursor<CR>
+vnoremap <leader>. <Cmd>Telescope lsp_range_code_actions theme=get_cursor<CR>
 nnoremap <silent> <leader>ld <Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
 " nnoremap <silent> K <Cmd>Lspsaga hover_doc<CR>
 " nnoremap <leader>. <Cmd>Lspsaga code_action<CR>
@@ -224,5 +229,9 @@ command! -bang -bar Bd lua require'nvim-config.lib'.close_buffer_and_go_to_alt("
 command! -nargs=1 Grep silent! grep! <args> | belowright cope
 command! Spectre lua require'spectre'.open()
 command! SpectreFile lua require'spectre'.open_file_search()
-command! HiShow execute('redir=>a | silent hi | redir END | enew | put=a '
-            \ . '| execute("normal! ggdj") | set nomod | f Highlights | ColorizerAttachToBuffer')
+command! HiShow exe 'redir=>a | silent hi | redir END | enew | silent put=a '
+            \ . '| exe "norm! ggdj" | set nomod | f Highlights | ColorizerAttachToBuffer'
+command! Messages lua UpdateMessagesWin()
+
+" ABBREVIATIONS
+cnoreabbrev msg Messages

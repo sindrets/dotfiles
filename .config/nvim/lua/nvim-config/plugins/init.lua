@@ -122,6 +122,6 @@ return require'packer'.startup {
     use { 'juanedi/predawn.vim' }
     use { 'christianchiarulli/nvcode-color-schemes.vim' }
     use { 'glepnir/zephyr-nvim' }
-    use { 'sindrets/tokyonight.nvim' }
+    use { 'folke/tokyonight.nvim' }
   end
 }

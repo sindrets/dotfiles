@@ -31,6 +31,9 @@ return function ()
       "packer",
       "qf",
       "Outline"
+    },
+    buftype = {
+      "terminal"
     }
   }
   vim.g.nvim_tree_show_icons = {
@@ -238,7 +241,7 @@ return function ()
   vim.api.nvim_exec([[
     hi! link NvimTreeGitNew diffAdded
     hi! link NvimTreeGitDeleted diffRemoved
-    hi! link NvimTreeGitDirty GitDirty
+    " hi! link NvimTreeGitDirty GitDirty
     hi! link NvimTreeGitStaged diffAdded
     hi! link NvimTreeFolderIcon NvimTreeFolderName
     ]], false)
