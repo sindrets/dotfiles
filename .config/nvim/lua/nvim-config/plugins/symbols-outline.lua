@@ -16,9 +16,10 @@ return function ()
   }
 
   vim.api.nvim_exec([[
+    hi! link FocusedSymbol Visual
     augroup SymbolsOutlineConfig
       au!
-      au FileType Outline set nolist winfixwidth signcolumn=no
+      au FileType Outline set nolist winfixwidth winfixheight signcolumn=no
     augroup END
     ]], false)
 end

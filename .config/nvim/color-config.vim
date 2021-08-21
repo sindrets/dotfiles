@@ -1,8 +1,6 @@
-let g:colorscheme = "tokyonight"
+let g:colorscheme = "rose-pine"
 
 let ayucolor="dark"
-let g:material_terminal_italics = 1
-let g:material_theme_style = 'darker'
 let g:gruvbox_italic = 1
 let g:gruvbox_contrast_dark = "medium"
 let g:gruvbox_invert_selection = 0
@@ -17,16 +15,28 @@ let g:neodark#use_256color = 0
 let g:neodark#solid_vertsplit = 1
 let g:spacegray_use_italics = 1
 let g:spacegray_low_contrast = 1
+let g:material_style = "palenight"
+let g:material_contrast = v:true
+let g:material_italic_comments = v:true
+let g:material_italic_functions = v:true
+let g:material_borders = v:true
+let g:material_hide_eob = v:true
+let g:rose_pine_variant = "moon"
+let g:rose_pine_enable_italics = v:true
 let g:tokyonight_style = "night"
 let g:tokyonight_dark_sidebar = 1
 let g:tokyonight_sidebars = [ "DiffviewFiles" ]
-let g:tokyonight_colors = {
-            \   "bg_dark": "#16161F",
-            \   "bg_popup": "#16161F",
-            \   "bg_statusline": "#16161F",
-            \   "bg_sidebar": "#16161F",
-            \   "bg_float": "#16161F",
-            \ }
+if g:tokyonight_style ==# "night"
+    let g:tokyonight_colors = {
+                \   "bg_dark": "#16161F",
+                \   "bg_popup": "#16161F",
+                \   "bg_statusline": "#16161F",
+                \   "bg_sidebar": "#16161F",
+                \   "bg_float": "#16161F",
+                \ }
+else
+    let g:tokyonight_colors = v:null
+endif
 set background=dark
 
 " Neovim Terminal Colors
@@ -66,10 +76,10 @@ augroup END
 " function sets the diff colors to some more sane defaults that at least looks
 " quite pleasant in most colorschemes.
 function! SaneDiffDefaults()
-    hi DiffAdd    ctermfg=234 ctermbg=114 guibg=#26332c guifg=NONE
-    hi DiffChange cterm=underline ctermfg=180 guibg=#273842 guifg=NONE
-    hi DiffDelete ctermfg=234 ctermbg=168 guibg=#572E33 guifg=NONE
-    hi DiffText   ctermfg=234 ctermbg=180 guibg=#314753 guifg=NONE
+    hi DiffAdd    guibg=#26332c guifg=NONE
+    hi DiffChange guibg=#273842 guifg=NONE
+    hi DiffDelete guibg=#572E33 guifg=NONE
+    hi DiffText   guibg=#314753 guifg=NONE
     hi! link       diffAdded     DiffAdd
     hi! link       diffChanged   DiffChange
     hi! link       diffRemoved   DiffDelete
@@ -185,16 +195,40 @@ function! ApplyColorTweaks()
 
     elseif g:colorscheme ==# "tokyonight"
         hi! link ColorColumn CursorLine
-        hi! link NvimTreeFolderIcon NormalFloat
-        hi! link NvimTreeFolderName Directory
+        " hi! link NvimTreeFolderIcon NormalFloat
+        " hi! link NvimTreeFolderName Directory
         hi DiffAdd    guibg=#283B4D guifg=NONE
         hi DiffChange guibg=#28304d guifg=NONE
         hi DiffText   guibg=#36426b guifg=NONE
         hi! link DiffDelete Comment
-        " hi DiffDelete guibg=#3C2C3C guifg=#725272 gui=bold
+        hi! DiffAddAsDelete guibg=#3C2C3C
         hi! link GitsignsAdd String
         hi! link DiffviewNormal NormalSB
-        " call SaneDiffDefaults()
+
+    elseif g:colorscheme ==# "rose-pine"
+        hi! link DiffDelete Comment
+        hi! DiffAddAsDelete guibg=#422D43
+    "     hi! IncSearch gui=reverse guifg=#eb6f92
+    "     hi! TabLineSel cterm=bold gui=bold guifg=#9ccfd8
+    "     hi! Folded guifg=#f6c177
+    "     hi! EndOfBuffer guifg=#232136
+    "     hi! Visual guibg=#4b4367
+    "     hi! CursorLine guibg=#323049
+    "     hi! link ColorColumn CursorLine
+    "     hi! link NvimTreeIndentMarker Whitespace
+    "     hi! link TelescopeBorder SpecialKey
+    "     hi! GitSignsAdd guifg=#57a7a4
+    "     hi! GitSignsChange guifg=#6167b9
+    "     hi! GitSignsDelete guifg=#eb6f92
+    "     hi! diffAdded guifg=#9ccfd8
+    "     hi! diffRemoved guifg=#eb6f92
+    "     hi! link diffChanged PreProc
+    "     hi! DiffAdd guifg=NONE guibg=#3b4456
+    "     hi! DiffChange guifg=NONE guibg=#323456
+    "     hi! DiffText guifg=NONE guibg=#424674
+    "     hi! LspReferenceRead guifg=NONE guibg=#393754
+    "     hi! LspReferenceWrite guifg=NONE guibg=#393754
+    "     hi! LspReferenceText guifg=NONE guibg=#393754
 
     endif
 endfunction

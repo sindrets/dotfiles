@@ -40,9 +40,10 @@ return function ()
   }
 
   function M.apply_diff_tweaks()
+    local StandardView = require'diffview.views.standard.standard_view'.StandardView
     vim.schedule(function ()
-      local view = require'diffview.lib'.get_current_diffview()
-      if view then
+      local view = require'diffview.lib'.get_current_view()
+      if view and view:instanceof(StandardView) then
         local curhl = vim.wo[view.left_winid].winhl
         vim.wo[view.left_winid].winhl = table.concat({
             "DiffAdd:DiffAddAsDelete",

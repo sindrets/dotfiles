@@ -4,6 +4,7 @@ return function ()
   local condition = require('galaxyline.condition')
   local gls = gl.section
   local cur_section
+
   gl.short_line_list = {
     'NvimTree',
     'vista',
@@ -86,6 +87,18 @@ return function ()
     end
   end
 
+  _G.UpdateGalaxyline = function ()
+    require("nvim-config.plugins.galaxyline")()
+    gl.load_galaxyline()
+  end
+
+  vim.api.nvim_exec([[
+    augroup galaxyline_config
+      au!
+      au ColorScheme * lua UpdateGalaxyline()
+    augroup END
+  ]], false)
+
   -- RESET
   gls.left = {}
   gls.mid = {}
@@ -138,7 +151,7 @@ return function ()
           ['!'] = 'SHELL',
           t = 'TERMINAL'
         }
-        vim.api.nvim_command('hi GalaxyViMode guifg='..mode_color())
+        vim.cmd('hi GalaxyViMode guifg=' .. mode_color())
         return alias[vim.fn.mode()]..' '
       end,
       highlight = {colors.red,colors.bg,'bold'},
@@ -411,6 +424,4 @@ return function ()
       highlight = {colors.fg,colors.bg}
     }
   })
-
-  vim.api.nvim_command([[hi! link StatusLine GalaxySFileName]])
 end

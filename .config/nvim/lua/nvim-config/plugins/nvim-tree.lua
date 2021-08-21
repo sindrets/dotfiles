@@ -24,6 +24,11 @@ return function ()
   vim.g.nvim_tree_side = "left"
   vim.g.nvim_tree_tab_open = 0
   vim.g.nvim_tree_hijack_cursor = 0
+  -- Shorten the path to fit the window width:
+  vim.g.nvim_tree_root_folder_modifier = string.format(
+    [[:s?.\{-}\(\/.\{1,%d}$\)?…\1?]],
+    vim.g.nvim_tree_width - 6
+  )
   -- vim.g.nvim_tree_window_picker_chars = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
   -- vim.g.nvim_tree_window_picker_chars = "aoeuidhtnsgcrld;qjkxbmwv"
   vim.g.nvim_tree_window_picker_exclude = {
@@ -243,7 +248,7 @@ return function ()
     hi! link NvimTreeGitDeleted diffRemoved
     " hi! link NvimTreeGitDirty GitDirty
     hi! link NvimTreeGitStaged diffAdded
-    hi! link NvimTreeFolderIcon NvimTreeFolderName
+    " hi! link NvimTreeFolderIcon NvimTreeFolderName
     ]], false)
 
   vim.api.nvim_exec([[

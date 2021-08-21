@@ -66,7 +66,7 @@ return require'packer'.startup {
     use { 'tpope/vim-surround' }
 
     -- MISC
-    use { 'glepnir/galaxyline.nvim', branch = 'main', config = conf("galaxyline") }
+    use { 'sindrets/galaxyline.nvim', config = conf("galaxyline") }
     use { 'lewis6991/gitsigns.nvim', config = conf("gitsigns") }
     use { 'lukas-reineke/indent-blankline.nvim', setup = conf("indent-blankline") }
     use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble") }
@@ -101,7 +101,6 @@ return require'packer'.startup {
     -- THEMES
     use { 'rakr/vim-one' }
     use { 'ayu-theme/ayu-vim' }
-    use { 'kaicataldo/material.vim' }
     use { 'phanviet/vim-monokai-pro' }
     use { 'tomasiser/vim-code-dark' }
     use { 'w0ng/vim-hybrid' }
@@ -120,8 +119,10 @@ return require'packer'.startup {
     use { 'sainnhe/gruvbox-material' }
     use { 'kjssad/quantum.vim' }
     use { 'juanedi/predawn.vim' }
-    use { 'christianchiarulli/nvcode-color-schemes.vim' }
     use { 'glepnir/zephyr-nvim' }
     use { 'folke/tokyonight.nvim' }
+    use { 'Mofiqul/dracula.nvim' }
+    use { 'marko-cerovac/material.nvim' }
+    use { 'sindrets/rose-pine-neovim', as = 'rose-pine' }
   end
 }

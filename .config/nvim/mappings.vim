@@ -155,7 +155,7 @@ nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 
 " LspTrouble and Symbols outline
 nnoremap <A-S-D> <Cmd>lua LspTroubleCustomToggle()<CR>
-nnoremap <C-M-o> <Cmd>lua ToggleSymbolsOutline()<CR>
+nnoremap <C-M-o> <Cmd>lua ToggleSymbolsOutline()<CR><C-w>=
 nnoremap <M-CR> <Cmd>lua UpdateMessagesWin()<CR>
 
 " Open a terminal split
