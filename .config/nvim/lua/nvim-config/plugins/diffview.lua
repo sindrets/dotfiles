@@ -4,11 +4,12 @@ return function ()
 
   require'diffview'.setup {
     diff_binaries = false,
+    use_icons = true,
+    enhanced_diff_hl = true,
     file_panel = {
       position = "left",
       width = 35,
       height = 10,
-      use_icons = true
     },
     key_bindings = {
       disable_defaults = false,
@@ -18,6 +19,7 @@ return function ()
         ["<leader>e"] = cb("focus_files"),
         ["<leader>b"] = cb("toggle_files"),
         ["-"]         = cb("toggle_stage_entry"),
+        ["<leader>s"] = "<Cmd>sp % <bar> setl nodiff<CR>"
       },
       file_panel = {
         ["j"]             = cb("next_entry"),
@@ -54,11 +56,9 @@ return function ()
   end
 
   vim.api.nvim_exec([[
-    hi! def DiffAddAsDelete guibg=#3C2C3C
-
     augroup diffview_config
       au!
-      au TabNew * lua DiffviewConfig.apply_diff_tweaks()
+      " au TabNew * lua DiffviewConfig.apply_diff_tweaks()
     augroup END
   ]], false)
 

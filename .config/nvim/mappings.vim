@@ -1,14 +1,14 @@
 " Allow movement through display lines (wrapped lines)
-nnoremap <expr> j v:count == 0 ? 'gj' : 'j'
-nnoremap <expr> k v:count == 0 ? 'gk' : 'k'
-nnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
-nnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
-xnoremap <expr> j v:count == 0 ? 'gj' : 'j'
-xnoremap <expr> k v:count == 0 ? 'gk' : 'k'
-xnoremap <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
-xnoremap <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
-inoremap <expr> <DOWN> pumvisible() ? '<DOWN>' : '<C-\><C-o>gj'
-inoremap <expr> <UP> pumvisible() ? '<UP>' : '<C-\><C-o>gk'
+nnoremap <silent> <expr> j v:count == 0 ? 'gj' : 'j'
+nnoremap <silent> <expr> k v:count == 0 ? 'gk' : 'k'
+nnoremap <silent> <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
+nnoremap <silent> <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
+xnoremap <silent> <expr> j v:count == 0 ? 'gj' : 'j'
+xnoremap <silent> <expr> k v:count == 0 ? 'gk' : 'k'
+xnoremap <silent> <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
+xnoremap <silent> <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
+inoremap <silent> <expr> <DOWN> pumvisible() ? '<DOWN>' : '<C-\><C-o>gj'
+inoremap <silent> <expr> <UP> pumvisible() ? '<UP>' : '<C-\><C-o>gk'
 
 " Home moves to first non-whitespace on display line
 nnoremap H g^
@@ -22,20 +22,22 @@ xnoremap <expr> <End> v:count == 0 ? "g$" : "$"
 inoremap <Home> <Cmd>normal g^<CR>
 inoremap <End> <C-\><C-O>g$
 
-" Copy, cut and paste to/from system clipboard
-xnoremap <expr> y v:register == '"' ? '"+y' : 'y'
-xnoremap <expr> <S-Y> v:register == '"' ? '"+Y' : 'Y'
+" Yank, delete, paste
+nnoremap <silent> y :set opfunc=PlusYank<CR>g@
 nnoremap <expr> yy v:register == '"' ? '"+yy' : 'yy'
+nnoremap <expr> Y v:register == '"' ? '"+y$' : 'y$'
 nnoremap <M-p> "+p
 nnoremap <M-P> "+P
+xnoremap <expr> y v:register == '"' ? '"+y' : 'y'
+xnoremap <expr> <S-Y> v:register == '"' ? '"+Y' : 'Y'
 inoremap <M-p> <Cmd>set paste \| exec 'normal "+p' \| set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
 
 " File explorer
-map <silent> <Leader>e <Cmd>lua NvimTreeConfig.focus()<CR>
-map <silent> <Leader>b <Cmd>NvimTreeToggle<CR>
+nnoremap <silent> <Leader>e <Cmd>lua NvimTreeConfig.focus()<CR>
+nnoremap <silent> <Leader>b <Cmd>NvimTreeToggle<CR>
 
-nnoremap <silent> <Leader>q :q<CR>
+nnoremap <silent> <Leader>q <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
 inoremap <M-Space> <Esc>
 
 " Make session
@@ -47,7 +49,7 @@ inoremap <M-Return> <Esc>O
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR>
 nnoremap  <silent> <s-tab> :bp<CR>
-nnoremap <leader><leader> <Cmd>:buffer #<CR>
+nnoremap <leader><leader> <Cmd>buffer #<CR>
 nnoremap <silent> <leader>w <Cmd>lua require'nvim-config.lib'.close_buffer_and_go_to_alt()<CR>
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 
@@ -69,6 +71,8 @@ nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 nnoremap <C-x> <C-w>p
+nnoremap <C-w><C-m> <Cmd>WinShift<CR>
+nnoremap <C-w>m <Cmd>WinShift<CR>
 
 " Window splits
 nnoremap <leader>v <Cmd>vsp<CR>
@@ -132,9 +136,9 @@ nnoremap <F3> :noh<CR>
 nmap , @@
 
 " Toggle comments
-nnoremap <C-\> :call NERDComment(0, "toggle")<CR>
-inoremap <C-\> <Esc>:call NERDComment(0, "toggle")<CR>a
-vnoremap <C-\> :call NERDComment(0, "toggle")<CR>gv
+nnoremap <silent> <C-\> <Cmd>call nerdcommenter#Comment(0, "toggle")<CR>
+inoremap <silent> <C-\> <Esc>:call nerdcommenter#Comment(0, "toggle")<CR>a
+vnoremap <silent> <C-\> :call nerdcommenter#Comment(0, "toggle")<CR>gv
 
 " Telescope
 nnoremap <C-P> <Cmd>lua require'nvim-config.lib'.workspace_files()<CR>
@@ -144,6 +148,7 @@ nnoremap <M-f> <Cmd>Telescope live_grep<CR>
 nnoremap <M-t> <Cmd>Telescope lsp_workspace_symbols<CR>
 nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
 nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
+nnoremap z= <Cmd>Telescope spell_suggest theme=get_cursor<CR>
 
 " Git
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
@@ -155,7 +160,7 @@ nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 
 " LspTrouble and Symbols outline
 nnoremap <A-S-D> <Cmd>lua LspTroubleCustomToggle()<CR>
-nnoremap <C-M-o> <Cmd>lua ToggleSymbolsOutline()<CR><C-w>=
+nnoremap <C-M-o> <Cmd>lua ToggleSymbolsOutline()<CR>
 nnoremap <M-CR> <Cmd>lua UpdateMessagesWin()<CR>
 
 " Open a terminal split
@@ -219,19 +224,43 @@ nnoremap <F10> <Cmd>lua require'nvim-config.lib'.print_syn_group()<CR>
 
 " COMMANDS
 command! -nargs=+ Rnew lua require'nvim-config.lib'.read_new(<q-args>)
-command! Ssync syntax sync minlines=3000
-command! DiffSaved lua require'nvim-config.lib'.diff_saved()
-command! CocJavaClearCache call CocJavaClearCacheFunc()
-command! CocJavaExploreCache call CocJavaExploreCacheFunc()
-command! -nargs=1 SplitOn lua require'nvim-config.lib'.split_on_pattern(<args>)
-command! ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_visual_selection(), false)
-command! -bang -bar Bd lua require'nvim-config.lib'.close_buffer_and_go_to_alt("<bang>" == "!")
-command! -nargs=1 Grep silent! grep! <args> | belowright cope
-command! Spectre lua require'spectre'.open()
-command! SpectreFile lua require'spectre'.open_file_search()
-command! HiShow exe 'redir=>a | silent hi | redir END | enew | silent put=a '
-            \ . '| exe "norm! ggdj" | set nomod | f Highlights | ColorizerAttachToBuffer'
-command! Messages lua UpdateMessagesWin()
+command! -bar Ssync syntax sync minlines=3000
+command! -bar DiffSaved lua require'nvim-config.lib'.diff_saved()
+command! -bar -nargs=1 SplitOn lua require'nvim-config.lib'.split_on_pattern(<args>)
+command! -bar ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_visual_selection(), false)
+command! -bar -bang Bd lua require'nvim-config.lib'.close_buffer_and_go_to_alt("<bang>" == "!")
+command! -bar -nargs=1 Grep silent! grep! <args> | belowright cope
+command! -bar Spectre lua require'spectre'.open()
+command! -bar SpectreFile lua require'spectre'.open_file_search()
+command! -bar HiShow exe 'redir=>a | silent hi | redir END | enew | silent put=a '
+            \ . '| exe "norm! ggdj" | setl buftype=nofile | f Highlights | ColorizerAttachToBuffer'
+command! -bar Messages lua UpdateMessagesWin()
+command! -bar Scratch lua require'nvim-config.lib'.new_scratch_buf()
+command! -bar -nargs=1 -complete=help HelpHere
+            \ if &bt !=# 'help' | keepalt e $VIMRUNTIME/doc/help.txt | setl bt=help nobl | endif |
+            \ h <args>
 
 " ABBREVIATIONS
 cnoreabbrev msg Messages
+cnoreabbrev sch Scratch
+cnoreabbrev hh HelpHere
+
+" OPERATOR FUNCTIONS
+
+" Always yank to plus registry.
+function! PlusYank(type = "")
+    let sel_save = &selection
+    let cb_save = &clipboard
+    let visual_marks_save = [getpos("'<"), getpos("'>")]
+
+    try
+        set clipboard= selection=inclusive
+        let commands = #{line: "'[V']\"+y", char: "`[v`]\"+y", block: "`[\<c-v>`]\"+y"}
+        silent exe 'keepjumps normal! ' .. get(commands, a:type, '')
+    finally
+        call setpos("'<", visual_marks_save[0])
+        call setpos("'>", visual_marks_save[1])
+        let &clipboard = cb_save
+        let &selection = sel_save
+    endtry
+endfunction

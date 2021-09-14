@@ -18,14 +18,15 @@ return function ()
     documentation = true;
 
     source = {
-      path = true;
-      buffer = true;
-      calc = true;
-      nvim_lsp = true;
-      nvim_lua = true;
-      vsnip = true;
-      ultisnips = true;
-      luasnip = true;
+      path = true,
+      buffer = true,
+      calc = true,
+      spell = true,
+      nvim_lsp = true,
+      nvim_lua = true,
+      vsnip = true,
+      ultisnips = true,
+      luasnip = true,
     };
   }
 

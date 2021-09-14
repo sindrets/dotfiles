@@ -42,16 +42,19 @@ ToggleQF = lib.create_buf_toggler(
 ToggleSymbolsOutline = lib.create_buf_toggler(
   function () return utils.find_buf_with_pattern("OUTLINE") end,
   function () vim.cmd("SymbolsOutlineOpen") end,
-  function () vim.cmd("SymbolsOutlineClose") end
+  function ()
+    vim.cmd("SymbolsOutlineClose")
+    vim.cmd("wincmd =")
+  end
 )
 
 function OpenMessagesWin()
   local msgs = vim.api.nvim_exec("mes", true)
-  local lines = vim.split(msgs, "\n"), 3
+  local lines = vim.split(msgs, "\n")
   vim.cmd("belowright new")
   vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
   vim.api.nvim_buf_set_var(0, "bufid", "messages_window")
-  vim.cmd("set nomod nolist winfixheight bh=delete ft=log | f Messages")
+  vim.cmd("setl nolist winfixheight buftype=nofile bh=delete ft=log | f Messages")
   vim.cmd("res " .. math.min(14, #lines))
   vim.cmd("norm! G")
 end

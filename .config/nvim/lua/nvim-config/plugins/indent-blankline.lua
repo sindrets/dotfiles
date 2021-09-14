@@ -21,6 +21,7 @@ return function ()
     'NvimTree',
     'Trouble',
     'DiffviewFiles',
+    'DiffviewFileHistory',
     'Outline',
     'lspinfo'
   }

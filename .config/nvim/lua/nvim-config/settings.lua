@@ -40,14 +40,16 @@ opt.showcmd = true
 opt.mouse = "a"
 opt.hidden = true
 opt.cursorline = true
+opt.guicursor = "n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20"
 opt.splitbelow = true
 opt.splitright = true
 opt.wrap = true
 opt.linebreak = true
-opt.swapfile = false
-opt.updatetime = 100
+opt.swapfile = true
+opt.shortmess = "filnxtToOFIA"
+opt.updatetime = 4096 -- change cursorhold time with 'vim.g.cursorhold_updatetime'
 opt.termguicolors = true
-opt.backspace = list {"indent", "eol", "start"}
+opt.backspace = list { "indent", "eol", "start" }
 opt.inccommand = "split"
 opt.foldmethod = "expr"
 opt.foldexpr = "nvim_treesitter#foldexpr()"
@@ -124,7 +126,6 @@ if vim.fn.executable("ag") == 1 then
 end
 
 vim.cmd("syntax on")
-vim.cmd("syntax sync minlines=3000")
 vim.cmd("filetype plugin indent on")
 
 local init_extra_path = vim.fn.fnamemodify(vim.fn.expand("$MYVIMRC"), ":h") .. "/init_extra.vim"

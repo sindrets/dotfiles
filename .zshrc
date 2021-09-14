@@ -32,8 +32,7 @@ export LESS=-r # scroll pager with mouse wheel.
 export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
 export GIT_DIRECTORY="$HOME/Documents/git"
-export MANPAGER="nvim -R -c 'set ft=man nomod nolist' \
-    -c 'nmap K :Man <C-R>=expand(\"<cword>\")<CR><CR>'"
+export MANPAGER="nvim -nc 'set nolist' +Man! -"
 
 eval `dircolors "$HOME/.dir_colors"`
 
@@ -113,8 +112,7 @@ alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/
     | fzf --height 10` && [ ! -z "$code_dir" ] && code --folder-uri $code_dir'
 alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compiling for {}...\" \
     && tsc -p {}' \\;"
-alias nvim-pager="nvim -R -c 'set nomod nolist' \
-    -c 'nmap K :Man <C-R>=expand(\"<cword>\")<CR><CR>'"
+alias nvim-pager="nvim -Rnc 'set bt=nofile nolist'"
 
 function chpwd() {
     emulate -L zsh
@@ -255,3 +253,8 @@ then
 fi
 
 # vim: sw=4
+
+
+# BEGIN_KITTY_SHELL_INTEGRATION
+if test -e "/usr/lib/kitty/shell-integration/kitty.zsh"; then source "/usr/lib/kitty/shell-integration/kitty.zsh"; fi
+# END_KITTY_SHELL_INTEGRATION

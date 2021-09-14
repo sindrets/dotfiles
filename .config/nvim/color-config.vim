@@ -1,4 +1,4 @@
-let g:colorscheme = "rose-pine"
+let g:colorscheme = "material"
 
 let ayucolor="dark"
 let g:gruvbox_italic = 1
@@ -15,12 +15,6 @@ let g:neodark#use_256color = 0
 let g:neodark#solid_vertsplit = 1
 let g:spacegray_use_italics = 1
 let g:spacegray_low_contrast = 1
-let g:material_style = "palenight"
-let g:material_contrast = v:true
-let g:material_italic_comments = v:true
-let g:material_italic_functions = v:true
-let g:material_borders = v:true
-let g:material_hide_eob = v:true
 let g:rose_pine_variant = "moon"
 let g:rose_pine_enable_italics = v:true
 let g:tokyonight_style = "night"
@@ -38,6 +32,7 @@ else
     let g:tokyonight_colors = v:null
 endif
 set background=dark
+lua require("nvim-config.plugins.material")()
 
 " Neovim Terminal Colors
 function! ApplyTerminalColorDefaults() 
@@ -195,42 +190,65 @@ function! ApplyColorTweaks()
 
     elseif g:colorscheme ==# "tokyonight"
         hi! link ColorColumn CursorLine
-        " hi! link NvimTreeFolderIcon NormalFloat
-        " hi! link NvimTreeFolderName Directory
-        hi DiffAdd    guibg=#283B4D guifg=NONE
-        hi DiffChange guibg=#28304d guifg=NONE
-        hi DiffText   guibg=#36426b guifg=NONE
-        hi! link DiffDelete Comment
-        hi! DiffAddAsDelete guibg=#3C2C3C
+        if &background ==# "dark"
+            hi DiffAdd    guibg=#283B4D guifg=NONE
+            hi DiffChange guibg=#28304d guifg=NONE
+            hi DiffText   guibg=#36426b guifg=NONE
+        endif
         hi! link GitsignsAdd String
         hi! link DiffviewNormal NormalSB
 
-    elseif g:colorscheme ==# "rose-pine"
-        hi! link DiffDelete Comment
-        hi! DiffAddAsDelete guibg=#422D43
-    "     hi! IncSearch gui=reverse guifg=#eb6f92
-    "     hi! TabLineSel cterm=bold gui=bold guifg=#9ccfd8
-    "     hi! Folded guifg=#f6c177
-    "     hi! EndOfBuffer guifg=#232136
-    "     hi! Visual guibg=#4b4367
-    "     hi! CursorLine guibg=#323049
-    "     hi! link ColorColumn CursorLine
-    "     hi! link NvimTreeIndentMarker Whitespace
-    "     hi! link TelescopeBorder SpecialKey
-    "     hi! GitSignsAdd guifg=#57a7a4
-    "     hi! GitSignsChange guifg=#6167b9
-    "     hi! GitSignsDelete guifg=#eb6f92
-    "     hi! diffAdded guifg=#9ccfd8
-    "     hi! diffRemoved guifg=#eb6f92
-    "     hi! link diffChanged PreProc
-    "     hi! DiffAdd guifg=NONE guibg=#3b4456
-    "     hi! DiffChange guifg=NONE guibg=#323456
-    "     hi! DiffText guifg=NONE guibg=#424674
-    "     hi! LspReferenceRead guifg=NONE guibg=#393754
-    "     hi! LspReferenceWrite guifg=NONE guibg=#393754
-    "     hi! LspReferenceText guifg=NONE guibg=#393754
+    elseif g:colorscheme ==# "everforest"
+        hi! SignColumn guibg=NONE
+        hi! FoldColumn guibg=NONE
+        hi! OrangeSign guibg=NONE
+        hi! GreenSign  guibg=NONE
+        hi! PurpleSign guibg=NONE
+        hi! RedSign    guibg=NONE
+        hi! YellowSign guibg=NONE
+        hi! AquaSign   guibg=NONE
+        hi! BlueSign   guibg=NONE
+        if &background ==# "light"
+            hi! CursorLineNr gui=bold guibg=NONE guifg=#8da101
+            hi! DiffAdd guibg=#EBF4BF guifg=NONE
+            hi! DiffDelete guibg=#FCDDCC guifg=NONE
+            hi! DiffChange guibg=#E3ECE4 guifg=NONE
+            hi! DiffText guibg=#BEDFE6 guifg=NONE
+        else
+            hi! CursorLineNr gui=bold guibg=NONE guifg=#a7c080
+            hi! DiffText guibg=#4a6778 guifg=NONE
+        endif
+
+    elseif g:colorscheme ==# "palenight"
+        hi! CursorLine guibg=#212433
+        hi! StatusLine guibg=#212433
+        hi! StatusLineNC guibg=#212433
+        hi! Folded guibg=#1e212e
+        hi! ColorColumn guibg=#33384d
+        hi! NonText guifg=#3c445f
+        hi! TabLineSel guifg=#82b1ff
+        hi! IndentBlanklineContextChar guifg=#82b1ff
+        hi! EndOfBuffer guifg=#292D3E
+        hi! link NvimTreeIndentMarker LineNr
+        hi! link TelescopeBorder Directory
+        hi! DiffAdd guibg=#344a4d guifg=NONE
+        hi! DiffDelete guibg=#4b3346 guifg=NONE
+        hi! DiffChange guibg=#32395c guifg=NONE
+        hi! DiffText guibg=#3f4a87 guifg=NONE
+        hi! diffChanged guifg=#82b1ff
+        hi! GitSignsChange guifg=#82b1ff
+        hi! link LspReferenceText ColorColumn
+        hi! link LspReferenceRead ColorColumn
+        hi! link LspReferenceWrite ColorColumn
+        hi! NvimTreeRootFolder guifg=#C3E88D gui=bold
+        hi! NvimTreeFolderIcon guifg=#F78C6C
+        hi! NvimTreeNormal guibg=#222533
+        hi! NvimTreeCursorLine guibg=#33374c
+        hi! NvimTreeGitDirty guifg=#ffcb6b
 
     endif
+
+    " lua require("nvim-config.lib").update_diff_hl()
 endfunction
 
 execute("colorscheme " . g:colorscheme)

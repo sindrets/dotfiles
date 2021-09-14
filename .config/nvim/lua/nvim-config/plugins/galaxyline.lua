@@ -13,22 +13,41 @@ return function ()
     'fugitiveblame',
     'LspTrouble',
     'DiffviewFiles',
+    'DiffviewFileHistoryPanel',
+    'DiffviewFHOptionPanel',
     'Outline'
   }
 
-  local colors = {
-    bg = utils.get_bg("StatusLine") or '#1c1e23',
-    fg = utils.get_fg("StatusLine") or '#bbc2cf',
-    yellow = '#ECBE7B',
-    cyan = '#008080',
-    darkblue = '#081633',
-    green = '#98be65',
-    orange = '#FF8800',
-    violet = '#a9a1e1',
-    magenta = '#c678dd',
-    blue = '#51afef';
-    red = '#ec5f67';
-  }
+  local colors
+  if vim.o.background == "light" then
+    colors = {
+      bg = utils.get_bg("StatusLine") or '#1c1e23',
+      fg = utils.get_fg("StatusLine") or '#bbc2cf',
+      yellow = '#ECBE7B',
+      cyan = '#008080',
+      darkblue = '#081633',
+      green = '#7f9f54',
+      orange = '#FF8800',
+      violet = '#958ec7',
+      magenta = '#c678dd',
+      blue = '#4596cd',
+      red = '#ec5f67',
+    }
+  else
+    colors = {
+      bg = utils.get_bg("StatusLine") or '#1c1e23',
+      fg = utils.get_fg("StatusLine") or '#bbc2cf',
+      yellow = '#ECBE7B',
+      cyan = '#008080',
+      darkblue = '#081633',
+      green = '#98be65',
+      orange = '#FF8800',
+      violet = '#a9a1e1',
+      magenta = '#c678dd',
+      blue = '#51afef',
+      red = '#ec5f67',
+    }
+  end
 
   local function mode_color()
     local mode_colors = {
@@ -281,11 +300,8 @@ return function ()
         end
 
         local result = line .. ":" .. col
-        local min_size = #result
-        if min_size % 4 ~= 0 then min_size = #result + (4 - #result % 4) end
-
-        if #result < min_size then
-          result = utils.str_center_pad(result, min_size)
+        if #result % 4 ~= 0 then
+          result = utils.str_center_pad(result, #result + (4 - #result % 4))
         end
 
         return result

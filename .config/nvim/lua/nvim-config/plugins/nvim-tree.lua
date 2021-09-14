@@ -6,7 +6,7 @@ return function ()
     ".git"
   }
 
-  vim.g.nvim_tree_indent_markers = 1
+  vim.g.nvim_tree_indent_markers = 0
   vim.g.nvim_tree_git_hl = 1
   vim.g.nvim_tree_gitignore = 0
   vim.g.nvim_tree_width = 30
@@ -15,7 +15,7 @@ return function ()
   vim.g.nvim_tree_auto_open = 0
   vim.g.nvim_tree_auto_close = 0
   vim.g.nvim_tree_quit_on_open = 0
-  vim.g.nvim_tree_hijack_netrw = 0
+  vim.g.nvim_tree_hijack_netrw = 1
   vim.g.nvim_tree_disable_netrw = 0
   vim.g.nvim_tree_folder_devicons = 1
   vim.g.nvim_tree_follow = 1
@@ -24,10 +24,12 @@ return function ()
   vim.g.nvim_tree_side = "left"
   vim.g.nvim_tree_tab_open = 0
   vim.g.nvim_tree_hijack_cursor = 0
+  vim.g.nvim_tree_update_cwd = 1
   -- Shorten the path to fit the window width:
   vim.g.nvim_tree_root_folder_modifier = string.format(
-    [[:s?.\{-}\(\/.\{1,%d}$\)?…\1?]],
-    vim.g.nvim_tree_width - 6
+    [[:~:s?\(.\{%d}\)?§§\1?:s?^§§.\{-}\(\/.\{1,%d}$\)?…\1?:s?\(.*\)? \1?]],
+    vim.g.nvim_tree_width - 6,
+    vim.g.nvim_tree_width - 8
   )
   -- vim.g.nvim_tree_window_picker_chars = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
   -- vim.g.nvim_tree_window_picker_chars = "aoeuidhtnsgcrld;qjkxbmwv"
@@ -45,7 +47,7 @@ return function ()
     git = 1,
     folders = 1,
     files = 1,
-    folder_arrows = 0
+    folder_arrows = 1
   }
   -- vim.g.nvim_tree_ignore = {"*.png", "*.jpg"}
 
@@ -55,7 +57,7 @@ return function ()
     git = {
       unstaged = "",
       staged = "",
-      unmerged = "",
+      unmerged = "",
       renamed = "",
       untracked = "",
       deleted = "",
@@ -151,16 +153,6 @@ return function ()
     end
   end
 
-  function M.update_cwd()
-    if vim.g.nvim_tree_ready == 1 then
-      local view = require'nvim-tree.view'
-      local lib = require'nvim-tree.lib'
-      if view.win_open() then
-        lib.change_dir(vim.fn.getcwd())
-      end
-    end
-  end
-
   function M.xdg_open()
     local lib = require'nvim-tree.lib'
     local node = lib.get_node_at_cursor()
@@ -225,14 +217,14 @@ return function ()
     end)
   end
 
-  function M.global_bufenter()
-    local buf_path = vim.fn.expand('%')
-    if vim.fn.isdirectory(buf_path) == 1 then
-      vim.cmd("cd " .. buf_path)
-      vim.cmd("NvimTreeOpen")
-      M.refresh_needed = true
-    end
-  end
+  -- function M.global_bufenter()
+  --   local buf_path = vim.fn.expand('%')
+  --   if vim.fn.isdirectory(buf_path) == 1 then
+  --     vim.cmd("cd " .. buf_path)
+  --     vim.cmd("NvimTreeOpen")
+  --     M.refresh_needed = true
+  --   end
+  -- end
 
   events.on_nvim_tree_ready(function ()
     if M.refresh_needed then
@@ -255,9 +247,9 @@ return function ()
     augroup NvimTreeConfig
       au!
       au FileType NvimTree lua NvimTreeConfig.custom_setup()
-      au DirChanged * lua NvimTreeConfig.update_cwd()
-      au BufEnter * lua NvimTreeConfig.global_bufenter()
+      " au BufEnter * lua NvimTreeConfig.global_bufenter()
       au BufDelete * lua NvimTreeConfig.close_folders_without_open_buffers(true)
+      au BufWritePost * lua require'nvim-tree.lib'.refresh_tree(true)
     augroup END
     ]], false)
 

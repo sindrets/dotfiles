@@ -3,10 +3,10 @@ augroup NvimConfig
 
     " nuke netrw brain damage
     au VimEnter * silent! au! FileExplorer *
-    au BufEnter *
-                \ if isdirectory(expand('%'))
-                \ |     bd
-                \ | endif
+    " au BufEnter *
+    "             \ if isdirectory(expand('%'))
+    "             \ |     bd
+    "             \ | endif
 
     au VimEnter * lua require'nvim-config.lib'.source_project_config();
                 \ require'nvim-config.lib'.source_project_session()
@@ -27,8 +27,10 @@ augroup NvimConfig
     au TermLeave * setlocal nu rnu
 
     " Run PackerCompile when changes are made to plugin configs.
-    au BufWritePost */lua/nvim-config/plugins/*.lua execute 'PackerCompile' 
-                \ | lua require'nvim-config.utils'.info('Packer compiled!')
+    au BufWritePost */lua/nvim-config/plugins/*.lua exe 'PackerCompile'
+                \ | lua vim.schedule(function()
+                \   require'nvim-config.utils'.info('Packer compiled!')
+                \ end)
 
     au TabEnter * silent! NvimTreeRefresh
 augroup END

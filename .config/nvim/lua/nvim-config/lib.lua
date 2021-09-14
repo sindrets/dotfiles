@@ -1,7 +1,7 @@
 local utils = require'nvim-config.utils'
 local api = vim.api
-
 local M = {}
+local scratch_counter = 1
 
 local last_sourced_config = nil
 local last_sourced_session = nil
@@ -15,13 +15,13 @@ BufToggleEntry.__index = BufToggleEntry
 ---BufToggleEntry constructor.
 ---@param opts table
 ---@return BufToggleEntry
-function BufToggleEntry:new(opts)
+function BufToggleEntry.new(opts)
   opts = opts or {}
-  local this = {
+  local self = {
     height = opts.height
   }
-  setmetatable(this, self)
-  return this
+  setmetatable(self, BufToggleEntry)
+  return self
 end
 
 ---Create a function that toggles a window with an identifiable buffer of some
@@ -41,7 +41,7 @@ end
 ---@return function
 function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
   opts = opts or {}
-  local toggler_entry = BufToggleEntry:new({ height = opts.height })
+  local toggler_entry = BufToggleEntry.new({ height = opts.height })
 
   local function open()
     toggler_entry.last_winid = api.nvim_get_current_win()
@@ -133,10 +133,11 @@ end
 
 function M.diff_saved()
   local filetype = api.nvim_buf_get_option(0, "filetype")
-  vim.cmd("diffthis")
-  vim.cmd("vnew | r # | normal! 1Gdd")
+  vim.cmd("tab split | diffthis")
+  vim.cmd("aboveleft vnew | r # | normal! 1Gdd")
   vim.cmd("diffthis")
   vim.cmd("setlocal bt=nofile bh=wipe nobl noswf ro ft=" .. filetype)
+  vim.cmd("wincmd l")
 end
 
 function M.workspace_files(opt)
@@ -194,13 +195,13 @@ function M.source_project_config()
 end
 
 function M.source_project_session()
-  if #vim.v.argv == 1 and utils.file_readable(".vim/Session.vim") then
-    local project_config_path = vim.loop.fs_realpath(".vim/Session.vim")
-    if last_sourced_session ~= project_config_path then
-      vim.cmd("source .vim/Session.vim")
-      last_sourced_session = project_config_path
-    end
-  end
+  -- if #vim.v.argv == 1 and utils.file_readable(".vim/Session.vim") then
+  --   local project_config_path = vim.loop.fs_realpath(".vim/Session.vim")
+  --   if last_sourced_session ~= project_config_path then
+  --     vim.cmd("source .vim/Session.vim")
+  --     last_sourced_session = project_config_path
+  --   end
+  -- end
 end
 
 function M.get_indent_level()
@@ -279,7 +280,38 @@ function M.print_syn_group()
 end
 
 function M.mkdp_open_in_new_window(url)
-  vim.cmd("call system('$BROWSER --new-window " .. url .. "')")
+  vim.fn.system(string.format("$BROWSER --new-window %s", url))
+end
+
+function M.new_scratch_buf()
+  local bufid = api.nvim_create_buf(true, true)
+  local name = "Scratch " .. scratch_counter
+  scratch_counter = scratch_counter + 1
+  api.nvim_buf_set_name(bufid, name)
+  api.nvim_win_set_buf(0, bufid)
+
+  return bufid
+end
+
+---Close the current window and bring focus to the last used window.
+function M.comfy_quit()
+  local cur_win = api.nvim_get_current_win()
+  local prev_win = vim.fn.win_getid(vim.fn.winnr("#"))
+  local ok, err = pcall(vim.cmd, "silent q")
+
+  if not ok then
+    utils.err(err)
+  elseif cur_win ~= prev_win then
+    api.nvim_set_current_win(prev_win)
+  end
+end
+
+function M.update_diff_hl()
+  local bg = utils.get_bg("DiffDelete") or "red"
+  local fg = utils.get_fg("DiffDelete") or "NONE"
+  local gui = utils.get_gui("DiffDelete") or "NONE"
+  vim.cmd(string.format("hi! DiffAddAsDelete guibg=%s guifg=%s gui=%s", bg, fg, gui))
+  vim.cmd("hi! link DiffDelete Comment")
 end
 
 --[[

@@ -27,6 +27,6 @@ return function ()
         name = "Teal",
       }
     },
-    default = true
+    default = false
   }
 end

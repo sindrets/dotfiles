@@ -19,6 +19,12 @@ return require'packer'.startup {
     use { 'teal-language/vim-teal' }
 
     -- BEHAVIOUR
+    use {
+      'antoinemadec/FixCursorHold.nvim',
+      setup = function()
+        vim.g.cursorhold_updatetime = 250
+      end
+    }
     use { 'nvim-lua/popup.nvim' }
     use { 'nvim-lua/plenary.nvim' }
     use { 'kyazdani42/nvim-web-devicons', config = conf("nvim-web-devicons") }
@@ -28,12 +34,21 @@ return require'packer'.startup {
       config = conf("treesitter")
     }
     use { 'nvim-treesitter/playground', requires = "nvim-treesitter/nvim-treesitter" }
+    use {
+      'lewis6991/spellsitter.nvim', config = function()
+        require('spellsitter').setup {
+          hl = 'SpellBad',
+          captures = {'comment'},  -- set to {} to spellcheck everything
+        }
+      end
+    }
     use { 'neovim/nvim-lspconfig' }
     -- use { 'glepnir/lspsaga.nvim', { 'branch': 'main' } }
     use { 'mfussenegger/nvim-jdtls' }
     use { 'hrsh7th/nvim-compe', config = conf("nvim-compe") }
     use {
       'kyazdani42/nvim-tree.lua',
+      commit = "bfeaf4c8ef5ff24e",
       config = conf("nvim-tree"),
       requires = "kyazdani42/nvim-web-devicons"
     }
@@ -42,12 +57,15 @@ return require'packer'.startup {
     use { 'norcalli/nvim-colorizer.lua', config = conf("nvim-colorizer") }
     use { 'hrsh7th/vim-vsnip' }
     use { 'hrsh7th/vim-vsnip-integ' }
-    use { 'scrooloose/nerdcommenter', setup = function ()
-      vim.g.NERDSpaceDelims = 1
-      vim.g.NERDDefaultAlign = "left"
-    end }
+    use {
+      'scrooloose/nerdcommenter',
+      setup = function ()
+        vim.g.NERDSpaceDelims = 1
+        vim.g.NERDDefaultAlign = "left"
+      end
+    }
     use { 'nvim-telescope/telescope.nvim', config = conf("telescope") }
-    use { 'nvim-telescope/telescope-fzy-native.nvim' }
+    use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
     use { 'nvim-telescope/telescope-media-files.nvim' }
     use { 'akinsho/nvim-bufferline.lua', config = conf("nvim-bufferline") }
     use { 'karb94/neoscroll.nvim', config = conf("neoscroll") }
@@ -73,6 +91,7 @@ return require'packer'.startup {
     use { 'sindrets/diffview.nvim', config = conf("diffview") }
     -- use { 'sindrets/diffview.nvim' }
     use { 'sindrets/diffview-api-test' }
+    use { 'sindrets/winshift.nvim', config = conf("winshift") }
     use {
       'TimUntersberger/neogit',
       config = conf("neogit"),
@@ -85,17 +104,40 @@ return require'packer'.startup {
       config = conf("nvim-ts-rainbow")
     }
     use { 'tpope/vim-fugitive' }
+    use {
+      'rhysd/conflict-marker.vim',
+      setup = function ()
+        vim.g.conflict_marker_begin = '^<<<<<<< .*$'
+        vim.g.conflict_marker_common_ancestors = '^||||||| .*$'
+        vim.g.conflict_marker_separator = '^=======$'
+        vim.g.conflict_marker_end   = '^>>>>>>> .*$'
+        vim.g.conflict_marker_highlight_group = ''
+        vim.api.nvim_exec([[
+          hi! link ConflictMarkerBegin DiffAdd
+          hi! link ConflictMarkerOurs DiffAdd
+          hi! link ConflictMarkerCommonAncestors DiffText
+          hi! link ConflictMarkerCommonAncestorsHunk DiffText
+          hi! link ConflictMarkerSeparator DiffText
+          hi! link ConflictMarkerTheirs DiffChange
+          hi! link ConflictMarkerEnd DiffText
+        ]], false)
+      end
+    }
     use { 'glepnir/dashboard-nvim', setup = conf("dashboard") }
     use { 'ryanoasis/vim-devicons' }
     use { 'kevinhwang91/rnvimr' }
-    use { 'iamcco/markdown-preview.nvim', run = 'cd app && yarn install', setup = function ()
-      vim.api.nvim_exec([[
-        function! MkdpOpenInNewWindow(url)
-          lua require'nvim-config.lib'.mkdp_open_in_new_window(vim.fn.eval("a:url"))
-        endfunction
-        ]], false)
-      vim.g.mkdp_browserfunc = "MkdpOpenInNewWindow"
-    end }
+    use {
+      'iamcco/markdown-preview.nvim',
+      run = 'cd app && yarn install',
+      setup = function ()
+        vim.api.nvim_exec([[
+          function! MkdpOpenInNewWindow(url)
+            lua require'nvim-config.lib'.mkdp_open_in_new_window(vim.fn.eval("a:url"))
+          endfunction
+          ]], false)
+        vim.g.mkdp_browserfunc = "MkdpOpenInNewWindow"
+      end
+    }
     use { 'honza/vim-snippets' }
 
     -- THEMES
@@ -124,5 +166,8 @@ return require'packer'.startup {
     use { 'Mofiqul/dracula.nvim' }
     use { 'marko-cerovac/material.nvim' }
     use { 'sindrets/rose-pine-neovim', as = 'rose-pine' }
+    use { 'mcchrish/zenbones.nvim' }
+    use { 'sainnhe/everforest' }
+    use { 'Cybolic/palenight.vim' }
   end
 }
