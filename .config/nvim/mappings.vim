@@ -83,6 +83,10 @@ nnoremap <C-M-h> <Cmd>vertical res -2<CR>
 nnoremap <C-M-l> <Cmd>vertical res +2<CR>
 nnoremap <C-M-j> <Cmd>res +1<CR>
 nnoremap <C-M-k> <Cmd>res -1<CR>
+tnoremap <C-M-h> <Cmd>vertical res -2<CR>
+tnoremap <C-M-l> <Cmd>vertical res +2<CR>
+tnoremap <C-M-j> <Cmd>res +1<CR>
+tnoremap <C-M-k> <Cmd>res -1<CR>
 
 " Remap jump forward
 nnoremap <C-S> <C-I>
@@ -90,7 +94,20 @@ nnoremap <C-S> <C-I>
 " Search for selected text
 vnoremap // "vy/\V<C-R>=escape(@",'/\')<CR><CR>
 
-" Move lines up/down
+" Move lines
+nnoremap <A-K> <Cmd>m-2<CR>==
+nnoremap <A-J> <Cmd>m+<CR>==
+nnoremap <A-H> <<
+nnoremap <A-L> >>
+inoremap <A-K> <Cmd>m-2 \| normal! ==<CR>
+inoremap <A-J> <Cmd>m+ \| normal! ==<CR>
+inoremap <A-H> <Cmd>norm! <<<CR>
+inoremap <A-L> <CMD>norm! >><CR>
+vnoremap <A-K> :m '<-2<CR>gv=gv
+vnoremap <A-J> :m '>+<CR>gv=gv
+vnoremap <A-H> <gv
+vnoremap <A-L> >gv
+
 nnoremap <A-UP> <Cmd>m-2<CR>==
 nnoremap <A-DOWN> <Cmd>m+<CR>==
 inoremap <A-UP> <Cmd>m-2 \| normal! ==<CR>
@@ -124,10 +141,6 @@ imap <S-Right> <Esc><Right>v
 " Ctrl+backspace to delete prev word, ctrl+del to delete next word
 inoremap <C-H> <C-\><C-o>db
 inoremap <C-Del> <C-\><C-o>dw
-
-" Indentation
-vmap <lt> <gv
-vmap > >gv
 
 " Turn off search highlight until next search
 nnoremap <F3> :noh<CR>

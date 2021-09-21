@@ -164,7 +164,7 @@ return require'packer'.startup {
     use { 'glepnir/zephyr-nvim' }
     use { 'folke/tokyonight.nvim' }
     use { 'Mofiqul/dracula.nvim' }
-    use { 'marko-cerovac/material.nvim' }
+    use { 'sindrets/material.nvim' }
     use { 'sindrets/rose-pine-neovim', as = 'rose-pine' }
     use { 'mcchrish/zenbones.nvim' }
     use { 'sainnhe/everforest' }

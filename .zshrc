@@ -41,9 +41,10 @@ source /usr/share/zsh/share/antigen.zsh
 
 antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
+antigen bundle softmoth/zsh-vim-mode@main
 antigen bundle zsh-vi-more/evil-registers
 antigen bundle mafredri/zsh-async
-antigen bundle sindresorhus/pure
+antigen bundle sindresorhus/pure@main
 
 antigen apply
 # ---------------
@@ -57,6 +58,15 @@ bindkey -M vicmd '^[[1;5D' backward-word  # Ctrl-left
 bindkey -M vicmd '^[[1;5C' forward-word  # Ctrl-right
 bindkey -M viins '^[[3~' delete-char  # delete key
 bindkey "^?" backward-delete-char
+
+autoload -Uz surround
+zle -N delete-surround surround
+zle -N add-surround surround
+zle -N change-surround surround
+bindkey -a cs change-surround
+bindkey -a ds delete-surround
+bindkey -a ys add-surround
+bindkey -M visual S add-surround
 
 # Enable Ctrl-x-e to edit command line
 autoload -U edit-command-line
@@ -211,6 +221,13 @@ _fzf_compgen_dir() {
     fd --type d --hidden --follow --exclude ".git" . "$1"
 }
 
+# Use block shape cursor
+# function fix_cursor() {
+#    echo -ne '\e[1 q'
+# }
+
+# precmd_functions+=(fix_cursor)
+
 # source .sh_extra if it exists
 [ -e "$HOME/.sh_extra" ] && source "$HOME/.sh_extra"
 
@@ -252,9 +269,9 @@ then
     eval neofetch
 fi
 
-# vim: sw=4
-
 
 # BEGIN_KITTY_SHELL_INTEGRATION
-if test -e "/usr/lib/kitty/shell-integration/kitty.zsh"; then source "/usr/lib/kitty/shell-integration/kitty.zsh"; fi
+# if test -e "/usr/lib/kitty/shell-integration/kitty.zsh"; then source "/usr/lib/kitty/shell-integration/kitty.zsh"; fi
 # END_KITTY_SHELL_INTEGRATION
+
+# vim: sw=4
