@@ -44,6 +44,20 @@ return require'packer'.startup {
     }
     use { 'neovim/nvim-lspconfig' }
     -- use { 'glepnir/lspsaga.nvim', { 'branch': 'main' } }
+    use {
+      "ray-x/lsp_signature.nvim",
+      config = function()
+        require("lsp_signature").setup({
+            hint_enable = false,
+            hint_prefix = "● ",
+            max_width = 80,
+            max_height = 12,
+            handler_opts = {
+              border = "single"
+            }
+          })
+      end
+    }
     use { 'mfussenegger/nvim-jdtls' }
     use { 'hrsh7th/nvim-compe', config = conf("nvim-compe") }
     use {

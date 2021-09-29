@@ -1,4 +1,4 @@
-let g:colorscheme = "material"
+let g:colorscheme = "tokyonight"
 
 let ayucolor="dark"
 let g:gruvbox_italic = 1
@@ -17,20 +17,20 @@ let g:spacegray_use_italics = 1
 let g:spacegray_low_contrast = 1
 let g:rose_pine_variant = "moon"
 let g:rose_pine_enable_italics = v:true
-let g:tokyonight_style = "night"
+" let g:tokyonight_style = "night"
 let g:tokyonight_dark_sidebar = 1
-let g:tokyonight_sidebars = [ "DiffviewFiles" ]
-if g:tokyonight_style ==# "night"
-    let g:tokyonight_colors = {
-                \   "bg_dark": "#16161F",
-                \   "bg_popup": "#16161F",
-                \   "bg_statusline": "#16161F",
-                \   "bg_sidebar": "#16161F",
-                \   "bg_float": "#16161F",
-                \ }
-else
-    let g:tokyonight_colors = v:null
-endif
+let g:tokyonight_sidebars = [ "qf", "packer", "NeogitStatus", "DiffviewFiles" ]
+" if g:tokyonight_style ==# "night"
+"     let g:tokyonight_colors = {
+"                 \   "bg_dark": "#16161F",
+"                 \   "bg_popup": "#16161F",
+"                 \   "bg_statusline": "#16161F",
+"                 \   "bg_sidebar": "#16161F",
+"                 \   "bg_float": "#16161F",
+"                 \ }
+" else
+"     let g:tokyonight_colors = v:null
+" endif
 set background=dark
 lua require("nvim-config.plugins.material")()
 
@@ -196,7 +196,7 @@ function! ApplyColorTweaks()
             hi DiffText   guibg=#36426b guifg=NONE
         endif
         hi! link GitsignsAdd String
-        hi! link DiffviewNormal NormalSB
+        " hi! link DiffviewNormal NormalSB
 
     elseif g:colorscheme ==# "everforest"
         hi! SignColumn guibg=NONE
@@ -248,7 +248,7 @@ function! ApplyColorTweaks()
 
     endif
 
-    " lua require("nvim-config.lib").update_diff_hl()
+    lua require("nvim-config.lib").update_custom_hl()
 endfunction
 
 execute("colorscheme " . g:colorscheme)

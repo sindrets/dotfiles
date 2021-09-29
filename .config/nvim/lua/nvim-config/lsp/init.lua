@@ -32,6 +32,7 @@ function M.get_local_settings()
   return local_settings
 end
 
+---@diagnostic disable-next-line: unused-local
 vim.lsp.util.apply_text_document_edit = function(text_document_edit, index)
   local text_document = text_document_edit.textDocument
   local bufnr = vim.uri_to_bufnr(text_document.uri)
@@ -39,14 +40,30 @@ vim.lsp.util.apply_text_document_edit = function(text_document_edit, index)
   vim.lsp.util.apply_text_edits(text_document_edit.edits, bufnr)
 end
 
+---@diagnostic disable-next-line: unused-local
+_G.LspDefaultOnAttach = function(client, bufnr)
+  require("lsp_signature").on_attach({
+    bind = true, -- This is mandatory, otherwise border config won't get registered.
+    handler_opts = {
+      border = "single",
+    },
+  }, bufnr)
+end
+
+_G.LspGetDefaultSetup = function()
+  return vim.tbl_deep_extend("force", {
+    on_attach = LspDefaultOnAttach,
+  }, M.get_local_settings())
+end
+
 -- Java
 require'nvim-config.lsp.java'
 
 -- Typescript
-lspconfig.tsserver.setup{}
+lspconfig.tsserver.setup(LspGetDefaultSetup())
 
 -- Python
-lspconfig.pyright.setup{}
+lspconfig.pyright.setup(LspGetDefaultSetup())
 
 -- Lua
 require'nvim-config.lsp.lua'
@@ -55,22 +72,23 @@ require'nvim-config.lsp.lua'
 require'nvim-config.lsp.teal'
 
 -- C#
-require'lspconfig'.omnisharp.setup{
-  cmd = { "/usr/bin/omnisharp", "--languageserver" , "--hostPID", tostring(PID) },
-  filetypes = { "cs", "vb" },
-  init_options = {},
-  -- root_dir = lspconfig.util.root_pattern(".csproj", ".sln"),
-  -- root_dir = vim.fn.getcwd
-}
+require'lspconfig'.omnisharp.setup({
+    cmd = { "/usr/bin/omnisharp", "--languageserver" , "--hostPID", tostring(PID) },
+    filetypes = { "cs", "vb" },
+    init_options = {},
+    on_attach = LspDefaultOnAttach,
+    -- root_dir = lspconfig.util.root_pattern(".csproj", ".sln"),
+    -- root_dir = vim.fn.getcwd
+  })
 
 -- C, C++
-require'lspconfig'.clangd.setup{}
+require'lspconfig'.clangd.setup(LspGetDefaultSetup())
 
 -- Vim
-require'lspconfig'.vimls.setup{}
+require'lspconfig'.vimls.setup(LspGetDefaultSetup())
 
 -- Go
-require'lspconfig'.gopls.setup{}
+require'lspconfig'.gopls.setup(LspGetDefaultSetup())
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -81,11 +99,10 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   }
 )
 
+local pop_opts = { border = "single", max_width = 80 }
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, pop_opts)
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-  vim.lsp.handlers.signature_help, {
-    -- Use a sharp border with `FloatBorder` highlights
-    border = "single"
-  }
+  vim.lsp.handlers.signature_help, pop_opts
 )
 
 function M.define_diagnostic_signs(opts)
@@ -111,7 +128,7 @@ function M.define_diagnostic_signs(opts)
   for _,g in pairs(group) do
     vim.fn.sign_define(
     g.highlight,
-    {text=g.sign,texthl=g.highlight,linehl='',numhl=''}
+    { text = g.sign, texthl = g.highlight, linehl = '', numhl = '' }
     )
   end
 end
@@ -137,14 +154,14 @@ end
 
 -- Only show diagnostics if cur line is not the same as last call.
 local last_diagnostics_line = nil
-function M.show_line_diagnostics()
+function M.show_position_diagnostics()
   local cur_line = vim.api.nvim_eval("line('.')")
   if last_diagnostics_line and last_diagnostics_line == cur_line then
     return
   end
   last_diagnostics_line = cur_line
 
-  vim.lsp.diagnostic.show_line_diagnostics()
+  vim.lsp.diagnostic.show_position_diagnostics()
 end
 
 -- LSP auto commands
@@ -159,8 +176,7 @@ vim.api.nvim_exec([[
     au CursorMoved  * silent! lua LspConfig.highlight_cursor_clear()
     au CursorMovedI * silent! lua LspConfig.highlight_cursor_clear()
 
-    au CursorHold * silent! lua LspConfig.show_line_diagnostics()
-    au CursorHoldI * silent! lua vim.lsp.buf.signature_help()
+    au CursorHold * silent! lua LspConfig.show_position_diagnostics()
   augroup END
   ]], false)
 

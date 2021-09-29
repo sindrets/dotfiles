@@ -25,6 +25,7 @@ require'lspconfig'.sumneko_lua.setup {
     "lua-language-server"
   },
   filetypes = { "lua" },
+  on_attach = LspDefaultOnAttach,
   settings = {
     Lua = {
       runtime = {

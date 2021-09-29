@@ -195,13 +195,13 @@ function M.source_project_config()
 end
 
 function M.source_project_session()
-  -- if #vim.v.argv == 1 and utils.file_readable(".vim/Session.vim") then
-  --   local project_config_path = vim.loop.fs_realpath(".vim/Session.vim")
-  --   if last_sourced_session ~= project_config_path then
-  --     vim.cmd("source .vim/Session.vim")
-  --     last_sourced_session = project_config_path
-  --   end
-  -- end
+  if #vim.v.argv == 1 and utils.file_readable(".vim/Session.vim") then
+    local project_config_path = vim.loop.fs_realpath(".vim/Session.vim")
+    if last_sourced_session ~= project_config_path then
+      vim.cmd("source .vim/Session.vim")
+      last_sourced_session = project_config_path
+    end
+  end
 end
 
 function M.get_indent_level()
@@ -306,12 +306,18 @@ function M.comfy_quit()
   end
 end
 
-function M.update_diff_hl()
-  local bg = utils.get_bg("DiffDelete") or "red"
-  local fg = utils.get_fg("DiffDelete") or "NONE"
-  local gui = utils.get_gui("DiffDelete") or "NONE"
-  vim.cmd(string.format("hi! DiffAddAsDelete guibg=%s guifg=%s gui=%s", bg, fg, gui))
-  vim.cmd("hi! link DiffDelete Comment")
+function M.update_custom_hl()
+  -- FloatBorder
+  vim.cmd(string.format(
+    "hi! FloatBorder guifg=%s guibg=%s", utils.get_fg("FloatBorder"), utils.get_bg("NormalFloat")
+  ))
+
+  -- Custom diff hl
+  -- local bg = utils.get_bg("DiffDelete") or "red"
+  -- local fg = utils.get_fg("DiffDelete") or "NONE"
+  -- local gui = utils.get_gui("DiffDelete") or "NONE"
+  -- vim.cmd(string.format("hi! DiffAddAsDelete guibg=%s guifg=%s gui=%s", bg, fg, gui))
+  -- vim.cmd("hi! link DiffDelete Comment")
 end
 
 --[[

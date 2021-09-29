@@ -36,40 +36,29 @@ function M.printi(...)
 end
 
 function M.str_right_pad(s, min_size, fill)
-  local result = s
-  if not fill then fill = " " end
-
-  while #result < min_size do
-    result = result .. fill
+  if #s >= min_size then
+    return s
   end
-
-  return result
+  if not fill then fill = " " end
+  return s .. string.rep(fill, math.ceil((min_size - #s) / #fill))
 end
 
 function M.str_left_pad(s, min_size, fill)
-  local result = s
-  if not fill then fill = " " end
-
-  while #result < min_size do
-    result = fill .. result
+  if #s >= min_size then
+    return s
   end
-
-  return result
+  if not fill then fill = " " end
+  return string.rep(fill, math.ceil((min_size - #s) / #fill)) .. s
 end
 
 function M.str_center_pad(s, min_size, fill)
-  local result = s
-  if not fill then fill = " " end
-
-  while #result < min_size do
-    if #result % 2 == 0 then
-      result = result .. fill
-    else
-      result = fill .. result
-    end
+  if #s >= min_size then
+    return s
   end
-
-  return result
+  if not fill then fill = " " end
+  local left_len = math.floor((min_size - #s) / #fill / 2)
+  local right_len = math.ceil((min_size - #s) / #fill / 2)
+  return string.rep(fill, left_len) .. s .. string.rep(fill, right_len)
 end
 
 function M.str_repeat(s, count)

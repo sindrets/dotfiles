@@ -4,12 +4,25 @@ return function ()
 
   require'diffview'.setup {
     diff_binaries = false,
-    use_icons = true,
     enhanced_diff_hl = true,
+    use_icons = true,
+    icons = {
+      folder_closed = "",
+      folder_open = "",
+    },
+    signs = {
+      fold_closed = "",
+      fold_open = "",
+    },
     file_panel = {
       position = "left",
       width = 35,
       height = 10,
+      listing_style = "tree",       -- One of 'list' or 'tree'
+      tree_options = {              -- Only applies when listing_style is 'tree'
+        flatten_dirs = true,
+        folder_statuses = "only_folded"  -- One of 'never', 'only_folded' or 'always'.
+      }
     },
     key_bindings = {
       disable_defaults = false,
@@ -19,7 +32,6 @@ return function ()
         ["<leader>e"] = cb("focus_files"),
         ["<leader>b"] = cb("toggle_files"),
         ["-"]         = cb("toggle_stage_entry"),
-        ["<leader>s"] = "<Cmd>sp % <bar> setl nodiff<CR>"
       },
       file_panel = {
         ["j"]             = cb("next_entry"),

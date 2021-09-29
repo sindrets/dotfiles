@@ -32,7 +32,7 @@ export LESS=-r # scroll pager with mouse wheel.
 export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
 export GIT_DIRECTORY="$HOME/Documents/git"
-export MANPAGER="nvim -nc 'set nolist' +Man! -"
+export MANPAGER="$(which nvim) -nc 'set nolist' +Man! -"
 
 eval `dircolors "$HOME/.dir_colors"`
 

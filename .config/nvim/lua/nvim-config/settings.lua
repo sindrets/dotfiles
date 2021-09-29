@@ -1,23 +1,4 @@
-local opts_info = vim.api.nvim_get_all_options_info()
-
-local opt =
-  setmetatable(
-  {},
-  {
-    __newindex = function(_, key, value)
-      vim.o[key] = value
-      local info = opts_info[key]
-      if info then
-        local scope = info.scope
-        if scope == "win" then
-          vim.wo[key] = value
-        elseif scope == "buf" then
-          vim.bo[key] = value
-        end
-      end
-    end
-  }
-)
+local opt = vim.opt
 
 local function list(value, str, sep)
   sep = sep or ","
@@ -54,6 +35,7 @@ opt.inccommand = "split"
 opt.foldmethod = "expr"
 opt.foldexpr = "nvim_treesitter#foldexpr()"
 opt.foldlevelstart = 99
+opt.foldlevel = 99 -- 'foldlevelstart' isn't working correctly?
 opt.scrolloff = 3
 opt.completeopt = list { "menuone", "noselect" }
 opt.signcolumn = "yes:2"
@@ -100,7 +82,9 @@ opt.listchars = list {
 }
 opt.fillchars = list {
   "vert:▏",
-  "diff:╱"
+  "diff:╱",
+  "foldclose:",
+  "foldopen:"
 }
 opt.showbreak = "⤷ "
 opt.writebackup = true

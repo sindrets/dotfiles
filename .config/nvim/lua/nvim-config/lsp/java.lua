@@ -16,6 +16,7 @@ function M.start_jdtls()
   extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 
   local function jdtls_on_attch(client, bufnr)
+    LspDefaultOnAttach(client, bufnr)
     require'jdtls.setup'.add_commands()
     -- local opts = { noremap = true, silent = true; }
   end

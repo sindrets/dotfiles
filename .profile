@@ -53,11 +53,11 @@ unset MANPATH
 eval `dircolors "$HOME/.dir_colors"`
 
 if [ -z "$SSH_AUTH_SOCK" ] ; then
-  eval `ssh-agent -s`
-  ssh-add
+  eval `ssh-agent -s` 1>/dev/null
 fi
 
 if [ -e "$HOME/.profile_extra" ]; then
   source "$HOME/.profile_extra"
 fi
 
+export DOT_PROFILE_LOADED=1
