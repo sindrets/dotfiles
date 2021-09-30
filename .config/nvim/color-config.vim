@@ -17,20 +17,20 @@ let g:spacegray_use_italics = 1
 let g:spacegray_low_contrast = 1
 let g:rose_pine_variant = "moon"
 let g:rose_pine_enable_italics = v:true
-" let g:tokyonight_style = "night"
+let g:tokyonight_style = "storm"
 let g:tokyonight_dark_sidebar = 1
-let g:tokyonight_sidebars = [ "qf", "packer", "NeogitStatus", "DiffviewFiles" ]
-" if g:tokyonight_style ==# "night"
-"     let g:tokyonight_colors = {
-"                 \   "bg_dark": "#16161F",
-"                 \   "bg_popup": "#16161F",
-"                 \   "bg_statusline": "#16161F",
-"                 \   "bg_sidebar": "#16161F",
-"                 \   "bg_float": "#16161F",
-"                 \ }
-" else
-"     let g:tokyonight_colors = v:null
-" endif
+let g:tokyonight_sidebars = [ "qf", "packer", "DiffviewFiles" ]
+if exists("g:tokyonight_style") && g:tokyonight_style ==# "night"
+    let g:tokyonight_colors = {
+                \   "bg_dark": "#16161F",
+                \   "bg_popup": "#16161F",
+                \   "bg_statusline": "#16161F",
+                \   "bg_sidebar": "#16161F",
+                \   "bg_float": "#16161F",
+                \ }
+else
+    let g:tokyonight_colors = v:null
+endif
 set background=dark
 lua require("nvim-config.plugins.material")()
 
@@ -96,6 +96,8 @@ hi! NonText gui=nocombine
 hi! link LspReferenceText Visual
 hi! link LspReferenceRead Visual
 hi! link LspReferenceWrite Visual
+hi! link illuminatedWord LspReferenceText
+hi! link illuminatedCurWord illuminatedWord
 " hi! LspDiagnosticsSignHint guifg=#36d0e0
 " hi! LspDiagnosticsVirtualTextHint guifg=#36d0e0
 " hi! LspDiagnosticsUnderlineHint cterm=underline gui=undercurl guisp=#36d0e0

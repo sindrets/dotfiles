@@ -34,7 +34,7 @@ require'lspconfig'.sumneko_lua.setup {
         unicodeName = true
       },
       diagnostics = {
-        globals = { "vim" }
+        globals = { "vim", "jit" }
       },
       workspace = {
         library = lua_lib,

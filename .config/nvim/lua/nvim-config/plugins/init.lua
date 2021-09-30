@@ -96,15 +96,32 @@ return require'packer'.startup {
     use { 'Rasukarusan/nvim-block-paste' }
     use { 'godlygeek/tabular' }
     use { 'tpope/vim-surround' }
+    use {
+      'RRethy/vim-illuminate',
+      setup = function()
+        vim.g.Illuminate_delay = 250
+        vim.g.Illuminate_highlightUnderCursor = 1
+        vim.g.Illuminate_ftblacklist = {
+          "dashboard",
+          "packer",
+          "NeogitStatus",
+          "TelescopePrompt",
+          "NvimTree",
+          "Trouble",
+          "DiffviewFiles",
+          "DiffviewFileHistory",
+          "Outline"
+        }
+      end
+    }
 
     -- MISC
-    use { 'sindrets/galaxyline.nvim', config = conf("galaxyline") }
+    use { 'NTBBloodbath/galaxyline.nvim', config = conf("galaxyline") }
     use { 'lewis6991/gitsigns.nvim', config = conf("gitsigns") }
     use { 'lukas-reineke/indent-blankline.nvim', setup = conf("indent-blankline") }
     use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble") }
     use { 'sindrets/diffview.nvim', config = conf("diffview") }
-    -- use { 'sindrets/diffview.nvim' }
-    use { 'sindrets/diffview-api-test' }
+    -- use { 'sindrets/diffview-api-test' }
     use { 'sindrets/winshift.nvim', config = conf("winshift") }
     use {
       'TimUntersberger/neogit',

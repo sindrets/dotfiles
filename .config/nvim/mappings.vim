@@ -143,7 +143,7 @@ inoremap <C-H> <C-\><C-o>db
 inoremap <C-Del> <C-\><C-o>dw
 
 " Turn off search highlight until next search
-nnoremap <F3> :noh<CR>
+nnoremap <CR> <Cmd>noh<CR>
 
 " Repeat prev macro
 nmap , @@

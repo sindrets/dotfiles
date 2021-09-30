@@ -18,7 +18,8 @@ augroup NvimConfig
                 \ | endif
 
     " Highlight yanks
-    au TextYankPost * silent! lua vim.highlight.on_yank{higroup="Visual", timeout=300}
+    au TextYankPost * silent!
+                \ lua vim.highlight.on_yank{ higroup="Visual", timeout=300, on_visual=false }
 
     au BufWinEnter quickfix set nobuflisted | setlocal nowrap cc=
 

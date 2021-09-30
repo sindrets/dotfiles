@@ -42,6 +42,7 @@ end
 
 ---@diagnostic disable-next-line: unused-local
 _G.LspDefaultOnAttach = function(client, bufnr)
+  require("illuminate").on_attach(client)
   require("lsp_signature").on_attach({
     bind = true, -- This is mandatory, otherwise border config won't get registered.
     handler_opts = {
@@ -152,14 +153,14 @@ function M.highlight_cursor_clear()
 end
 ---------------------------------
 
--- Only show diagnostics if cur line is not the same as last call.
-local last_diagnostics_line = nil
+-- Only show diagnostics if current word is not the same as last call.
+local last_diagnostics_word = nil
 function M.show_position_diagnostics()
-  local cur_line = vim.api.nvim_eval("line('.')")
-  if last_diagnostics_line and last_diagnostics_line == cur_line then
+  local cword = vim.fn.expand("<cword>")
+  if last_diagnostics_word and last_diagnostics_word == cword then
     return
   end
-  last_diagnostics_line = cur_line
+  last_diagnostics_word = cword
 
   vim.lsp.diagnostic.show_position_diagnostics()
 end
@@ -171,10 +172,10 @@ vim.api.nvim_exec([[
     au ColorScheme * :hi def link LspReferenceText CursorLine
     au ColorScheme * :hi def link LspReferenceRead CursorLine
     au ColorScheme * :hi def link LspReferenceWrite CursorLine
-    au CursorHold   * silent! lua LspConfig.highlight_cursor_symbol()
-    au CursorHoldI  * silent! lua LspConfig.highlight_cursor_symbol()
-    au CursorMoved  * silent! lua LspConfig.highlight_cursor_clear()
-    au CursorMovedI * silent! lua LspConfig.highlight_cursor_clear()
+    " au CursorHold   * silent! lua LspConfig.highlight_cursor_symbol()
+    " au CursorHoldI  * silent! lua LspConfig.highlight_cursor_symbol()
+    " au CursorMoved  * silent! lua LspConfig.highlight_cursor_clear()
+    " au CursorMovedI * silent! lua LspConfig.highlight_cursor_clear()
 
     au CursorHold * silent! lua LspConfig.show_position_diagnostics()
   augroup END

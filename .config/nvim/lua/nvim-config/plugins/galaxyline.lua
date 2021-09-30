@@ -95,7 +95,7 @@ return function ()
           end
           return result
         end,
-        highlight = {"NONE", colors.bg}
+        highlight = { "NONE", colors.bg }
       }
     }
   end
@@ -132,7 +132,7 @@ return function ()
   table.insert(cur_section, {
     RainbowRed = {
       provider = function() return '▊ ' end,
-      highlight = {colors.blue,colors.bg}
+      highlight = { colors.blue, colors.bg }
     },
   })
 
@@ -173,7 +173,7 @@ return function ()
         vim.cmd('hi GalaxyViMode guifg=' .. mode_color())
         return alias[vim.fn.mode()]..' '
       end,
-      highlight = {colors.red,colors.bg,'bold'},
+      highlight = { colors.red, colors.bg, 'bold' },
     },
   })
 
@@ -181,7 +181,7 @@ return function ()
     FileSize = {
       provider = 'FileSize',
       condition = condition.buffer_not_empty,
-      highlight = {colors.fg,colors.bg}
+      highlight = { colors.fg, colors.bg }
     }
   })
 
@@ -189,7 +189,7 @@ return function ()
     FileIcon = {
       provider = 'FileIcon',
       condition = condition.buffer_not_empty,
-      highlight = {require('galaxyline.provider_fileinfo').get_file_icon_color,colors.bg},
+      highlight = { require('galaxyline.providers.fileinfo').get_file_icon_color, colors.bg },
     },
   })
 
@@ -197,7 +197,7 @@ return function ()
     FileName = {
       provider = 'FileName',
       condition = condition.buffer_not_empty,
-      highlight = {colors.magenta,colors.bg,'bold'}
+      highlight = { colors.magenta, colors.bg, 'bold' }
     }
   })
 
@@ -207,7 +207,7 @@ return function ()
       condition = condition.hide_in_width,
       icon = ' ',
       separator = '',
-      highlight = {colors.green,colors.bg},
+      highlight = { colors.green, colors.bg },
     }
   })
 
@@ -217,7 +217,7 @@ return function ()
       condition = condition.hide_in_width,
       icon = ' ',
       separator = '',
-      highlight = {colors.blue, colors.bg},
+      highlight = { colors.blue, colors.bg },
     }
   })
 
@@ -227,7 +227,7 @@ return function ()
       condition = condition.hide_in_width,
       icon = ' ',
       separator = '',
-      highlight = {colors.red,colors.bg},
+      highlight = { colors.red, colors.bg },
     }
   })
 
@@ -239,14 +239,14 @@ return function ()
     ShowLspClient = {
       provider = 'GetLspClient',
       condition = function ()
-        local tbl = {['dashboard'] = true,['']=true}
+        local tbl = { ['dashboard'] = true, [''] = true }
         if tbl[vim.bo.filetype] then
           return false
         end
         return vim.fn.winwidth(0) > 150
       end,
       icon = ' LSP:',
-      highlight = {colors.cyan,colors.bg,'bold'}
+      highlight = { colors.cyan, colors.bg, 'bold' }
     }
   })
 
@@ -258,7 +258,7 @@ return function ()
     DiagnosticError = {
       provider = 'DiagnosticError',
       icon = '  ',
-      highlight = {colors.red,colors.bg,'bold'}
+      highlight = { colors.red, colors.bg, 'bold' }
     }
   })
 
@@ -266,7 +266,7 @@ return function ()
     DiagnosticWarn = {
       provider = 'DiagnosticWarn',
       icon = '  ',
-      highlight = {colors.yellow,colors.bg,'bold'},
+      highlight = { colors.yellow, colors.bg, 'bold' },
     }
   })
 
@@ -274,7 +274,7 @@ return function ()
     DiagnosticHint = {
       provider = 'DiagnosticHint',
       icon = '  ',
-      highlight = {colors.cyan,colors.bg,'bold'},
+      highlight = { colors.cyan, colors.bg, 'bold' },
     }
   })
 
@@ -282,7 +282,7 @@ return function ()
     DiagnosticInfo = {
       provider = 'DiagnosticInfo',
       icon = '  ',
-      highlight = {colors.blue,colors.bg,'bold'},
+      highlight = { colors.blue, colors.bg, 'bold' },
     }
   })
 
@@ -307,8 +307,8 @@ return function ()
         return result
       end,
       separator = ' ',
-      separator_highlight = {'NONE',colors.bg},
-      highlight = {colors.fg,colors.bg},
+      separator_highlight = { 'NONE', colors.bg },
+      highlight = { colors.fg, colors.bg },
     },
   })
 
@@ -321,8 +321,8 @@ return function ()
         return ' '.. result .. '% '
       end,
       separator = ' ',
-      separator_highlight = {'NONE',colors.bg},
-      highlight = {colors.fg,colors.bg,'bold'},
+      separator_highlight = { 'NONE', colors.bg },
+      highlight = { colors.fg, colors.bg, 'bold' },
     }
   })
 
@@ -331,8 +331,8 @@ return function ()
       provider = function ()
         return '  '.. vim.fn.line("$") .. " "
       end,
-      separator_highlight = {'NONE',colors.bg},
-      highlight = {colors.fg,colors.bg},
+      separator_highlight = { 'NONE', colors.bg },
+      highlight = { colors.fg, colors.bg },
     }
   })
 
@@ -348,8 +348,8 @@ return function ()
       condition = width_condition(110),
       icon = " ",
       separator = ' ',
-      separator_highlight = {'NONE',colors.bg},
-      highlight = {colors.cyan, colors.bg, 'bold'},
+      separator_highlight = { 'NONE', colors.bg },
+      highlight = { colors.cyan, colors.bg, 'bold' },
     },
   })
 
@@ -368,8 +368,8 @@ return function ()
       end,
       condition = width_condition(100),
       separator = ' ',
-      separator_highlight = {'NONE',colors.bg},
-      highlight = {colors.green,colors.bg,'bold'}
+      separator_highlight = { 'NONE', colors.bg },
+      highlight = { colors.green, colors.bg, 'bold' }
     }
   })
 
@@ -377,8 +377,8 @@ return function ()
     FileEncode = {
       provider = "FileEncode",
       condition = condition.hide_in_width,
-      separator_highlight = {'NONE',colors.bg},
-      highlight = {colors.green,colors.bg,'bold'}
+      separator_highlight = { 'NONE', colors.bg },
+      highlight = { colors.green, colors.bg, 'bold' }
     }
   })
 
@@ -387,8 +387,8 @@ return function ()
       provider = function() return '  ' end,
       condition = condition.check_git_workspace,
       separator = ' ',
-      separator_highlight = {'NONE',colors.bg},
-      highlight = {colors.violet,colors.bg,'bold'},
+      separator_highlight = { 'NONE', colors.bg },
+      highlight = { colors.violet, colors.bg, 'bold' },
     }
   })
 
@@ -396,7 +396,7 @@ return function ()
     GitBranch = {
       provider = "GitBranch",
       condition = condition.check_git_workspace,
-      highlight = {colors.violet,colors.bg,'bold'},
+      highlight = { colors.violet, colors.bg, 'bold' },
     }
   })
 
@@ -409,7 +409,7 @@ return function ()
   table.insert(cur_section, {
     RainbowRed = {
       provider = function() return '▊ ' end,
-      highlight = {colors.blue,colors.bg}
+      highlight = { colors.blue, colors.bg }
     },
   })
 
@@ -417,8 +417,8 @@ return function ()
     BufferType = {
       provider = 'FileTypeName',
       separator = ' ',
-      separator_highlight = {'NONE',colors.bg},
-      highlight = {colors.blue,colors.bg,'bold'}
+      separator_highlight = { 'NONE', colors.bg },
+      highlight = { colors.blue, colors.bg, 'bold' }
     }
   })
 
@@ -426,7 +426,7 @@ return function ()
     SFileName = {
       provider =  'SFileName',
       condition = condition.buffer_not_empty,
-      highlight = {colors.fg,colors.bg,'bold'}
+      highlight = { colors.fg, colors.bg, 'bold' }
     }
   })
 
@@ -437,7 +437,7 @@ return function ()
   table.insert(cur_section, {
     BufferIcon = {
       provider= 'BufferIcon',
-      highlight = {colors.fg,colors.bg}
+      highlight = { colors.fg, colors.bg }
     }
   })
 end
