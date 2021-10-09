@@ -17,6 +17,7 @@ return require'packer'.startup {
     use { 'kevinoid/vim-jsonc' }
     use { 'sheerun/vim-polyglot' }
     use { 'teal-language/vim-teal' }
+    use { 'mboughaba/i3config.vim' }
 
     -- BEHAVIOUR
     use {
@@ -31,17 +32,17 @@ return require'packer'.startup {
     use {
       'nvim-treesitter/nvim-treesitter',
       run = ':TSUpdate',
-      config = conf("treesitter")
+      config = conf("treesitter"),
     }
     use { 'nvim-treesitter/playground', requires = "nvim-treesitter/nvim-treesitter" }
-    use {
-      'lewis6991/spellsitter.nvim', config = function()
-        require('spellsitter').setup {
-          hl = 'SpellBad',
-          captures = {'comment'},  -- set to {} to spellcheck everything
-        }
-      end
-    }
+    -- use {
+    --   'lewis6991/spellsitter.nvim', config = function()
+    --     require('spellsitter').setup {
+    --       hl = 'SpellBad',
+    --       captures = {'comment'},  -- set to {} to spellcheck everything
+    --     }
+    --   end
+    -- }
     use { 'neovim/nvim-lspconfig' }
     -- use { 'glepnir/lspsaga.nvim', { 'branch': 'main' } }
     use {

@@ -1,6 +1,4 @@
 return function ()
-  local utils = require "nvim-config.utils"
-
   local function process_sections(sections)
     local result = {}
 
@@ -36,7 +34,7 @@ return function ()
     }
   end
 
-  local version_lines = utils.str_split(vim.api.nvim_exec("version", true), "\n")
+  local version_lines = vim.split(vim.api.nvim_exec("version", true), "\n")
   vim.g.dashboard_custom_footer = { version_lines[2] }
 
   local sections = {

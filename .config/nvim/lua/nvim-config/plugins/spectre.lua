@@ -6,8 +6,8 @@ return function ()
   line_sep       = '└─────────────────────────────────────────',
   highlight = {
     ui = "String",
-    search = "DiffDelete",
-    replace = "DiffChange"
+    search = "DiffAddAsDelete",
+    replace = "DiffText"
   },
   mapping={
     ['delete_line'] = {

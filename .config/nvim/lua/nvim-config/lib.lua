@@ -306,6 +306,31 @@ function M.comfy_quit()
   end
 end
 
+function M.comfy_grep(...)
+  local args = vim.tbl_map(function(arg)
+    return vim.fn.shellescape(arg):gsub("[|]", { ["'"] = "''", ["|"] = "\\|" })
+  end, {...})
+
+  local ok, err = pcall(vim.api.nvim_exec, "grep! " .. table.concat(args, " "), true)
+  if not ok then
+    utils.err(err)
+    return
+  end
+
+  vim.cmd("belowright cope")
+end
+
+function M.cmd_help_here(subject)
+  local mods = ""
+  if vim.bo.buftype ~= "help" then
+    vim.cmd("e $VIMRUNTIME/doc/help.txt")
+    vim.bo.buftype = "help"
+    vim.bo.buflisted = false
+    mods = "keepjumps keepalt"
+  end
+  vim.cmd(string.format("%s help %s", mods, subject))
+end
+
 function M.update_custom_hl()
   -- FloatBorder
   vim.cmd(string.format(
@@ -313,11 +338,11 @@ function M.update_custom_hl()
   ))
 
   -- Custom diff hl
-  -- local bg = utils.get_bg("DiffDelete") or "red"
-  -- local fg = utils.get_fg("DiffDelete") or "NONE"
-  -- local gui = utils.get_gui("DiffDelete") or "NONE"
-  -- vim.cmd(string.format("hi! DiffAddAsDelete guibg=%s guifg=%s gui=%s", bg, fg, gui))
-  -- vim.cmd("hi! link DiffDelete Comment")
+  local bg = utils.get_bg("DiffDelete") or "red"
+  local fg = utils.get_fg("DiffDelete") or "NONE"
+  local gui = utils.get_gui("DiffDelete") or "NONE"
+  vim.cmd(string.format("hi! DiffAddAsDelete guibg=%s guifg=%s gui=%s", bg, fg, gui))
+  vim.cmd("hi! link DiffDelete Comment")
 end
 
 --[[

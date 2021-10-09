@@ -143,7 +143,8 @@ inoremap <C-H> <C-\><C-o>db
 inoremap <C-Del> <C-\><C-o>dw
 
 " Turn off search highlight until next search
-nnoremap <CR> <Cmd>noh<CR>
+nnoremap <M-\> <Cmd>noh<CR>
+nnoremap <F3> <Cmd>noh<CR>
 
 " Repeat prev macro
 nmap , @@
@@ -156,6 +157,7 @@ vnoremap <silent> <C-\> :call nerdcommenter#Comment(0, "toggle")<CR>gv
 " Telescope
 nnoremap <C-P> <Cmd>lua require'nvim-config.lib'.workspace_files()<CR>
 nnoremap <leader>p <Cmd>lua require'nvim-config.lib'.workspace_files({ all = true })<CR>
+nnoremap <C-M-P> <Cmd>Telescope git_status<CR>
 nnoremap <M-b> <Cmd>Telescope buffers<CR>
 nnoremap <M-f> <Cmd>Telescope live_grep<CR>
 nnoremap <M-t> <Cmd>Telescope lsp_workspace_symbols<CR>
@@ -193,6 +195,9 @@ nnoremap [l <Cmd>lprevious<CR>
 nnoremap ]l <Cmd>lnext<CR>
 nnoremap [L <Cmd>lfirst<CR>
 nnoremap ]L <Cmd>llast<CR>
+
+nnoremap [r <Cmd>lua require"illuminate".next_reference({ reverse = true, wrap = true })<CR>
+nnoremap ]r <Cmd>lua require"illuminate".next_reference({ wrap = true })<CR>
 
 " Trigger completion
 inoremap <silent><expr> <C-Space> compe#complete()
@@ -242,7 +247,7 @@ command! -bar DiffSaved lua require'nvim-config.lib'.diff_saved()
 command! -bar -nargs=1 SplitOn lua require'nvim-config.lib'.split_on_pattern(<args>)
 command! -bar ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_visual_selection(), false)
 command! -bar -bang Bd lua require'nvim-config.lib'.close_buffer_and_go_to_alt("<bang>" == "!")
-command! -bar -nargs=1 Grep silent! grep! <args> | belowright cope
+command! -nargs=+ Grep lua require'nvim-config.lib'.comfy_grep(<f-args>)
 command! -bar Spectre lua require'spectre'.open()
 command! -bar SpectreFile lua require'spectre'.open_file_search()
 command! -bar HiShow exe 'redir=>a | silent hi | redir END | enew | silent put=a '
@@ -250,8 +255,7 @@ command! -bar HiShow exe 'redir=>a | silent hi | redir END | enew | silent put=a
 command! -bar Messages lua UpdateMessagesWin()
 command! -bar Scratch lua require'nvim-config.lib'.new_scratch_buf()
 command! -bar -nargs=1 -complete=help HelpHere
-            \ if &bt !=# 'help' | keepalt e $VIMRUNTIME/doc/help.txt | setl bt=help nobl | endif |
-            \ h <args>
+            \ lua require'nvim-config.lib'.cmd_help_here(vim.fn.expand("<args>"))
 
 " ABBREVIATIONS
 cnoreabbrev msg Messages

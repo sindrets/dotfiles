@@ -49,6 +49,7 @@ _G.LspDefaultOnAttach = function(client, bufnr)
       border = "single",
     },
   }, bufnr)
+  vim.schedule(_G.ReloadGalaxyline)
 end
 
 _G.LspGetDefaultSetup = function()
@@ -108,25 +109,43 @@ vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
 
 function M.define_diagnostic_signs(opts)
   local group = {
-    err_group = {
+    -- version 0.5
+    {
       highlight = 'LspDiagnosticsSignError',
       sign = opts.error
     },
-    warn_group = {
+    {
       highlight = 'LspDiagnosticsSignWarning',
       sign = opts.warn
     },
-    hint_group = {
+    {
       highlight = 'LspDiagnosticsSignHint',
       sign = opts.hint
     },
-    infor_group = {
+    {
       highlight = 'LspDiagnosticsSignInformation',
+      sign = opts.info
+    },
+    -- version >=0.6
+    {
+      highlight = 'DiagnosticSignError',
+      sign = opts.error
+    },
+    {
+      highlight = 'DiagnosticSignWarn',
+      sign = opts.warn
+    },
+    {
+      highlight = 'DiagnosticSignHint',
+      sign = opts.hint
+    },
+    {
+      highlight = 'DiagnosticSignInfo',
       sign = opts.info
     },
   }
 
-  for _,g in pairs(group) do
+  for _, g in ipairs(group) do
     vim.fn.sign_define(
     g.highlight,
     { text = g.sign, texthl = g.highlight, linehl = '', numhl = '' }
@@ -153,16 +172,25 @@ function M.highlight_cursor_clear()
 end
 ---------------------------------
 
--- Only show diagnostics if current word is not the same as last call.
+-- Only show diagnostics if current word + line is not the same as last call.
 local last_diagnostics_word = nil
 function M.show_position_diagnostics()
   local cword = vim.fn.expand("<cword>")
-  if last_diagnostics_word and last_diagnostics_word == cword then
+  local cline = vim.api.nvim_win_get_cursor(0)[1]
+
+  if last_diagnostics_word
+    and last_diagnostics_word[1] == cline
+    and last_diagnostics_word[2] == cword then
     return
   end
-  last_diagnostics_word = cword
+  last_diagnostics_word = { cline, cword }
 
-  vim.lsp.diagnostic.show_position_diagnostics()
+  if vim.diagnostic then
+    vim.diagnostic.show_position_diagnostics()
+  else
+    ---@diagnostic disable-next-line: deprecated
+    vim.lsp.diagnostic.show_position_diagnostics()
+  end
 end
 
 -- LSP auto commands

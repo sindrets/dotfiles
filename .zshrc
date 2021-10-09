@@ -103,7 +103,9 @@ alias h="cd ~"
 alias g="cd $GIT_DIRECTORY"
 alias m="cd ~/Documents/misc"
 alias r="source ~/.zshrc"
+alias nv="nvim"
 alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' ~/.config/nvim/init.lua"
+alias nv-conf="nvim-conf"
 alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"
 alias zsh-conf="$EDITOR ~/.zshrc"
@@ -269,9 +271,9 @@ then
     eval neofetch
 fi
 
+# vim: sw=4
+
 
 # BEGIN_KITTY_SHELL_INTEGRATION
-# if test -e "/usr/lib/kitty/shell-integration/kitty.zsh"; then source "/usr/lib/kitty/shell-integration/kitty.zsh"; fi
+if test -e "/usr/lib/kitty/shell-integration/kitty.zsh"; then source "/usr/lib/kitty/shell-integration/kitty.zsh"; fi
 # END_KITTY_SHELL_INTEGRATION
-
-# vim: sw=4

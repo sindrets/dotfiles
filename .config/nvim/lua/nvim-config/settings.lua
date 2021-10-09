@@ -109,7 +109,7 @@ if vim.fn.executable("ag") == 1 then
   opt.grepformat = "%f:%l:%c:%m"
 end
 
-vim.cmd("syntax on")
+-- vim.cmd("syntax on")
 vim.cmd("filetype plugin indent on")
 
 local init_extra_path = vim.fn.fnamemodify(vim.fn.expand("$MYVIMRC"), ":h") .. "/init_extra.vim"

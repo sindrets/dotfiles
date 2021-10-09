@@ -27,7 +27,7 @@ return function ()
   vim.g.nvim_tree_update_cwd = 1
   -- Shorten the path to fit the window width:
   vim.g.nvim_tree_root_folder_modifier = string.format(
-    [[:~:s?\(.\{%d}\)?§§\1?:s?^§§.\{-}\(\/.\{1,%d}$\)?…\1?:s?\(.*\)? \1?]],
+    [[:~:s?\(.\{%d}\)?§§\1?:s?^§§.\{-}\(\/.\{1,%d}$\)?…\1?:s?\(.*\)? \1?]],
     vim.g.nvim_tree_width - 6,
     vim.g.nvim_tree_width - 8
   )
@@ -66,10 +66,10 @@ return function ()
     folder = {
       arrow_open = "",
       arrow_closed = "",
-      default = "",
-      open = "",
-      empty = "",
-      empty_open = "",
+      default = "",
+      open = "",
+      empty = "",
+      empty_open = "",
       symlink = "",
       symlink_open = "",
     },

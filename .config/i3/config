@@ -47,10 +47,18 @@ bindsym $mod+j focus down
 bindsym $mod+k focus up
 #bindsym $mod+l focus right
 
+bindsym $mod+Mod1+h focus left
+bindsym $mod+Mod1+j focus down
+bindsym $mod+Mod1+k focus up
+bindsym $mod+Mod1+l focus right
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
 bindsym $mod+Right focus right
+
+# Navigate siblings (i.e. tabs)
+bindsym $mod+Ctrl+l focus next sibling
+bindsym $mod+Ctrl+h focus prev sibling
 
 # move focused window
 bindsym $mod+Shift+h move left
@@ -67,6 +75,7 @@ bindsym $mod+Shift+Right move right 30 px
 workspace_auto_back_and_forth yes
 bindsym $mod+b workspace back_and_forth
 bindsym $mod+Shift+b move container to workspace back_and_forth; workspace back_and_forth
+bindsym $mod+Ctrl+b move container to workspace back_and_forth
 
 # split orientation
 bindsym $mod+h split v; exec --no-startup-id notify-send 'Split horizontally' -t 1000 -i align-vertical-top
