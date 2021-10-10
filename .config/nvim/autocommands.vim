@@ -3,10 +3,7 @@ augroup NvimConfig
 
     " nuke netrw brain damage
     au VimEnter * silent! au! FileExplorer *
-    " au BufEnter *
-    "             \ if isdirectory(expand('%'))
-    "             \ |     bd
-    "             \ | endif
+    " au BufEnter * if isdirectory(expand('%')) | bd | endif
 
     au VimEnter * lua require'nvim-config.lib'.source_project_config();
                 \ require'nvim-config.lib'.source_project_session()
@@ -19,19 +16,17 @@ augroup NvimConfig
 
     " Highlight yanks
     au TextYankPost * silent!
-                \ lua vim.highlight.on_yank{ higroup="Visual", timeout=300, on_visual=false }
+                \ lua vim.highlight.on_yank({ higroup="Visual", timeout=300, on_visual=true })
 
-    au BufWinEnter quickfix set nobuflisted | setlocal nowrap cc=
+    au BufWinEnter quickfix set nobuflisted | setl nowrap cc=
 
-    au TermEnter * setlocal nonu nornu signcolumn=no
+    au TermEnter * setl nonu nornu signcolumn=no
 
-    au TermLeave * setlocal nu rnu
+    au TermLeave * setl nu rnu
 
     " Run PackerCompile when changes are made to plugin configs.
-    au BufWritePost */lua/nvim-config/plugins/*.lua exe 'PackerCompile'
-                \ | lua vim.schedule(function()
-                \   require'nvim-config.utils'.info('Packer compiled!')
-                \ end)
+    au BufWritePost */lua/nvim-config/plugins/*.lua PackerCompile
+    au User PackerCompileDone lua require'nvim-config.utils'.info("Packer compiled!")
 
     au TabEnter * silent! NvimTreeRefresh
 augroup END

@@ -35,7 +35,7 @@ inoremap <Home> <Cmd>normal g^<CR>
 inoremap <End> <C-\><C-O>g$
 
 " Yank, delete, paste
-nnoremap <silent> y :set opfunc=PlusYank<CR>g@
+nnoremap <expr> y PlusYank()
 nnoremap <expr> yy v:register == '"' ? '"+yy' : 'yy'
 nnoremap <expr> Y v:register == '"' ? '"+y$' : 'y$'
 nnoremap <M-p> "+p
@@ -66,8 +66,17 @@ nnoremap <silent> <leader>w <Cmd>lua require'nvim-config.lib'.close_buffer_and_g
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 
 " Navigate tabs
-map <silent> <Leader><Tab> :tabn<CR>
-map <silent> <Leader><S-Tab> :tabp<CR>
+nnoremap <silent> <Leader><Tab> <Cmd>tabn<CR>
+nnoremap <silent> <Leader><S-Tab> <Cmd>tabp<CR>
+nnoremap <leader>1 <Cmd>1tabn<CR>
+nnoremap <leader>2 <Cmd>2tabn<CR>
+nnoremap <leader>3 <Cmd>3tabn<CR>
+nnoremap <leader>4 <Cmd>4tabn<CR>
+nnoremap <leader>5 <Cmd>5tabn<CR>
+nnoremap <leader>6 <Cmd>6tabn<CR>
+nnoremap <leader>7 <Cmd>7tabn<CR>
+nnoremap <leader>8 <Cmd>8tabn<CR>
+nnoremap <leader>9 <Cmd>9tabn<CR>
 
 " Navigate windows
 tnoremap <A-h> <C-\><C-N><C-w>h
@@ -178,6 +187,7 @@ nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
 nnoremap z= <Cmd>Telescope spell_suggest theme=get_cursor<CR>
 
 " Git
+nnoremap <leader>gg <Cmd>Neogit<CR>
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
 nnoremap <leader>gl <Cmd>Git log<CR>
 nnoremap <leader>gcs <Cmd>Git commit<CR>
@@ -228,15 +238,7 @@ nnoremap <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>. <Cmd>Telescope lsp_code_actions theme=get_cursor<CR>
 vnoremap <leader>. <Cmd>Telescope lsp_range_code_actions theme=get_cursor<CR>
 nnoremap <silent> <leader>ld <Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
-" nnoremap <silent> K <Cmd>Lspsaga hover_doc<CR>
-" nnoremap <leader>. <Cmd>Lspsaga code_action<CR>
-" vnoremap <leader>. <Cmd>Lspsaga range_code_action<CR>
-" nnoremap <silent> <C-f> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(1)<CR>
-" nnoremap <silent> <C-b> <cmd>lua require('lspsaga.action').smart_scroll_with_saga(-1)<CR>
-" nnoremap <silent> <leader>ld <Cmd>Lspsaga show_line_diagnostics<CR>
-" nnoremap <M-c> :call CocAction("pickColor")<CR>
 " nnoremap <M-O> <Cmd>lua vim.lsp.buf.organize_imports()<CR>
-" nnoremap <M-t> :CocList symbols<CR>
 
 xnoremap @ :<C-u>lua require'nvim-config.lib'.execute_macro_over_visual_range()<CR>
 
@@ -269,15 +271,26 @@ cnoreabbrev hh HelpHere
 
 " OPERATOR FUNCTIONS
 
-" Always yank to plus registry.
+" Always yank to plus registry by default.
 function! PlusYank(type = "")
+    if a:type == ''
+        let b:_register = v:register
+        set opfunc=PlusYank
+        return 'g@'
+    endif
+
+    let l:reg = b:_register == '"' ? '+' : b:_register
     let sel_save = &selection
     let cb_save = &clipboard
     let visual_marks_save = [getpos("'<"), getpos("'>")]
 
     try
         set clipboard= selection=inclusive
-        let commands = #{line: "'[V']\"+y", char: "`[v`]\"+y", block: "`[\<c-v>`]\"+y"}
+        let commands = #{
+                    \ line: "'[V']\"" . l:reg . "y",
+                    \ char: "`[v`]\"" . l:reg . "y",
+                    \ block: "`[\<c-v>`]\"" . l:reg . "y",
+                    \ }
         silent exe 'keepjumps normal! ' .. get(commands, a:type, '')
     finally
         call setpos("'<", visual_marks_save[0])
