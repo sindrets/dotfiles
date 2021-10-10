@@ -10,6 +10,18 @@ xnoremap <silent> <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
 inoremap <silent> <expr> <DOWN> pumvisible() ? '<DOWN>' : '<C-\><C-o>gj'
 inoremap <silent> <expr> <UP> pumvisible() ? '<UP>' : '<C-\><C-o>gk'
 
+" Navigate in insert mode
+inoremap <C-M-h> <Left>
+inoremap <C-M-j> <Down>
+inoremap <C-M-k> <Up>
+inoremap <C-M-l> <Right>
+
+" Navigate snippet placeholders
+imap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
+smap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
+imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+
 " Home moves to first non-whitespace on display line
 nnoremap H g^
 nnoremap L g$
@@ -143,8 +155,8 @@ inoremap <C-H> <C-\><C-o>db
 inoremap <C-Del> <C-\><C-o>dw
 
 " Turn off search highlight until next search
-nnoremap <M-\> <Cmd>noh<CR>
-nnoremap <F3> <Cmd>noh<CR>
+nnoremap <Esc> <Cmd>noh<CR>
+nnoremap * *N
 
 " Repeat prev macro
 nmap , @@
@@ -179,9 +191,8 @@ nnoremap <C-M-o> <Cmd>lua ToggleSymbolsOutline()<CR>
 nnoremap <M-CR> <Cmd>lua UpdateMessagesWin()<CR>
 
 " Open a terminal split
-nnoremap <silent> <C-L> <Cmd>lua ToggleTermSplit()<CR>
-inoremap <silent> <C-L> <Cmd>lua ToggleTermSplit()<CR>
-tnoremap <silent> <C-L> <Cmd>lua ToggleTermSplit()<CR>
+nnoremap <silent> <C-l> <Cmd>lua ToggleTermSplit()<CR>
+tnoremap <silent> <C-l> <Cmd>lua ToggleTermSplit()<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
 tnoremap <silent> <C-q> <Esc>
 
@@ -202,12 +213,6 @@ nnoremap ]r <Cmd>lua require"illuminate".next_reference({ wrap = true })<CR>
 " Trigger completion
 inoremap <silent><expr> <C-Space> compe#complete()
 " inoremap <silent><expr> <Cr> compe#confirm("<Cr>")
-
-" Navigate snippet placeholders
-imap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
-smap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
-imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
-smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
 
 " LSP
 nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>

@@ -42,15 +42,10 @@ bindsym $mod+space exec --no-startup-id "~/.config/rofi/applets/launchers-git/la
 bindsym $mod+Ctrl+space exec --no-startup-id ~/.config/scripts/sudo-rofi
 
 # change focus
-#bindsym $mod+h focus left
+bindsym $mod+h focus left
 bindsym $mod+j focus down
 bindsym $mod+k focus up
-#bindsym $mod+l focus right
-
-bindsym $mod+Mod1+h focus left
-bindsym $mod+Mod1+j focus down
-bindsym $mod+Mod1+k focus up
-bindsym $mod+Mod1+l focus right
+bindsym $mod+l focus right
 bindsym $mod+Left focus left
 bindsym $mod+Down focus down
 bindsym $mod+Up focus up
@@ -78,9 +73,8 @@ bindsym $mod+Shift+b move container to workspace back_and_forth; workspace back_
 bindsym $mod+Ctrl+b move container to workspace back_and_forth
 
 # split orientation
-bindsym $mod+h split v; exec --no-startup-id notify-send 'Split horizontally' -t 1000 -i align-vertical-top
+bindsym $mod+x split v; exec --no-startup-id notify-send 'Split horizontally' -t 1000 -i align-vertical-top
 bindsym $mod+v split h; exec --no-startup-id notify-send 'Split vertically' -t 1000 -i align-horizontal-left
-bindsym $mod+q split toggle
 
 # toggle fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
@@ -88,7 +82,7 @@ bindsym $mod+f fullscreen toggle
 # change container layout (stacked, tabbed, toggle split)
 #bindsym $mod+s layout stacking
 bindsym $mod+w layout tabbed
-#bindsym $mod+e layout toggle split
+# bindsym $mod+q layout default
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -101,6 +95,7 @@ bindsym $mod+Shift+s sticky toggle
 
 # focus the parent container
 bindsym $mod+a focus parent
+bindsym $mod+Shift+a focus child
 
 # move the currently focused window to the scratchpad
 bindsym $mod+Shift+minus move scratchpad
@@ -109,7 +104,7 @@ bindsym $mod+Shift+minus move scratchpad
 # If there are multiple scratchpad windows, this command cycles through them.
 bindsym $mod+minus scratchpad show
 
-bindsym Mod4+l exec --no-startup-id ~/.config/i3lock/blur-lock.sh
+bindsym $mod+Mod1+l exec --no-startup-id ~/.config/i3lock/blur-lock.sh
 
 # navigate workspaces next / previous
 bindsym $mod+Ctrl+Right workspace next
