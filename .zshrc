@@ -32,7 +32,7 @@ export LESS=-r # scroll pager with mouse wheel.
 export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
 export GIT_DIRECTORY="$HOME/Documents/git"
-export MANPAGER="$(which nvim) -nc 'set nolist' +Man! -"
+export MANPAGER="$(which nvim) -nc 'set nolist scl=yes:1' +Man! -"
 
 eval `dircolors "$HOME/.dir_colors"`
 
@@ -104,7 +104,8 @@ alias g="cd $GIT_DIRECTORY"
 alias m="cd ~/Documents/misc"
 alias r="source ~/.zshrc"
 alias nv="nvim"
-alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' ~/.config/nvim/init.lua"
+alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' ~/.config/nvim/init.lua \
+    ~/.config/nvim/lua/nvim-config/plugins/init.lua"
 alias nv-conf="nvim-conf"
 alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"

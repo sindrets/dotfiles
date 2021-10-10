@@ -328,7 +328,12 @@ function M.cmd_help_here(subject)
     vim.bo.buflisted = false
     mods = "keepjumps keepalt"
   end
-  vim.cmd(string.format("%s help %s", mods, subject))
+
+  local ok, err = pcall(vim.api.nvim_exec, string.format("%s help %s", mods, subject), true)
+  if not ok then
+    M.close_buffer_and_go_to_alt(true)
+    utils.err(err)
+  end
 end
 
 function M.update_custom_hl()
