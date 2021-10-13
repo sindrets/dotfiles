@@ -11,15 +11,15 @@ inoremap <silent> <expr> <DOWN> pumvisible() ? '<DOWN>' : '<C-\><C-o>gj'
 inoremap <silent> <expr> <UP> pumvisible() ? '<UP>' : '<C-\><C-o>gk'
 
 " Navigate in insert mode
-inoremap <C-M-h> <Left>
-inoremap <C-M-j> <Down>
-inoremap <C-M-k> <Up>
-inoremap <C-M-l> <Right>
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
 
 " Navigate snippet placeholders
-imap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
+imap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Down>'
 smap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
-imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<Up>'
 smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
 
 " Home moves to first non-whitespace on display line
@@ -160,7 +160,7 @@ imap <S-Left> <Esc>v
 imap <S-Right> <Esc><Right>v
 
 " Ctrl+backspace to delete prev word, ctrl+del to delete next word
-inoremap <C-H> <C-\><C-o>db
+" inoremap <C-H> <C-\><C-o>db
 inoremap <C-Del> <C-\><C-o>dw
 
 " Turn off search highlight until next search

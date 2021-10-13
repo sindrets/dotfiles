@@ -18,14 +18,12 @@ end
 
 lua_add_lib("$VIMRUNTIME")
 lua_add_lib("~/.config/nvim")
--- lua_add_lib("~/.vim/plug/*")
 
-require'lspconfig'.sumneko_lua.setup {
+local config = vim.tbl_extend("force", LspGetDefaultConfig(), {
   cmd = {
     "lua-language-server"
   },
   filetypes = { "lua" },
-  on_attach = LspDefaultOnAttach,
   settings = {
     Lua = {
       runtime = {
@@ -46,4 +44,6 @@ require'lspconfig'.sumneko_lua.setup {
       },
     }
   }
-}
+})
+
+require'lspconfig'.sumneko_lua.setup(config)

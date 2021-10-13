@@ -2,6 +2,7 @@ USER = vim.fn.expand("$USER")
 HOME = vim.fn.expand("$HOME")
 PID = vim.fn.getpid()
 local utils = require("nvim-config.utils")
+local cmp_lsp = require("cmp_nvim_lsp")
 local lspconfig = require("lspconfig")
 -- local lspsaga_codeaction = require("lspsaga.codeaction")
 -- local root_pattern = lspconfig.util.root_pattern
@@ -41,7 +42,7 @@ vim.lsp.util.apply_text_document_edit = function(text_document_edit, index)
 end
 
 ---@diagnostic disable-next-line: unused-local
-_G.LspDefaultOnAttach = function(client, bufnr)
+_G.LspCommonOnAttach = function(client, bufnr)
   require("illuminate").on_attach(client)
   require("lsp_signature").on_attach({
     bind = true, -- This is mandatory, otherwise border config won't get registered.
@@ -52,9 +53,10 @@ _G.LspDefaultOnAttach = function(client, bufnr)
   vim.schedule(_G.ReloadGalaxyline)
 end
 
-_G.LspGetDefaultSetup = function()
+_G.LspGetDefaultConfig = function()
   return vim.tbl_deep_extend("force", {
-    on_attach = LspDefaultOnAttach,
+    on_attach = LspCommonOnAttach,
+    capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()),
   }, M.get_local_settings())
 end
 
@@ -62,10 +64,10 @@ end
 require'nvim-config.lsp.java'
 
 -- Typescript
-lspconfig.tsserver.setup(LspGetDefaultSetup())
+lspconfig.tsserver.setup(LspGetDefaultConfig())
 
 -- Python
-lspconfig.pyright.setup(LspGetDefaultSetup())
+lspconfig.pyright.setup(LspGetDefaultConfig())
 
 -- Lua
 require'nvim-config.lsp.lua'
@@ -78,19 +80,19 @@ require'lspconfig'.omnisharp.setup({
     cmd = { "/usr/bin/omnisharp", "--languageserver" , "--hostPID", tostring(PID) },
     filetypes = { "cs", "vb" },
     init_options = {},
-    on_attach = LspDefaultOnAttach,
+    on_attach = LspCommonOnAttach,
     -- root_dir = lspconfig.util.root_pattern(".csproj", ".sln"),
     -- root_dir = vim.fn.getcwd
   })
 
 -- C, C++
-require'lspconfig'.clangd.setup(LspGetDefaultSetup())
+require'lspconfig'.clangd.setup(LspGetDefaultConfig())
 
 -- Vim
-require'lspconfig'.vimls.setup(LspGetDefaultSetup())
+require'lspconfig'.vimls.setup(LspGetDefaultConfig())
 
 -- Go
-require'lspconfig'.gopls.setup(LspGetDefaultSetup())
+require'lspconfig'.gopls.setup(LspGetDefaultConfig())
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {

@@ -60,15 +60,26 @@ return require'packer'.startup {
       end
     }
     use { 'mfussenegger/nvim-jdtls' }
-    use { 'hrsh7th/nvim-compe', config = conf("nvim-compe") }
+    -- use { 'hrsh7th/nvim-compe', config = conf("nvim-compe") }
+    use {
+      'hrsh7th/nvim-cmp',
+      requires = {
+        { 'hrsh7th/cmp-nvim-lsp' },
+        { 'f3fora/cmp-spell', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-vsnip', after = 'nvim-cmp' },
+      },
+      config = conf("nvim-cmp"),
+    }
     use {
       'kyazdani42/nvim-tree.lua',
       commit = "bfeaf4c8ef5ff24e",
       config = conf("nvim-tree"),
       requires = "kyazdani42/nvim-web-devicons"
     }
-    use { 'windwp/nvim-autopairs', config = conf("nvim-autopairs") }
-    use { 'onsails/lspkind-nvim', config = conf("lspkind") }
+    use { 'windwp/nvim-autopairs', after = "nvim-cmp", config = conf("nvim-autopairs") }
+    -- use { 'onsails/lspkind-nvim', config = conf("lspkind") }
     use { 'norcalli/nvim-colorizer.lua', config = conf("nvim-colorizer") }
     use { 'hrsh7th/vim-vsnip' }
     use { 'hrsh7th/vim-vsnip-integ' }

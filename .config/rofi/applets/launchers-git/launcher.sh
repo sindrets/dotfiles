@@ -12,7 +12,7 @@
 # gnome_do	slingshot		appdrawer			appfolder		column
 # row		row_center		screen				row_dock		row_dropdown
 
-style="row_center"
+style="column_center"
 path="`realpath -m $0/../$style`"
 
 rofi -no-lazy-grab -show drun -theme "$path".rasi -modi drun,run,ssh,window

@@ -104,7 +104,7 @@ alias g="cd $GIT_DIRECTORY"
 alias m="cd ~/Documents/misc"
 alias r="source ~/.zshrc"
 alias nv="nvim"
-alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' ~/.config/nvim/init.lua \
+alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' -c 'args %' ~/.config/nvim/init.lua \
     ~/.config/nvim/lua/nvim-config/plugins/init.lua"
 alias nv-conf="nvim-conf"
 alias vim-conf="$EDITOR ~/.vimrc"

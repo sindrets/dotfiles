@@ -1,22 +1,24 @@
-local utils = require'nvim-config.utils'
-local jdtls = require'jdtls'
-local finders = require'telescope.finders'
-local sorters = require'telescope.sorters'
-local actions = require'telescope.actions'
-local pickers = require'telescope.pickers'
+local utils = require("nvim-config.utils")
+local jdtls = require("jdtls")
+local finders = require("telescope.finders")
+local sorters = require("telescope.sorters")
+local actions = require("telescope.actions")
+local pickers = require("telescope.pickers")
+local cmp_lsp = require("cmp_nvim_lsp")
 
 local M = {}
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true;
 capabilities.workspace.configuration = true
+capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 function M.start_jdtls()
   local extendedClientCapabilities = jdtls.extendedClientCapabilities
   extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 
   local function jdtls_on_attch(client, bufnr)
-    LspDefaultOnAttach(client, bufnr)
+    LspCommonOnAttach(client, bufnr)
     require'jdtls.setup'.add_commands()
     -- local opts = { noremap = true, silent = true; }
   end

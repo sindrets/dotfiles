@@ -211,6 +211,7 @@ function! ApplyColorTweaks()
         hi! AquaSign   guibg=NONE
         hi! BlueSign   guibg=NONE
         if &background ==# "light"
+            hi! Search guibg=#35a77c
             hi! CursorLineNr gui=bold guibg=NONE guifg=#8da101
             hi! DiffAdd guibg=#EBF4BF guifg=NONE
             hi! DiffDelete guibg=#FCDDCC guifg=NONE
