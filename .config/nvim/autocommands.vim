@@ -5,8 +5,8 @@ augroup NvimConfig
     au VimEnter * silent! au! FileExplorer *
     " au BufEnter * if isdirectory(expand('%')) | bd | endif
 
-    au VimEnter * lua require'nvim-config.lib'.source_project_config();
-                \ require'nvim-config.lib'.source_project_session()
+    au VimEnter * lua require'nvim-config.au'.source_project_config();
+                \ require'nvim-config.au'.source_project_session()
 
     " Restore cursor pos
     au BufReadPost *
@@ -29,4 +29,10 @@ augroup NvimConfig
     au User PackerCompileDone lua require'nvim-config.utils'.info("Packer compiled!")
 
     au TabEnter * silent! NvimTreeRefresh
+
+    au BufEnter *
+                \ if expand("<afile>") =~ '.*:\d\+:\d\+$'
+                \ |     exe 'lua require"nvim-config.au"'
+                \           . '.open_file_location(vim.fn.expand("<afile>"))'
+                \ | endif
 augroup END

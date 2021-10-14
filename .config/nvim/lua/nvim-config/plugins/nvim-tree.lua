@@ -145,11 +145,12 @@ return function ()
   function M.toggle_no_focus()
     local lib = require'nvim-tree.lib'
     local view = require'nvim-tree.view'
+    local cur_win = vim.api.nvim_get_current_win()
     if view.win_open() then
       view.close()
     else
       lib.open()
-      vim.cmd("wincmd p")
+      vim.api.nvim_set_current_win(cur_win)
     end
   end
 

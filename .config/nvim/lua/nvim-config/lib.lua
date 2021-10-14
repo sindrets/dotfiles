@@ -3,9 +3,6 @@ local api = vim.api
 local M = {}
 local scratch_counter = 1
 
-local last_sourced_config = nil
-local last_sourced_session = nil
-
 ---@class BufToggleEntry
 ---@field last_winid integer
 ---@field height integer|nil
@@ -183,27 +180,6 @@ function M.split_on_pattern(pattern)
   vim.cmd("noh")
 end
 
-function M.source_project_config()
-  if utils.file_readable(".vim/init.vim") then
-    local project_config_path = vim.loop.fs_realpath(".vim/init.vim")
-    if last_sourced_config ~= project_config_path then
-      vim.cmd("source .vim/init.vim")
-      last_sourced_config = project_config_path
-      utils.info("Sourced project config: " .. project_config_path)
-    end
-  end
-end
-
-function M.source_project_session()
-  if #vim.v.argv == 1 and utils.file_readable(".vim/Session.vim") then
-    local project_config_path = vim.loop.fs_realpath(".vim/Session.vim")
-    if last_sourced_session ~= project_config_path then
-      vim.cmd("source .vim/Session.vim")
-      last_sourced_session = project_config_path
-    end
-  end
-end
-
 function M.get_indent_level()
   local lnum = vim.fn.line(".")
   if lnum == 0 then return 0 end
@@ -246,7 +222,7 @@ function M.full_indent()
     end
 
     vim.cmd("normal! d0x")
-    api.nvim_feedkeys(utils.str_repeat(" ", indent), "n", false)
+    api.nvim_feedkeys(string.rep(" ", indent), "n", false)
   else
     if indent == 0 then
       indent = ts > 0 and ts or 4
@@ -259,7 +235,7 @@ function M.full_indent()
     local nspaces = indent - ntabs * ts
     vim.cmd("normal! d0x")
     api.nvim_feedkeys(
-      utils.str_repeat(tab_char, ntabs) .. utils.str_repeat(" ", nspaces),
+      string.rep(tab_char, ntabs) .. string.rep(" ", nspaces),
       "n", false
     )
   end
@@ -267,9 +243,9 @@ end
 
 function M.name_syn_stack()
   local stack = vim.fn.synstack(vim.fn.line("."), vim.fn.col("."))
-  utils.map(stack, function (v)
+  stack = vim.tbl_map(function (v)
     return vim.fn.synIDattr(v, "name")
-  end)
+  end, stack)
   return stack
 end
 

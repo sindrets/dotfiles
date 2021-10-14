@@ -28,10 +28,9 @@ function M.err(msg)
 end
 
 function M.printi(...)
-  local args = {...}
-  M.map(args, function (v)
+  local args = vim.tbl_map(function (v)
     return vim.inspect(v)
-  end)
+  end, M.tbl_pack(...))
   print(M.tbl_unpack(args))
 end
 
@@ -59,30 +58,6 @@ function M.str_center_pad(s, min_size, fill)
   local left_len = math.floor((min_size - #s) / #fill / 2)
   local right_len = math.ceil((min_size - #s) / #fill / 2)
   return string.rep(fill, left_len) .. s .. string.rep(fill, right_len)
-end
-
-function M.str_repeat(s, count)
-  local result = ""
-  for _ = 1, count do
-    result = result .. s
-  end
-  return result
-end
-
-function M.str_split(s, sep)
-  sep = sep or "%s+"
-  local iter = s:gmatch("()" .. sep .. "()")
-  local result = {}
-  local sep_start, sep_end
-
-  local i = 1
-  while i ~= nil do
-    sep_start, sep_end = iter()
-    table.insert(result, s:sub(i, (sep_start or 0) - 1))
-    i = sep_end
-  end
-
-  return result
 end
 
 function M.tbl_pack(...)
@@ -134,13 +109,6 @@ function M.tbl_deep_clone(t)
   end
 
   return clone
-end
-
-function M.map(tbl, cb)
-  for k, v in pairs(tbl) do
-    tbl[k] = cb(v)
-  end
-  return tbl
 end
 
 function M.get_hl_attr(hl_group_name, attr)
