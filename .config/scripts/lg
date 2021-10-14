@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+# Live Grep
+# Perform a live query with ripgrep and open the result in nvim.
+
+INITIAL_QUERY=""
+RG_PREFIX="rg --column --line-number --no-heading --color=always --smart-case "
+FZF_DEFAULT_COMMAND="$RG_PREFIX '$INITIAL_QUERY'"
+
+res="$(\
+    fzf --bind "change:reload:$RG_PREFIX {q} || true" \
+        --ansi --disabled --query "$INITIAL_QUERY" \
+        --height=50% --layout=reverse --color=16\
+)"
+
+[ ! $? = 0 ] && exit $?
+
+files="$(echo "$res" | perl -pe 's/^(.*?:\d+:\d+):.*/\1/')"
+file_args="$(echo "$files" | xargs -I{} -d '\n' printf "%q " {})"
+
+nvim $file_args
+
+# location=$(echo "$res" | head -n1 | perl -pe 's/^(.*?:\d+:\d+:).*/\1/')
+# line="$(echo "$location" | perl -pe 's/^.*:(\d+):\d+:/\1/')"
+# col="$(echo "$location" | perl -pe 's/^.*:\d+:(\d+):/\1/')"
+
+# nvim -c "$(printf 'norm! %sG%s|' $line $col)" $file_args

@@ -28,6 +28,7 @@ function M.source_project_session()
     end
   end
 end
+
 ---Open a file at a specific line + column.
 ---Example location: `foo/bar/baz:128:17`
 ---@param location string

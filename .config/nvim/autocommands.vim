@@ -30,6 +30,7 @@ augroup NvimConfig
 
     au TabEnter * silent! NvimTreeRefresh
 
+    " Handle opening buffers with the format`foo/bar/baz:128:17`
     au BufEnter *
                 \ if expand("<afile>") =~ '.*:\d\+:\d\+$'
                 \ |     exe 'lua require"nvim-config.au"'
