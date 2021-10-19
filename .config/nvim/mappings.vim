@@ -62,7 +62,7 @@ inoremap <M-Return> <Esc>O
 nnoremap  <silent>   <tab> :bn<CR>
 nnoremap  <silent> <s-tab> :bp<CR>
 nnoremap <leader><leader> <Cmd>buffer #<CR>
-nnoremap <silent> <leader>w <Cmd>lua require'nvim-config.lib'.close_buffer_and_go_to_alt()<CR>
+nnoremap <silent> <leader>w <Cmd>lua require'nvim-config.lib'.remove_buffer()<CR>
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 
 " Navigate tabs
@@ -165,7 +165,7 @@ inoremap <C-Del> <C-\><C-o>dw
 
 " Turn off search highlight until next search
 nnoremap <Esc> <Cmd>noh<CR>
-nnoremap * *N
+nnoremap * <Cmd>let b:m_view = winsaveview() <Bar> exe 'norm! *N' <Bar> call winrestview(b:m_view)<CR>
 
 " Repeat prev macro
 nmap , @@
@@ -253,7 +253,7 @@ command! -bar Ssync syntax sync minlines=3000
 command! -bar DiffSaved lua require'nvim-config.lib'.diff_saved()
 command! -bar -nargs=1 SplitOn lua require'nvim-config.lib'.split_on_pattern(<args>)
 command! -bar ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_visual_selection(), false)
-command! -bar -bang Bd lua require'nvim-config.lib'.close_buffer_and_go_to_alt("<bang>" == "!")
+command! -bar -bang Bd lua require'nvim-config.lib'.remove_buffer("<bang>" == "!")
 command! -nargs=+ Grep lua require'nvim-config.lib'.comfy_grep(<f-args>)
 command! -bar Spectre lua require'spectre'.open()
 command! -bar SpectreFile lua require'spectre'.open_file_search()
@@ -261,13 +261,20 @@ command! -bar HiShow exe 'redir=>a | silent hi | redir END | enew | silent put=a
             \ . '| exe "norm! ggdj" | setl buftype=nofile | f Highlights | ColorizerAttachToBuffer'
 command! -bar Messages lua UpdateMessagesWin()
 command! -bar Scratch lua require'nvim-config.lib'.new_scratch_buf()
-command! -bar -nargs=1 -complete=help HelpHere
-            \ lua require'nvim-config.lib'.cmd_help_here(vim.fn.expand("<args>"))
+command! -bar -nargs=1 -complete=help HelpHere lua require'nvim-config.lib'.cmd_help_here([[<args>]])
 
 " ABBREVIATIONS
 cnoreabbrev msg Messages
 cnoreabbrev sch Scratch
 cnoreabbrev hh HelpHere
+cnoreabbrev T Telescope
+cnoreabbrev gs Telescope git_status
+cnoreabbrev gb Telescope git_branches
+cnoreabbrev gl Telescope git_commits
+cnoreabbrev Qa qa
+cnoreabbrev QA qa
+cnoreabbrev Qa! qa!
+cnoreabbrev QA! qa!
 
 " OPERATOR FUNCTIONS
 

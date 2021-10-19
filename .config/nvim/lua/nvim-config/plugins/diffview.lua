@@ -24,6 +24,10 @@ return function ()
         folder_statuses = "only_folded"  -- One of 'never', 'only_folded' or 'always'.
       }
     },
+    default_args = {
+      DiffviewOpen = {},
+      DiffviewFileHistory = {},
+    },
     key_bindings = {
       disable_defaults = false,
       view = {
@@ -38,7 +42,7 @@ return function ()
         ["<down>"]        = cb("next_entry"),
         ["k"]             = cb("prev_entry"),
         ["<up>"]          = cb("prev_entry"),
-        ["<cr>"]          = cb("select_entry"),
+        ["<cr>"]          = cb("focus_entry"),
         ["o"]             = cb("select_entry"),
         ["<2-LeftMouse>"] = cb("select_entry"),
         ["-"]             = cb("toggle_stage_entry"),
@@ -49,30 +53,34 @@ return function ()
         ["<s-tab>"]       = cb("select_prev_entry"),
         ["<leader>e"]     = cb("focus_files"),
         ["<leader>b"]     = cb("toggle_files"),
-      }
+      },
+      file_history_panel = {
+        ["g!"]            = cb("options"),            -- Open the option panel
+        ["<C-A-d>"]       = cb("open_in_diffview"),   -- Open the entry under the cursor in a diffview
+        ["y"]             = cb("copy_hash"),          -- Copy the commit hash of the entry under the cursor
+        ["zR"]            = cb("open_all_folds"),
+        ["zM"]            = cb("close_all_folds"),
+        ["j"]             = cb("next_entry"),
+        ["<down>"]        = cb("next_entry"),
+        ["k"]             = cb("prev_entry"),
+        ["<up>"]          = cb("prev_entry"),
+        ["<cr>"]          = cb("focus_entry"),
+        ["o"]             = cb("select_entry"),
+        ["<2-LeftMouse>"] = cb("select_entry"),
+        ["<tab>"]         = cb("select_next_entry"),
+        ["<s-tab>"]       = cb("select_prev_entry"),
+        ["gf"]            = cb("goto_file"),
+        ["<C-w><C-f>"]    = cb("goto_file_split"),
+        ["<C-w>gf"]       = cb("goto_file_tab"),
+        ["<leader>e"]     = cb("focus_files"),
+        ["<leader>b"]     = cb("toggle_files"),
+      },
+      option_panel = {
+        ["<tab>"] = cb("select"),
+        ["q"]     = cb("close"),
+      },
     }
   }
-
-  function M.apply_diff_tweaks()
-    local StandardView = require'diffview.views.standard.standard_view'.StandardView
-    vim.schedule(function ()
-      local view = require'diffview.lib'.get_current_view()
-      if view and view:instanceof(StandardView) then
-        local curhl = vim.wo[view.left_winid].winhl
-        vim.wo[view.left_winid].winhl = table.concat({
-            "DiffAdd:DiffAddAsDelete",
-            curhl ~= "" and curhl or nil
-          }, ",")
-      end
-    end)
-  end
-
-  vim.api.nvim_exec([[
-    augroup diffview_config
-      au!
-      " au TabNew * lua DiffviewConfig.apply_diff_tweaks()
-    augroup END
-  ]], false)
 
   _G.DiffviewConfig = M
 end

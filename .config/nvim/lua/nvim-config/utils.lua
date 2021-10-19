@@ -3,28 +3,23 @@ local api = vim.api
 
 local M = {}
 
-function M._echo_multiline(msg)
-  for _, s in ipairs(vim.fn.split(msg, "\n")) do
-    vim.cmd("echom '" .. s:gsub("'", "''").."'")
-  end
+function M._echo_multiline(msg, hl)
+  local chunks = vim.tbl_map(function(line)
+    return { line, hl }
+  end, vim.split(msg, "\n"))
+  vim.api.nvim_echo(chunks, true, {})
 end
 
 function M.info(msg)
-  vim.cmd('echohl Directory')
-  M._echo_multiline(msg)
-  vim.cmd('echohl None')
+  M._echo_multiline(msg, "Directory")
 end
 
 function M.warn(msg)
-  vim.cmd('echohl WarningMsg')
-  M._echo_multiline(msg)
-  vim.cmd('echohl None')
+  M._echo_multiline(msg, "WarningMsg")
 end
 
 function M.err(msg)
-  vim.cmd('echohl ErrorMsg')
-  M._echo_multiline(msg)
-  vim.cmd('echohl None')
+  M._echo_multiline(msg, "ErrorMsg")
 end
 
 function M.printi(...)
@@ -61,7 +56,7 @@ function M.str_center_pad(s, min_size, fill)
 end
 
 function M.tbl_pack(...)
-  return {n=select('#',...); ...}
+  return { n = select('#',...); ... }
 end
 
 function M.tbl_unpack(t, i, j)
@@ -75,7 +70,7 @@ end
 ---@return any[]
 function M.tbl_slice(t, first, last)
   local slice = {}
-  for i = first, last or #t do
+  for i = first or 1, last or #t do
     table.insert(slice, t[i])
   end
 
@@ -228,56 +223,6 @@ function M.lsp_organize_imports()
       vim.lsp.util.apply_workspace_edit(edit)
     end
   end
-end
-
-function M.within_range(outer, inner)
-  local o1y = outer.start.line
-  local o1x = outer.start.character
-  local o2y = outer['end'].line
-  local o2x = outer['end'].character
-  assert(o1y <= o2y, "Start must be before end: " .. vim.inspect(outer))
-
-  local i1y = inner.start.line
-  local i1x = inner.start.character
-  local i2y = inner['end'].line
-  local i2x = inner['end'].character
-  assert(i1y <= i2y, "Start must be before end: " .. vim.inspect(inner))
-
-  if o1y < i1y then
-    if o2y > i2y then
-      return true
-    end
-    return o2y == i2y and o2x >= i2x
-  elseif o1y == i1y then
-    if o2y > i2y then
-      return true
-    else
-      return o2y == i2y and o1x <= i1x and o2x >= i2x
-    end
-  else
-    return false
-  end
-end
-
-function M.get_diagnostics_for_range(bufnr, range)
-  local diagnostics = vim.lsp.diagnostic.get(bufnr)
-  if not diagnostics then return {} end
-  local line_diagnostics = {}
-  for _, diagnostic in ipairs(diagnostics) do
-    if M.within_range(diagnostic.range, range) then
-      table.insert(line_diagnostics, diagnostic)
-    end
-  end
-  if #line_diagnostics == 0 then
-    -- If there is no diagnostics at the cursor position,
-    -- see if there is at least something on the same line
-    for _, diagnostic in ipairs(diagnostics) do
-      if diagnostic.range.start.line == range.start.line then
-        table.insert(line_diagnostics, diagnostic)
-      end
-    end
-  end
-  return line_diagnostics
 end
 
 return M

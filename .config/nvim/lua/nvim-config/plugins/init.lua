@@ -44,7 +44,6 @@ return require'packer'.startup {
     --   end
     -- }
     use { 'neovim/nvim-lspconfig' }
-    -- use { 'glepnir/lspsaga.nvim', { 'branch': 'main' } }
     use {
       "ray-x/lsp_signature.nvim",
       config = function()
@@ -60,7 +59,6 @@ return require'packer'.startup {
       end
     }
     use { 'mfussenegger/nvim-jdtls' }
-    -- use { 'hrsh7th/nvim-compe', config = conf("nvim-compe") }
     use {
       'hrsh7th/nvim-cmp',
       requires = {
@@ -79,7 +77,6 @@ return require'packer'.startup {
       requires = "kyazdani42/nvim-web-devicons"
     }
     use { 'windwp/nvim-autopairs', after = "nvim-cmp", config = conf("nvim-autopairs") }
-    -- use { 'onsails/lspkind-nvim', config = conf("lspkind") }
     use { 'norcalli/nvim-colorizer.lua', config = conf("nvim-colorizer") }
     use { 'hrsh7th/vim-vsnip' }
     use { 'hrsh7th/vim-vsnip-integ' }

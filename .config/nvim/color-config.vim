@@ -1,4 +1,4 @@
-let g:colorscheme = "tokyonight"
+let g:colorscheme = "material"
 
 let ayucolor="dark"
 let g:gruvbox_italic = 1

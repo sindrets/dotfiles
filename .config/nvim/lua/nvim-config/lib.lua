@@ -151,7 +151,11 @@ function M.workspace_files(opt)
   end
 end
 
-function M.close_buffer_and_go_to_alt(force, bufid)
+---Delete a buffer while also preserving the window layout. Changes the current
+---buffer to the alt buffer if available, and then deletes it.
+---@param force boolean Ignore unsaved changes.
+---@param bufid integer
+function M.remove_buffer(force, bufid)
   bufid = bufid or api.nvim_get_current_buf()
   if not force then
     local modified = vim.bo[bufid].modified
@@ -307,7 +311,7 @@ function M.cmd_help_here(subject)
 
   local ok, err = pcall(vim.api.nvim_exec, string.format("%s help %s", mods, subject), true)
   if not ok then
-    M.close_buffer_and_go_to_alt(true)
+    M.remove_buffer(true)
     utils.err(err)
   end
 end
@@ -326,9 +330,7 @@ function M.update_custom_hl()
   vim.cmd("hi! link DiffDelete Comment")
 end
 
---[[
-TYPES
---]]
+--#region TYPES
 
 ---@class BufTogglerOpts
 ---@field focus boolean Focus the window if it exists and is unfocused.
@@ -336,9 +338,7 @@ TYPES
 ---@field remember_height boolean Remember the height of the window when it was
 ---       closed, and restore it the next time its opened.
 
---[[
-TYPES END
---]]
+--#endregion
 
 M.BufToggleEntry = BufToggleEntry
 return M

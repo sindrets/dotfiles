@@ -1,12 +1,62 @@
-local utils = require("nvim-config.utils")
 local jdtls = require("jdtls")
 local finders = require("telescope.finders")
 local sorters = require("telescope.sorters")
 local actions = require("telescope.actions")
 local pickers = require("telescope.pickers")
 local cmp_lsp = require("cmp_nvim_lsp")
+local diagnostic = vim.diagnostic or vim.lsp.diagnostic
 
 local M = {}
+
+function M.within_range(outer, inner)
+  local o1y = outer.start.line
+  local o1x = outer.start.character
+  local o2y = outer['end'].line
+  local o2x = outer['end'].character
+  assert(o1y <= o2y, "Start must be before end: " .. vim.inspect(outer))
+
+  local i1y = inner.start.line
+  local i1x = inner.start.character
+  local i2y = inner['end'].line
+  local i2x = inner['end'].character
+  assert(i1y <= i2y, "Start must be before end: " .. vim.inspect(inner))
+
+  if o1y < i1y then
+    if o2y > i2y then
+      return true
+    end
+    return o2y == i2y and o2x >= i2x
+  elseif o1y == i1y then
+    if o2y > i2y then
+      return true
+    else
+      return o2y == i2y and o1x <= i1x and o2x >= i2x
+    end
+  else
+    return false
+  end
+end
+
+function M.get_diagnostics_for_range(bufnr, range)
+  local diagnostics = diagnostic.get(bufnr)
+  if not diagnostics then return {} end
+  local line_diagnostics = {}
+  for _, item in ipairs(diagnostics) do
+    if M.within_range(item.range, range) then
+      table.insert(line_diagnostics, item)
+    end
+  end
+  if #line_diagnostics == 0 then
+    -- If there is no diagnostics at the cursor position,
+    -- see if there is at least something on the same line
+    for _, item in ipairs(diagnostics) do
+      if item.range.start.line == range.start.line then
+        table.insert(line_diagnostics, item)
+      end
+    end
+  end
+  return line_diagnostics
+end
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true;
@@ -32,7 +82,7 @@ function M.start_jdtls()
     end
     local bufnr = vim.api.nvim_get_current_buf()
     params.context = {
-      diagnostics = utils.get_diagnostics_for_range(bufnr, params.range),
+      diagnostics = M.get_diagnostics_for_range(bufnr, params.range),
       only = kind,
     }
     return params

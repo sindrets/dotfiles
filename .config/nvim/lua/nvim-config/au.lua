@@ -47,6 +47,7 @@ function M.open_file_location(location)
   if vim.fn.filereadable(file) == 1 then
     vim.cmd("edit " .. vim.fn.fnameescape(file))
     vim.cmd("do BufRead")
+    vim.cmd("do BufEnter")
     pcall(api.nvim_win_set_cursor, 0, { line, col - 1 })
     pcall(api.nvim_buf_delete, bufnr, {})
     api.nvim_exec("argd " .. vim.fn.fnameescape(location), false)

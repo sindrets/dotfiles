@@ -24,6 +24,8 @@ augroup NvimConfig
 
     au TermLeave * setl nu rnu
 
+    au BufEnter * if &buftype ==# "terminal" | startinsert | endif
+
     " Run PackerCompile when changes are made to plugin configs.
     au BufWritePost */lua/nvim-config/plugins/*.lua PackerCompile
     au User PackerCompileDone lua require'nvim-config.utils'.info("Packer compiled!")
