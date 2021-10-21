@@ -106,26 +106,64 @@ function M.tbl_deep_clone(t)
   return clone
 end
 
-function M.get_hl_attr(hl_group_name, attr)
-  local id = api.nvim_get_hl_id_by_name(hl_group_name)
-  if not id then return end
+---@param name string Syntax group name.
+---@param attr string Attribute name.
+---@param trans boolean Translate the syntax group (follows links).
+function M.get_hl_attr(name, attr, trans)
+  local id = api.nvim_get_hl_id_by_name(name)
+  if id and trans then
+    id = vim.fn.synIDtrans(id)
+  end
+  if not id then
+    return
+  end
 
   local value = vim.fn.synIDattr(id, attr)
-  if not value or value == "" then return end
+  if not value or value == "" then
+    return
+  end
 
   return value
 end
 
-function M.get_fg(hl_group_name)
-  return M.get_hl_attr(hl_group_name, "fg")
+---@param group_name string Syntax group name.
+---@param trans boolean Translate the syntax group (follows links). True by default.
+function M.get_fg(group_name, trans)
+  if type(trans) ~= "boolean" then trans = true end
+  return M.get_hl_attr(group_name, "fg", trans)
 end
 
-function M.get_bg(hl_group_name)
-  return M.get_hl_attr(hl_group_name, "bg")
+---@param group_name string Syntax group name.
+---@param trans boolean Translate the syntax group (follows links). True by default.
+function M.get_bg(group_name, trans)
+  if type(trans) ~= "boolean" then trans = true end
+  return M.get_hl_attr(group_name, "bg", trans)
 end
 
-function M.get_gui(hl_group_name)
-  return M.get_hl_attr(hl_group_name, "gui")
+---@param group_name string Syntax group name.
+---@param trans boolean Translate the syntax group (follows links). True by default.
+function M.get_gui(group_name, trans)
+  if type(trans) ~= "boolean" then trans = true end
+  local hls = {}
+  local attributes = {
+    "bold",
+    "italic",
+    "reverse",
+    "standout",
+    "underline",
+    "undercurl",
+    "strikethrough"
+  }
+
+  for _, attr in ipairs(attributes) do
+    if M.get_hl_attr(group_name, attr, trans) == "1" then
+      table.insert(hls, attr)
+    end
+  end
+
+  if #hls > 0 then
+    return table.concat(hls, ",")
+  end
 end
 
 function M.find_buf_with_pattern(pattern)

@@ -20,10 +20,17 @@ return function ()
   }
 
   local colors
+  local fg = utils.get_fg("StatusLine") or '#bbc2cf'
+  local bg = utils.get_bg("StatusLine") or '#1c1e23'
+
+  if utils.get_hl_attr("StatusLine", "reverse") == "1" then
+    fg, bg = bg, fg
+  end
+
   if vim.o.background == "light" then
     colors = {
-      bg = utils.get_bg("StatusLine") or '#1c1e23',
-      fg = utils.get_fg("StatusLine") or '#bbc2cf',
+      fg = fg,
+      bg = bg,
       yellow = '#ECBE7B',
       cyan = '#008080',
       darkblue = '#081633',
@@ -36,8 +43,8 @@ return function ()
     }
   else
     colors = {
-      bg = utils.get_bg("StatusLine") or '#1c1e23',
-      fg = utils.get_fg("StatusLine") or '#bbc2cf',
+      fg = fg,
+      bg = bg,
       yellow = '#ECBE7B',
       cyan = '#008080',
       darkblue = '#081633',

@@ -199,6 +199,7 @@ return require'packer'.startup {
     use { 'ntk148v/vim-horizon' }
     use { 'ajh17/Spacegray.vim' }
     use { 'sainnhe/gruvbox-material' }
+    use { 'gruvbox-community/gruvbox' }
     use { 'kjssad/quantum.vim' }
     use { 'juanedi/predawn.vim' }
     use { 'glepnir/zephyr-nvim' }

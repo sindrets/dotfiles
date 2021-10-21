@@ -319,13 +319,15 @@ end
 function M.update_custom_hl()
   -- FloatBorder
   vim.cmd(string.format(
-    "hi! FloatBorder guifg=%s guibg=%s", utils.get_fg("FloatBorder"), utils.get_bg("NormalFloat")
+    "hi! FloatBorder guifg=%s guibg=%s",
+    utils.get_fg("FloatBorder") or "white",
+    utils.get_bg("NormalFloat") or "NONE"
   ))
 
   -- Custom diff hl
-  local bg = utils.get_bg("DiffDelete") or "red"
-  local fg = utils.get_fg("DiffDelete") or "NONE"
-  local gui = utils.get_gui("DiffDelete") or "NONE"
+  local bg = utils.get_bg("DiffDelete", false) or "red"
+  local fg = utils.get_fg("DiffDelete", false) or "NONE"
+  local gui = utils.get_gui("DiffDelete", false) or "NONE"
   vim.cmd(string.format("hi! DiffAddAsDelete guibg=%s guifg=%s gui=%s", bg, fg, gui))
   vim.cmd("hi! link DiffDelete Comment")
 end
