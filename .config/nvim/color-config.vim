@@ -1,4 +1,4 @@
-let g:colorscheme = "material"
+let g:colorscheme = "onedark"
 
 let ayucolor="dark"
 let g:gruvbox_italic = 1
@@ -71,22 +71,22 @@ augroup END
 " function sets the diff colors to some more sane defaults that at least looks
 " quite pleasant in most colorschemes.
 function! SaneDiffDefaults()
-    hi DiffAdd    guibg=#26332c guifg=NONE
-    hi DiffChange guibg=#273842 guifg=NONE
-    hi DiffDelete guibg=#572E33 guifg=NONE
-    hi DiffText   guibg=#314753 guifg=NONE
-    hi! link       diffAdded     DiffAdd
-    hi! link       diffChanged   DiffChange
-    hi! link       diffRemoved   DiffDelete
-    hi! link       diffBDiffer   WarningMsg
-    hi! link       diffCommon    WarningMsg
-    hi! link       diffDiffer    WarningMsg
-    hi! link       diffFile      Directory
-    hi! link       diffIdentical WarningMsg
-    hi! link       diffIndexLine Number
-    hi! link       diffIsA       WarningMsg
-    hi! link       diffNoEOL     WarningMsg
-    hi! link       diffOnly      WarningMsg
+    hi! DiffAdd    guibg=#26332c guifg=NONE gui=NONE
+    hi! DiffChange guibg=#273842 guifg=NONE gui=NONE
+    hi! DiffDelete guibg=#572E33 guifg=NONE gui=NONE
+    hi! DiffText   guibg=#314753 guifg=NONE gui=NONE
+    " hi! link       diffAdded     DiffAdd
+    " hi! link       diffChanged   DiffChange
+    " hi! link       diffRemoved   DiffDelete
+    " hi! link       diffBDiffer   WarningMsg
+    " hi! link       diffCommon    WarningMsg
+    " hi! link       diffDiffer    WarningMsg
+    " hi! link       diffFile      Directory
+    " hi! link       diffIdentical WarningMsg
+    " hi! link       diffIndexLine Number
+    " hi! link       diffIsA       WarningMsg
+    " hi! link       diffNoEOL     WarningMsg
+    " hi! link       diffOnly      WarningMsg
 endfunction
 
 hi! def GitDirty guifg=#e2c08d
@@ -179,14 +179,6 @@ function! ApplyColorTweaks()
         hi link         vimFuncVar  NONE
         hi link         vimUserFunc NONE
 
-    elseif g:colorscheme ==# "onedark"
-        hi! link GitGutterAdd diffAdded
-        hi! link GitGutterRemoved diffRemoved
-        hi! link GitGutterChange diffChanged
-        " hi link         vimFuncVar  NONE
-        " hi link         vimUserFunc NONE
-        call SaneDiffDefaults()
-
     elseif g:colorscheme ==# "zephyr"
         hi! Visual guifg=NONE guibg=#393e49
 
@@ -248,6 +240,26 @@ function! ApplyColorTweaks()
         hi! NvimTreeNormal guibg=#222533
         hi! NvimTreeCursorLine guibg=#33374c
         hi! NvimTreeGitDirty guifg=#ffcb6b
+
+    elseif g:colorscheme ==# "onedark"
+        if &bg ==# "dark"
+            hi! Cursor guibg=#61afef
+            hi! Identifier guifg=#c678dd
+            hi! TabLineSel guifg=#61afef guibg=NONE
+            hi! Whitespace guifg=#404040
+            hi! NonText guifg=#404040
+            hi! IndentBlanklineContextChar guifg=#61afef
+            hi! CursorLine guibg=#252525
+            hi! FoldColumn guibg=#1e1e1e guifg=#61afef
+            hi! StatusLine guibg=#2e2e2e
+            hi! LspReferenceText guibg=#2e2e2e
+            hi! NvimTreeOpenedFolderName guifg=#61afef gui=italic,bold
+            hi! NvimTreeRootFolder guifg=#98c379
+            hi! NvimTreeGitDirty guifg=#e5c07b
+            hi! NvimTreeGitStaged guifg=#98c379
+            hi! link TelescopeBorder Directory
+            call SaneDiffDefaults()
+        endif
 
     endif
 

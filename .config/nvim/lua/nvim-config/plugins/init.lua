@@ -210,5 +210,6 @@ return require'packer'.startup {
     use { 'mcchrish/zenbones.nvim' }
     use { 'sainnhe/everforest' }
     use { 'Cybolic/palenight.vim' }
+    use { 'olimorris/onedarkpro.nvim' }
   end
 }

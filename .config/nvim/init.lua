@@ -4,10 +4,10 @@ local utils = require'nvim-config.utils'
 require'nvim-config'
 
 ToggleTermSplit = lib.create_buf_toggler(
-  function ()
+  function()
     return utils.find_buf_with_pattern("term_split")
   end,
-  function ()
+  function()
     vim.cmd("100 wincmd j")
     vim.cmd("belowright sp")
     local bufid = utils.find_buf_with_pattern("term_split")
@@ -20,7 +20,7 @@ ToggleTermSplit = lib.create_buf_toggler(
     end
     vim.cmd("startinsert")
   end,
-  function ()
+  function()
     local bufid = utils.find_buf_with_pattern("term_split")
     if bufid then
       local wins = vim.fn.win_findbuf(bufid)
@@ -33,16 +33,22 @@ ToggleTermSplit = lib.create_buf_toggler(
 )
 
 ToggleQF = lib.create_buf_toggler(
-  function () return utils.find_buf_with_option("buftype", "quickfix") end,
-  function () vim.cmd("100 wincmd j | belowright cope") end,
-  function () vim.cmd("ccl") end,
+  function() return utils.find_buf_with_option("buftype", "quickfix") end,
+  function() vim.cmd("100 wincmd j | belowright cope") end,
+  function()
+    if vim.fn.win_gettype() == "quickfix" then
+      vim.cmd("ccl")
+    else
+      vim.cmd("lcl")
+    end
+  end,
   { focus = true, remember_height = true }
 )
 
 ToggleSymbolsOutline = lib.create_buf_toggler(
-  function () return utils.find_buf_with_pattern("OUTLINE") end,
-  function () vim.cmd("SymbolsOutlineOpen") end,
-  function ()
+  function() return utils.find_buf_with_pattern("OUTLINE") end,
+  function() vim.cmd("SymbolsOutlineOpen") end,
+  function()
     vim.cmd("SymbolsOutlineClose")
     vim.cmd("wincmd =")
   end
@@ -76,3 +82,10 @@ function UpdateMessagesWin()
     OpenMessagesWin()
   end
 end
+
+Config = {
+  lib = lib,
+  utils = utils
+}
+
+return Config

@@ -22,6 +22,13 @@ function M.err(msg)
   M._echo_multiline(msg, "ErrorMsg")
 end
 
+---Replace termcodes.
+---@param s string
+---@return string
+function M.t(s)
+  return api.nvim_replace_termcodes(s, true, true, true)
+end
+
 function M.printi(...)
   local args = vim.tbl_map(function (v)
     return vim.inspect(v)

@@ -112,9 +112,6 @@ tnoremap <C-M-k> <Cmd>res -1<CR>
 " Remap jump forward
 nnoremap <C-S> <C-I>
 
-" Search for selected text
-vnoremap // "vy/\V<C-R>=escape(@",'/\')<CR><CR>
-
 " Move lines
 nnoremap <A-K> <Cmd>m-2<CR>==
 nnoremap <A-J> <Cmd>m+<CR>==
@@ -165,7 +162,10 @@ inoremap <C-Del> <C-\><C-o>dw
 
 " Turn off search highlight until next search
 nnoremap <Esc> <Cmd>noh<CR>
-nnoremap * <Cmd>let b:m_view = winsaveview() <Bar> exe 'norm! *N' <Bar> call winrestview(b:m_view)<CR>
+nnoremap <expr> * v:lua.Config.lib.comfy_star()
+
+" Search for selected text
+vnoremap * "vy/\V<C-R>=escape(@",'/\')<CR><CR>
 
 " Repeat prev macro
 nmap , @@
@@ -217,8 +217,8 @@ nnoremap ]l <Cmd>lnext<CR>
 nnoremap [L <Cmd>lfirst<CR>
 nnoremap ]L <Cmd>llast<CR>
 
-nnoremap [r <Cmd>lua require"illuminate".next_reference({ reverse = true, wrap = true })<CR>
-nnoremap ]r <Cmd>lua require"illuminate".next_reference({ wrap = true })<CR>
+nnoremap <expr> [r v:lua.Config.lib.next_reference(v:true)
+nnoremap <expr> ]r v:lua.Config.lib.next_reference()
 
 " Trigger completion
 inoremap <silent><expr> <C-Space> compe#complete()
@@ -275,6 +275,7 @@ cnoreabbrev Qa qa
 cnoreabbrev QA qa
 cnoreabbrev Qa! qa!
 cnoreabbrev QA! qa!
+cnoreabbrev we w <Bar> e
 
 " OPERATOR FUNCTIONS
 

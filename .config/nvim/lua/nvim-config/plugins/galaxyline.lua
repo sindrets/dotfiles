@@ -194,13 +194,6 @@ return function ()
       },
     },
     {
-      FileSize = {
-        provider = 'FileSize',
-        condition = condition.buffer_not_empty,
-        highlight = { colors.fg, colors.bg }
-      }
-    },
-    {
       FileIcon = {
         provider = 'FileIcon',
         condition = condition.buffer_not_empty,

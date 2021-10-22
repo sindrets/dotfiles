@@ -300,6 +300,46 @@ function M.comfy_grep(...)
   vim.cmd("belowright cope")
 end
 
+---[EXPR] Search for the current word without jumping forward. Respects
+---`v:count`.
+---@param reverse boolean
+---@param count integer
+---@return string
+function M.comfy_star(reverse, count)
+  count = count or vim.v.count
+  vim.fn.setreg("/", "\\<" .. vim.fn.expand("<cword>") .. "\\>")
+  local ret = "<Cmd>set hlsearch <Bar> exe 'norm! wN'"
+
+  if count > 0 then
+    ret = string.format(
+      "%s <Bar> norm! %d%s",
+      ret,
+      count,
+      reverse and "N" or "n"
+    )
+  end
+
+  return utils.t(ret .. "<CR>")
+end
+
+---[EXPR] Jump to the next reference of the item under the cursor. Uses LSP
+---when available, otherwise performs a normal search for the current word.
+---@param reverse boolean
+---@return string
+function M.next_reference(reverse)
+  if type(reverse) ~= "boolean" then
+    reverse = false
+  end
+  if #vim.lsp.buf_get_clients(0) > 0 then
+    return utils.t(string.format(
+      '<Cmd>lua require("illuminate").next_reference({ reverse = %s, wrap = true })<CR>',
+      tostring(reverse)
+    ))
+  else
+    return M.comfy_star(reverse, 1)
+  end
+end
+
 function M.cmd_help_here(subject)
   local mods = ""
   if vim.bo.buftype ~= "help" then

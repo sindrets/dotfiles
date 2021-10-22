@@ -46,6 +46,7 @@ return function ()
         ["o"]             = cb("select_entry"),
         ["<2-LeftMouse>"] = cb("select_entry"),
         ["-"]             = cb("toggle_stage_entry"),
+        ["s"]             = cb("toggle_stage_entry"),
         ["S"]             = cb("stage_all"),
         ["U"]             = cb("unstage_all"),
         ["R"]             = cb("refresh_files"),
