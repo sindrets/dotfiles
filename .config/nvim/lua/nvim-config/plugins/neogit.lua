@@ -1,7 +1,11 @@
 return function ()
   require'neogit'.setup {
     disable_signs = false,
+    disable_hint = true,
     disable_context_highlighting = false,
+    status = {
+      recent_commit_count = 10,
+    },
     -- customize displayed signs
     signs = {
       -- { CLOSED, OPENED }

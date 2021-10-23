@@ -25,7 +25,17 @@ return function ()
         icon = "",
         color = "#51a0cf",
         name = "Teal",
-      }
+      },
+      ["el"] = {
+        icon = "ﬦ",
+        color = "#5D439C",
+        name = "Elisp"
+      },
+      ["lisp"] = {
+        icon = "ﬦ",
+        color = "#264B8B",
+        name = "Lisp"
+      },
     },
     default = false
   }

@@ -186,7 +186,6 @@ return require'packer'.startup {
     use { 'phanviet/vim-monokai-pro' }
     use { 'tomasiser/vim-code-dark' }
     use { 'w0ng/vim-hybrid' }
-    use { 'chriskempson/base16-vim' }
     use { 'nanotech/jellybeans.vim' }
     use { 'cocopon/iceberg.vim' }
     use { 'junegunn/seoul256.vim' }
@@ -211,5 +210,6 @@ return require'packer'.startup {
     use { 'sainnhe/everforest' }
     use { 'Cybolic/palenight.vim' }
     use { 'olimorris/onedarkpro.nvim' }
+    use { 'RRethy/nvim-base16' }
   end
 }

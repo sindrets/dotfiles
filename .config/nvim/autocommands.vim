@@ -22,7 +22,7 @@ augroup NvimConfig
 
     au TermEnter * setl nonu nornu signcolumn=no
 
-    au TermLeave * setl nu rnu
+    au TermLeave * if &buftype ==# "terminal" | setl nu rnu | endif
 
     au BufEnter * if &buftype ==# "terminal" | startinsert | endif
 
