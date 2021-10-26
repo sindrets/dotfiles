@@ -92,11 +92,11 @@ end
 function Color.from_hex(c)
   local n = c
   if type(c) == "string" then
-    n = tonumber(c:match("#?(.*)"), 16)
-  end
-
-  if n <= 0xffffff then
-    n = bit.lshift(n, 8) + 0xff
+    local s = c:lower():match("#?([a-f0-9]+)")
+    n = tonumber(s, 16)
+    if #s <= 6 then
+      n = bit.lshift(n, 8) + 0xff
+    end
   end
 
   return Color(
@@ -143,16 +143,9 @@ function Color.test_shade()
   print("-- SHADE TEST -- ")
   local c = Color.from_hex("#98c379")
 
-  for i = 5, 1, -1 do
-    local f = (1 / 5) * -i
-    utils._echo_multiline(f .. "\t\t" .. c:shade(f):to_css())
-  end
-
-  utils._echo_multiline("0.0\t\t" .. c:to_css())
-
-  for i = 1, 5 do
-    local f = (1 / 5) * i
-    utils._echo_multiline(f .. "\t\t" .. c:shade(f):to_css())
+  for i = 0, 10 do
+    local f = (1 / 5) * i - 1
+    print(string.format("%-8.1f%s", f, c:shade(f):to_css()))
   end
 end
 
@@ -163,7 +156,7 @@ function Color.test_blend()
 
   for i = 0, 10 do
     local f = (1 / 10) * i
-    utils._echo_multiline(f .. "\t\t" .. c0:blend(c1, f):to_css())
+    print(string.format("%-8.1f%s", f, c0:blend(c1, f):to_css()))
   end
 end
 
