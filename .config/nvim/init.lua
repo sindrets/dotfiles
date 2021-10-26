@@ -1,5 +1,9 @@
 local lib = require'nvim-config.lib'
 local utils = require'nvim-config.utils'
+_G.Config = {
+  lib = lib,
+  utils = utils
+}
 
 require'nvim-config'
 
@@ -82,10 +86,5 @@ function UpdateMessagesWin()
     OpenMessagesWin()
   end
 end
-
-Config = {
-  lib = lib,
-  utils = utils
-}
 
 return Config

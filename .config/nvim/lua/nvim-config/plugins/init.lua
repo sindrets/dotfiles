@@ -181,6 +181,7 @@ return require'packer'.startup {
     use { 'honza/vim-snippets' }
 
     -- THEMES
+    use { 'rktjmp/lush.nvim' }
     use { 'rakr/vim-one' }
     use { 'ayu-theme/ayu-vim' }
     use { 'phanviet/vim-monokai-pro' }
@@ -206,10 +207,10 @@ return require'packer'.startup {
     use { 'Mofiqul/dracula.nvim' }
     use { 'sindrets/material.nvim' }
     use { 'sindrets/rose-pine-neovim', as = 'rose-pine' }
-    use { 'mcchrish/zenbones.nvim' }
+    use { 'mcchrish/zenbones.nvim', requires = 'rktjmp/lush.nvim' }
     use { 'sainnhe/everforest' }
     use { 'Cybolic/palenight.vim' }
-    use { 'olimorris/onedarkpro.nvim' }
+    use { 'olimorris/onedarkpro.nvim', branch = 'main' }
     use { 'RRethy/nvim-base16' }
   end
 }

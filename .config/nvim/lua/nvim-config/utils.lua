@@ -36,6 +36,20 @@ function M.printi(...)
   print(M.tbl_unpack(args))
 end
 
+function M.clamp(value, min, max)
+  if value < min then
+    return min
+  end
+  if value > max then
+    return max
+  end
+  return value
+end
+
+function M.round(value)
+  return math.floor(value + 0.5)
+end
+
 function M.str_right_pad(s, min_size, fill)
   if #s >= min_size then
     return s
@@ -171,6 +185,29 @@ function M.get_gui(group_name, trans)
   if #hls > 0 then
     return table.concat(hls, ",")
   end
+end
+
+function M.hi(group, opt)
+  vim.cmd(string.format(
+    "hi %s %s guifg=%s guibg=%s gui=%s guisp=%s blend=%s",
+    opt.default or "",
+    group,
+    opt.fg or "NONE",
+    opt.bg or "NONE",
+    opt.gui or "NONE",
+    opt.sp or "NONE",
+    opt.blend or "NONE"
+  ))
+end
+
+function M.hi_link(from, to, opt)
+  vim.cmd(string.format(
+    "hi%s %s link %s %s",
+    opt.force and "!" or "",
+    opt.default and "default" or "",
+    from,
+    to or ""
+  ))
 end
 
 function M.find_buf_with_pattern(pattern)

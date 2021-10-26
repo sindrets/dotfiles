@@ -40,9 +40,9 @@ function M.open_file_location(location)
 
   bufnr = tonumber(bufnr)
   location = vim.trim(location)
-  local file = location:match("(.*):%d+:%d+$")
-  local line = tonumber(location:match(".*:(%d+):%d+$"))
-  local col = tonumber(location:match(".*:%d+:(%d+)$"))
+  local file = location:match("(.*):%d+:%d+:?$")
+  local line = tonumber(location:match(".*:(%d+):%d+:?$"))
+  local col = tonumber(location:match(".*:%d+:(%d+):?$"))
 
   if vim.fn.filereadable(file) == 1 then
     vim.cmd("edit " .. vim.fn.fnameescape(file))
@@ -50,7 +50,7 @@ function M.open_file_location(location)
     vim.cmd("do BufEnter")
     pcall(api.nvim_win_set_cursor, 0, { line, col - 1 })
     pcall(api.nvim_buf_delete, bufnr, {})
-    api.nvim_exec("argd " .. vim.fn.fnameescape(location), false)
+    pcall(api.nvim_exec, "argd " .. vim.fn.fnameescape(location), false)
   end
 end
 

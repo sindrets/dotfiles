@@ -32,7 +32,7 @@ local config = vim.tbl_extend("force", LspGetDefaultConfig(), {
         unicodeName = true
       },
       diagnostics = {
-        globals = { "vim", "jit" }
+        globals = { "vim", "jit", "bit" }
       },
       workspace = {
         library = lua_lib,

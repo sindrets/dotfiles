@@ -1,4 +1,4 @@
-let g:colorscheme = "onedark"
+let g:colorscheme = "onedarkpro"
 
 let ayucolor="dark"
 let g:gruvbox_italic = 1
@@ -241,7 +241,7 @@ function! ApplyColorTweaks()
         hi! NvimTreeCursorLine guibg=#33374c
         hi! NvimTreeGitDirty guifg=#ffcb6b
 
-    elseif g:colorscheme ==# "onedark"
+    elseif g:colorscheme ==# "onedarkpro"
         if &bg ==# "dark"
             hi! Cursor guibg=#61afef
             hi! Identifier guifg=#c678dd
@@ -257,6 +257,7 @@ function! ApplyColorTweaks()
             hi! NvimTreeRootFolder guifg=#98c379
             hi! NvimTreeGitDirty guifg=#e5c07b
             hi! NvimTreeGitStaged guifg=#98c379
+            hi! TelescopeSelection guifg=#c678dd guibg=#2e2e2e
             hi! link TelescopeBorder Directory
             call SaneDiffDefaults()
         endif

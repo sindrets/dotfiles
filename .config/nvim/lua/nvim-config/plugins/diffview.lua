@@ -83,5 +83,5 @@ return function ()
     }
   }
 
-  _G.DiffviewConfig = M
+  _G.Config.diffview = M
 end

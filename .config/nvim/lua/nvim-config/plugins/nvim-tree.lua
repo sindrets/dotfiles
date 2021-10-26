@@ -84,7 +84,7 @@ return function ()
   local tree_cb = require'nvim-tree.config'.nvim_tree_callback
   local bindings = {
     ["<CR>"]           = tree_cb("edit"),
-    ["o"]              = ":lua NvimTreeConfig.xdg_open()<CR>",
+    ["o"]              = ":lua Config.nvim_tree.xdg_open()<CR>",
     ["<2-LeftMouse>"]  = tree_cb("edit"),
     ["<2-RightMouse>"] = tree_cb("cd"),
     ["<C-]>"]          = tree_cb("cd"),
@@ -245,14 +245,14 @@ return function ()
     ]], false)
 
   vim.api.nvim_exec([[
-    augroup NvimTreeConfig
+    augroup Config.nvim_tree
       au!
-      au FileType NvimTree lua NvimTreeConfig.custom_setup()
-      " au BufEnter * lua NvimTreeConfig.global_bufenter()
-      au BufDelete * lua NvimTreeConfig.close_folders_without_open_buffers(true)
+      au FileType NvimTree lua Config.nvim_tree.custom_setup()
+      " au BufEnter * lua Config.nvim_tree.global_bufenter()
+      au BufDelete * lua Config.nvim_tree.close_folders_without_open_buffers(true)
       au BufWritePost * lua require'nvim-tree.lib'.refresh_tree(true)
     augroup END
     ]], false)
 
-  _G.NvimTreeConfig = M
+  _G.Config.nvim_tree = M
 end

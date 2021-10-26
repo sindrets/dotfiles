@@ -202,14 +202,14 @@ vim.api.nvim_exec([[
     au ColorScheme * :hi def link LspReferenceText CursorLine
     au ColorScheme * :hi def link LspReferenceRead CursorLine
     au ColorScheme * :hi def link LspReferenceWrite CursorLine
-    " au CursorHold   * silent! lua LspConfig.highlight_cursor_symbol()
-    " au CursorHoldI  * silent! lua LspConfig.highlight_cursor_symbol()
-    " au CursorMoved  * silent! lua LspConfig.highlight_cursor_clear()
-    " au CursorMovedI * silent! lua LspConfig.highlight_cursor_clear()
+    " au CursorHold   * silent! lua Config.lsp.highlight_cursor_symbol()
+    " au CursorHoldI  * silent! lua Config.lsp.highlight_cursor_symbol()
+    " au CursorMoved  * silent! lua Config.lsp.highlight_cursor_clear()
+    " au CursorMovedI * silent! lua Config.lsp.highlight_cursor_clear()
 
-    au CursorHold * silent! lua LspConfig.show_position_diagnostics()
+    au CursorHold * silent! lua Config.lsp.show_position_diagnostics()
   augroup END
   ]], false)
 
-_G.LspConfig = M
+_G.Config.lsp = M
 return M

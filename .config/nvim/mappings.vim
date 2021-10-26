@@ -47,7 +47,7 @@ inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
 
 " File explorer
 nnoremap <silent> <Leader>e <Cmd>NvimTreeFindFile<CR>
-nnoremap <silent> <Leader>b <Cmd>lua NvimTreeConfig.toggle_no_focus()<CR>
+nnoremap <silent> <Leader>b <Cmd>lua Config.nvim_tree.toggle_no_focus()<CR>
 
 nnoremap <silent> <Leader>q <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
 inoremap <M-Space> <Esc>

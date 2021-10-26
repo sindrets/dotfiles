@@ -242,7 +242,7 @@ inoremap <M-p> <Cmd>set paste \| exec 'normal "+p' \| set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
 
 " File explorer
-map <silent> <Leader>e <Cmd>lua NvimTreeConfig.focus()<CR>
+map <silent> <Leader>e <Cmd>lua Config.nvim_tree.focus()<CR>
 map <silent> <Leader>b <Cmd>NvimTreeToggle<CR>
 
 nnoremap <silent> <Leader>q :q<CR>
