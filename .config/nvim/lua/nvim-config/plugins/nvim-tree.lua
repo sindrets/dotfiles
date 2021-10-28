@@ -27,9 +27,13 @@ return function ()
   vim.g.nvim_tree_update_cwd = 1
   -- Shorten the path to fit the window width:
   vim.g.nvim_tree_root_folder_modifier = string.format(
-    [[:~:s?\(.\{%d}\)?§§\1?:s?^§§.\{-}\(\/.\{1,%d}$\)?…\1?:s?\(.*\)? \1?]],
-    vim.g.nvim_tree_width - 6,
-    vim.g.nvim_tree_width - 8
+    [[:~]] -- Relative to home
+    .. [[:s?\v(.{%d})?§§\1?]] -- Add mark if longer than max width
+    .. [[:s?\v^§§.{-}(\/.{1,%d}$)?…\1?]] -- If mark: remove until the last '/' that fits in max width
+    .. [[:s?\v^§§.*\/(.*$)?…\1?]] -- If mark still here: basename is longer than max width. Keep only basename
+    .. [[:s?\v(.*)? \1?]], -- Add repo icon
+    vim.g.nvim_tree_width - 7,
+    vim.g.nvim_tree_width - 9
   )
   -- vim.g.nvim_tree_window_picker_chars = "QWERTYUIOPASDFGHJKLZXCVBNM1234567890"
   -- vim.g.nvim_tree_window_picker_chars = "aoeuidhtnsgcrld;qjkxbmwv"

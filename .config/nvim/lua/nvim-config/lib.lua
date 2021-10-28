@@ -287,17 +287,34 @@ function M.comfy_quit()
 end
 
 function M.comfy_grep(...)
-  local args = vim.tbl_map(function(arg)
+  local args = {...}
+  local pattern = M.regex_to_pattern(args[1])
+  local cargs = vim.tbl_map(function(arg)
     return vim.fn.shellescape(arg):gsub("[|]", { ["'"] = "''", ["|"] = "\\|" })
-  end, {...})
+  end, args)
 
-  local ok, err = pcall(vim.api.nvim_exec, "grep! " .. table.concat(args, " "), true)
+  local ok, err = pcall(vim.api.nvim_exec, "grep! " .. table.concat(cargs, " "), true)
   if not ok then
     utils.err(err)
     return
   end
 
+  vim.fn.setreg("/", pattern)
+  vim.opt.hlsearch = true
   vim.cmd("belowright cope")
+end
+
+function M.regex_to_pattern(exp)
+  local subs = {
+    { "\\b", "%%(<|>)" },
+    { "=", "\\=" },
+    { "@", "\\@" },
+    { "~", "\\~" },
+  }
+  for _, sub in ipairs(subs) do
+    exp = exp:gsub(sub[1], sub[2])
+  end
+  return  "\\v" .. exp
 end
 
 ---[EXPR] Search for the current word without jumping forward. Respects
@@ -340,6 +357,7 @@ function M.next_reference(reverse)
   end
 end
 
+---Open a help page in the current window.
 function M.cmd_help_here(subject)
   local mods = ""
   if vim.bo.buftype ~= "help" then
@@ -350,6 +368,30 @@ function M.cmd_help_here(subject)
   end
 
   local ok, err = pcall(vim.api.nvim_exec, string.format("%s help %s", mods, subject), true)
+  if not ok then
+    M.remove_buffer(true)
+    utils.err(err)
+  end
+end
+
+---Open a man page in the current window.
+function M.cmd_man_here(a, b)
+  local tag = a
+  if b then
+    tag = string.format("%s(%s)", b, a)
+  end
+
+  local mods = ""
+  if api.nvim_buf_get_name(0) ~= "man://0" then
+    vim.cmd("e man://0")
+    vim.bo.buftype = "nofile"
+    vim.bo.buflisted = false
+    vim.bo.filetype = "man"
+    vim.bo.tagfunc = "man#goto_tag"
+    mods = "keepjumps keepalt"
+  end
+
+  local ok, err = pcall(vim.api.nvim_exec, string.format("%s tag %s", mods, tag), true)
   if not ok then
     M.remove_buffer(true)
     utils.err(err)

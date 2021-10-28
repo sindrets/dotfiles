@@ -26,6 +26,8 @@ augroup NvimConfig
 
     au BufEnter * if &buftype ==# "terminal" | startinsert | endif
 
+    au BufWinEnter,FileType fugitiveblame setl nolist
+
     " Run PackerCompile when changes are made to plugin configs.
     au BufWritePost */lua/nvim-config/plugins/*.lua PackerCompile
     au User PackerCompileDone lua require'nvim-config.utils'.info("Packer compiled!")

@@ -67,6 +67,7 @@ return require'packer'.startup {
         { 'hrsh7th/cmp-path', after = 'nvim-cmp' },
         { 'hrsh7th/cmp-buffer', after = 'nvim-cmp' },
         { 'hrsh7th/cmp-vsnip', after = 'nvim-cmp' },
+        { 'hrsh7th/cmp-cmdline', after = 'nvim-cmp' },
       },
       config = conf("nvim-cmp"),
     }
@@ -179,6 +180,7 @@ return require'packer'.startup {
       end
     }
     use { 'honza/vim-snippets' }
+    use { 'sunaku/vim-dasht' }
 
     -- THEMES
     use { 'rktjmp/lush.nvim' }
@@ -212,5 +214,6 @@ return require'packer'.startup {
     use { 'Cybolic/palenight.vim' }
     use { 'olimorris/onedarkpro.nvim', branch = 'main' }
     use { 'RRethy/nvim-base16' }
+    use { 'martinsione/darkplus.nvim' }
   end
 }

@@ -20,12 +20,15 @@ return function ()
   }
 
   local colors
-  local fg = utils.get_fg("StatusLine") or '#bbc2cf'
-  local bg = utils.get_bg("StatusLine") or '#1c1e23'
+  local fg = utils.get_fg("StatusLine")
+  local bg = utils.get_bg("StatusLine")
 
   if utils.get_hl_attr("StatusLine", "reverse") == "1" then
     fg, bg = bg, fg
   end
+
+  fg = fg or utils.get_fg("Normal")
+  bg = bg or utils.get_bg("Normal")
 
   if vim.o.background == "light" then
     colors = {

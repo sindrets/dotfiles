@@ -73,4 +73,13 @@ return function()
       { name = 'buffer' },
     }
   })
+
+  cmp.setup.cmdline(':', {
+    completion = {
+      autocomplete = false,
+    },
+    sources = {
+      { name = 'cmdline' }
+    }
+  })
 end

@@ -104,6 +104,11 @@ hi! link illuminatedCurWord illuminatedWord
 
 " Colorscheme tweaks
 function! ApplyColorTweaks()
+    if !exists("g:colors_name")
+        call v:lua.Config.utils.warn("'g:colors_name' is not defined!")
+        let g:colors_name = "UNKNOWN"
+    endif
+
     let g:colorscheme = g:colors_name
 
     hi! LspDiagnosticsDefaultError gui=bold
@@ -246,8 +251,8 @@ function! ApplyColorTweaks()
             hi! Cursor guibg=#61afef
             hi! Identifier guifg=#c678dd
             hi! TabLineSel guifg=#61afef guibg=NONE
-            hi! Whitespace guifg=#404040
-            hi! NonText guifg=#404040
+            hi! Whitespace guifg=#303030
+            hi! NonText guifg=#303030
             hi! IndentBlanklineContextChar guifg=#61afef
             hi! CursorLine guibg=#252525
             hi! FoldColumn guibg=#1e1e1e guifg=#61afef
