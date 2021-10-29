@@ -1,4 +1,4 @@
-let g:colorscheme = "onedarkpro"
+let g:colorscheme = "doom-one"
 
 let ayucolor="dark"
 let g:gruvbox_italic = 1
@@ -266,6 +266,20 @@ function! ApplyColorTweaks()
             hi! link TelescopeBorder Directory
             call SaneDiffDefaults()
         endif
+
+    elseif g:colorscheme ==# "doom-one"
+        hi DiffAdd guibg=#3E493D guifg=NONE
+        hi DiffChange guibg=#304659 guifg=NONE
+        hi DiffText guibg=#38607f guifg=NONE
+        hi DiffDelete guibg=#4F343A guifg=NONE
+        hi DiffAdded guibg=#3E493D guifg=#97BE65
+        hi DiffRemoved guibg=#4F343A guifg=#FF6C69
+        hi DiffChanged guifg=#51afef
+        hi GitSignsChange guifg=#51afef
+        hi TermCursor guifg=NONE
+        hi link TermCursor NONE
+        hi! NvimTreeRootFolder gui=bold
+        set pumblend=0
 
     endif
 

@@ -288,7 +288,6 @@ end
 
 function M.comfy_grep(...)
   local args = {...}
-  local pattern = M.regex_to_pattern(args[1])
   local cargs = vim.tbl_map(function(arg)
     return vim.fn.shellescape(arg):gsub("[|]", { ["'"] = "''", ["|"] = "\\|" })
   end, args)
@@ -299,13 +298,20 @@ function M.comfy_grep(...)
     return
   end
 
-  vim.fn.setreg("/", pattern)
+  vim.fn.setreg("/", M.regex_to_pattern(args[1]))
   vim.opt.hlsearch = true
   vim.cmd("belowright cope")
 end
 
+---Convert a PCRE regex to a vim pattern. WARN: Conversion is incomplete.
+---@param exp string
+---@return string
 function M.regex_to_pattern(exp)
   local subs = {
+    { "%(%?:", "%%(" },
+    { "%*%?", "{-}" },
+    { "<", "\\<" },
+    { ">", "\\>" },
     { "\\b", "%%(<|>)" },
     { "=", "\\=" },
     { "@", "\\@" },
@@ -382,8 +388,8 @@ function M.cmd_man_here(a, b)
   end
 
   local mods = ""
-  if api.nvim_buf_get_name(0) ~= "man://0" then
-    vim.cmd("e man://0")
+  if api.nvim_buf_get_name(0) ~= "manhere://0" then
+    vim.cmd("e manhere://0")
     vim.bo.buftype = "nofile"
     vim.bo.buflisted = false
     vim.bo.filetype = "man"

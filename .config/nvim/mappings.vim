@@ -62,7 +62,9 @@ inoremap <M-Return> <Esc>O
 nnoremap  <silent>   <tab> :bn<CR>
 nnoremap  <silent> <s-tab> :bp<CR>
 nnoremap <leader><leader> <Cmd>buffer #<CR>
+nnoremap ~ <Cmd>buffer #<CR>
 nnoremap <silent> <leader>w <Cmd>lua require'nvim-config.lib'.remove_buffer()<CR>
+nnoremap <leader>W <Cmd>bd<CR>
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 
 " Navigate tabs
@@ -269,6 +271,7 @@ command! -bar -nargs=* -complete=customlist,man#complete ManHere lua require'nvi
 cnoreabbrev msg Messages
 cnoreabbrev sch Scratch
 cnoreabbrev hh HelpHere
+cnoreabbrev mh ManHere
 cnoreabbrev T Telescope
 cnoreabbrev gs Telescope git_status
 cnoreabbrev gb Telescope git_branches

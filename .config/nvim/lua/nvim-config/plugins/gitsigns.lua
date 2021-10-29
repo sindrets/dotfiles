@@ -51,6 +51,9 @@ return function ()
     status_formatter = nil, -- Use default
   }
 
-  vim.cmd([[hi! GitSignsChange gui=NONE]])
-  vim.cmd([[hi! link GitSignsDelete diffRemoved]])
+  vim.api.nvim_exec([[
+    hi def link GitSignsAdd diffAdded
+    hi def link GitSignsChange diffChanged
+    hi def link GitSignsDelete diffRemoved
+  ]], false)
 end

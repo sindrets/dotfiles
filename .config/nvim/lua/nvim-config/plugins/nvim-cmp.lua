@@ -1,5 +1,6 @@
 return function()
-  local cmp = require'cmp'
+  local cmp = require('cmp')
+  local cmp_autopairs = require('nvim-autopairs.completion.cmp')
 
   local lsp_kinds = {
     Method = "  ",
@@ -74,12 +75,14 @@ return function()
     }
   })
 
-  cmp.setup.cmdline(':', {
-    completion = {
-      autocomplete = false,
-    },
-    sources = {
-      { name = 'cmdline' }
-    }
-  })
+  cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+
+  -- cmp.setup.cmdline(':', {
+  --   completion = {
+  --     autocomplete = false,
+  --   },
+  --   sources = {
+  --     { name = 'cmdline' }
+  --   }
+  -- })
 end

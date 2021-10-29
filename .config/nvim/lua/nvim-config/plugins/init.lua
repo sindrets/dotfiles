@@ -69,6 +69,7 @@ return require'packer'.startup {
         { 'hrsh7th/cmp-vsnip', after = 'nvim-cmp' },
         { 'hrsh7th/cmp-cmdline', after = 'nvim-cmp' },
       },
+      after = 'nvim-autopairs',
       config = conf("nvim-cmp"),
     }
     use {
@@ -77,7 +78,7 @@ return require'packer'.startup {
       config = conf("nvim-tree"),
       requires = "kyazdani42/nvim-web-devicons"
     }
-    use { 'windwp/nvim-autopairs', after = "nvim-cmp", config = conf("nvim-autopairs") }
+    use { 'windwp/nvim-autopairs', config = conf("nvim-autopairs") }
     use { 'norcalli/nvim-colorizer.lua', config = conf("nvim-colorizer") }
     use { 'hrsh7th/vim-vsnip' }
     use { 'hrsh7th/vim-vsnip-integ' }
@@ -214,6 +215,6 @@ return require'packer'.startup {
     use { 'Cybolic/palenight.vim' }
     use { 'olimorris/onedarkpro.nvim', branch = 'main' }
     use { 'RRethy/nvim-base16' }
-    use { 'martinsione/darkplus.nvim' }
+    use { 'NTBBloodbath/doom-one.nvim' }
   end
 }

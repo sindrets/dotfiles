@@ -2,7 +2,6 @@
 -- packages in the vim global variable
 vim = require("vim.shared")
 vim = require("vim.uri")
-vim = require("vim.inspect")
 
 -- let sumneko know where the sources are for the global vim runtime
 vim.lsp = require("vim.lsp")

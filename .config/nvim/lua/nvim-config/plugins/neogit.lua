@@ -62,8 +62,8 @@ return function ()
       au FileType Neogit* setlocal nolist
       " au ColorScheme * call v:lua.Config.neogit.fix_hl()
       au FileType NeogitCommitView setl nobl
-      au BufEnter,FileType NeogitCommitView set eventignore+=CursorMoved
-      au BufLeave NeogitCommitView set eventignore-=CursorMoved
+      " au BufEnter,FileType NeogitCommitView set eventignore+=CursorMoved
+      " au BufLeave NeogitCommitView set eventignore-=CursorMoved
     augroup END
   ]], false)
 
