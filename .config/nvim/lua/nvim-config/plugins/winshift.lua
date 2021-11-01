@@ -5,7 +5,7 @@ return function()
     moving_win_options = {
       wrap = false,
       cursorline = false,
-      cusorcolumn = false,
+      cursorcolumn = false,
       colorcolumn = "",
     }
   })

@@ -278,7 +278,11 @@ function! ApplyColorTweaks()
         hi GitSignsChange guifg=#51afef
         hi TermCursor guifg=NONE
         hi link TermCursor NONE
-        hi! NvimTreeRootFolder gui=bold
+        hi NvimTreeRootFolder gui=bold
+        hi SpellCap guisp=#51afef
+        hi SpellBad guisp=#FF6C69
+        hi SpellRare guisp=#a9a1e1
+        hi SpellLocal guisp=#da8548
         set pumblend=0
 
     endif

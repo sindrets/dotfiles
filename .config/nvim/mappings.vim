@@ -134,10 +134,6 @@ inoremap <A-UP> <Cmd>m-2 \| normal! ==<CR>
 inoremap <A-DOWN> <Cmd>m+ \| normal! ==<CR>
 vnoremap <A-UP> :m '<-2<CR>gv=gv
 vnoremap <A-DOWN> :m '>+<CR>gv=gv
-" vnoremap <A-UP> <Cmd>call MoveSelection("up")<CR>
-" vnoremap <A-DOWN> <Cmd>call MoveSelection("down")<CR>
-" vnoremap <A-UP> <Cmd>'<,'>m '<-2<CR>gv=gv
-" vnoremap <A-DOWN> <Cmd>'<,'>m '>+<CR>gv=gv
 
 " Select all
 nnoremap <C-A> ggVG

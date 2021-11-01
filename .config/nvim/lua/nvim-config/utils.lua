@@ -201,12 +201,13 @@ function M.hi(group, opt)
 end
 
 function M.hi_link(from, to, opt)
+  opt = opt or {}
   vim.cmd(string.format(
     "hi%s %s link %s %s",
     opt.force and "!" or "",
     opt.default and "default" or "",
     from,
-    to or ""
+    to or "NONE"
   ))
 end
 

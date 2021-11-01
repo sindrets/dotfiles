@@ -44,7 +44,9 @@ return function ()
       interval = 1000
     },
     diff_opts = {
+      algorithm = "histogram",
       internal = true,
+      indent_heuristic = true,
     },
     sign_priority = 6,
     update_debounce = 100,

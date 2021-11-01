@@ -30,6 +30,10 @@ return function ()
   fg = fg or utils.get_fg("Normal")
   bg = bg or utils.get_bg("Normal")
 
+  utils.hi("StatusLine", { fg = fg, bg = bg, gui = "NONE" })
+  utils.hi("StatusLineNC", { fg = fg, bg = bg, gui = "NONE" })
+  utils.hi_link("StatusLineNC")
+
   if vim.o.background == "light" then
     colors = {
       fg = fg,
