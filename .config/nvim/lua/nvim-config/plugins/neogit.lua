@@ -1,5 +1,6 @@
 return function ()
   local Color = require("nvim-config.color").Color
+  local hl = require("nvim-config.hl")
   local utils = require("nvim-config.utils")
   local M = {}
 
@@ -31,8 +32,8 @@ return function ()
   }
 
   function M.fix_hl()
-    local hl_fg_normal = utils.get_fg("Normal")
-    local hl_bg_normal = utils.get_bg("Normal")
+    local hl_fg_normal = hl.get_fg("Normal")
+    local hl_bg_normal = hl.get_bg("Normal")
 
     local bg_normal = Color.from_hex(hl_bg_normal)
     local sign = bg_normal.lightness >= 0.5 and -1 or 1
@@ -44,14 +45,14 @@ return function ()
     utils.hi("NeogitHunkHeaderHighlight", { bg = bg_hunk_header_hl:to_css() })
     utils.hi("NeogitDiffContextHighlight", { bg = bg_diff_context_hl:to_css() })
     utils.hi("NeogitDiffAddHighlight", {
-      bg = utils.get_bg("DiffAdd", false) or bg_diff_context_hl:to_css(),
-      fg = utils.get_fg("DiffAdd", false) or utils.get_fg("diffAdded") or hl_fg_normal,
-      gui = utils.get_gui("DiffAdd", false),
+      bg = hl.get_bg("DiffAdd", false) or bg_diff_context_hl:to_css(),
+      fg = hl.get_fg("DiffAdd", false) or hl.get_fg("diffAdded") or hl_fg_normal,
+      gui = hl.get_gui("DiffAdd", false),
     })
     utils.hi("NeogitDiffDeleteHighlight", {
-      bg = utils.get_bg("DiffDelete", false) or bg_diff_context_hl:to_css(),
-      fg = utils.get_fg("DiffDelete", false) or utils.get_fg("diffRemoved") or hl_fg_normal,
-      gui = utils.get_gui("DiffDelete", false),
+      bg = hl.get_bg("DiffDelete", false) or bg_diff_context_hl:to_css(),
+      fg = hl.get_fg("DiffDelete", false) or hl.get_fg("diffRemoved") or hl_fg_normal,
+      gui = hl.get_gui("DiffDelete", false),
     })
   end
 

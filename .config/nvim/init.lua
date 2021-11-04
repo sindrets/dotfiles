@@ -1,9 +1,15 @@
 local lib = require'nvim-config.lib'
 local utils = require'nvim-config.utils'
+local api = vim.api
+
 _G.Config = {
   lib = lib,
   utils = utils
 }
+
+_G.pi = function(a, opt)
+  print(vim.inspect(a, opt))
+end
 
 require'nvim-config'
 
@@ -65,7 +71,7 @@ function OpenMessagesWin()
   vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
   vim.api.nvim_buf_set_var(0, "bufid", "messages_window")
   vim.cmd("setl nolist winfixheight buftype=nofile bh=delete ft=log | f Messages")
-  vim.cmd("res " .. math.min(14, #lines))
+  vim.cmd("res " .. math.min(math.max(#lines, 3), 14))
   vim.cmd("norm! G")
 end
 
@@ -78,8 +84,7 @@ function UpdateMessagesWin()
     vim.bo[bufid].modified = false
     local winids = vim.fn.win_findbuf(bufid)
     if #winids > 0 then
-      vim.api.nvim_set_current_win(winids[1])
-      vim.cmd("res " .. math.min(14, #lines))
+      api.nvim_set_current_win(winids[1])
       vim.cmd("norm! G")
     end
   else

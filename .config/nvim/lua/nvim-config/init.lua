@@ -1,10 +1,10 @@
 NvimConfigDir = vim.fn.stdpath("config")
 
-require'nvim-config.settings'
+require('nvim-config.settings')
 vim.cmd("source " .. NvimConfigDir .. "/mappings.vim")
 vim.cmd("source " .. NvimConfigDir .. "/autocommands.vim")
-require'nvim-config.plugins'
-require'nvim-config.lsp'
+require('nvim-config.plugins')
+require('nvim-config.lsp')
 
 -- Colorscheme tweaks and settings
-vim.cmd("source " .. NvimConfigDir .. "/color-config.vim")
+require("nvim-config.colorscheme")

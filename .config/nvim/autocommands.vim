@@ -36,7 +36,7 @@ augroup NvimConfig
 
     " Handle opening buffers with the format`foo/bar/baz:128:17`
     au BufEnter *
-                \ if expand("<afile>") =~ '.*:\d\+:\d\+:?$'
+                \ if expand("<afile>") =~ '.*:\d\+:\(\d\+\)\?:\?$'
                 \ |     exe 'lua require"nvim-config.au"'
                 \           . '.open_file_location(vim.fn.expand("<afile>"))'
                 \ | endif

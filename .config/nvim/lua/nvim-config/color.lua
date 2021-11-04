@@ -1,24 +1,23 @@
-local oop = require("diffview.oop")
 local utils = require("nvim-config.utils")
 local M = {}
 
 --#region TYPES
 
 ---@class RGBA
----@field red number
----@field green number
----@field blue number
----@field alpha number
+---@field red number Float [0,1]
+---@field green number Float [0,1]
+---@field blue number Float [0,1]
+---@field alpha number Float [0,1]
 
 ---@class HSV
----@field hue number
----@field saturation number
----@field value number
+---@field hue number Float [0,360)
+---@field saturation number Float [0,1]
+---@field value number Float [0,1]
 
 ---@class HSL
----@field hue number
----@field saturation number
----@field lightness number
+---@field hue number Float [0,360)
+---@field saturation number Float [0,1]
+---@field lightness number Float [0,1]
 
 --#endregion
 
@@ -31,8 +30,7 @@ local M = {}
 ---@field saturation number
 ---@field value number
 ---@field lightness number
-local Color = oop.Object
-Color = oop.create_class("Color")
+local Color = setmetatable({}, {})
 
 function Color:init(r, g, b, a)
   self:set_red(r)
@@ -47,10 +45,10 @@ function Color.from_color(c)
   return Color(c.red, c.green, c.blue, c.alpha)
 end
 
----@param h number Hue. Float [0,1]
+---@param h number Hue. Float [0,360)
 ---@param s number Saturation. Float [0,1]
 ---@param v number Value. Float [0,1]
----@param a number (Optional) Alpha. Float [0,1]
+---@param a? number Alpha. Float [0,1]
 ---@return Color
 function Color.from_hsv(h, s, v, a)
   h = h % 360
@@ -66,10 +64,10 @@ function Color.from_hsv(h, s, v, a)
   return Color(f(5), f(3), f(1), a)
 end
 
----@param h number Hue. Float [0,1]
+---@param h number Hue. Float [0,360)
 ---@param s number Saturation. Float [0,1]
 ---@param l number Lightness. Float [0,1]
----@param a number (Optional) Alpha. Float [0,1]
+---@param a? number Alpha. Float [0,1]
 ---@return Color
 function Color.from_hsl(h, s, l, a)
   h = h % 360
@@ -100,10 +98,10 @@ function Color.from_hex(c)
   end
 
   return Color(
-    bit.rshift(n, 24) / 255,
-    bit.band(bit.rshift(n, 16), 0xff) / 255,
-    bit.band(bit.rshift(n, 8), 0xff) / 255,
-    bit.band(n, 0xff) / 255
+    bit.rshift(n, 24) / 0xff,
+    bit.band(bit.rshift(n, 16), 0xff) / 0xff,
+    bit.band(bit.rshift(n, 8), 0xff) / 0xff,
+    bit.band(n, 0xff) / 0xff
   )
 end
 
@@ -130,6 +128,7 @@ end
 ---Returns a new color that's a linear blend between two colors.
 ---@param other Color
 ---@param f number Amount. Float [0,1].
+---@return Color
 function Color:blend(other, f)
   return Color(
     (other.red - self.red) * f + self.red,
@@ -237,10 +236,10 @@ end
 ---@return integer
 function Color:to_hex(with_alpha)
   local n = bit.bor(
-    bit.bor((self.blue * 255), bit.lshift((self.green * 255), 8)),
-    bit.lshift((self.red * 255), 16)
+    bit.bor((self.blue * 0xff), bit.lshift((self.green * 0xff), 8)),
+    bit.lshift((self.red * 0xff), 16)
   )
-  return with_alpha and bit.lshift(n, 8) + (self.alpha * 255) or n
+  return with_alpha and bit.lshift(n, 8) + (self.alpha * 0xff) or n
 end
 
 ---Convert the color to a css hex color (`#RRGGBB[AA]`).
@@ -255,24 +254,28 @@ end
 ---@param v number Float [0,1].
 function Color:set_red(v)
   self._red = utils.clamp(v or 1.0, 0, 1)
+  return self
 end
 
 ---@param v number Float [0,1].
 function Color:set_green(v)
   self._green = utils.clamp(v or 1.0, 0, 1)
+  return self
 end
 
 ---@param v number Float [0,1].
 function Color:set_blue(v)
   self._blue = utils.clamp(v or 1.0, 0, 1)
+  return self
 end
 
 ---@param v number Float [0,1].
 function Color:set_alpha(v)
   self._alpha = utils.clamp(v or 1.0, 0, 1)
+  return self
 end
 
----@param v number Float [0,1].
+---@param v number Hue. Float [0,360).
 function Color:set_hue(v)
   local hsv = self:to_hsv()
   hsv.hue = v % 360
@@ -280,6 +283,7 @@ function Color:set_hue(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+  return self
 end
 
 ---@param v number Float [0,1].
@@ -290,6 +294,7 @@ function Color:set_saturation(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+  return self
 end
 
 ---@param v number Float [0,1].
@@ -300,6 +305,7 @@ function Color:set_value(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+  return self
 end
 
 ---@param v number Float [0,1].
@@ -310,6 +316,7 @@ function Color:set_lightness(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+  return self
 end
 
 ---Copy the values from another color.
@@ -322,31 +329,37 @@ function Color:set_from_color(c)
 end
 
 ---@param x RGBA|number[]|number Either an RGBA struct, or a vector, or the value for red.
----@param g number Green. Float [0,1].
----@param b number Blue. Float [0,1].
----@param a number (Optional) Alpha. Float [0,1].
+---@param g? number Green. Float [0,1].
+---@param b? number Blue. Float [0,1].
+---@param a? number Alpha. Float [0,1].
+---@overload fun(rgba: RGBA)
+---@overload fun(rgba: number[])
+---@overload fun(r: number, g: number, b: number, a: number)
 function Color:set_from_rgba(x, g, b, a)
   if type(x) == "number" then
-    self:set_red(x)
-    self:set_green(g)
-    self:set_blue(b)
-    self:set_alpha(a or self.alpha)
+    self.red = x
+    self.green = g
+    self.blue = b
+    self.alpha = a or self.alpha
   elseif type(x.red) == "number" then
-    self:set_red(x.red)
-    self:set_green(x.green)
-    self:set_blue(x.blue)
-    self:set_alpha(x.alpha)
+    self.red = x.red
+    self.green = x.green
+    self.blue = x.blue
+    self.alpha = x.alpha
   else
-    self:set_red(x[1])
-    self:set_green(x[2])
-    self:set_blue(x[3])
-    self:set_alpha(x[4] or self.alpha)
+    self.red = x[1]
+    self.green = x[2]
+    self.blue = x[3]
+    self.alpha = x[4] or self.alpha
   end
 end
 
 ---@param x HSV|number[]|number Either an HSV struct, or a vector, or the value for hue.
----@param s number Saturation. Float [0,1].
----@param v number Value Float [0,1].
+---@param s? number Saturation. Float [0,1].
+---@param v? number Value Float [0,1].
+---@overload fun(hsv: HSV)
+---@overload fun(hsv: number[])
+---@overload fun(h: number, s: number, v: number)
 function Color:set_from_hsv(x, s, v)
   local c
   if type(x) == "number" then
@@ -360,8 +373,11 @@ function Color:set_from_hsv(x, s, v)
 end
 
 ---@param x HSL|number[]|number Either an HSL struct, or a vector, or the value for hue.
----@param s number Saturation. Float [0,1].
----@param l number Lightness. Float [0,1].
+---@param s? number Saturation. Float [0,1].
+---@param l? number Lightness. Float [0,1].
+---@overload fun(hsl: HSL)
+---@overload fun(hsl: number[])
+---@overload fun(h: number, s: number, l: number)
 function Color:set_from_hsl(x, s, l)
   local c
   if type(x) == "number" then
@@ -372,6 +388,83 @@ function Color:set_from_hsl(x, s, l)
     c = Color.from_hsl(x[1], x[2], x[3], self.alpha)
   end
   self:set_from_color(c)
+end
+
+---@param v number Float [-1,1].
+function Color:mod_red(v)
+  self._red = utils.clamp(self._red + v, 0, 1)
+  return self
+end
+
+---@param v number Float [-1,1].
+function Color:mod_green(v)
+  self._green = utils.clamp(self._green + v, 0, 1)
+  return self
+end
+
+---@param v number Float [-1,1].
+function Color:mod_blue(v)
+  self._blue = utils.clamp(self._blue + v, 0, 1)
+  return self
+end
+
+---@param v number Float [-1,1].
+function Color:mod_alpha(v)
+  self._alpha = utils.clamp(self._alpha + v, 0, 1)
+  return self
+end
+
+---@param v number Hue. Float (-360,360).
+function Color:mod_hue(v)
+  local hsv = self:to_hsv()
+  hsv.hue = (hsv.hue + v) % 360
+  local c = Color.from_hsv(hsv.hue, hsv.saturation, hsv.value)
+  self._red = c.red
+  self._green = c.green
+  self._blue = c.blue
+  return self
+end
+
+---@param v number Float [-1,1].
+function Color:mod_saturation(v)
+  local hsv = self:to_hsv()
+  hsv.saturation = utils.clamp(hsv.saturation + v, 0, 1)
+  local c = Color.from_hsv(hsv.hue, hsv.saturation, hsv.value)
+  self._red = c.red
+  self._green = c.green
+  self._blue = c.blue
+  return self
+end
+
+---@param v number Float [-1,1].
+function Color:mod_value(v)
+  local hsv = self:to_hsv()
+  hsv.value = utils.clamp(hsv.value + v, 0, 1)
+  local c = Color.from_hsv(hsv.hue, hsv.saturation, hsv.value)
+  self._red = c.red
+  self._green = c.green
+  self._blue = c.blue
+  return self
+end
+
+---@param v number Float [-1,1].
+function Color:mod_lightness(v)
+  local hsl = self:to_hsl()
+  hsl.lightness = utils.clamp(hsl.lightness + v, 0, 1)
+  local c = Color.from_hsl(hsl.hue, hsl.saturation, hsl.lightness)
+  self._red = c.red
+  self._green = c.green
+  self._blue = c.blue
+  return self
+end
+
+function Color:mod(o)
+  for key, value in pairs(o) do
+    if self["mod_" .. key] then
+      self["mod_" .. key](value)
+    end
+  end
+  return self
 end
 
 do
@@ -398,22 +491,27 @@ do
   }
   -- stylua: ignore end
 
-  local __index = Color.__index
   function Color.__index(self, k)
     if getters[k] then
       return getters[k](self)
-    else
-      return __index(self, k)
     end
+    return Color[k]
   end
 
-  local __newindex = Color.__newindex
   function Color.__newindex(self, k, v)
     if setters[k] then
       setters[k](self, v)
     else
-      __newindex(self, k, v)
+      rawset(self, k, v)
     end
+  end
+
+  local mt = getmetatable(Color)
+  ---@return Color
+  function mt.__call(_, ...)
+    local this = setmetatable({}, Color)
+    this:init(...)
+    return this
   end
 end
 

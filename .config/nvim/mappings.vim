@@ -191,7 +191,7 @@ nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
 nnoremap <leader>gl <Cmd>Git log<CR>
 nnoremap <leader>gcs <Cmd>Git commit<CR>
 nnoremap <leader>gcc <Cmd>Git commit -a<CR>
-nnoremap <leader>gb <Cmd>Git blame<CR>
+nnoremap <leader>gb <Cmd>Git blame <bar> wincmd p<CR>
 nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 
 " LspTrouble and Symbols outline

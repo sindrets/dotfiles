@@ -1,3 +1,4 @@
+local hl = require("nvim-config.hl")
 local utils = require'nvim-config.utils'
 local api = vim.api
 local M = {}
@@ -23,12 +24,13 @@ end
 
 ---Create a function that toggles a window with an identifiable buffer of some
 ---kind. The toggle logic works as follows:
---- * Open if
+---
+--- - Open if
 ---   - The buffer is not found
 ---   - No window with the buffer is found
---- * Close if:
+--- - Close if:
 ---   - The buffer is active in the current window.
---- * Focus if (only if the `focus` option is enabled):
+--- - Focus if (only if the `focus` option is enabled):
 ---   - The buffer exists, the window exists, but the window is not active.
 ---@param buf_finder function A function that should return the buffer id of
 ---       the wanted buffer if it exists, otherwise nil.
@@ -141,10 +143,10 @@ function M.workspace_files(opt)
   opt = opt or {}
   if opt.all then
     require'telescope.builtin'.find_files({
-        hidden = true,
-        find_command = { "fd", "--type", "f", "-uu" }
-      })
-  elseif #vim.fn.glob("./.git") ~= 0 then
+      hidden = true,
+      find_command = { "fd", "--type", "f", "-uu" }
+    })
+  elseif #vim.fn.glob("./.git") > 0 then
     vim.cmd("Telescope git_files")
   else
     require'telescope.builtin'.find_files({ hidden = true })
@@ -408,14 +410,14 @@ function M.update_custom_hl()
   -- FloatBorder
   vim.cmd(string.format(
     "hi! FloatBorder guifg=%s guibg=%s",
-    utils.get_fg("FloatBorder") or "white",
-    utils.get_bg("NormalFloat") or "NONE"
+    hl.get_fg("FloatBorder") or "white",
+    hl.get_bg("NormalFloat") or "NONE"
   ))
 
   -- Custom diff hl
-  local bg = utils.get_bg("DiffDelete", false) or "red"
-  local fg = utils.get_fg("DiffDelete", false) or "NONE"
-  local gui = utils.get_gui("DiffDelete", false) or "NONE"
+  local bg = hl.get_bg("DiffDelete", false) or "red"
+  local fg = hl.get_fg("DiffDelete", false) or "NONE"
+  local gui = hl.get_gui("DiffDelete", false) or "NONE"
   vim.cmd(string.format("hi! DiffAddAsDelete guibg=%s guifg=%s gui=%s", bg, fg, gui))
   vim.cmd("hi! link DiffDelete Comment")
 end

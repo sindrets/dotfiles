@@ -28,12 +28,13 @@ local config = vim.tbl_extend("force", LspGetDefaultConfig(), {
   settings = {
     Lua = {
       runtime = {
+        version = "LuaJIT",
         path = lua_path,
         fileEncoding = "utf8",
         unicodeName = true
       },
       diagnostics = {
-        globals = { "vim", "jit", "bit" }
+        globals = { "vim", "jit", "bit", "Config" }
       },
       workspace = {
         library = lua_lib,

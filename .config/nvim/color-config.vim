@@ -1,4 +1,5 @@
 let g:colorscheme = "doom-one"
+set background=dark
 
 let ayucolor="dark"
 let g:gruvbox_italic = 1
@@ -31,7 +32,6 @@ if exists("g:tokyonight_style") && g:tokyonight_style ==# "night"
 else
     let g:tokyonight_colors = v:null
 endif
-set background=dark
 lua require("nvim-config.plugins.material")()
 
 " Neovim Terminal Colors
@@ -268,22 +268,24 @@ function! ApplyColorTweaks()
         endif
 
     elseif g:colorscheme ==# "doom-one"
-        hi DiffAdd guibg=#3E493D guifg=NONE
-        hi DiffChange guibg=#304659 guifg=NONE
-        hi DiffText guibg=#38607f guifg=NONE
-        hi DiffDelete guibg=#4F343A guifg=NONE
-        hi DiffAdded guibg=#3E493D guifg=#97BE65
-        hi DiffRemoved guibg=#4F343A guifg=#FF6C69
-        hi DiffChanged guifg=#51afef
-        hi GitSignsChange guifg=#51afef
-        hi TermCursor guifg=NONE
-        hi link TermCursor NONE
-        hi NvimTreeRootFolder gui=bold
-        hi SpellCap guisp=#51afef
-        hi SpellBad guisp=#FF6C69
-        hi SpellRare guisp=#a9a1e1
-        hi SpellLocal guisp=#da8548
-        set pumblend=0
+        if &bg == "dark"
+            hi DiffAdd guibg=#3E493D guifg=NONE
+            hi DiffChange guibg=#304659 guifg=NONE
+            hi DiffText guibg=#38607f guifg=NONE
+            hi DiffDelete guibg=#4F343A guifg=NONE
+            hi DiffAdded guibg=#3E493D guifg=#97BE65
+            hi DiffRemoved guibg=#4F343A guifg=#FF6C69
+            hi DiffChanged guifg=#51afef
+            hi GitSignsChange guifg=#51afef
+            hi TermCursor guifg=NONE
+            hi link TermCursor NONE
+            hi NvimTreeRootFolder gui=bold
+            hi SpellCap guisp=#51afef
+            hi SpellBad guisp=#FF6C69
+            hi SpellRare guisp=#a9a1e1
+            hi SpellLocal guisp=#da8548
+            set pumblend=0
+        endif
 
     endif
 
