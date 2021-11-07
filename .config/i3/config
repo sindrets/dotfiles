@@ -283,7 +283,8 @@ client.placeholder      $borderActive   $background $white $borderActive   $bord
 client.background $background
 
 # Gaps
-gaps inner 20
+set $gap_size 20
+gaps inner $gap_size
 gaps outer 0
 
 #smart_gaps on
@@ -327,6 +328,14 @@ mode "$mode_gaps_outer" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
+
+# Toggle gaps
+bindsym $mod+o exec --no-startup-id "if [ `i3-msg -t get_tree | grep -Po \
+    '.*\\"gaps\\":{\\"inner\\":\K(-|)[0-9]+(?=.*\\"focused\\":true)'` -eq 0 ]; then \
+        i3-msg gaps inner current set 0; \
+    else \
+        i3-msg gaps inner current set $gap_size; \
+    fi"
 
 # set power-manager and volume control
 exec --no-startup-id mate-power-manager

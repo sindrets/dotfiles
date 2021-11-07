@@ -1,4 +1,3 @@
-local hl = require("nvim-config.hl")
 local utils = require'nvim-config.utils'
 local api = vim.api
 local M = {}
@@ -404,22 +403,6 @@ function M.cmd_man_here(a, b)
     M.remove_buffer(true)
     utils.err(err)
   end
-end
-
-function M.update_custom_hl()
-  -- FloatBorder
-  vim.cmd(string.format(
-    "hi! FloatBorder guifg=%s guibg=%s",
-    hl.get_fg("FloatBorder") or "white",
-    hl.get_bg("NormalFloat") or "NONE"
-  ))
-
-  -- Custom diff hl
-  local bg = hl.get_bg("DiffDelete", false) or "red"
-  local fg = hl.get_fg("DiffDelete", false) or "NONE"
-  local gui = hl.get_gui("DiffDelete", false) or "NONE"
-  vim.cmd(string.format("hi! DiffAddAsDelete guibg=%s guifg=%s gui=%s", bg, fg, gui))
-  vim.cmd("hi! link DiffDelete Comment")
 end
 
 --#region TYPES

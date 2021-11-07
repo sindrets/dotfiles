@@ -286,6 +286,20 @@ function M.apply_tweaks()
       vim.opt.pumblend = 0
     end
   end
+
+  -- FloatBorder
+  hi("FloatBorder", {
+    bg = hl.get_bg("NormalFloat") or "NONE",
+    fg = hl.get_fg("FloatBorder") or "white",
+  })
+
+  -- Custom diff hl
+  hi("DiffAddAsDelete", {
+    bg = hl.get_bg("DiffDelete", false) or "red",
+    fg = hl.get_fg("DiffDelete", false) or "NONE",
+    gui = hl.get_gui("DiffDelete", false) or "NONE"
+  })
+  hi_link("DiffDelete", "Comment")
 end
 
 Config.colorscheme = M

@@ -20,7 +20,7 @@ local M = {}
 
 ---@param name string Syntax group name.
 ---@param attr string Attribute name.
----@param trans boolean Translate the syntax group (follows links).
+---@param trans? boolean Translate the syntax group (follows links).
 function M.get_hl_attr(name, attr, trans)
   local id = api.nvim_get_hl_id_by_name(name)
   if id and trans then
@@ -39,21 +39,21 @@ function M.get_hl_attr(name, attr, trans)
 end
 
 ---@param group_name string Syntax group name.
----@param trans boolean Translate the syntax group (follows links). True by default.
+---@param trans? boolean Translate the syntax group (follows links). True by default.
 function M.get_fg(group_name, trans)
   if type(trans) ~= "boolean" then trans = true end
   return M.get_hl_attr(group_name, "fg", trans)
 end
 
 ---@param group_name string Syntax group name.
----@param trans boolean Translate the syntax group (follows links). True by default.
+---@param trans? boolean Translate the syntax group (follows links). True by default.
 function M.get_bg(group_name, trans)
   if type(trans) ~= "boolean" then trans = true end
   return M.get_hl_attr(group_name, "bg", trans)
 end
 
 ---@param group_name string Syntax group name.
----@param trans boolean Translate the syntax group (follows links). True by default.
+---@param trans? boolean Translate the syntax group (follows links). True by default.
 function M.get_gui(group_name, trans)
   if type(trans) ~= "boolean" then trans = true end
   local hls = {}
@@ -94,8 +94,8 @@ function M.hi(group, opt)
 end
 
 ---@param from string Syntax group name.
----@param to string Syntax group name.
----@param opt HiLinkSpec
+---@param to? string Syntax group name. (default: `"NONE"`)
+---@param opt? HiLinkSpec
 function M.hi_link(from, to, opt)
   opt = opt or {}
   vim.cmd(string.format(

@@ -8,14 +8,16 @@ return require'packer'.startup {
   ---@diagnostic disable-next-line: unused-local
   function (use, use_rocks)
 
+    vim.g.did_load_filetypes = 1
     vim.g.netrw_liststyle = 3
     vim.g.netrw_bufsettings = "noma nomod nonu nowrap ro nornu"
 
     use 'wbthomason/packer.nvim'
 
     -- SYNTAX
+    use { 'plasticboy/vim-markdown' }
+    use { 'MTDL9/vim-log-highlighting' }
     use { 'kevinoid/vim-jsonc' }
-    use { 'sheerun/vim-polyglot' }
     use { 'teal-language/vim-teal' }
     use { 'mboughaba/i3config.vim' }
 
@@ -26,6 +28,8 @@ return require'packer'.startup {
         vim.g.cursorhold_updatetime = 250
       end
     }
+    use { 'nathom/filetype.nvim' }
+    use { 'Darazaki/indent-o-matic' }
     use { 'nvim-lua/popup.nvim' }
     use { 'nvim-lua/plenary.nvim' }
     use { 'kyazdani42/nvim-web-devicons', config = conf("nvim-web-devicons") }
@@ -107,6 +111,7 @@ return require'packer'.startup {
     use { 'Rasukarusan/nvim-block-paste' }
     use { 'godlygeek/tabular' }
     use { 'tpope/vim-surround' }
+    use { "tweekmonster/startuptime.vim" }
     use {
       'RRethy/vim-illuminate',
       setup = function()

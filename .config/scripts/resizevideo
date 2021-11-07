@@ -1,0 +1,33 @@
+#!/bin/bash
+# Compress a video to a given size
+# https://stackoverflow.com/a/61146975
+
+target_video_size_MB="$2"
+origin_duration_s=$(ffprobe -v error -show_streams -select_streams a "$1" | grep -Po "(?<=^duration\=)\d*\.\d*")
+origin_audio_bitrate_kbit_s=$(ffprobe -v error -pretty -show_streams -select_streams a "$1" | grep -Po "(?<=^bit_rate\=)\d*\.\d*")
+target_audio_bitrate_kbit_s=$origin_audio_bitrate_kbit_s # TODO for now, make audio bitrate the same
+target_video_bitrate_kbit_s=$(\
+    awk \
+    -v size="$target_video_size_MB" \
+    -v duration="$origin_duration_s" \
+    -v audio_rate="$target_audio_bitrate_kbit_s" \
+    'BEGIN { print  ( ( size * 8192.0 ) / ( 1.048576 * duration ) - audio_rate ) }')
+
+ffmpeg \
+    -y \
+    -i "$1" \
+    -c:v libx264 \
+    -b:v "$target_video_bitrate_kbit_s"k \
+    -pass 1 \
+    -an \
+    -f mp4 \
+    /dev/null \
+&& \
+ffmpeg \
+    -i "$1" \
+    -c:v libx264 \
+    -b:v "$target_video_bitrate_kbit_s"k \
+    -pass 2 \
+    -c:a aac \
+    -b:a "$target_audio_bitrate_kbit_s"k \
+    "${1%.*}-$2mB.mp4"
