@@ -79,13 +79,13 @@ bindkey '^x^e' edit-command-line
 if [ -x "$(command -v exa)" ]; then
     alias ls='exa --group-directories-first'
     alias la='exa --group-directories-first -a'
-    alias ll="exa --group-directories-first -lh"
-    alias lla="exa --group-directories-first -lha"
+    alias ll="exa --group-directories-first -lh --git"
+    alias lla="exa --group-directories-first -lha --git"
 else
-    alias ls='ls --color=always'
-    alias la='ls -a'
-    alias ll="ls -lh"
-    alias lla="ls -lha"
+    alias ls='ls --group-directories-first --color=always'
+    alias la='ls --group-directories-first -a'
+    alias ll="ls --group-directories-first -lh"
+    alias lla="ls --group-directories-first -lha"
 fi
 
 alias grep="grep --color"

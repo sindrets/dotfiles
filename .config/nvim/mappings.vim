@@ -96,6 +96,7 @@ nnoremap <A-l> <C-w>l
 nnoremap <C-x> <C-w>p
 nnoremap <C-w><C-m> <Cmd>WinShift<CR>
 nnoremap <C-w>m <Cmd>WinShift<CR>
+nnoremap <C-w>X <Cmd>WinShift swap<CR>
 
 " Window splits
 nnoremap <leader>v <Cmd>vsp<CR>
@@ -277,6 +278,7 @@ cnoreabbrev QA qa
 cnoreabbrev Qa! qa!
 cnoreabbrev QA! qa!
 cnoreabbrev we w <Bar> e
+cnoreabbrev ftd filetype detect
 
 " OPERATOR FUNCTIONS
 

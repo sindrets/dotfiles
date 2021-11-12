@@ -12,6 +12,9 @@ return require'packer'.startup {
     vim.g.netrw_liststyle = 3
     vim.g.netrw_bufsettings = "noma nomod nonu nowrap ro nornu"
 
+    vim.cmd([[runtime! ftdetect/*.vim]])
+    vim.cmd([[runtime! ftdetect/*.lua]])
+
     use 'wbthomason/packer.nvim'
 
     -- SYNTAX

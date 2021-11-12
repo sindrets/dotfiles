@@ -11,8 +11,8 @@ return function ()
 
   local time = 180
   local mappings = {
-    ["<C-u>"] = { 'scroll', { '-math.max(vim.wo.scroll, 22)', 'true', time } },
-    ["<C-d>"] = { 'scroll', { 'math.max(vim.wo.scroll, 22)', 'true', time } },
+    ["<C-u>"] = { 'scroll', { '-math.max(vim.wo.scroll, 16)', 'true', time } },
+    ["<C-d>"] = { 'scroll', { 'math.max(vim.wo.scroll, 16)', 'true', time } },
     ["<C-b>"] = { 'scroll', { '-vim.api.nvim_win_get_height(0)', 'true', time * 2 } },
     ["<C-f>"] = { 'scroll', { 'vim.api.nvim_win_get_height(0)', 'true', time * 2 } },
     ["zt"] = { 'zt', { time } },

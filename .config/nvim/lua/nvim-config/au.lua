@@ -40,17 +40,19 @@ function M.open_file_location(location)
 
   bufnr = tonumber(bufnr)
   local l = vim.trim(location)
-  local file = l:match("(.*):%d+:%d+:?$") or l:match("(.*):%d+:?$")
+  local file = l:match("(.*):%d+:%d+:?$") or l:match("(.*):%d+:?$") or l:match("(.*):$")
   local line = tonumber(l:match(".*:(%d+):%d+:?$") or l:match(".*:(%d+):?$"))
   local col = tonumber(l:match(".*:%d+:(%d+):?$")) or 1
 
   if vim.fn.filereadable(file) == 1 then
     vim.cmd("edit " .. vim.fn.fnameescape(file))
-    vim.cmd("do BufRead")
-    vim.cmd("do BufEnter")
-    pcall(api.nvim_win_set_cursor, 0, { line, col - 1 })
-    pcall(api.nvim_buf_delete, bufnr, {})
-    pcall(api.nvim_exec, "argd " .. vim.fn.fnameescape(l), false)
+    if line then
+      vim.cmd("do BufRead")
+      vim.cmd("do BufEnter")
+      pcall(api.nvim_win_set_cursor, 0, { line, col - 1 })
+      pcall(api.nvim_buf_delete, bufnr, {})
+      pcall(api.nvim_exec, "argd " .. vim.fn.fnameescape(l), false)
+    end
   end
 end
 

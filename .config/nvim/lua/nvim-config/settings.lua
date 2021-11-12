@@ -89,6 +89,7 @@ opt.fillchars = list {
 opt.showbreak = "⤷ "
 opt.writebackup = true
 opt.undofile = true
+opt.isfname:append(":")
 
 local data_backup = vim.fn.stdpath("data") .. "/backup"
 local data_undo = vim.fn.stdpath("data") .. "/undo"
