@@ -1,7 +1,7 @@
 return function ()
-  local Color = require("nvim-config.color").Color
-  local hl = require("nvim-config.hl")
-  local utils = require("nvim-config.utils")
+  local Color = Config.common.color.Color
+  local hl = Config.common.hl
+  local utils = Config.common.utils
   local M = {}
 
   require'neogit'.setup {

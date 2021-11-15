@@ -1,6 +1,6 @@
 return function ()
-  local utils = require('nvim-config.utils')
-  local hl = require("nvim-config.hl")
+  local utils = Config.common.utils
+  local hl = Config.common.hl
   local gl = require('galaxyline')
   local condition = require('galaxyline.condition')
   local gls = gl.section
@@ -21,15 +21,12 @@ return function ()
   }
 
   local colors
-  local fg = hl.get_fg("StatusLine")
-  local bg = hl.get_bg("StatusLine")
+  local fg = hl.get_fg({ "StatusLine", "Normal" })
+  local bg = hl.get_bg({ "StatusLine", "Normal" })
 
   if hl.get_hl_attr("StatusLine", "reverse") == "1" then
     fg, bg = bg, fg
   end
-
-  fg = fg or hl.get_fg("Normal")
-  bg = bg or hl.get_bg("Normal")
 
   hl.hi("StatusLine", { fg = fg, bg = bg, gui = "NONE" })
   hl.hi("StatusLineNC", { fg = fg, bg = bg, gui = "NONE" })

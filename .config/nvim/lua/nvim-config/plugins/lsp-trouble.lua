@@ -1,6 +1,6 @@
 return function ()
   local lib = require("nvim-config.lib")
-  local utils = require("nvim-config.utils")
+  local utils = Config.common.utils
 
   require("trouble").setup {
     height = 10, -- height of the trouble list

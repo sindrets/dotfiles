@@ -1,11 +1,12 @@
-local lib = require'nvim-config.lib'
-local utils = require'nvim-config.utils'
-local api = vim.api
-
 _G.Config = {
-  lib = lib,
-  utils = utils
+  common = require("nvim-config.common"),
 }
+
+Config.lib = require("nvim-config.lib")
+
+local lib = Config.lib
+local utils = Config.common.utils
+local api = vim.api
 
 _G.pi = function(a, opt)
   print(vim.inspect(a, opt))

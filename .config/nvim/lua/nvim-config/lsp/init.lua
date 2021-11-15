@@ -1,11 +1,9 @@
 USER = vim.fn.expand("$USER")
 HOME = vim.fn.expand("$HOME")
 PID = vim.fn.getpid()
-local utils = require("nvim-config.utils")
 local cmp_lsp = require("cmp_nvim_lsp")
 local lspconfig = require("lspconfig")
--- local lspsaga_codeaction = require("lspsaga.codeaction")
--- local root_pattern = lspconfig.util.root_pattern
+local utils = Config.common.utils
 
 local M = {}
 

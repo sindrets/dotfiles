@@ -1,4 +1,4 @@
-local utils = require'nvim-config.utils'
+local utils = Config.common.utils
 local api = vim.api
 local M = {}
 local scratch_counter = 1

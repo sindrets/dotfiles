@@ -18,7 +18,7 @@ end
 
 lua_add_lib("$VIMRUNTIME")
 lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/plenary.nvim")
--- lua_add_lib("~/.config/nvim")
+lua_add_lib("~/.config/nvim")
 
 local config = vim.tbl_extend("force", LspGetDefaultConfig(), {
   cmd = {

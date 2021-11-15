@@ -1,10 +1,10 @@
-local Color = require("nvim-config.color").Color
-local utils = require("nvim-config.utils")
-local hl = require("nvim-config.hl")
+local Color = Config.common.color.Color
+local utils = Config.common.utils
+local hl = Config.common.hl
 local api = vim.api
 local hi, hi_link = hl.hi, hl.hi_link
 
-local colorscheme = "doom-one"
+local colorscheme = "palenight"
 vim.opt.bg = "dark"
 
 vim.g.ayucolor = "dark"
@@ -44,11 +44,11 @@ require("nvim-config.plugins.material")()
 
 do
   hi("NonText", { gui = "nocombine" })
-  hi_link("LspReferenceText", "Visual")
-  hi_link("LspReferenceRead", "Visual")
-  hi_link("LspReferenceWrite", "Visual")
-  hi_link("illuminateWord", "LspReferenceText")
-  hi_link("illuminateCurWord", "illuminateWord")
+  hi_link("LspReferenceText", "Visual", { default = true })
+  hi_link("LspReferenceRead", "Visual", { default = true })
+  hi_link("LspReferenceWrite", "Visual", { default = true })
+  hi_link("illuminateWord", "LspReferenceText", { default = true })
+  hi_link("illuminateCurWord", "illuminateWord", { default = true })
 
   api.nvim_exec([[
     augroup colorscheme_config
@@ -222,6 +222,8 @@ function M.apply_tweaks()
     end
 
   elseif colorscheme == "palenight" then
+    local bg_normal = Color.from_hl("Normal", "bg")
+    hi("Visual", { bg = bg_normal:clone():mod_value(0.18):mod_saturation(0.2):to_css() })
     hi("CursorLine", { bg = "#212433", })
     hi("StatusLine", { bg = "#212433", })
     hi("StatusLineNC", { bg = "#212433", })
@@ -239,9 +241,9 @@ function M.apply_tweaks()
     hi("DiffText", { bg = "#3f4a87", fg = "NONE", })
     hi("diffChanged", { fg = "#82b1ff", })
     hi("GitSignsChange", { fg = "#82b1ff", })
-    hi_link("LspReferenceText", "ColorColumn")
-    hi_link("LspReferenceRead", "ColorColumn")
-    hi_link("LspReferenceWrite", "ColorColumn")
+    hi("LspReferenceText", { bg = bg_normal:clone():mod_value(0.12):to_css() })
+    hi("LspReferenceRead", { bg = bg_normal:clone():mod_value(0.12):to_css() })
+    hi("LspReferenceWrite", { bg = bg_normal:clone():mod_value(0.12):to_css() })
     hi("NvimTreeRootFolder", { fg = "#C3E88D", gui = "bold", })
     hi("NvimTreeFolderIcon", { fg = "#F78C6C", })
     hi("NvimTreeNormal", { bg = "#222533", })
