@@ -1,6 +1,7 @@
 return function()
   local cmp = require('cmp')
   local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+  local cmp_buffer = require("cmp_buffer")
 
   local lsp_kinds = {
     Method = "  ",
@@ -71,8 +72,22 @@ return function()
       { name = 'vsnip' },
       { name = 'spell' },
       { name = 'path' },
-      { name = 'buffer' },
-    }
+      {
+        name = 'buffer',
+        get_bufnrs = function()
+          local buf_map = {}
+          for _, winid in ipairs(vim.api.nvim_list_wins()) do
+            buf_map[vim.api.nvim_win_get_buf(winid)] = true
+          end
+          return vim.tbl_keys(buf_map)
+        end
+      },
+    },
+    sorting = {
+      comparators = {
+        function(...) return cmp_buffer:compare_locality(...) end,
+      },
+    },
   })
 
   cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())

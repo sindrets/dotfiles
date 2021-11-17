@@ -1,5 +1,12 @@
 return function ()
-  require'bufferline'.setup{
+  local symbol_map = {
+    error = "",
+    warning = "",
+    info = "",
+    hint = "",
+  }
+
+  require('bufferline').setup{
     options = {
       view = "default",
       numbers = "none",
@@ -12,20 +19,11 @@ return function ()
       max_prefix_length = 15, -- prefix used when a buffer is deduplicated
       tab_size = 18,
       diagnostics = "nvim_lsp",
-      diagnostics_indicator = function(count, level, diagnostics_dict)
+      ---@diagnostic disable-next-line: unused-local
+      diagnostics_indicator = function(total_count, level, diagnostics_dict)
         local s = ""
-        for e, n in pairs(diagnostics_dict) do
-          local sym = ""
-          if e == "error" then
-            sym = "  "
-          elseif e == "warning" then
-            sym = "  "
-          elseif e == "info" then
-            sym = "  "
-          elseif e == "other" then
-            sym = "  "
-          end
-          s = s .. sym .. n
+        for kind, count in pairs(diagnostics_dict) do
+          s = string.format("%s %s %d", s, symbol_map[kind], count)
         end
         return s
       end,

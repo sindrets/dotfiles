@@ -5,23 +5,41 @@ local M = {}
 
 ---@alias vector any[]
 
-function M._echo_multiline(msg, hl)
-  local chunks = vim.tbl_map(function(line)
-    return { line, hl }
-  end, vim.split(msg, "\n"))
-  vim.api.nvim_echo(chunks, true, {})
+---Echo string with multiple lines.
+---@param msg string
+---@param hl? string Highlight group name.
+---@param schedule? boolean Schedule the echo call.
+function M.echo_multiln(msg, hl, schedule)
+  if schedule then
+    vim.schedule(function()
+      M.echo_multiln(msg, hl, false)
+    end)
+    return
+  end
+
+  vim.cmd("echohl " .. (hl or "None"))
+  for _, line in ipairs(vim.split(msg, "\n")) do
+    vim.cmd(string.format('echom "%s"', vim.fn.escape(line, [["\]])))
+  end
+  vim.cmd("echohl None")
 end
 
-function M.info(msg)
-  M._echo_multiline(msg, "Directory")
+---@param msg string
+---@param schedule? boolean Schedule the echo call.
+function M.info(msg, schedule)
+  M.echo_multiln(msg, "Directory", schedule)
 end
 
-function M.warn(msg)
-  M._echo_multiline(msg, "WarningMsg")
+---@param msg string
+---@param schedule? boolean Schedule the echo call.
+function M.warn(msg, schedule)
+  M.echo_multiln(msg, "WarningMsg", schedule)
 end
 
-function M.err(msg)
-  M._echo_multiline(msg, "ErrorMsg")
+---@param msg string
+---@param schedule? boolean Schedule the echo call.
+function M.err(msg, schedule)
+  M.echo_multiln(msg, "ErrorMsg", schedule)
 end
 
 ---Replace termcodes.
