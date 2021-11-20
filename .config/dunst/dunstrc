@@ -29,7 +29,8 @@
     # the top and down respectively.
     # The width can be negative.  In this case the actual width is the
     # screen width minus the width defined in within the geometry option.
-    geometry = "450x5-30+20"
+    # geometry = "450x5-30+20"
+    width = 450
 
     # Show how many messages are currently hidden (because of geometry).
     indicate_hidden = yes
@@ -47,6 +48,28 @@
     # than the font height and padding combined, it will be raised
     # to the font height and padding.
     notification_height = 0
+
+    # Maximum number of notification (0 means no limit)
+    notification_limit = 5
+
+    ### Progress bar ###
+
+    # Turn on the progess bar. It appears when a progress hint is passed with
+    # for example dunstify -h int:value:12
+    progress_bar = true
+
+    # Set the progress bar height. This includes the frame, so make sure
+    # it's at least twice as big as the frame width.
+    progress_bar_height = 10
+
+    # Set the frame width of the progress bar
+    progress_bar_frame_width = 1
+
+    # Set the minimum width for the progress bar
+    progress_bar_min_width = 150
+
+    # Set the maximum width for the progress bar
+    progress_bar_max_width = 300
 
     # Draw a line of "separator_height" pixel height between two
     # notifications.
@@ -184,7 +207,7 @@
     dmenu = /usr/bin/rofi -dmenu -p dunst
 
     # Browser for opening urls in context menu.
-    browser = /usr/bin/google-chrome-stable
+    browser = /usr/bin/firefox-beta
 
     # Always run rule-defined scripts, even if the notification is suppressed
     always_run_script = true

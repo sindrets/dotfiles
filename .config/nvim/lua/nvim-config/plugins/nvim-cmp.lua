@@ -83,11 +83,11 @@ return function()
         end
       },
     },
-    sorting = {
-      comparators = {
-        function(...) return cmp_buffer:compare_locality(...) end,
-      },
-    },
+    -- sorting = {
+    --   comparators = {
+    --     function(...) return cmp_buffer:compare_locality(...) end,
+    --   },
+    -- },
   })
 
   cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())

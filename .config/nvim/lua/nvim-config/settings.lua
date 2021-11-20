@@ -32,8 +32,8 @@ opt.updatetime = 4096 -- change cursorhold time with 'vim.g.cursorhold_updatetim
 opt.termguicolors = true
 opt.backspace = list { "indent", "eol", "start" }
 opt.inccommand = "split"
-opt.foldmethod = "expr"
-opt.foldexpr = "nvim_treesitter#foldexpr()"
+-- opt.foldmethod = "expr"
+-- opt.foldexpr = "nvim_treesitter#foldexpr()"
 opt.foldlevelstart = 99
 opt.foldlevel = 99 -- 'foldlevelstart' isn't working correctly?
 opt.scrolloff = 3
@@ -119,3 +119,10 @@ if vim.fn.filereadable(init_extra_path) == 1 then
 end
 
 vim.g.mapleader = " "
+
+if vim.g.neovide then
+  vim.g.neovide_cursor_trail_size = 0
+  vim.g.neovide_cursor_trail_length = 0
+  vim.g.neovide_floating_blur = false
+  vim.g.neovide_floating_opacity = 1.0
+end

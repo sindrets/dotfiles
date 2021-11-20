@@ -8,12 +8,12 @@ return require'packer'.startup {
   ---@diagnostic disable-next-line: unused-local
   function (use, use_rocks)
 
-    vim.g.did_load_filetypes = 1
+    -- vim.g.did_load_filetypes = 1
     vim.g.netrw_liststyle = 3
     vim.g.netrw_bufsettings = "noma nomod nonu nowrap ro nornu"
 
-    vim.cmd([[runtime! ftdetect/*.vim]])
-    vim.cmd([[runtime! ftdetect/*.lua]])
+    -- vim.cmd([[runtime! ftdetect/*.vim]])
+    -- vim.cmd([[runtime! ftdetect/*.lua]])
 
     use 'wbthomason/packer.nvim'
 
@@ -31,7 +31,7 @@ return require'packer'.startup {
         vim.g.cursorhold_updatetime = 250
       end
     }
-    use { 'nathom/filetype.nvim' }
+    -- use { 'nathom/filetype.nvim' }
     use { 'Darazaki/indent-o-matic' }
     use { 'nvim-lua/popup.nvim' }
     use { 'nvim-lua/plenary.nvim' }
@@ -85,6 +85,19 @@ return require'packer'.startup {
       config = conf("nvim-tree"),
       requires = "kyazdani42/nvim-web-devicons"
     }
+    use {
+      'https://gitlab.com/yorickpeterse/nvim-pqf.git',
+      config = function()
+        require("pqf").setup({
+          signs = {
+            error = "",
+            warning = "",
+            info = "",
+            hint = "",
+          }
+        })
+      end,
+    }
     use { 'windwp/nvim-autopairs', config = conf("nvim-autopairs") }
     use { 'norcalli/nvim-colorizer.lua', config = conf("nvim-colorizer") }
     use { 'hrsh7th/vim-vsnip' }
@@ -100,7 +113,11 @@ return require'packer'.startup {
     use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
     use { 'nvim-telescope/telescope-media-files.nvim' }
     use { 'akinsho/nvim-bufferline.lua', config = conf("nvim-bufferline") }
-    use { 'karb94/neoscroll.nvim', config = conf("neoscroll") }
+    use {
+      'karb94/neoscroll.nvim',
+      config = conf("neoscroll"),
+      cond = vim.g.neovide or vim.g.nvui
+    }
     use { 'windwp/nvim-spectre', config = conf("spectre") }
     use { 'mileszs/ack.vim' }
     use { 'mattn/emmet-vim', setup = function ()
@@ -154,25 +171,25 @@ return require'packer'.startup {
       config = conf("nvim-ts-rainbow")
     }
     use { 'tpope/vim-fugitive' }
-    use {
-      'rhysd/conflict-marker.vim',
-      setup = function ()
-        vim.g.conflict_marker_begin = '^<<<<<<< .*$'
-        vim.g.conflict_marker_common_ancestors = '^||||||| .*$'
-        vim.g.conflict_marker_separator = '^=======$'
-        vim.g.conflict_marker_end   = '^>>>>>>> .*$'
-        vim.g.conflict_marker_highlight_group = ''
-        vim.api.nvim_exec([[
-          hi! link ConflictMarkerBegin DiffAdd
-          hi! link ConflictMarkerOurs DiffAdd
-          hi! link ConflictMarkerCommonAncestors DiffText
-          hi! link ConflictMarkerCommonAncestorsHunk DiffText
-          hi! link ConflictMarkerSeparator DiffText
-          hi! link ConflictMarkerTheirs DiffChange
-          hi! link ConflictMarkerEnd DiffText
-        ]], false)
-      end
-    }
+    -- use {
+    --   'rhysd/conflict-marker.vim',
+    --   setup = function ()
+    --     vim.g.conflict_marker_begin = '^<<<<<<< .*$'
+    --     vim.g.conflict_marker_common_ancestors = '^||||||| .*$'
+    --     vim.g.conflict_marker_separator = '^=======$'
+    --     vim.g.conflict_marker_end   = '^>>>>>>> .*$'
+    --     vim.g.conflict_marker_highlight_group = ''
+    --     vim.api.nvim_exec([[
+    --       hi! link ConflictMarkerBegin DiffAdd
+    --       hi! link ConflictMarkerOurs DiffAdd
+    --       hi! link ConflictMarkerCommonAncestors DiffText
+    --       hi! link ConflictMarkerCommonAncestorsHunk DiffText
+    --       hi! link ConflictMarkerSeparator DiffText
+    --       hi! link ConflictMarkerTheirs DiffChange
+    --       hi! link ConflictMarkerEnd DiffText
+    --     ]], false)
+    --   end
+    -- }
     use { 'glepnir/dashboard-nvim', setup = conf("dashboard") }
     use { 'ryanoasis/vim-devicons' }
     use { 'kevinhwang91/rnvimr' }
@@ -189,7 +206,6 @@ return require'packer'.startup {
       end
     }
     use { 'honza/vim-snippets' }
-    use { 'sunaku/vim-dasht' }
 
     -- THEMES
     use { 'rktjmp/lush.nvim' }

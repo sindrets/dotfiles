@@ -2,7 +2,7 @@ local Color = Config.common.color.Color
 local utils = Config.common.utils
 local hl = Config.common.hl
 local api = vim.api
-local hi, hi_link = hl.hi, hl.hi_link
+local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local colorscheme = "palenight"
 vim.opt.bg = "dark"
@@ -116,6 +116,8 @@ function M.apply_tweaks()
 
   colorscheme = vim.g.colors_name
   local bg = vim.o.bg
+
+  hi_clear("Cursor")
 
   if colorscheme == "codedark" then
     hi("NonText", { bg = "NONE", })
@@ -233,6 +235,7 @@ function M.apply_tweaks()
     hi("TabLineSel", { fg = "#82b1ff", })
     hi("IndentBlanklineContextChar", { fg = "#82b1ff", })
     hi("EndOfBuffer", { fg = "#292D3E", })
+    hi_link("QuickFixLine", "DiffText")
     hi_link("NvimTreeIndentMarker", "LineNr")
     hi_link("TelescopeBorder", "Directory")
     hi("DiffAdd", { bg = "#344a4d", fg = "NONE", })

@@ -263,6 +263,7 @@ command! -bar Messages lua UpdateMessagesWin()
 command! -bar Scratch lua require'nvim-config.lib'.new_scratch_buf()
 command! -bar -nargs=1 -complete=help HelpHere lua require'nvim-config.lib'.cmd_help_here([[<args>]])
 command! -bar -nargs=* -complete=customlist,man#complete ManHere lua require'nvim-config.lib'.cmd_man_here(<f-args>)
+command! -bar DiffviewLog exe 'edit ' . stdpath("cache") . '/diffview.log'
 
 " ABBREVIATIONS
 cnoreabbrev msg Messages
