@@ -28,6 +28,7 @@ return function ()
       DiffviewOpen = {},
       DiffviewFileHistory = {},
     },
+    hooks = {},
     key_bindings = {
       disable_defaults = false,
       view = {

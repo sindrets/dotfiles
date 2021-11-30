@@ -7,8 +7,8 @@ xnoremap <silent> <expr> j v:count == 0 ? 'gj' : 'j'
 xnoremap <silent> <expr> k v:count == 0 ? 'gk' : 'k'
 xnoremap <silent> <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
 xnoremap <silent> <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
-inoremap <silent> <expr> <DOWN> pumvisible() ? '<DOWN>' : '<C-\><C-o>gj'
-inoremap <silent> <expr> <UP> pumvisible() ? '<UP>' : '<C-\><C-o>gk'
+inoremap <silent> <expr> <DOWN> pumvisible() ? '<DOWN>' : '<Cmd>norm! gj<CR>'
+inoremap <silent> <expr> <UP> pumvisible() ? '<UP>' : '<Cmd>norm! gk<CR>'
 
 " Navigate in insert mode
 inoremap <C-h> <Left>
@@ -192,6 +192,7 @@ nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
 nnoremap <leader>gl <Cmd>Git log<CR>
 nnoremap <leader>gcs <Cmd>Git commit<CR>
 nnoremap <leader>gcc <Cmd>Git commit -a<CR>
+nnoremap <leader>gca <Cmd>Git commit -a --amend<CR>
 nnoremap <leader>gb <Cmd>Git blame <bar> wincmd p<CR>
 nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 
@@ -263,7 +264,6 @@ command! -bar Messages lua UpdateMessagesWin()
 command! -bar Scratch lua require'nvim-config.lib'.new_scratch_buf()
 command! -bar -nargs=1 -complete=help HelpHere lua require'nvim-config.lib'.cmd_help_here([[<args>]])
 command! -bar -nargs=* -complete=customlist,man#complete ManHere lua require'nvim-config.lib'.cmd_man_here(<f-args>)
-command! -bar DiffviewLog exe 'edit ' . stdpath("cache") . '/diffview.log'
 
 " ABBREVIATIONS
 cnoreabbrev msg Messages

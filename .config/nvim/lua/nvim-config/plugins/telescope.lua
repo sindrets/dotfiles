@@ -1,5 +1,6 @@
 return function ()
   local actions = require('telescope.actions')
+  local action_state = require('telescope.actions.state')
 
   require('telescope').setup{
     defaults = {
@@ -53,6 +54,23 @@ return function ()
           ["<c-q>"] = actions.send_to_qflist + actions.open_qflist,
         },
         n = {},
+      },
+    },
+    pickers = {
+      git_commits = {
+        mappings = {
+          i = {
+            ["<C-M-d>"] = function()
+              -- Open in diffview
+              local selected_entry = action_state.get_selected_entry()
+              local value = selected_entry.value
+              -- close Telescope window properly prior to switching windows
+              vim.api.nvim_win_close(0, true)
+              vim.cmd("stopinsert")
+              vim.cmd(("DiffviewOpen %s^!"):format(value))
+            end
+          }
+        }
       },
     },
     extensions = {

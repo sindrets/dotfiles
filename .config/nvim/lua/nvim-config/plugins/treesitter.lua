@@ -5,5 +5,14 @@ return function ()
         enable = true,               -- false will disable the whole extension
         disable = { "vim", "c" },                -- list of language that will be disabled
       },
+      incremental_selection = {
+        enable = true,
+        keymaps = {
+          init_selection = '<CR>',
+          scope_incremental = '<CR>',
+          node_incremental = '<TAB>',
+          node_decremental = '<S-TAB>',
+        },
+      },
     })
 end
