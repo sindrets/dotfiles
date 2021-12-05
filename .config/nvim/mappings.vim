@@ -166,6 +166,9 @@ nnoremap <expr> * v:lua.Config.lib.comfy_star()
 " Search for selected text
 vnoremap * "vy/\V<C-R>=escape(@",'/\')<CR><CR>
 
+" Start search with very-magic mode
+nnoremap / /\v
+
 " Repeat prev macro
 nmap , @@
 
@@ -254,19 +257,19 @@ command! -bar Ssync syntax sync minlines=3000
 command! -bar DiffSaved lua require'nvim-config.lib'.diff_saved()
 command! -bar -nargs=1 SplitOn lua require'nvim-config.lib'.split_on_pattern(<args>)
 command! -bar ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_visual_selection(), false)
-command! -bar -bang Bd lua require'nvim-config.lib'.remove_buffer("<bang>" == "!")
+command! -bar -bang BRemove lua require'nvim-config.lib'.remove_buffer("<bang>" == "!")
 command! -nargs=+ Grep lua require'nvim-config.lib'.comfy_grep(<f-args>)
 command! -bar Spectre lua require'spectre'.open()
 command! -bar SpectreFile lua require'spectre'.open_file_search()
-command! -bar HiShow exe 'redir=>a | silent hi | redir END | enew | silent put=a '
-            \ . '| exe "norm! ggdj" | setl buftype=nofile | f Highlights | ColorizerAttachToBuffer'
+command! -bar HiShow exe 'redir=>a | silent hi | redir END | exe "e " . tempname() . "/Highlights" '
+            \ . '| call setline(1, split(g:a, "\n")) | setl bt=nofile | ColorizerAttachToBuffer'
 command! -bar Messages lua UpdateMessagesWin()
 command! -bar Scratch lua require'nvim-config.lib'.new_scratch_buf()
 command! -bar -nargs=1 -complete=help HelpHere lua require'nvim-config.lib'.cmd_help_here([[<args>]])
 command! -bar -nargs=* -complete=customlist,man#complete ManHere lua require'nvim-config.lib'.cmd_man_here(<f-args>)
 
 " ABBREVIATIONS
-cnoreabbrev msg Messages
+cnoreabbrev brm BRemove
 cnoreabbrev sch Scratch
 cnoreabbrev hh HelpHere
 cnoreabbrev mh ManHere

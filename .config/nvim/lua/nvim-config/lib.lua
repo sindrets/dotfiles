@@ -170,7 +170,12 @@ function M.remove_buffer(force, bufid)
   if alt_bufid ~= -1 then
     api.nvim_set_current_buf(alt_bufid)
   else
-    vim.cmd("silent! bp")
+    local listed = utils.list_listed_bufs()
+    if #listed > (vim.bo[0].buflisted and 1 or 0) then
+      vim.cmd("silent! bp")
+    else
+      vim.cmd("enew")
+    end
   end
 
   api.nvim_buf_delete(bufid, { force = true })

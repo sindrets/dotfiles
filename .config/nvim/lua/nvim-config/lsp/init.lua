@@ -71,7 +71,7 @@ lspconfig.pyright.setup(LspGetDefaultConfig())
 require'nvim-config.lsp.lua'
 
 -- Teal
-require'nvim-config.lsp.teal'
+-- require'nvim-config.lsp.teal'
 
 -- C#
 require'lspconfig'.omnisharp.setup({

@@ -9,8 +9,22 @@ return require'packer'.startup {
   function (use, use_rocks)
 
     -- vim.g.did_load_filetypes = 1
-    vim.g.netrw_liststyle = 3
+    vim.g.netrw_liststyle = 1
+    vim.g.netrw_sort_by = "exten"
     vim.g.netrw_bufsettings = "noma nomod nonu nowrap ro nornu"
+
+    vim.g.markdown_fenced_languages = {
+      "html",
+      "python",
+      "sh",
+      "bash=sh",
+      "dosini",
+      "ini=dosini",
+      "lua",
+      "c++=cpp",
+      "javascript",
+      "java",
+    }
 
     -- vim.cmd([[runtime! ftdetect/*.vim]])
     -- vim.cmd([[runtime! ftdetect/*.lua]])
@@ -18,7 +32,6 @@ return require'packer'.startup {
     use 'wbthomason/packer.nvim'
 
     -- SYNTAX
-    use { 'plasticboy/vim-markdown' }
     use { 'MTDL9/vim-log-highlighting' }
     use { 'kevinoid/vim-jsonc' }
     use { 'teal-language/vim-teal' }
@@ -79,12 +92,13 @@ return require'packer'.startup {
       after = 'nvim-autopairs',
       config = conf("nvim-cmp"),
     }
-    use {
-      'kyazdani42/nvim-tree.lua',
-      commit = "bfeaf4c8ef5ff24e",
-      config = conf("nvim-tree"),
-      requires = "kyazdani42/nvim-web-devicons"
-    }
+    -- use {
+    --   'kyazdani42/nvim-tree.lua',
+    --   commit = "bfeaf4c8ef5ff24e",
+    --   config = conf("nvim-tree"),
+    --   requires = "kyazdani42/nvim-web-devicons"
+    -- }
+    use { 'tpope/vim-vinegar' }
     use {
       'https://gitlab.com/yorickpeterse/nvim-pqf.git',
       config = function()

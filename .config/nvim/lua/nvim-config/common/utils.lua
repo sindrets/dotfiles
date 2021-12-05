@@ -196,6 +196,18 @@ function M.vec_push(t, ...)
   return t
 end
 
+function M.list_loaded_bufs()
+  return vim.tbl_filter(function(id)
+    return api.nvim_buf_is_loaded(id)
+  end, api.nvim_list_bufs())
+end
+
+function M.list_listed_bufs()
+  return vim.tbl_filter(function(id)
+    return vim.bo[id].buflisted
+  end, api.nvim_list_bufs())
+end
+
 function M.find_buf_with_pattern(pattern)
   for _, id in ipairs(api.nvim_list_bufs()) do
     local m = vim.fn.bufname(id):match(pattern)
@@ -225,7 +237,7 @@ end
 
 function M.wipe_all_buffers()
   for _, id in ipairs(api.nvim_list_bufs()) do
-    pcall(api.nvim_buf_delete, id)
+    pcall(api.nvim_buf_delete, id, {})
   end
 end
 
