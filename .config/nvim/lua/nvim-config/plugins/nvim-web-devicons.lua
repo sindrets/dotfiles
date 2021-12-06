@@ -2,7 +2,7 @@
 -- ~/.local/share/nvim/site/pack/packer/start/nvim-web-devicons/lua/nvim-web-devicons.lua
 
 return function ()
-  require("nvim-web-devicons").setup {
+  require("nvim-web-devicons").setup({
     -- your personnal icons can go here (to override)
     -- DevIcon will be appended to `name`
     override = {
@@ -36,7 +36,12 @@ return function ()
         color = "#264B8B",
         name = "Lisp"
       },
+      lir_folder_icon = {
+        icon = "",
+        color = "#7ebae4",
+        name = "LirFolderNode",
+      },
     },
-    default = false
-  }
+    default = true
+  })
 end

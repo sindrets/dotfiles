@@ -110,6 +110,10 @@ if vim.fn.executable("ag") == 1 then
   opt.grepformat = "%f:%l:%c:%m"
 end
 
+if vim.fn.executable("nvr") == 1 then
+  vim.loop.os_setenv("GIT_EDITOR", "nvr -cc split +'setl bh=delete' --remote-wait")
+end
+
 -- vim.cmd("syntax on")
 vim.cmd("filetype plugin indent on")
 

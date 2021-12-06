@@ -178,7 +178,9 @@ function M.remove_buffer(force, bufid)
     end
   end
 
-  api.nvim_buf_delete(bufid, { force = true })
+  if api.nvim_buf_is_valid(bufid) then
+    api.nvim_buf_delete(bufid, { force = true })
+  end
 end
 
 function M.split_on_pattern(pattern)

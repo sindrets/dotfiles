@@ -107,6 +107,8 @@ alias nv="nvim"
 alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' -c 'args %' ~/.config/nvim/init.lua \
     ~/.config/nvim/lua/nvim-config/plugins/init.lua"
 alias nv-conf="nvim-conf"
+alias nvim-pager="nvim -Rnc 'set bt=nofile nolist nonu nornu scl=yes:1'"
+alias nv-pager="nvim-pager"
 alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"
 alias zsh-conf="$EDITOR ~/.zshrc"
@@ -125,7 +127,6 @@ alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/
     | fzf --height 10` && [ ! -z "$code_dir" ] && code --folder-uri $code_dir'
 alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compiling for {}...\" \
     && tsc -p {}' \\;"
-alias nvim-pager="nvim -Rnc 'set bt=nofile nolist'"
 
 function chpwd() {
     emulate -L zsh

@@ -72,7 +72,7 @@ function OpenMessagesWin()
   vim.cmd("wincmd J")
   vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
   vim.api.nvim_buf_set_var(0, "bufid", "messages_window")
-  vim.cmd("setl nolist winfixheight buftype=nofile bh=delete ft=log scl=no | f Messages")
+  vim.cmd("setl nolist winfixheight bt=nofile bh=delete ft=log scl=no | f Messages")
   vim.cmd("res " .. math.min(math.max(#lines, 3), 14))
   vim.cmd("norm! G")
 end

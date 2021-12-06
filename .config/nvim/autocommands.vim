@@ -2,9 +2,8 @@ augroup NvimConfig
     au!
 
     " nuke netrw brain damage
-    " au VimEnter * silent! au! FileExplorer *
+    au VimEnter * silent! au! FileExplorer *
     " au BufEnter * if isdirectory(expand('%')) | bd | endif
-    au BufEnter * if &ft ==# "netrw" | setl buflisted | endif
 
     au VimEnter * lua require'nvim-config.au'.source_project_config();
                 \ require'nvim-config.au'.source_project_session()

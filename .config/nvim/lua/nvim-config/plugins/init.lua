@@ -9,6 +9,7 @@ return require'packer'.startup {
   function (use, use_rocks)
 
     -- vim.g.did_load_filetypes = 1
+    -- vim.g.loaded_netrwPlugin = 1
     vim.g.netrw_liststyle = 1
     vim.g.netrw_sort_by = "exten"
     vim.g.netrw_bufsettings = "noma nomod nonu nowrap ro nornu"
@@ -24,6 +25,7 @@ return require'packer'.startup {
       "c++=cpp",
       "javascript",
       "java",
+      "vim",
     }
 
     -- vim.cmd([[runtime! ftdetect/*.vim]])
@@ -92,13 +94,12 @@ return require'packer'.startup {
       after = 'nvim-autopairs',
       config = conf("nvim-cmp"),
     }
-    -- use {
-    --   'kyazdani42/nvim-tree.lua',
-    --   commit = "bfeaf4c8ef5ff24e",
-    --   config = conf("nvim-tree"),
-    --   requires = "kyazdani42/nvim-web-devicons"
-    -- }
-    use { 'tpope/vim-vinegar' }
+    use {
+      'tamago324/lir.nvim',
+      requires = { 'tamago324/lir-git-status.nvim' },
+      config = conf("lir"),
+      after = "nvim-web-devicons",
+    }
     use {
       'https://gitlab.com/yorickpeterse/nvim-pqf.git',
       config = function()
@@ -123,16 +124,16 @@ return require'packer'.startup {
         vim.g.NERDDefaultAlign = "left"
       end
     }
-    use { 'nvim-telescope/telescope.nvim', config = conf("telescope") }
+    use { 'nvim-telescope/telescope.nvim', config = conf("telescope"), after = "nvim-web-devicons" }
     use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
     use { 'nvim-telescope/telescope-media-files.nvim' }
-    use { 'akinsho/nvim-bufferline.lua', config = conf("nvim-bufferline") }
+    use { 'akinsho/nvim-bufferline.lua', config = conf("nvim-bufferline"), after = "nvim-web-devicons" }
     use {
       'karb94/neoscroll.nvim',
       config = conf("neoscroll"),
       cond = vim.g.neovide or vim.g.nvui
     }
-    use { 'windwp/nvim-spectre', config = conf("spectre") }
+    use { 'windwp/nvim-spectre', config = conf("spectre"), after = "nvim-web-devicons" }
     use { 'mileszs/ack.vim' }
     use { 'mattn/emmet-vim', setup = function ()
       vim.g.user_emmet_leader_key = "<C-Z>"
@@ -152,6 +153,7 @@ return require'packer'.startup {
         vim.g.Illuminate_delay = 250
         vim.g.Illuminate_highlightUnderCursor = 1
         vim.g.Illuminate_ftblacklist = {
+          "qf",
           "dashboard",
           "packer",
           "NeogitStatus",
@@ -160,7 +162,8 @@ return require'packer'.startup {
           "Trouble",
           "DiffviewFiles",
           "DiffviewFileHistory",
-          "Outline"
+          "Outline",
+          "lir",
         }
       end
     }
@@ -169,8 +172,8 @@ return require'packer'.startup {
     use { 'NTBBloodbath/galaxyline.nvim', config = conf("galaxyline") }
     use { 'lewis6991/gitsigns.nvim', config = conf("gitsigns") }
     use { 'lukas-reineke/indent-blankline.nvim', setup = conf("indent-blankline") }
-    use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble") }
-    use { 'sindrets/diffview.nvim', config = conf("diffview") }
+    use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble"), after = "nvim-web-devicons" }
+    use { 'sindrets/diffview.nvim', config = conf("diffview"), after = "nvim-web-devicons" }
     -- use { 'sindrets/diffview-api-test' }
     use { 'sindrets/winshift.nvim', config = conf("winshift") }
     use {
@@ -206,7 +209,6 @@ return require'packer'.startup {
     -- }
     use { 'glepnir/dashboard-nvim', setup = conf("dashboard") }
     use { 'ryanoasis/vim-devicons' }
-    use { 'kevinhwang91/rnvimr' }
     use {
       'iamcco/markdown-preview.nvim',
       run = 'cd app && yarn install',
@@ -254,5 +256,6 @@ return require'packer'.startup {
     use { 'olimorris/onedarkpro.nvim', branch = 'main' }
     use { 'RRethy/nvim-base16' }
     use { 'NTBBloodbath/doom-one.nvim' }
+    use { 'catppuccin/nvim', as = "catppuccin" }
   end
 }

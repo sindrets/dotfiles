@@ -4,7 +4,7 @@ local hl = Config.common.hl
 local api = vim.api
 local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
-local colorscheme = "palenight"
+local colorscheme = "catppuccin"
 vim.opt.bg = "dark"
 
 vim.g.ayucolor = "dark"
@@ -48,6 +48,7 @@ do
   hi_link("LspReferenceRead", "Visual", { default = true })
   hi_link("LspReferenceWrite", "Visual", { default = true })
   hi_link("illuminateWord", "LspReferenceText", { default = true })
+  hi_link("illuminatedWord", "LspReferenceText", { default = true })
   hi_link("illuminateCurWord", "illuminateWord", { default = true })
 
   api.nvim_exec([[
@@ -291,6 +292,12 @@ function M.apply_tweaks()
       M.generate_diff_colors()
       vim.opt.pumblend = 0
     end
+
+  elseif colorscheme == "catppuccin" then
+    hi("diffAdded", { fg = "#B3E1A3" })
+    hi("diffChanged", { fg = "#A4B9EF" })
+    M.generate_diff_colors()
+
   end
 
   -- FloatBorder
