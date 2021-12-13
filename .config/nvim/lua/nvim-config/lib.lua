@@ -1,6 +1,9 @@
 local utils = Config.common.utils
+
 local api = vim.api
-local M = {}
+local M = { expr = {} }
+local expr = M.expr
+
 local scratch_counter = 1
 
 ---@class BufToggleEntry
@@ -102,14 +105,14 @@ function M.execute_macro_over_visual_range()
   vim.fn.execute(":'<,'>normal @" .. vim.fn.nr2char(vim.fn.getchar()))
 end
 
-function M.read_new(expr)
+function M.read_new(exprression)
   vim.cmd("enew | set ft=log")
-  vim.fn.execute("r! " .. expr)
+  vim.fn.execute("r! " .. exprression)
 end
 
+---@return string[]
 function M.get_visual_selection()
-  local pos
-  pos = vim.fn.getpos("'<")
+  local pos = vim.fn.getpos("'<")
   local line_start = pos[2]
   local column_start = pos[3]
 
@@ -117,16 +120,16 @@ function M.get_visual_selection()
   local line_end = pos[2]
   local column_end = pos[3]
 
-  local lines = vim.fn.getline(line_start, line_end)
+  local lines = api.nvim_buf_get_lines(0, line_start - 1, line_end, false)
   if #lines == 0 then
     return ""
   end
 
-  local selection = vim.api.nvim_get_option("selection")
+  local selection = vim.o.selection
   lines[#lines] = lines[#lines]:sub(1, column_end - (selection == "inclusive" and 0 or 1))
   lines[1] = lines[1]:sub(column_start, -1)
 
-  return vim.fn.join(lines, "\n")
+  return lines
 end
 
 function M.diff_saved()
@@ -193,7 +196,7 @@ function M.split_on_pattern(pattern)
 end
 
 function M.get_indent_level()
-  local lnum = vim.fn.line(".")
+  local lnum = api.nvim_win_get_cursor(0)[1]
   if lnum == 0 then return 0 end
 
   local indent = vim.fn.cindent(lnum)
@@ -201,28 +204,22 @@ function M.get_indent_level()
 end
 
 function M.full_indent()
-  local pos = vim.fn.getcurpos()
-  local lnum, col = pos[2], pos[3]
-  local cur_view = vim.fn.winsaveview()
-
-  vim.cmd("normal! $")
-  local last_col = vim.fn.getcurpos()[3]
-
-  vim.cmd("normal! 0")
-  local first_nonspace = vim.fn.searchpos("\\S", "nc", lnum)[2]
-
-  vim.fn.winrestview(cur_view)
+  local pos = api.nvim_win_get_cursor(0)
+  local col = pos[2]
+  local cline = api.nvim_get_current_line()
+  local last_col = #cline
+  local first_nonspace = cline:match("^%s*()%S")
 
   local tab_char = "	"
-  if first_nonspace > 0 or col < last_col then
+  if first_nonspace or col < last_col then
     api.nvim_feedkeys(tab_char, "n", false)
     return
   end
 
   local indent = M.get_indent_level()
-  local et = vim.bo[0].et
-  local sw = vim.bo[0].sw
-  local ts = vim.bo[0].ts
+  local et = vim.bo.et
+  local sw = vim.bo.sw
+  local ts = vim.bo.ts
 
   if et then
     if indent == 0 then
@@ -316,14 +313,18 @@ end
 ---@return string
 function M.regex_to_pattern(exp)
   local subs = {
-    { "%(%?:", "%%(" },
-    { "%*%?", "{-}" },
-    { "<", "\\<" },
-    { ">", "\\>" },
-    { "\\b", "%%(<|>)" },
-    { "=", "\\=" },
-    { "@", "\\@" },
-    { "~", "\\~" },
+    { "@", "\\@" },                                 -- Escape at sign
+    { "~", "\\~" },                                 -- Escape tilde
+    { "([^\\]?)%((%?<%=)([^)]-)%)", "%1(%3)@<=" },  -- Positive lookbehind
+    { "([^\\]?)%((%?<%!)([^)]-)%)", "%1(%3)@<!" },  -- Negative lookbehind
+    { "([^\\]?)%((%?%=)([^)]-)%)", "%1(%3)@=" },    -- Positive lookahead
+    { "([^\\]?)%((%?%!)([^)]-)%)", "%1(%3)@!" },    -- Negative lookahead
+    { "([^\\]?)%(%?:", "%1%%(" },                   -- Non-capturing group
+    { "%*%?", "{-}" },                              -- Lazy quantifier
+    { "([^?]?)<", "%1\\<" },                        -- Escape chevrons
+    { "([^?]?)>", "%1\\>" },
+    { "\\b", "%%(<|>)" },                           -- Word boundary
+    { "([^?<]?)=", "%1\\=" },                       -- Escape equal sign
   }
   for _, sub in ipairs(subs) do
     exp = exp:gsub(sub[1], sub[2])
@@ -336,7 +337,7 @@ end
 ---@param reverse boolean
 ---@param count integer
 ---@return string
-function M.comfy_star(reverse, count)
+function expr.comfy_star(reverse, count)
   count = count or vim.v.count
   vim.fn.setreg("/", "\\<" .. vim.fn.expand("<cword>") .. "\\>")
   local ret = "<Cmd>set hlsearch <Bar> exe 'norm! wN'"
@@ -357,7 +358,7 @@ end
 ---when available, otherwise performs a normal search for the current word.
 ---@param reverse boolean
 ---@return string
-function M.next_reference(reverse)
+function expr.next_reference(reverse)
   if type(reverse) ~= "boolean" then
     reverse = false
   end
@@ -409,6 +410,35 @@ function M.cmd_man_here(a, b)
   if not ok then
     M.remove_buffer(true)
     utils.err(err)
+  end
+end
+
+---Execute the currently selected text as either vimscript or lua (derived from
+---filetype, defaults to vimscript). If no selection range is provided, the last
+---selection is used instead.
+---@param range? integer[]
+function M.cmd_exec_selection(range)
+  local ft = vim.bo.ft == "lua" and "lua" or "vim"
+  local lines
+  if type(range) == "table" and range[1] ~= range[2] then
+    table.sort(range)
+    lines = api.nvim_buf_get_lines(0, range[1] - 1, range[2], false)
+  else
+    lines = M.get_visual_selection()
+  end
+
+  local ok, out
+  if ft == "vim" then
+    ok, out = pcall(api.nvim_exec, table.concat(lines, "\n"), true)
+    if ok and out then
+      print(out)
+    end
+  else
+    ok, out = pcall(utils.exec_lua, table.concat(lines, "\n"))
+  end
+
+  if not ok and out then
+    utils.err(out)
   end
 end
 

@@ -1,4 +1,4 @@
-local luv = vim.loop
+local uv = vim.loop
 local api = vim.api
 
 local M = {}
@@ -72,6 +72,15 @@ end
 ---@return string
 function M.t(s)
   return api.nvim_replace_termcodes(s, true, true, true)
+end
+
+function M.exec_lua(code, ...)
+  local chunk, err = loadstring(code)
+  if err then
+    error(err)
+  else
+    return chunk(...)
+  end
 end
 
 function M.printi(...)
@@ -374,12 +383,10 @@ function M.wipe_all_buffers()
 end
 
 function M.file_readable(path)
-  local fd = luv.fs_open(path, "r", 438)
-  if fd then
-    luv.fs_close(fd)
-    return true
+  local p = uv.fs_realpath(path)
+  if p then
+    return uv.fs_access(p, "R")
   end
-
   return false
 end
 

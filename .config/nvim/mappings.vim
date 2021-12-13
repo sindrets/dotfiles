@@ -7,8 +7,10 @@ xnoremap <silent> <expr> j v:count == 0 ? 'gj' : 'j'
 xnoremap <silent> <expr> k v:count == 0 ? 'gk' : 'k'
 xnoremap <silent> <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
 xnoremap <silent> <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
-inoremap <silent> <expr> <DOWN> pumvisible() ? '<DOWN>' : '<Cmd>norm! gj<CR>'
-inoremap <silent> <expr> <UP> pumvisible() ? '<UP>' : '<Cmd>norm! gk<CR>'
+inoremap <silent> <expr> <DOWN> pumvisible() 
+            \ ? '<DOWN>' : '<Cmd>set ve+=onemore <bar> exe "norm! gj" <bar> set ve-=onemore<CR>'
+inoremap <silent> <expr> <UP> pumvisible() 
+            \ ? '<UP>' : '<Cmd>set ve+=onemore <bar> exe "norm! gk" <bar> set ve-=onemore<CR>'
 
 " Navigate in insert mode
 inoremap <C-h> <Left>
@@ -34,6 +36,7 @@ xnoremap <expr> <End> v:count == 0 ? "g$" : "$"
 inoremap <Home> <Cmd>normal g^<CR>
 inoremap <End> <C-\><C-O>g$
 
+
 " Yank, delete, paste
 nnoremap <expr> y PlusYank()
 nnoremap <expr> yy v:register == '"' ? '"+yy' : 'yy'
@@ -53,7 +56,6 @@ nnoremap <leader>ev <Cmd>vsp <bar> LirExplore<CR>
 nnoremap <leader>ee <Cmd>call v:lua.Config.lir.toggle_float()<CR>
 nnoremap <leader>E <Cmd>call v:lua.Config.lir.toggle_float(getcwd())<CR>
 
-nnoremap <silent> <Leader>q <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
 inoremap <M-Space> <Esc>
 
 " Make session
@@ -116,6 +118,9 @@ tnoremap <C-M-l> <Cmd>vertical res +2<CR>
 tnoremap <C-M-j> <Cmd>res +1<CR>
 tnoremap <C-M-k> <Cmd>res -1<CR>
 
+nnoremap <Leader>q <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
+nnoremap <C-q> <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
+
 " Remap jump forward
 nnoremap <C-S> <C-I>
 
@@ -165,7 +170,7 @@ inoremap <C-Del> <C-\><C-o>dw
 
 " Turn off search highlight until next search
 nnoremap <Esc> <Cmd>noh<CR>
-nnoremap <expr> * v:lua.Config.lib.comfy_star()
+nnoremap <expr> * v:lua.Config.lib.expr.comfy_star()
 
 " Search for selected text
 vnoremap * "vy/\V<C-R>=escape(@",'/\')<CR><CR>
@@ -187,7 +192,7 @@ nnoremap <leader>p <Cmd>lua require'nvim-config.lib'.workspace_files({ all = tru
 nnoremap <C-M-P> <Cmd>Telescope git_status<CR>
 nnoremap <M-b> <Cmd>Telescope buffers<CR>
 nnoremap <M-f> <Cmd>Telescope live_grep<CR>
-nnoremap <M-t> <Cmd>Telescope lsp_workspace_symbols<CR>
+nnoremap <M-O> <Cmd>Telescope lsp_dynamic_workspace_symbols<CR>
 nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
 nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
 nnoremap z= <Cmd>Telescope spell_suggest theme=get_cursor<CR>
@@ -225,8 +230,8 @@ nnoremap ]l <Cmd>lnext<CR>
 nnoremap [L <Cmd>lfirst<CR>
 nnoremap ]L <Cmd>llast<CR>
 
-nnoremap <expr> [r v:lua.Config.lib.next_reference(v:true)
-nnoremap <expr> ]r v:lua.Config.lib.next_reference()
+nnoremap <expr> [r v:lua.Config.lib.expr.next_reference(v:true)
+nnoremap <expr> ]r v:lua.Config.lib.expr.next_reference()
 
 " Trigger completion
 inoremap <silent><expr> <C-Space> compe#complete()
@@ -256,24 +261,25 @@ inoremap <silent> <Tab> <Cmd>lua require'nvim-config.lib'.full_indent()<CR>
 nnoremap <F10> <Cmd>lua require'nvim-config.lib'.print_syn_group()<CR>
 
 " COMMANDS
-command! -nargs=+ Rnew lua require'nvim-config.lib'.read_new(<q-args>)
+command! -nargs=+ Rnew lua Config.lib.read_new(<q-args>)
 command! -bar Ssync syntax sync minlines=3000
-command! -bar DiffSaved lua require'nvim-config.lib'.diff_saved()
-command! -bar -nargs=1 SplitOn lua require'nvim-config.lib'.split_on_pattern(<args>)
-command! -bar ExecuteSelection lua vim.api.nvim_exec(require'nvim-config.lib'.get_visual_selection(), false)
-command! -bar -bang BRemove lua require'nvim-config.lib'.remove_buffer("<bang>" == "!")
-command! -nargs=+ Grep lua require'nvim-config.lib'.comfy_grep(<f-args>)
+command! -bar DiffSaved lua Config.lib.diff_saved()
+command! -bar -nargs=1 SplitOn lua Config.lib.split_on_pattern(<args>)
+command! -bar -range ExecuteSelection lua Config.lib.cmd_exec_selection({ <line1>, <line2> })
+command! -bar -bang BRemove lua Config.lib.remove_buffer("<bang>" == "!")
+command! -nargs=+ Grep lua Config.lib.comfy_grep(<f-args>)
 command! -bar Spectre lua require'spectre'.open()
 command! -bar SpectreFile lua require'spectre'.open_file_search()
 command! -bar HiShow exe 'redir=>a | silent hi | redir END | exe "e " . tempname() . "/Highlights" '
             \ . '| call setline(1, split(g:a, "\n")) | setl bt=nofile | ColorizerAttachToBuffer'
 command! -bar Messages lua UpdateMessagesWin()
-command! -bar Scratch lua require'nvim-config.lib'.new_scratch_buf()
-command! -bar -nargs=1 -complete=help HelpHere lua require'nvim-config.lib'.cmd_help_here([[<args>]])
-command! -bar -nargs=* -complete=customlist,man#complete ManHere lua require'nvim-config.lib'.cmd_man_here(<f-args>)
+command! -bar Scratch lua Config.lib.new_scratch_buf()
+command! -bar -nargs=1 -complete=help HelpHere lua Config.lib.cmd_help_here([[<args>]])
+command! -bar -nargs=* -complete=customlist,man#complete ManHere lua Config.lib.cmd_man_here(<f-args>)
 
 " ABBREVIATIONS
 cnoreabbrev brm BRemove
+cnoreabbrev brm! BRemove!
 cnoreabbrev sch Scratch
 cnoreabbrev hh HelpHere
 cnoreabbrev mh ManHere

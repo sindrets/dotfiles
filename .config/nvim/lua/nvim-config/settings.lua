@@ -38,6 +38,7 @@ opt.foldlevelstart = 99
 opt.foldlevel = 99 -- 'foldlevelstart' isn't working correctly?
 opt.scrolloff = 3
 opt.completeopt = list { "menuone", "noselect" }
+opt.virtualedit = list { "block" }
 opt.signcolumn = "yes:2"
 opt.colorcolumn = list { "100" }
 opt.sessionoptions = list {
@@ -111,7 +112,9 @@ if vim.fn.executable("ag") == 1 then
 end
 
 if vim.fn.executable("nvr") == 1 then
-  vim.loop.os_setenv("GIT_EDITOR", "nvr -cc split +'setl bh=delete' --remote-wait")
+  vim.env.GIT_EDITOR =  "nvr -cc split +'setl bh=delete' --remote-wait"
+  vim.env.EDITOR = "nvr -l --remote"
+  vim.env.VISUAL = "nvr -l --remote"
 end
 
 -- vim.cmd("syntax on")

@@ -20,7 +20,7 @@ augroup NvimConfig
 
     au BufWinEnter quickfix set nobuflisted | setl nowrap cc=
 
-    au TermEnter * setl nonu nornu signcolumn=no
+    au TermEnter * setl nonu nornu signcolumn=no | IlluminationDisable
 
     au TermLeave * if &buftype ==# "terminal" | setl nu rnu | endif
 

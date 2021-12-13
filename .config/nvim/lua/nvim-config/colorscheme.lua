@@ -42,23 +42,6 @@ end
 
 require("nvim-config.plugins.material")()
 
-do
-  hi("NonText", { gui = "nocombine" })
-  hi_link("LspReferenceText", "Visual", { default = true })
-  hi_link("LspReferenceRead", "Visual", { default = true })
-  hi_link("LspReferenceWrite", "Visual", { default = true })
-  hi_link("illuminateWord", "LspReferenceText", { default = true })
-  hi_link("illuminatedWord", "LspReferenceText", { default = true })
-  hi_link("illuminateCurWord", "illuminateWord", { default = true })
-
-  api.nvim_exec([[
-    augroup colorscheme_config
-      au!
-      au ColorScheme * call v:lua.Config.colorscheme.apply_tweaks()
-    augroup END
-  ]], false)
-end
-
 local M = {}
 
 function M.apply_terminal_defaults()
@@ -107,6 +90,13 @@ function M.generate_diff_colors()
   hi("DiffDelete", { bg = bg_del:to_css(), fg = "NONE", gui = "NONE" })
   hi("DiffChange", { bg = bg_mod:to_css(), fg = "NONE", gui = "NONE" })
   hi("DiffText", { bg = bg_mod_text:to_css(), fg = "NONE", gui = "NONE" })
+end
+
+function M.apply_log_defaults()
+  hi_link("logLevelTrace", "DiagnosticHint")
+  hi_link({ "logLevelInfo", "logLevelNotice" }, "DiagnosticInfo")
+  hi_link({ "logLevelWarning", "logLevelDebug", "logLevelAlert" }, "DiagnosticWarn")
+  hi_link({ "logLevelError", "logLevelCritical", "logLevelEmergency" }, "DiagnosticError")
 end
 
 function M.apply_tweaks()
@@ -294,8 +284,13 @@ function M.apply_tweaks()
     end
 
   elseif colorscheme == "catppuccin" then
+    local bg_normal = Color.from_hl("Normal", "bg")
     hi("diffAdded", { fg = "#B3E1A3" })
     hi("diffChanged", { fg = "#A4B9EF" })
+    hi("NormalFloat", { bg = bg_normal:clone():mod_value(-0.025):to_css() })
+    hi("TablineSel", { bg = "NONE" })
+    hi("TelescopeBorder", { fg = hl.get_fg("FloatBorder") })
+    M.apply_log_defaults()
     M.generate_diff_colors()
 
   end
@@ -303,16 +298,37 @@ function M.apply_tweaks()
   -- FloatBorder
   hi("FloatBorder", {
     bg = hl.get_bg("NormalFloat") or "NONE",
-    fg = hl.get_fg("FloatBorder") or "white",
+    fg = hl.get_fg({ "FloatBorder", "Normal" }),
   })
 
   -- Custom diff hl
   hi("DiffAddAsDelete", {
-    bg = hl.get_bg("DiffDelete", false) or "red",
+    bg = hl.get_bg("DiffDelete", false) or "#FF6C69",
     fg = hl.get_fg("DiffDelete", false) or "NONE",
     gui = hl.get_gui("DiffDelete", false) or "NONE"
   })
   hi_link("DiffDelete", "Comment")
+end
+
+do
+  hi("NonText", { gui = "nocombine" })
+  hi_link("LspReferenceText", "Visual", { default = true })
+  hi_link("LspReferenceRead", "Visual", { default = true })
+  hi_link("LspReferenceWrite", "Visual", { default = true })
+  hi_link(
+    { "illuminateWord", "illuminatedWord", "illuminateCurWord" },
+    "LspReferenceText",
+    { default = true }
+  )
+
+  M.apply_log_defaults()
+
+  api.nvim_exec([[
+    augroup colorscheme_config
+      au!
+      au ColorScheme * call v:lua.Config.colorscheme.apply_tweaks()
+    augroup END
+  ]], false)
 end
 
 Config.colorscheme = M

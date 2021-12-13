@@ -1,2 +1,3 @@
 setl nolist
-setl signcolumn=no
+setl scl=yes:1
+setl nonu nornu

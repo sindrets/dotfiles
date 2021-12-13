@@ -12,7 +12,9 @@ _G.pi = function(a, opt)
   print(vim.inspect(a, opt))
 end
 
-require'nvim-config'
+_G.uv = vim.loop
+
+require("nvim-config")
 
 ToggleTermSplit = lib.create_buf_toggler(
   function()

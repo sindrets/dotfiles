@@ -108,9 +108,9 @@ function M.get_gui(groups, trans)
   end
 end
 
----@param group string Syntax group name.
+---@param groups string|string[] Syntax group name or a list of group names.
 ---@param opt HiSpec
-function M.hi(group, opt)
+function M.hi(groups, opt)
   local use_tc = vim.o.termguicolors
   local g = use_tc and "gui" or "cterm"
 
@@ -120,32 +120,45 @@ function M.hi(group, opt)
     opt.bg = opt.ctermbg or opt.bg
   end
 
-  vim.cmd(string.format(
-    "hi %s %s %s %s %s %s %s",
-    opt.default and "def" or "",
-    group,
-    opt.fg and (g .. "fg=" .. opt.fg) or "",
-    opt.bg and (g .. "bg=" .. opt.bg) or "",
-    opt.gui and (g .. "=" .. opt.gui) or "",
-    opt.sp and ("guisp=" .. opt.sp) or "",
-    opt.blend and ("blend=" .. opt.blend) or ""
-  ))
+  if type(groups) ~= "table" then
+    groups = { groups }
+  end
+
+  for _, group in ipairs(groups) do
+    vim.cmd(string.format(
+      "hi %s %s %s %s %s %s %s",
+      opt.default and "def" or "",
+      group,
+      opt.fg and (g .. "fg=" .. opt.fg) or "",
+      opt.bg and (g .. "bg=" .. opt.bg) or "",
+      opt.gui and (g .. "=" .. opt.gui) or "",
+      opt.sp and ("guisp=" .. opt.sp) or "",
+      opt.blend and ("blend=" .. opt.blend) or ""
+    ))
+  end
 end
 
----@param from string Syntax group name.
+---@param from string|string[] Syntax group name or a list of group names.
 ---@param to? string Syntax group name. (default: `"NONE"`)
 ---@param opt? HiLinkSpec
 function M.hi_link(from, to, opt)
   opt = vim.tbl_extend("keep", opt or {}, {
     force = true,
   })
-  vim.cmd(string.format(
-    "hi%s %s link %s %s",
-    opt.force and "!" or "",
-    opt.default and "default" or "",
-    from,
-    to or "NONE"
-  ))
+
+  if type(from) ~= "table" then
+    from = { from }
+  end
+
+  for _, f in ipairs(from) do
+    vim.cmd(string.format(
+      "hi%s %s link %s %s",
+      opt.force and "!" or "",
+      opt.default and "default" or "",
+      f,
+      to or "NONE"
+    ))
+  end
 end
 
 ---Clear highlighting for a given syntax group, or all groups if no group is

@@ -1,0 +1,43 @@
+[user]
+	email = sindrets@gmail.com
+	name = Sindre T. Strøm
+
+[core]
+	pager = delta
+
+[init]
+	defaultBranch = main
+
+[submodule]
+	recurse = false
+
+[pull]
+	rebase = false
+
+[interactive]
+	diffFilter = delta --color-only
+
+[diff]
+	tool = nvimdiff
+
+[difftool "nvimdiff"]
+	cmd = nvim -d $LOCAL $REMOTE
+
+[merge]
+	tool = nvimmerge
+	conflictstyle = diff3
+
+[mergetool "nvimmerge"]
+	cmd = nvim -d "$MERGED" "$BASE" "$LOCAL" "$REMOTE"
+
+[delta]
+    features = line-numbers decorations
+	whitespace-error-style = 22 reverse
+	syntax-theme = base16-256
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[alias]
+	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --branches

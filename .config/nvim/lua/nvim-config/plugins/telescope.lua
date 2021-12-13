@@ -17,6 +17,7 @@ return function ()
       selection_caret = "➤ ",
       entry_prefix = "  ",
       initial_mode = "insert",
+      results_title = false,
       selection_strategy = "reset",
       sorting_strategy = "ascending",
       layout_strategy = "horizontal",
@@ -57,6 +58,12 @@ return function ()
       },
     },
     pickers = {
+      find_files = {
+        results_title = false,
+      },
+      git_files = {
+        results_title = false,
+      },
       git_commits = {
         mappings = {
           i = {
@@ -67,8 +74,10 @@ return function ()
               -- close Telescope window properly prior to switching windows
               vim.api.nvim_win_close(0, true)
               vim.cmd("stopinsert")
-              vim.cmd(("DiffviewOpen %s^!"):format(value))
-            end
+              vim.schedule(function()
+                vim.cmd(("DiffviewOpen %s^!"):format(value))
+              end)
+            end,
           }
         }
       },
