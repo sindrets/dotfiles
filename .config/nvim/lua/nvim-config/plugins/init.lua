@@ -22,6 +22,7 @@ return require'packer'.startup {
       "dosini",
       "ini=dosini",
       "lua",
+      "cpp",
       "c++=cpp",
       "javascript",
       "java",

@@ -4,7 +4,7 @@ return function ()
   local utils = Config.common.utils
   local M = {}
 
-  require'neogit'.setup {
+  require('neogit').setup {
     disable_signs = false,
     disable_hint = true,
     disable_context_highlighting = false,
@@ -20,6 +20,11 @@ return function ()
     },
     integrations = {
       diffview = true
+    },
+    sections = {
+      recent = {
+        folded = false,
+      },
     },
     -- override/add mappings
     mappings = {

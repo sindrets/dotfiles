@@ -4,7 +4,7 @@ return function ()
 
     local longest = -1
     for _, entry in ipairs(section) do
-      entry.display_len = vim.fn.strdisplaywidth(entry.description[1])
+      entry.display_len = vim.api.nvim_strwidth(entry.description[1])
       longest = math.max(longest, entry.display_len)
     end
 

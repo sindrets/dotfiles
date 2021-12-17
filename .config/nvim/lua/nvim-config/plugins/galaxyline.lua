@@ -98,6 +98,7 @@ return function ()
     return mode_colors[vim.fn.mode()]
   end
 
+  ---@diagnostic disable-next-line: unused-local, unused-function
   local function use_provider(name)
     local ok, provider = pcall(require, "galaxyline.providers." .. name)
     if ok then
@@ -200,14 +201,39 @@ return function ()
     },
     {
       FileIcon = {
-        provider = 'FileIcon',
+        provider = function()
+            local basename = vim.fn.expand("%:t")
+            local ext = vim.fn.fnamemodify(basename, ":e")
+
+            local devicons = require("nvim-web-devicons")
+            local icon, _ = devicons.get_icon(basename, ext, { default = false })
+            return (icon or "") .. " "
+        end,
         condition = condition.buffer_not_empty,
-        highlight = { use_provider("fileinfo").get_file_icon_color, colors.bg },
+        highlight = {
+          function()
+            local basename = vim.fn.expand("%:t")
+            local ext = vim.fn.fnamemodify(basename, ":e")
+
+            local devicons = require("nvim-web-devicons")
+            local _, color = devicons.get_icon_color(basename, ext)
+            if color then
+              return color
+            end
+
+            return colors.fg
+          end,
+          colors.bg
+        },
       },
     },
     {
       FileName = {
-        provider = 'FileName',
+        provider = function()
+          local basename = vim.fn.expand("%:t")
+          local status = vim.bo.modified and " " or ""
+          return basename .. " " .. status
+        end,
         condition = condition.buffer_not_empty,
         highlight = { colors.magenta, colors.bg, 'bold' }
       }
