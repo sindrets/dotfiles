@@ -382,6 +382,56 @@ function M.wipe_all_buffers()
   end
 end
 
+function M.get_unique_file_bufname(filename)
+  local basename = vim.fn.fnamemodify(filename, ":t")
+  local collisions = vim.tbl_map(function(bufnr)
+    return api.nvim_buf_get_name(bufnr)
+  end, M.list_listed_bufs())
+  collisions = vim.tbl_filter(function(name)
+    return name ~= filename and vim.fn.fnamemodify(name, ":t") == basename
+  end, collisions)
+
+  -- Derived from: feline.nvim
+
+  -- Reverse filenames in order to compare their names
+  filename = string.reverse(filename)
+  collisions = vim.tbl_map(string.reverse, collisions)
+
+  local idx = 1
+
+  -- For every other filename, compare it with the name of the current file
+  -- char-by-char to find the minimum idx `i` where the i-th character is
+  -- different for the two filenames After doing it for every filename, get the
+  -- maximum value of `i`
+  if next(collisions) then
+    local delta_indices = vim.tbl_map(function(filename_other)
+        for i = 1, #filename do
+          -- Compare i-th character of both names until they aren't equal
+          if filename:sub(i, i) ~= filename_other:sub(i, i) then
+            return i
+          end
+        end
+        return 1
+      end,
+      collisions
+    )
+    idx = math.max(unpack(delta_indices))
+  end
+
+  -- Iterate backwards (since filename is reversed) until a path sep is found
+  -- in order to show a valid file path
+  while idx <= #filename do
+    if filename:sub(idx, idx) == path_sep then
+      idx = idx - 1
+      break
+    end
+
+    idx = idx + 1
+  end
+
+  return string.reverse(string.sub(filename, 1, idx))
+end
+
 function M.file_readable(path)
   local p = uv.fs_realpath(path)
   if p then

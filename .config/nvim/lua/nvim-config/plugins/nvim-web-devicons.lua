@@ -36,6 +36,16 @@ return function ()
         color = "#264B8B",
         name = "Lisp"
       },
+      Makefile = {
+        icon = "",
+        color = "#6d8086",
+        name = "Makefile",
+      },
+      makefile = {
+        icon = "",
+        color = "#6d8086",
+        name = "Makefile",
+      },
       lir_folder_icon = {
         icon = "",
         color = "#7ebae4",
