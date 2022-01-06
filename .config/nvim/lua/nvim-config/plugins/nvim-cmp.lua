@@ -1,7 +1,8 @@
 return function()
   local cmp = require('cmp')
   local cmp_autopairs = require('nvim-autopairs.completion.cmp')
-  local cmp_buffer = require("cmp_buffer")
+  local api = vim.api
+  local utils = Config.common.utils
 
   local lsp_kinds = {
     Method = "  ",
@@ -74,13 +75,15 @@ return function()
       { name = 'path' },
       {
         name = 'buffer',
-        get_bufnrs = function()
-          local buf_map = {}
-          for _, winid in ipairs(vim.api.nvim_list_wins()) do
-            buf_map[vim.api.nvim_win_get_buf(winid)] = true
-          end
-          return vim.tbl_keys(buf_map)
-        end
+        max_item_count = 20,
+        option = {
+          get_bufnrs = function()
+            return vim.tbl_filter(function(bufnr)
+              local bytesize = api.nvim_buf_get_offset(bufnr, api.nvim_buf_line_count(bufnr))
+              return bytesize < 1024 * 1024
+            end, utils.list_listed_bufs())
+          end,
+        },
       },
     },
     -- sorting = {

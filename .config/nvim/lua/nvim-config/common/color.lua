@@ -415,7 +415,7 @@ end
 function Color:set_from_hsl(x, s, l, a)
   local c
   if type(x) == "number" then
-    c = Color.from_hsl(x, s, l, self.alpha)
+    c = Color.from_hsl(x, s, l, a or self.alpha)
   elseif #x >= 3 then
     c = Color.from_hsl(x[1], x[2], x[3], x[4] or self.alpha)
   else

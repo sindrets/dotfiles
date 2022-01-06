@@ -285,11 +285,17 @@ function M.apply_tweaks()
 
   elseif colorscheme == "catppuccin" then
     local bg_normal = Color.from_hl("Normal", "bg")
+    hi_link("ColorColumn", "CursorLine", { force = true })
     hi("diffAdded", { fg = "#B3E1A3" })
     hi("diffChanged", { fg = "#A4B9EF" })
-    hi("NormalFloat", { bg = bg_normal:clone():mod_value(-0.025):to_css() })
+    hi("Visual", { gui = "NONE", bg = bg_normal:clone():mod_value(0.1):to_css() })
+    hi({ "NormalFloat", "StatusLine" }, { bg = bg_normal:clone():mod_value(-0.025):to_css() })
+    hi("ModeMsg", { fg = "#98BBF5" })
+    hi({ "TsNumber", "TsFloat" }, { gui = "NONE" })
+    hi("IndentBlanklineContextChar", { fg = "#B5E8E0" })
     hi("TablineSel", { bg = "NONE" })
     hi("TelescopeBorder", { fg = hl.get_fg("FloatBorder") })
+    hi("TelescopePromptPrefix", { fg = "#F08FA9" })
     M.apply_log_defaults()
     M.generate_diff_colors()
 

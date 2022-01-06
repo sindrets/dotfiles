@@ -40,4 +40,13 @@ augroup NvimConfig
                 \ |     exe 'lua require"nvim-config.au"'
                 \           . '.open_file_location(vim.fn.expand("<afile>"))'
                 \ | endif
+
+    au BufWinLeave * if get(t:, "compare_mode", 0) | diffoff | endif
+    au BufEnter * if get(t:, "compare_mode", 0)
+                \ |     if &bt ==# ""
+                \ |         setl diff cursorbind scrollbind fdm=diff fdl=0
+                \ |     else
+                \ |         setl nodiff nocursorbind noscrollbind
+                \ |     endif
+                \ | endif
 augroup END

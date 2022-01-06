@@ -1,35 +1,41 @@
-return function()
-  local utils = Config.common.utils
-  local hl = Config.common.hl
+local utils = Config.common.utils
+local hl = Config.common.hl
+local api = vim.api
+
+Config.feline = {}
+
+local M = Config.feline
+
+M.statusline = {}
+M.components = {}
+M.colors = {}
+
+local icons = {
+  modified = "",
+  line_number = "",
+  lsp_server = "",
+  indent = "",
+  os = {
+    unix = "",
+    windows = "",
+    mac = "",
+  },
+  git = {
+    branch = "",
+    diff_add = "",
+    diff_del = "",
+    diff_mod = "",
+  },
+  diagnostic = {
+    err = "",
+    warn = "",
+    info = "",
+    hint = "",
+  },
+}
+
+function M.update()
   local lsp = require("feline.providers.lsp")
-
-  local api = vim.api
-
-  Config.feline = {}
-
-  local icons = {
-    modified = "",
-    line_number = "",
-    lsp_server = "",
-    indent = "",
-    os = {
-      unix = "",
-      windows = "",
-      mac = "",
-    },
-    git = {
-      branch = "",
-      diff_add = "",
-      diff_del = "",
-      diff_mod = "",
-    },
-    diagnostic = {
-      err = "",
-      warn = "",
-      info = "",
-      hint = "",
-    },
-  }
 
   local fg = hl.get_fg({ "StatusLine", "Normal" })
   local bg = hl.get_bg({ "StatusLine", "Normal" })
@@ -42,9 +48,8 @@ return function()
   hl.hi("StatusLineNC", { fg = fg, bg = bg, gui = "NONE" })
   hl.hi_link("StatusLineNC")
 
-  local colors
   if vim.o.background == "light" then
-    colors = {
+    M.colors = {
       fg = fg,
       bg = bg,
       yellow = '#ECBE7B',
@@ -58,7 +63,7 @@ return function()
       red = '#ec5f67',
     }
   else
-    colors = {
+    M.colors = {
       fg = fg,
       bg = bg,
       yellow = '#ECBE7B',
@@ -73,6 +78,7 @@ return function()
     }
   end
 
+  local colors = M.colors
   local mode_colors = {
     n = colors.blue,
     no = colors.blue,
@@ -163,12 +169,11 @@ return function()
     end
   end
 
-  local components = {
+  M.components = {
     block = {
       provider = function() return "▊" end,
       hl = {
         fg = colors.blue,
-        bg = colors.bg,
       }
     },
     vi_mode = {
@@ -179,7 +184,6 @@ return function()
         local mode = api.nvim_get_mode().mode
         return {
           fg = mode_colors[mode],
-          bg = colors.bg,
           style = "bold",
         }
       end,
@@ -200,7 +204,6 @@ return function()
       icon = icons.lsp_server .. " ",
       hl = {
         fg = colors.red,
-        bg = colors.bg,
         style = "bold",
       },
       truncate_hide = true,
@@ -209,8 +212,8 @@ return function()
       info = {
         provider = function()
           local uname = utils.get_unique_file_bufname(api.nvim_buf_get_name(0))
-          local status = vim.bo.modified and (icons.modified .. " ") or ""
-          return uname .. " " .. status
+          local status = vim.bo.modified and (" " .. icons.modified .. " ") or ""
+          return uname .. status
         end,
         enabled = function()
           return vim.fn.bufname() ~= ""
@@ -222,7 +225,6 @@ return function()
           )
           return {
             fg = active and colors.magenta or colors.fg,
-            bg = colors.bg,
             style = "bold",
           }
         end,
@@ -255,7 +257,6 @@ return function()
 
           return {
             fg = fg,
-            bg = colors.bg,
           }
         end,
       },
@@ -265,7 +266,6 @@ return function()
         end,
         hl = {
           fg = colors.blue,
-          bg = colors.bg,
           style = "bold",
         },
       },
@@ -290,7 +290,6 @@ return function()
         truncate_hide = true,
         hl = {
           fg = colors.green,
-          bg = colors.bg,
           style = 'bold',
         },
       },
@@ -315,29 +314,27 @@ return function()
         end,
         hl = {
           fg = colors.fg,
-          bg = colors.bg,
         },
       },
       line_percent = {
         provider = function ()
           local current_line = vim.fn.line(".")
           local total_line = vim.fn.line("$")
-          local result,_ = math.modf((current_line / total_line) * 100)
+          local result, _ = math.modf((current_line / total_line) * 100)
           return result .. "%%"
         end,
         hl = {
           fg = colors.fg,
-          bg = colors.bg,
           style = "bold",
         },
       },
       line_count = {
         provider = function ()
-          return (" %s %s"):format(icons.line_number, vim.fn.line("$"))
+          return tostring(vim.fn.line("$"))
         end,
+        icon = icons.line_number .. " ",
         hl = {
           fg = colors.fg,
-          bg = colors.bg
         },
       },
       indent_info = {
@@ -352,7 +349,6 @@ return function()
         truncate_hide = true,
         hl = {
           fg = colors.cyan,
-          bg = colors.bg,
           style = "bold",
         },
       },
@@ -363,7 +359,6 @@ return function()
         icon = icons.git.branch .. " ",
         hl = {
           fg = colors.violet,
-          bg = colors.bg,
           style = "bold",
         }
       },
@@ -372,7 +367,6 @@ return function()
         icon = icons.git.diff_add .. " ",
         hl = {
           fg = colors.green,
-          bg = colors.bg,
         },
         truncate_hide = true,
       },
@@ -381,7 +375,6 @@ return function()
         icon = icons.git.diff_mod .. " ",
         hl = {
           fg = colors.blue,
-          bg = colors.bg,
         },
         truncate_hide = true,
       },
@@ -390,7 +383,6 @@ return function()
         icon = icons.git.diff_del .. " ",
         hl = {
           fg = colors.red,
-          bg = colors.bg,
         },
         truncate_hide = true,
       },
@@ -443,18 +435,19 @@ return function()
     },
   }
 
-  local statusline = {
+  local comps = M.components
+  M.statusline = {
     active = {
       -- LEFT
       [1] = extend_comps(
         {
-          components.block,
-          components.vi_mode,
-          components.file.icon,
-          components.file.info,
-          components.git.diff_add,
-          components.git.diff_mod,
-          components.git.diff_del,
+          comps.block,
+          comps.vi_mode,
+          comps.file.icon,
+          comps.file.info,
+          comps.git.diff_add,
+          comps.git.diff_mod,
+          comps.git.diff_del,
         },
         { right_sep = " " }
       ),
@@ -464,17 +457,17 @@ return function()
       [3] = utils.vec_join(
         extend_comps(
           {
-            components.diagnostic.err,
-            components.diagnostic.warn,
-            components.diagnostic.hint,
-            components.diagnostic.info,
-            components.file.line_info,
-            components.file.line_percent,
-            components.file.line_count,
-            components.lsp_server,
-            components.file.indent_info,
-            components.file.format,
-            components.git.branch,
+            comps.diagnostic.err,
+            comps.diagnostic.warn,
+            comps.diagnostic.hint,
+            comps.diagnostic.info,
+            comps.file.line_info,
+            comps.file.line_percent,
+            comps.file.line_count,
+            comps.lsp_server,
+            comps.file.indent_info,
+            comps.file.format,
+            comps.git.branch,
           },
           { left_sep = " " }
         ),
@@ -485,9 +478,9 @@ return function()
       -- LEFT
       [1] = extend_comps(
         {
-          components.block,
-          components.file.filetype,
-          components.file.info,
+          comps.block,
+          comps.file.filetype,
+          comps.file.info,
         },
         { right_sep = " " }
       ),
@@ -497,44 +490,47 @@ return function()
       [3] = {},
     },
   }
+end
 
-  Config.feline.setup = function()
-    require("feline").setup({
-      components = statusline,
-      theme = colors,
-      force_inactive = {
-        filetypes = {
-          "^NvimTree$",
-          "^vista$",
-          "^dbui$",
-          "^packer$",
-          "^fugitiveblame$",
-          "^Trouble$",
-          "^DiffviewFiles$",
-          "^DiffviewFileHistory$",
-          "^DiffviewFHOptionPanel$",
-          "^Outline$",
-          "^dashboard$",
-          "^NeogitStatus$",
-          "^lir$",
-        },
-        buftypes = { "terminal" },
-        bufnames = {}
-      }
-    })
-  end
+function M.setup()
+  require("feline").setup({
+    components = M.statusline,
+    theme = M.colors,
+    force_inactive = {
+      filetypes = {
+        "^NvimTree$",
+        "^vista$",
+        "^dbui$",
+        "^packer$",
+        "^fugitiveblame$",
+        "^Trouble$",
+        "^DiffviewFiles$",
+        "^DiffviewFileHistory$",
+        "^DiffviewFHOptionPanel$",
+        "^Outline$",
+        "^dashboard$",
+        "^NeogitStatus$",
+        "^lir$",
+      },
+      buftypes = { "terminal" },
+      bufnames = {},
+    },
+  })
+end
 
-  Config.feline.update = function()
-    require("nvim-config.plugins.feline")()
-    Config.feline.setup()
-  end
+function M.reload()
+  M.update()
+  M.setup()
+end
 
-  api.nvim_exec([[
+return function()
+  vim.api.nvim_exec([[
     augroup feline_config
       au!
-      au ColorScheme * lua Config.feline.update()
+      au ColorScheme * lua Config.feline.reload()
     augroup END
   ]], false)
 
+  Config.feline.update()
   Config.feline.setup()
 end

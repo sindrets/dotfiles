@@ -368,7 +368,7 @@ function expr.next_reference(reverse)
       tostring(reverse)
     ))
   else
-    return M.comfy_star(reverse, 1)
+    return expr.comfy_star(reverse, 1)
   end
 end
 

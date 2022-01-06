@@ -175,7 +175,7 @@ return require'packer'.startup {
     use { 'lukas-reineke/indent-blankline.nvim', setup = conf("indent-blankline") }
     use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble"), after = "nvim-web-devicons" }
     use { 'sindrets/diffview.nvim', config = conf("diffview"), after = "nvim-web-devicons" }
-    -- use { 'sindrets/diffview-api-test' }
+    -- use { '~/Documents/misc/diffview-api-test' }
     use { 'sindrets/winshift.nvim', config = conf("winshift") }
     use {
       'TimUntersberger/neogit',

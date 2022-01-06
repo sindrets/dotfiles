@@ -276,6 +276,10 @@ command! -bar Messages lua UpdateMessagesWin()
 command! -bar Scratch lua Config.lib.new_scratch_buf()
 command! -bar -nargs=1 -complete=help HelpHere lua Config.lib.cmd_help_here([[<args>]])
 command! -bar -nargs=* -complete=customlist,man#complete ManHere lua Config.lib.cmd_man_here(<f-args>)
+command! -bar -nargs=+ -complete=dir CompareDir
+            \ tabnew | let t:paths = [<f-args>] | let t:compare_mode = 1 | vsp
+            \ | silent exe '1windo lcd ' . t:paths[0] . ' | ' . ' 2windo lcd ' . t:paths[1]
+            \ | windo exe 'exe "edit " . getcwd()'
 
 " ABBREVIATIONS
 cnoreabbrev brm BRemove
