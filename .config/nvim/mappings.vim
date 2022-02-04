@@ -201,7 +201,7 @@ nnoremap <leader>fl <Cmd>Telescope current_buffer_fuzzy_find theme=get_ivy<CR>
 " Git
 nnoremap <leader>gg <Cmd>Neogit<CR>
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
-nnoremap <leader>gl <Cmd>Git log<CR>
+nnoremap <leader>gl <Cmd>Git log -n256<CR>
 nnoremap <leader>gcs <Cmd>Git commit<CR>
 nnoremap <leader>gcc <Cmd>Git commit -a<CR>
 nnoremap <leader>gca <Cmd>Git commit -a --amend<CR>
@@ -264,7 +264,8 @@ nnoremap <F10> <Cmd>lua require'nvim-config.lib'.print_syn_group()<CR>
 command! -nargs=+ Rnew lua Config.lib.read_new(<q-args>)
 command! -bar Ssync syntax sync minlines=3000
 command! -bar DiffSaved lua Config.lib.diff_saved()
-command! -bar -nargs=1 SplitOn lua Config.lib.split_on_pattern(<args>)
+command! -bar -range -bang -nargs=? SplitOn lua Config.lib.split_on_pattern(
+            \ [[<args>]], { <range>, <line1>, <line2> }, <q-bang> == "!")
 command! -bar -range ExecuteSelection lua Config.lib.cmd_exec_selection({ <line1>, <line2> })
 command! -bar -bang BRemove lua Config.lib.remove_buffer("<bang>" == "!")
 command! -nargs=+ Grep lua Config.lib.comfy_grep(<f-args>)

@@ -105,6 +105,7 @@ return function()
     float.toggle(abs_path and utils.path_remove_trailing(abs_path) or nil)
   end
 
+  hl.hi_link("LirFloatNormal", "NormalFloat", { force = true })
   hl.hi_link("LirFolderIcon", "Directory", { default = true })
   hl.hi_link("DevIconLirFolderNode", "LirFolderIcon")
 

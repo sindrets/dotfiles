@@ -29,16 +29,17 @@ augroup NvimConfig
     au BufWinEnter,FileType fugitiveblame setl nolist
 
     " Run PackerCompile when changes are made to plugin configs.
-    au BufWritePost */lua/nvim-config/plugins/*.lua PackerCompile
-    au User PackerCompileDone lua Config.common.utils.info("Packer compiled!")
+    au BufWritePost */lua/nvim-config/plugins/*.lua
+                \ exec "so " . stdpath("config") . "/lua/nvim-config/plugins/init.lua"
+                \ | PackerCompile
 
     au TabEnter * silent! NvimTreeRefresh
 
     " Handle opening buffers with the format`foo/bar/baz:128:17`
     au BufEnter *
-                \ if expand("<afile>") =~ '\v.*:(\d+)?(:\d+:?)?$'
-                \ |     exe 'lua require"nvim-config.au"'
-                \           . '.open_file_location(vim.fn.expand("<afile>"))'
+                \ if expand("<afile>") =~ "\v.*:(\d+)?(:\d+:?)?$"
+                \ |     exe "lua require'nvim-config.au'"
+                \           . ".open_file_location(vim.fn.expand('<afile>'))"
                 \ | endif
 
     au BufWinLeave * if get(t:, "compare_mode", 0) | diffoff | endif

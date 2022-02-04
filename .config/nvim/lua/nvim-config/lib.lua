@@ -158,7 +158,7 @@ end
 ---Delete a buffer while also preserving the window layout. Changes the current
 ---buffer to the alt buffer if available, and then deletes it.
 ---@param force boolean Ignore unsaved changes.
----@param bufid integer
+---@param bufid? integer
 function M.remove_buffer(force, bufid)
   bufid = bufid or api.nvim_get_current_buf()
   if not force then
@@ -186,13 +186,39 @@ function M.remove_buffer(force, bufid)
   end
 end
 
-function M.split_on_pattern(pattern)
+---Split a line on all matches of a given pattern.
+---@param pattern string Vim pattern.
+---@param range integer[]
+---@param noformat? boolean Don't format the split lines.
+function M.split_on_pattern(pattern, range, noformat)
+  if pattern == "" then
+    pattern = vim.fn.getreg("/")
+  end
   local epattern = pattern:gsub("/", "\\/")
-  vim.cmd(string.format(
-    "s/%s/%s\\r/g",
-    epattern, epattern
+  local last_line = api.nvim_win_get_cursor(0)[1]
+
+  local ok, err = pcall(vim.cmd, string.format(
+    [[%ss/%s/\0\r/g]],
+    range[1] == 0 and "" or ("%d,%d"):format(range[2], range[3]),
+    epattern,
+    epattern
   ))
   vim.cmd("noh")
+
+  if not ok then
+    utils.err(err)
+    return
+  end
+
+  if not noformat then
+    local new_line = api.nvim_win_get_cursor(0)[1]
+    local delta = math.abs(new_line - last_line)
+    if delta > 1 then
+      local view = vim.fn.winsaveview()
+      vim.cmd(("norm! =%dk"):format(delta - 1))
+      vim.fn.winrestview(view)
+    end
+  end
 end
 
 function M.get_indent_level()
