@@ -65,8 +65,8 @@ return function()
         return vim_item
       end,
     },
-    documentation = {
-      border = 'single',
+    window = {
+      documentation = "native",
     },
     sources = {
       { name = 'nvim_lsp' },
