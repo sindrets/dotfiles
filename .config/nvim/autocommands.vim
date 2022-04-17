@@ -35,8 +35,6 @@ augroup NvimConfig
 
     au User PackerCompileDone lua Config.common.utils.info("Packer compiled!")
 
-    au TabEnter * silent! NvimTreeRefresh
-
     " Handle opening buffers with the format`foo/bar/baz:128:17`
     au BufEnter *
                 \ if expand("<afile>") =~ '\v.*:(\d+)?(:\d+:?)?$'

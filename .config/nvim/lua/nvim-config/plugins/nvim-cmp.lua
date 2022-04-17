@@ -38,13 +38,13 @@ return function()
         vim.fn["vsnip#anonymous"](args.body)
       end,
     },
-    mapping = {
+    mapping = cmp.mapping.preset.insert({
       ['<C-d>'] = cmp.mapping.scroll_docs(-4),
       ['<C-f>'] = cmp.mapping.scroll_docs(4),
       ['<C-Space>'] = cmp.mapping.complete(),
       ['<C-e>'] = cmp.mapping.close(),
       ['<CR>'] = cmp.mapping.confirm({ select = true, behavior = cmp.ConfirmBehavior.Replace }),
-    },
+    }),
     formatting = {
       deprecated = true,
       fields = { 'kind', 'abbr', 'menu' },
@@ -66,9 +66,15 @@ return function()
       end,
     },
     window = {
-      documentation = "native",
+      -- completion = cmp.config.window.bordered(),
+      documentation = {
+        border = "single",
+        winhighlight = "Normal:Normal,CursorLine:Visual,Search:None",
+        zindex = 1001
+      },
     },
     sources = {
+      { name = 'nvim_lua' },
       { name = 'nvim_lsp' },
       { name = 'vsnip' },
       { name = 'spell' },

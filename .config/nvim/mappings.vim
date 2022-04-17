@@ -185,6 +185,8 @@ nmap , @@
 nnoremap <silent> <C-\> <Cmd>call nerdcommenter#Comment(0, "toggle")<CR>
 inoremap <silent> <C-\> <Esc>:call nerdcommenter#Comment(0, "toggle")<CR>a
 vnoremap <silent> <C-\> :call nerdcommenter#Comment(0, "toggle")<CR>gv
+nnoremap <silent> <leader>' <Cmd>call nerdcommenter#Comment(0, "toggle")<CR>
+vnoremap <silent> <leader>' :call nerdcommenter#Comment(0, "toggle")<CR>gv
 
 " Telescope
 nnoremap <C-P> <Cmd>lua require'nvim-config.lib'.workspace_files()<CR>

@@ -4,7 +4,7 @@ local function conf(config_name)
   return require(string.format("nvim-config.plugins.%s", config_name))
 end
 
-return require'packer'.startup {
+return require('packer').startup({
   ---@diagnostic disable-next-line: unused-local
   function (use, use_rocks)
 
@@ -101,6 +101,7 @@ return require'packer'.startup {
         { 'hrsh7th/cmp-buffer' },
         { 'hrsh7th/cmp-vsnip' },
         { 'hrsh7th/cmp-cmdline' },
+        { 'hrsh7th/cmp-nvim-lua' },
       },
       after = 'nvim-autopairs',
       config = conf("nvim-cmp"),
@@ -279,4 +280,4 @@ return require'packer'.startup {
     use { 'NTBBloodbath/doom-one.nvim' }
     use { 'catppuccin/nvim', as = "catppuccin" }
   end
-}
+})
