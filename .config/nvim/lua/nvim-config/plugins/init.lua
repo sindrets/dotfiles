@@ -48,7 +48,17 @@ return require'packer'.startup {
       end
     }
     -- use { 'nathom/filetype.nvim' }
-    use { 'Darazaki/indent-o-matic' }
+    use {
+      'Darazaki/indent-o-matic',
+      config = function()
+        require("indent-o-matic").setup({
+          -- Number of lines without indentation before giving up (use -1 for infinite)
+          max_lines = 2048,
+          -- Space indentations that should be detected
+          standard_widths = { 2, 3, 4, 8 },
+        })
+      end,
+    }
     use { 'nvim-lua/popup.nvim' }
     use { 'nvim-lua/plenary.nvim' }
     use { 'kyazdani42/nvim-web-devicons', config = conf("nvim-web-devicons") }
@@ -189,6 +199,17 @@ return require'packer'.startup {
       config = conf("nvim-ts-rainbow")
     }
     use { 'tpope/vim-fugitive' }
+    use {
+      'akinsho/git-conflict.nvim',
+      config = {
+        default_mappings = true, -- disable buffer local mapping created by this plugin
+        disable_diagnostics = true, -- This will disable the diagnostics in a buffer whilst it is conflicted
+        highlights = { -- They must have background color, otherwise the default color will be used
+          incoming = 'DiffChange',
+          current = 'DiffAdd',
+        },
+      },
+    }
     -- use {
     --   'rhysd/conflict-marker.vim',
     --   setup = function ()
@@ -246,7 +267,6 @@ return require'packer'.startup {
     use { 'gruvbox-community/gruvbox' }
     use { 'kjssad/quantum.vim' }
     use { 'juanedi/predawn.vim' }
-    use { 'glepnir/zephyr-nvim' }
     use { 'folke/tokyonight.nvim' }
     use { 'Mofiqul/dracula.nvim' }
     use { 'sindrets/material.nvim' }
