@@ -32,14 +32,6 @@ function M.get_local_settings()
 end
 
 ---@diagnostic disable-next-line: unused-local
-vim.lsp.util.apply_text_document_edit = function(text_document_edit, index)
-  local text_document = text_document_edit.textDocument
-  local bufnr = vim.uri_to_bufnr(text_document.uri)
-
-  vim.lsp.util.apply_text_edits(text_document_edit.edits, bufnr)
-end
-
----@diagnostic disable-next-line: unused-local
 _G.LspCommonOnAttach = function(client, bufnr)
   require("illuminate").on_attach(client)
   require("lsp_signature").on_attach({

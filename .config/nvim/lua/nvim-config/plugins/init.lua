@@ -39,6 +39,7 @@ return require('packer').startup({
     use { 'kevinoid/vim-jsonc' }
     use { 'teal-language/vim-teal' }
     use { 'mboughaba/i3config.vim' }
+    use { "chrisbra/csv.vim" }
 
     -- BEHAVIOUR
     use {
@@ -139,6 +140,7 @@ return require('packer').startup({
     use { 'nvim-telescope/telescope.nvim', config = conf("telescope"), after = "nvim-web-devicons" }
     use { 'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
     use { 'nvim-telescope/telescope-media-files.nvim' }
+    use { 'nvim-telescope/telescope-ui-select.nvim' }
     use { 'akinsho/nvim-bufferline.lua', config = conf("nvim-bufferline"), after = "nvim-web-devicons" }
     use {
       'karb94/neoscroll.nvim',
@@ -182,6 +184,7 @@ return require('packer').startup({
 
     -- MISC
     use { 'feline-nvim/feline.nvim', config = conf("feline") }
+    use { 'b0o/incline.nvim', config = conf("incline"), after = "nvim-web-devicons" }
     use { 'lewis6991/gitsigns.nvim', config = conf("gitsigns") }
     use { 'lukas-reineke/indent-blankline.nvim', setup = conf("indent-blankline") }
     use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble"), after = "nvim-web-devicons" }

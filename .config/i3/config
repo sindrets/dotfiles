@@ -23,7 +23,7 @@ bindsym $mod+Shift+Return exec $terminal --class kitty_FLOAT
 # AltGr+3
 bindsym Mod5+sterling exec 1password
 bindsym Mod1+3 exec 1password
-bindsym $mod+e exec dolphin
+bindsym $mod+e exec thunar
 bindsym $mod+s exec fsearch
 bindsym $mod+g exec --no-startup-id ~/.config/i3/scripts/goto-workspace.sh
 bindsym $mod+period exec ~/.config/scripts/rofi-emoji.sh

@@ -250,8 +250,8 @@ nmap <silent> <leader>rn <Cmd>lua vim.lsp.buf.rename()<CR>
 nmap <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> <leader>f <Cmd>lua vim.lsp.buf.formatting()<CR>
 nnoremap <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <leader>. <Cmd>Telescope lsp_code_actions theme=get_cursor<CR>
-vnoremap <leader>. <Cmd>Telescope lsp_range_code_actions theme=get_cursor<CR>
+nnoremap <leader>. <Cmd>lua vim.lsp.buf.code_action()<CR>
+vnoremap <leader>. <Cmd>lua vim.lsp.buf.range_code_action()<CR>
 nnoremap <silent> <leader>ld <Cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>
 " nnoremap <M-O> <Cmd>lua vim.lsp.buf.organize_imports()<CR>
 
@@ -283,6 +283,7 @@ command! -bar -nargs=+ -complete=dir CompareDir
             \ tabnew | let t:paths = [<f-args>] | let t:compare_mode = 1 | vsp
             \ | silent exe '1windo lcd ' . t:paths[0] . ' | ' . ' 2windo lcd ' . t:paths[1]
             \ | windo exe 'exe "edit " . getcwd()'
+command! -bar TabTerm tab sp | exe 'term' | startinsert
 
 " ABBREVIATIONS
 cnoreabbrev brm BRemove

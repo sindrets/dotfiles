@@ -107,6 +107,11 @@ function M.apply_tweaks()
 
   colorscheme = vim.g.colors_name
   local bg = vim.o.bg
+  ---@type Color
+  local bg_normal = Color.from_hl("Normal", "bg")
+    or Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
+  ---@diagnostic disable-next-line: unused-local
+  local fg_normal = Color.from_hl("Normal", "fg")
 
   hi_clear("Cursor")
 
@@ -215,7 +220,6 @@ function M.apply_tweaks()
     end
 
   elseif colorscheme == "palenight" then
-    local bg_normal = Color.from_hl("Normal", "bg")
     hi("Visual", { bg = bg_normal:clone():mod_value(0.18):mod_saturation(0.2):to_css() })
     hi("CursorLine", { bg = "#212433", })
     hi("StatusLine", { bg = "#212433", })
@@ -253,9 +257,9 @@ function M.apply_tweaks()
       hi("Whitespace", { fg = "#303030", })
       hi("NonText", { fg = "#303030", })
       hi("IndentBlanklineContextChar", { fg = "#61afef", })
-      hi("CursorLine", { bg = "#252525", })
+      hi("CursorLine", { bg = bg_normal:clone():mod_value(-0.05):to_css(), })
       hi("FoldColumn", { bg = "#1e1e1e", fg = "#61afef", })
-      hi("StatusLine", { bg = "#2e2e2e", })
+      hi("StatusLine", { bg = bg_normal:clone():mod_value(-0.03):to_css(), })
       hi("LspReferenceText", { bg = "#2e2e2e", })
       hi("NvimTreeOpenedFolderName", { fg = "#61afef", gui = "italic,bold", })
       hi("NvimTreeRootFolder", { fg = "#98c379", })
@@ -284,7 +288,6 @@ function M.apply_tweaks()
     end
 
   elseif colorscheme == "catppuccin" then
-    local bg_normal = Color.from_hl("Normal", "bg")
     hi_link("ColorColumn", "CursorLine", { force = true })
     hi("diffAdded", { fg = "#B3E1A3" })
     hi("diffChanged", { fg = "#A4B9EF" })
@@ -314,6 +317,17 @@ function M.apply_tweaks()
     gui = hl.get_gui("DiffDelete", false) or "NONE"
   })
   hi_link("DiffDelete", "Comment")
+
+  hi("BufferLineTabSelected", {
+    bg = Color.from_hl("Normal", "bg"):mod_value(0.1):to_css(),
+    fg = hl.get_fg({ "Title", "Normal" }),
+    gui = "bold",
+  })
+
+  hi({ "InclineNormal", "InclineNormalNC" }, {
+    bg = bg_normal:clone():mod_value(-0.05):to_css(),
+    fg = "NONE",
+  })
 end
 
 do

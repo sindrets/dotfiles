@@ -28,7 +28,29 @@ return function ()
       DiffviewOpen = {},
       DiffviewFileHistory = {},
     },
-    hooks = {},
+    hooks = {
+      view_opened = function(view)
+        local DiffView = require("diffview.views.diff.diff_view").DiffView
+        if view:instanceof(DiffView) then
+          local watcher = vim.loop.new_fs_poll()
+          ---@diagnostic disable-next-line: unused-local
+          watcher:start(view.git_dir .. "/index", 1000, function(err, prev, cur)
+            if not err then
+              vim.schedule(function()
+                vim.cmd("DiffviewRefresh")
+              end)
+            end
+          end)
+
+          ---@diagnostic disable-next-line: undefined-global
+          DiffviewGlobal.emitter:on("view_closed", function(v)
+            if v == view then
+              watcher:stop()
+            end
+          end)
+        end
+      end,
+    },
     key_bindings = {
       disable_defaults = false,
       view = {
