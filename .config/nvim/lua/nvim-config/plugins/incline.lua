@@ -1,19 +1,28 @@
 return function()
   local web_devicons = require("nvim-web-devicons")
-  local hl = Config.common.hl
+  local utils = Config.common.utils
+
+  local USE_COLOR = false
 
   require('incline').setup {
     render = function(props)
-      local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(props.buf), ":t")
+      local path = require("diffview.utils").path
+      local p = vim.api.nvim_buf_get_name(props.buf)
+      local name = path:basename(p)
       name = name == "" and "[No Name]" or name
-      local ext = name:match("^.+%.(.*)$") or ""
-      local icon, hl_group = web_devicons.get_icon(name, ext, { default = true })
 
-      return {
-        -- { icon .. " ", guifg = hl.get_fg(hl_group) },
-        { icon .. " " },
-        { name },
-      }
+      local icon, color
+      if path:is_directory(p) then
+        icon, color = web_devicons.get_icon_color("lir_folder_icon")
+      else
+        icon, color = web_devicons.get_icon_color(name, path:extension(p), { default = true })
+      end
+
+      return utils.vec_join(
+        {{ icon .. " ", guifg = USE_COLOR and color or nil }},
+        {{ name }},
+        vim.bo[props.buf].modified and {{ " [+]" }} or nil
+      )
     end,
     debounce_threshold = {
       falling = 50,

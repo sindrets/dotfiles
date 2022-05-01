@@ -9,12 +9,15 @@ local last_sourced_config = nil
 local last_sourced_session = nil
 
 function M.source_project_config()
-  if utils.file_readable(".vim/init.vim") then
-    local project_config_path = vim.loop.fs_realpath(".vim/init.vim")
-    if last_sourced_config ~= project_config_path then
-      vim.cmd("source .vim/init.vim")
-      last_sourced_config = project_config_path
-      utils.info("Sourced project config: " .. project_config_path)
+  for _, file in ipairs({ ".vim/init.vim", ".vim/init.lua" }) do
+    if utils.file_readable(file) then
+      local project_config_path = vim.loop.fs_realpath(file)
+      if last_sourced_config ~= project_config_path then
+        vim.cmd("source " .. file)
+        last_sourced_config = project_config_path
+        utils.info("Sourced project config: " .. project_config_path, true)
+        break
+      end
     end
   end
 end

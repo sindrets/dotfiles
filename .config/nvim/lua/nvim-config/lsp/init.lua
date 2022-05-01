@@ -168,20 +168,17 @@ local last_diagnostics_word = nil
 function M.show_position_diagnostics()
   local cword = vim.fn.expand("<cword>")
   local cline = vim.api.nvim_win_get_cursor(0)[1]
+  local bufnr = vim.api.nvim_get_current_buf()
 
   if last_diagnostics_word
     and last_diagnostics_word[1] == cline
-    and last_diagnostics_word[2] == cword then
+    and last_diagnostics_word[2] == cword
+    and last_diagnostics_word[3] == bufnr then
     return
   end
-  last_diagnostics_word = { cline, cword }
+  last_diagnostics_word = { cline, cword, bufnr }
 
-  if vim.diagnostic then
-    vim.diagnostic.show_position_diagnostics()
-  else
-    ---@diagnostic disable-next-line: deprecated
-    vim.lsp.diagnostic.show_position_diagnostics()
-  end
+  vim.diagnostic.open_float({ scope = "cursor" })
 end
 
 -- LSP auto commands
