@@ -32,6 +32,9 @@ return function()
     EnumMember = "  "
   }
 
+  -- Prevent event listeners from stacking whenever packer reloads the config.
+  cmp.event:clear()
+
   cmp.setup({
     snippet = {
       expand = function(args)
@@ -84,10 +87,16 @@ return function()
         max_item_count = 20,
         option = {
           get_bufnrs = function()
-            return vim.tbl_filter(function(bufnr)
-              local bytesize = api.nvim_buf_get_offset(bufnr, api.nvim_buf_line_count(bufnr))
-              return bytesize < 1024 * 1024
-            end, utils.list_listed_bufs())
+            return vim.tbl_filter(
+              function(bufnr)
+                local bytesize = api.nvim_buf_get_offset(bufnr, api.nvim_buf_line_count(bufnr))
+                return bytesize < 1024 * 1024
+              end,
+              utils.vec_union(
+                utils.list_bufs({ listed = true }),
+                utils.list_bufs({ no_hidden = true })
+              )
+            )
           end,
         },
       },
@@ -102,11 +111,13 @@ return function()
   cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
 
   -- cmp.setup.cmdline(':', {
-  --   completion = {
-  --     autocomplete = false,
-  --   },
-  --   sources = {
-  --     { name = 'cmdline' }
-  --   }
+  --   mapping = cmp.mapping.preset.cmdline({}),
+  --   sources = cmp.config.sources(
+  --     {
+  --       { name = 'path' },
+  --     }, {
+  --       { name = 'cmdline' },
+  --     }
+  --   ),
   -- })
 end

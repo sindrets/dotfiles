@@ -6,7 +6,7 @@ return function ()
     hint = "",
   }
 
-  require('bufferline').setup{
+  require('bufferline').setup({
     options = {
       view = "default",
       numbers = "none",
@@ -39,24 +39,24 @@ return function ()
       -- sort_by = 'extension' | 'relative_directory' | 'directory' | function(buffer_a, buffer_b)
         --   -- add custom logic
         --   return buffer_a.modified > buffer_b.modified
-      -- end
-      offsets = {
-        {
-          filetype = "NvimTree",
-          text = "Files",
-          text_align = "center"
+        -- end
+        offsets = {
+          {
+            filetype = "NvimTree",
+            text = "Files",
+            text_align = "center"
+          },
+          {
+            filetype = "DiffviewFiles",
+            text = "Source Control",
+            text_align = "center"
+          },
         },
-        {
-          filetype = "DiffviewFiles",
-          text = "Source Control",
-          text_align = "center"
-        },
-      }
-    }
-  }
+      },
+    })
 
   vim.api.nvim_exec([[
     hi! BufferLineDiagnostic gui=bold
     hi! BufferLineDiagnosticVisible gui=bold
-    ]], false)
+  ]], false)
 end

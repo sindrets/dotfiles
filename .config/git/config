@@ -30,11 +30,14 @@
 	tool = nvimmerge
 	conflictstyle = diff3
 
+[mergetool]
+	hideResolved = true
+
 [mergetool "nvimmerge"]
 	cmd = nvim -d "$MERGED" "$BASE" "$LOCAL" "$REMOTE"
 
 [delta]
-    features = line-numbers decorations
+	features = line-numbers decorations
 	whitespace-error-style = 22 reverse
 	syntax-theme = base16-256
 [filter "lfs"]
@@ -44,3 +47,7 @@
 	required = true
 [alias]
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --branches
+[credential "https://github.com"]
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = !/usr/bin/gh auth git-credential

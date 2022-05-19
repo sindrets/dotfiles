@@ -1,9 +1,16 @@
 return function ()
   require("nvim-treesitter.configs").setup({
-    ensure_installed = "all", -- one of "all", "maintained", or a list of languages
+    ensure_installed = "all",
     highlight = {
-      enable = true,               -- false will disable the whole extension
-      disable = { "vim" },                -- list of language that will be disabled
+      -- false will disable the whole extension
+      enable = true,
+      -- list of language that will be disabled
+      disable = {
+        "vim",
+        "help",
+        "markdown", -- NOTE: Parser seems immature. Revisit later.
+        "c", -- NOTE: Performance is abysmal in files of any notable length.
+      },
     },
     -- incremental_selection = {
     --   enable = true,

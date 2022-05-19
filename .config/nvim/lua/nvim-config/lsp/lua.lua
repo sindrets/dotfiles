@@ -3,7 +3,7 @@ local lua_path = {
   "lua/?/init.lua",
 }
 
-for _, v in ipairs(vim.split(package.path, ";")) do
+for _, v in ipairs(vim.split(package.path, ";", {})) do
   table.insert(lua_path, v)
 end
 
@@ -43,8 +43,16 @@ local config = vim.tbl_deep_extend("force", LspGetDefaultConfig(), {
       telemetry = {
         enable = false,
       },
-    }
-  }
+      format = {
+        enable = true,
+        -- NOTE: all the values need to be of type 'string'
+        defaultConfig = {
+          indent_style = "space",
+          indent_size = "2",
+        },
+      },
+    },
+  },
 })
 
 require'lspconfig'.sumneko_lua.setup(config)

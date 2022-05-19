@@ -2,9 +2,9 @@ local utils = Config.common.utils
 local hl = Config.common.hl
 local api = vim.api
 
-Config.feline = {}
+Config.plugin.feline = {}
 
-local M = Config.feline
+local M = Config.plugin.feline
 
 M.statusline = {}
 M.components = {}
@@ -34,6 +34,31 @@ local icons = {
   },
 }
 
+local color_palettes = {
+  dark = {
+    yellow = "#ECBE7B",
+    cyan = "#008080",
+    darkblue = "#081633",
+    green = "#98be65",
+    orange = "#FF8800",
+    violet = "#a9a1e1",
+    magenta = "#c678dd",
+    blue = "#51afef",
+    red = "#ec5f67",
+  },
+  light = {
+    yellow = "#ECBE7B",
+    cyan = "#008080",
+    darkblue = "#081633",
+    green = "#7f9f54",
+    orange = "#FF8800",
+    violet = "#958ec7",
+    magenta = "#c678dd",
+    blue = "#4596cd",
+    red = "#ec5f67",
+  },
+}
+
 function M.update()
   local lsp = require("feline.providers.lsp")
 
@@ -48,35 +73,11 @@ function M.update()
   hl.hi("StatusLineNC", { fg = fg, bg = bg, gui = "NONE" })
   hl.hi_link("StatusLineNC")
 
-  if vim.o.background == "light" then
-    M.colors = {
-      fg = fg,
-      bg = bg,
-      yellow = '#ECBE7B',
-      cyan = '#008080',
-      darkblue = '#081633',
-      green = '#7f9f54',
-      orange = '#FF8800',
-      violet = '#958ec7',
-      magenta = '#c678dd',
-      blue = '#4596cd',
-      red = '#ec5f67',
-    }
-  else
-    M.colors = {
-      fg = fg,
-      bg = bg,
-      yellow = '#ECBE7B',
-      cyan = '#008080',
-      darkblue = '#081633',
-      green = '#98be65',
-      orange = '#FF8800',
-      violet = '#a9a1e1',
-      magenta = '#c678dd',
-      blue = '#51afef',
-      red = '#ec5f67',
-    }
-  end
+  M.colors = vim.tbl_extend(
+    "force",
+    { fg = fg, bg = bg },
+    vim.o.background == "light" and color_palettes.light or color_palettes.dark
+  )
 
   local colors = M.colors
   local mode_colors = {
@@ -84,6 +85,7 @@ function M.update()
     no = colors.blue,
     nov = colors.blue,
     noV = colors.blue,
+    nt = colors.blue,
     ['no'] = colors.blue,
     niI = colors.blue,
     niR = colors.blue,
@@ -116,6 +118,7 @@ function M.update()
     no = 'NORMAL',
     nov = 'NORMAL',
     noV = 'NORMAL',
+    nt = 'NORMAL',
     ['no'] = 'NORMAL',
     niI = 'NORMAL',
     niR = 'NORMAL',
@@ -178,12 +181,23 @@ function M.update()
     },
     vi_mode = {
       provider = function()
-        return mode_name_map[api.nvim_get_mode().mode]
+        return mode_name_map[api.nvim_get_mode().mode] or ""
       end,
       hl = function()
         local mode = api.nvim_get_mode().mode
         return {
-          fg = mode_colors[mode],
+          fg = mode_colors[mode] or "NONE",
+          style = "bold",
+        }
+      end,
+    },
+    paste_mode = {
+      provider = function()
+        return vim.o.paste and "[PASTE]" or ""
+      end,
+      hl = function()
+        return {
+          fg = colors.orange,
           style = "bold",
         }
       end,
@@ -231,8 +245,13 @@ function M.update()
       },
       icon = {
         provider = function()
-          local basename = vim.fn.expand("%:t")
-          local ext = vim.fn.fnamemodify(basename, ":e")
+          local basename, ext
+          if vim.bo.buftype == "terminal" then
+            basename = "sh"
+          else
+            basename = vim.fn.expand("%:t")
+            ext = vim.fn.fnamemodify(basename, ":e")
+          end
 
           local devicons = require("nvim-web-devicons")
           local icon, _ = devicons.get_icon(basename, ext, { default = false })
@@ -244,8 +263,13 @@ function M.update()
         hl = function()
           ---@diagnostic disable-next-line: redefined-local
           local fg
-          local basename = vim.fn.expand("%:t")
-          local ext = vim.fn.fnamemodify(basename, ":e")
+          local basename, ext
+          if vim.bo.buftype == "terminal" then
+            basename = "sh"
+          else
+            basename = vim.fn.expand("%:t")
+            ext = vim.fn.fnamemodify(basename, ":e")
+          end
 
           local devicons = require("nvim-web-devicons")
           local _, color = devicons.get_icon_color(basename, ext)
@@ -443,6 +467,7 @@ function M.update()
         {
           comps.block,
           comps.vi_mode,
+          comps.paste_mode,
           comps.file.icon,
           comps.file.info,
           comps.git.diff_add,
@@ -512,7 +537,9 @@ function M.setup()
         -- "^NeogitStatus$",
         -- "^lir$",
       },
-      buftypes = { "terminal" },
+      buftypes = {
+        -- "terminal"
+      },
       bufnames = {},
     },
   })
@@ -524,13 +551,6 @@ function M.reload()
 end
 
 return function()
-  vim.api.nvim_exec([[
-    augroup feline_config
-      au!
-      au ColorScheme * lua Config.feline.reload()
-    augroup END
-  ]], false)
-
-  Config.feline.update()
-  Config.feline.setup()
+  Config.plugin.feline.update()
+  Config.plugin.feline.setup()
 end

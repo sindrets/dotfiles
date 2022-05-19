@@ -20,7 +20,11 @@ augroup NvimConfig
 
     au BufWinEnter quickfix set nobuflisted | setl nowrap cc=
 
-    au TermEnter * setl nonu nornu signcolumn=no | IlluminationDisable
+    " Problem: treesitter(?) somehow keeps re-triggering the modelines.
+    " Solution: disable modelines after first exec.
+    au BufWinEnter * setl nomodeline
+
+    au TermEnter * setl nonu nornu signcolumn=no | IlluminationDisable!
 
     au TermLeave * if &buftype ==# "terminal" | setl nu rnu | endif
 
@@ -33,7 +37,8 @@ augroup NvimConfig
                 \ exe "so " . stdpath("config") . "/lua/nvim-config/plugins/init.lua"
                 \ | PackerCompile
 
-    au User PackerCompileDone lua Config.common.utils.info("Packer compiled!")
+    au User PackerCompileDone exe 'lua Config.common.utils.info("Packer compiled!")'
+                \ | do ColorScheme
 
     " Handle opening buffers with the format`foo/bar/baz:128:17`
     au BufEnter *

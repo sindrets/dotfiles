@@ -5,6 +5,12 @@ local M = {}
 
 local is_windows = jit.os == "Windows"
 local path_sep = package.config:sub(1, 1)
+local setlocal_opr_templates = {
+  set = [[setl ${option}=${value}]],
+  remove = [[exe 'setl ${option}-=${value}']],
+  append = [[exe 'setl ${option}=' . (&${option} == "" ? "" : &${option} . ",") . '${value}']],
+  prepend = [[exe 'setl ${option}=${value}' . (&${option} == "" ? "" : "," . &${option})]],
+}
 
 ---@alias vector any[]
 
@@ -26,6 +32,7 @@ function M.echo_multiln(msg, hl, schedule)
   end
   for _, line in ipairs(msg) do
     line = line:gsub('"', [[\"]])
+    line = line:gsub('\t', "    ")
     vim.cmd(string.format('echom "%s"', line))
   end
   vim.cmd("echohl None")
@@ -78,7 +85,7 @@ function M.exec_lua(code, ...)
   local chunk, err = loadstring(code)
   if err then
     error(err)
-  else
+  elseif chunk then
     return chunk(...)
   end
 end
@@ -237,6 +244,16 @@ function M.str_center_pad(s, min_size, fill)
   return string.rep(fill, left_len) .. s .. string.rep(fill, right_len)
 end
 
+---Simple string templating
+---Example template: "${name} is ${value}"
+---@param str string Template string
+---@param table table Key-value pairs to replace in the string
+function M.str_template(str, table)
+  return (str:gsub("($%b{})", function(w)
+    return table[w:sub(3, -2)] or w
+  end))
+end
+
 function M.tbl_pack(...)
   return { n = select('#',...); ... }
 end
@@ -293,19 +310,105 @@ end
 function M.vec_join(...)
   local result = {}
   local args = {...}
-  local n = 0
+  local c = 0
 
   for i = 1, select("#", ...) do
     if type(args[i]) ~= "nil" then
       if type(args[i]) ~= "table" then
-        result[n + 1] = args[i]
-        n = n + 1
+        result[c + 1] = args[i]
+        c = c + 1
       else
         for j, v in ipairs(args[i]) do
-          result[n + j] = v
+          result[c + j] = v
         end
-        n = n + #args[i]
+        c = c + #args[i]
       end
+    end
+  end
+
+  return result
+end
+
+---Get the result of the union of the given vectors.
+---@vararg vector
+---@return vector
+function M.vec_union(...)
+  local result = {}
+  local args = {...}
+  local seen = {}
+
+  for i = 1, select("#", ...) do
+    if type(args[i]) ~= "nil" then
+      if type(args[i]) ~= "table" and not seen[args[i]] then
+        seen[args[i]] = true
+        result[#result+1] = args[i]
+      else
+        for _, v in ipairs(args[i]) do
+          if not seen[v] then
+            seen[v] = true
+            result[#result+1] = v
+          end
+        end
+      end
+    end
+  end
+
+  return result
+end
+
+---Get the result of the difference of the given vectors.
+---@vararg vector
+---@return vector
+function M.vec_diff(...)
+  local args = {...}
+  local seen = {}
+
+  for i = 1, select("#", ...) do
+    if type(args[i]) ~= "nil" then
+      if type(args[i]) ~= "table" then
+        if i == 1  then
+          seen[args[i]] = true
+        elseif seen[args[i]] then
+          seen[args[i]] = nil
+        end
+      else
+        for _, v in ipairs(args[i]) do
+          if i == 1 then
+            seen[v] = true
+          elseif seen[v] then
+            seen[v] = nil
+          end
+        end
+      end
+    end
+  end
+
+  return vim.tbl_keys(seen)
+end
+
+---Get the result of the symmetric difference of the given vectors.
+---@vararg vector
+---@return vector
+function M.vec_symdiff(...)
+  local result = {}
+  local args = {...}
+  local seen = {}
+
+  for i = 1, select("#", ...) do
+    if type(args[i]) ~= "nil" then
+      if type(args[i]) ~= "table" then
+        seen[args[i]] = seen[args[i]] == 1 and 0 or 1
+      else
+        for _, v in ipairs(args[i]) do
+          seen[v] = seen[v] == 1 and 0 or 1
+        end
+      end
+    end
+  end
+
+  for v, state in pairs(seen) do
+    if state == 1 then
+      result[#result+1] = v
     end
   end
 
@@ -337,20 +440,49 @@ function M.vec_push(t, ...)
   return t
 end
 
-function M.list_loaded_bufs()
-  return vim.tbl_filter(function(id)
-    return api.nvim_buf_is_loaded(id)
-  end, api.nvim_list_bufs())
+---@class ListBufsSpec
+---@field loaded boolean Filter out buffers that aren't loaded.
+---@field listed boolean Filter out buffers that aren't listed.
+---@field no_hidden boolean Filter out buffers that are hidden.
+---@field tabpage integer Filter out buffers that are not displayed in a given tabpage.
+
+---@param opt? ListBufsSpec
+function M.list_bufs(opt)
+  opt = opt or {}
+  local bufs
+
+  if opt.no_hidden or opt.tabpage then
+    local wins = opt.tabpage and api.nvim_tabpage_list_wins(opt.tabpage) or api.nvim_list_wins()
+    local bufnr
+    local seen = {}
+    bufs = {}
+    for _, winid in ipairs(wins) do
+      bufnr = api.nvim_win_get_buf(winid)
+      if not seen[bufnr] then
+        bufs[#bufs+1] = bufnr
+      end
+      seen[bufnr] = true
+    end
+  else
+    bufs = api.nvim_list_bufs()
+  end
+
+  return vim.tbl_filter(function(v)
+    if opt.loaded and not api.nvim_buf_is_loaded(v) then
+      return false
+    end
+    if opt.listed and not vim.bo[v].buflisted then
+      return false
+    end
+    return true
+  end, bufs)
 end
 
-function M.list_listed_bufs()
-  return vim.tbl_filter(function(id)
-    return vim.bo[id].buflisted
-  end, api.nvim_list_bufs())
-end
-
-function M.find_buf_with_pattern(pattern)
-  for _, id in ipairs(api.nvim_list_bufs()) do
+---@param pattern string Lua pattern mathed against the buffer name.
+---@param opt? ListBufsSpec
+---@return integer?
+function M.find_buf_with_pattern(pattern, opt)
+  for _, id in ipairs(M.list_bufs(opt or {})) do
     local m = vim.fn.bufname(id):match(pattern)
     if m then return id end
   end
@@ -358,8 +490,12 @@ function M.find_buf_with_pattern(pattern)
   return nil
 end
 
-function M.find_buf_with_var(var, value)
-  for _, id in ipairs(api.nvim_list_bufs()) do
+---@param var string Variable name.
+---@param value any Predicate value.
+---@param opt? ListBufsSpec
+---@return integer?
+function M.find_buf_with_var(var, value, opt)
+  for _, id in ipairs(M.list_bufs(opt or {})) do
     local ok, v = pcall(api.nvim_buf_get_var, id, var)
     if ok and v == value then return id end
   end
@@ -367,8 +503,12 @@ function M.find_buf_with_var(var, value)
   return nil
 end
 
-function M.find_buf_with_option(option, value)
-  for _, id in ipairs(api.nvim_list_bufs()) do
+---@param option string Option name.
+---@param value any Predicate value.
+---@param opt? ListBufsSpec
+---@return integer?
+function M.find_buf_with_option(option, value, opt)
+  for _, id in ipairs(M.list_bufs(opt or {})) do
     local ok, v = pcall(api.nvim_buf_get_option, id, option)
     if ok and v == value then return id end
   end
@@ -386,7 +526,7 @@ function M.get_unique_file_bufname(filename)
   local basename = vim.fn.fnamemodify(filename, ":t")
   local collisions = vim.tbl_map(function(bufnr)
     return api.nvim_buf_get_name(bufnr)
-  end, M.list_listed_bufs())
+  end, M.list_bufs({ listed = true }))
   collisions = vim.tbl_filter(function(name)
     return name ~= filename and vim.fn.fnamemodify(name, ":t") == basename
   end, collisions)
@@ -430,6 +570,89 @@ function M.get_unique_file_bufname(filename)
   end
 
   return string.reverse(string.sub(filename, 1, idx))
+end
+
+---@class SetLocalSpec
+---@field method '"set"'|'"remove"'|'"append"'|'"prepend"' Assignment method. (default: "set")
+
+---@class SetLocalListSpec : string[]
+---@field opt SetLocalSpec
+
+---HACK: workaround for inconsistent behavior from `vim.opt_local`.
+---@see [Neovim issue](https://github.com/neovim/neovim/issues/14670)
+---@param winids number[]|number Either a list of winids, or a single winid (0
+---for current window).
+---@param option_map table<string, SetLocalListSpec|string|boolean>
+---@param opt? SetLocalSpec
+function M.set_local(winids, option_map, opt)
+  if type(winids) ~= "table" then
+    winids = { winids }
+  end
+
+  opt = vim.tbl_extend("keep", opt or {}, { method = "set" })
+
+  local cmd
+  for _, id in ipairs(winids) do
+    api.nvim_win_call(id, function()
+      for option, value in pairs(option_map) do
+        if type(value) == "boolean" then
+          cmd = string.format("setl %s%s", value and "" or "no", option)
+        else
+          ---@type SetLocalSpec
+          local o = opt
+          if type(value) == "table" then
+            o = vim.tbl_extend("force", opt, value.opt or {})
+            value = table.concat(value, ",")
+          end
+
+          cmd = M.str_template(
+            setlocal_opr_templates[o.method],
+            { option = option, value = tostring(value):gsub("'", "''") }
+          )
+        end
+
+        vim.cmd(cmd)
+      end
+    end)
+  end
+end
+
+---@param winids number[]|number Either a list of winids, or a single winid (0
+---for current window).
+---@param option string
+function M.unset_local(winids, option)
+  if type(winids) ~= "table" then
+    winids = { winids }
+  end
+
+  for _, id in ipairs(winids) do
+    api.nvim_win_call(id, function()
+      vim.cmd(string.format("set %s<", option))
+    end)
+  end
+end
+
+---Get a list of all windows that contain the given buffer.
+---@param bufid integer
+---@param tabpage? integer Only search windows in the given tabpage.
+---@return integer[]
+function M.win_find_buf(bufid, tabpage)
+  local result = {}
+  local wins
+
+  if tabpage then
+    wins = api.nvim_tabpage_list_wins(tabpage)
+  else
+    wins = api.nvim_list_wins()
+  end
+
+  for _, id in ipairs(wins) do
+    if api.nvim_win_get_buf(id) == bufid then
+      table.insert(result, id)
+    end
+  end
+
+  return result
 end
 
 function M.file_readable(path)

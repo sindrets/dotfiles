@@ -50,14 +50,14 @@ return function ()
     utils.hi("NeogitHunkHeaderHighlight", { bg = bg_hunk_header_hl:to_css() })
     utils.hi("NeogitDiffContextHighlight", { bg = bg_diff_context_hl:to_css() })
     utils.hi("NeogitDiffAddHighlight", {
-      bg = hl.get_bg("DiffAdd", false) or bg_diff_context_hl:to_css(),
-      fg = hl.get_fg("DiffAdd", false) or hl.get_fg("diffAdded") or hl_fg_normal,
-      gui = hl.get_gui("DiffAdd", false),
+      bg = hl.get_bg("DiffAdd", true) or bg_diff_context_hl:to_css(),
+      fg = hl.get_fg("DiffAdd", true) or hl.get_fg("diffAdded") or hl_fg_normal,
+      gui = hl.get_gui("DiffAdd", true),
     })
     utils.hi("NeogitDiffDeleteHighlight", {
-      bg = hl.get_bg("DiffDelete", false) or bg_diff_context_hl:to_css(),
-      fg = hl.get_fg("DiffDelete", false) or hl.get_fg("diffRemoved") or hl_fg_normal,
-      gui = hl.get_gui("DiffDelete", false),
+      bg = hl.get_bg("DiffDelete", true) or bg_diff_context_hl:to_css(),
+      fg = hl.get_fg("DiffDelete", true) or hl.get_fg("diffRemoved") or hl_fg_normal,
+      gui = hl.get_gui("DiffDelete", true),
     })
   end
 
@@ -66,7 +66,7 @@ return function ()
       au!
       au FileType NeogitStatus setl nobl
       au FileType Neogit* setl nolist
-      " au ColorScheme * call v:lua.Config.neogit.fix_hl()
+      " au ColorScheme * call v:lua.Config.plugin.neogit.fix_hl()
       au FileType NeogitCommitView setl nobl
       au BufEnter,FileType NeogitCommitView set eventignore+=CursorMoved
       au BufLeave NeogitCommitView set eventignore-=CursorMoved
@@ -74,5 +74,5 @@ return function ()
   ]], false)
 
   -- M.fix_hl()
-  Config.neogit = M
+  Config.plugin.neogit = M
 end

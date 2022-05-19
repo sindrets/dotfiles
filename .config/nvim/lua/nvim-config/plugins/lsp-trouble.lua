@@ -35,9 +35,9 @@ return function ()
     use_lsp_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
   }
 
-  LspTroubleCustomToggle = lib.create_buf_toggler(
+  Config.fn.toggle_diagnostics = lib.create_buf_toggler(
     function ()
-      return utils.find_buf_with_option("filetype", "Trouble")
+      return utils.find_buf_with_option("filetype", "Trouble", { no_hidden = true, tabpage = 0 })
     end,
     function ()
       vim.cmd("Trouble")

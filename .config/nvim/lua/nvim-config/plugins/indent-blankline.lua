@@ -27,7 +27,8 @@ return function ()
     'DiffviewFiles',
     'DiffviewFileHistory',
     'Outline',
-    'lspinfo'
+    'lspinfo',
+    'fugitive',
   }
   vim.g.indent_blankline_context_patterns = {
     'class', 'return', 'function', 'method', '^if', '^while', 'jsx_element',

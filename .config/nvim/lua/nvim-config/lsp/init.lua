@@ -185,15 +185,14 @@ end
 vim.api.nvim_exec([[
   augroup init_lsp
     au!
-    au ColorScheme * :hi def link LspReferenceText CursorLine
-    au ColorScheme * :hi def link LspReferenceRead CursorLine
-    au ColorScheme * :hi def link LspReferenceWrite CursorLine
     " au CursorHold   * silent! lua Config.lsp.highlight_cursor_symbol()
     " au CursorHoldI  * silent! lua Config.lsp.highlight_cursor_symbol()
     " au CursorMoved  * silent! lua Config.lsp.highlight_cursor_clear()
     " au CursorMovedI * silent! lua Config.lsp.highlight_cursor_clear()
 
     au CursorHold * silent! lua Config.lsp.show_position_diagnostics()
+    " au ModeChanged *:[vVsSi]* IlluminationDisable!
+    " au ModeChanged *:[n]* IlluminationEnable!
   augroup END
   ]], false)
 

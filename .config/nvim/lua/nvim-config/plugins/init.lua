@@ -69,14 +69,14 @@ return require('packer').startup({
       config = conf("treesitter"),
     }
     use { 'nvim-treesitter/playground', requires = "nvim-treesitter/nvim-treesitter" }
-    -- use {
-    --   'lewis6991/spellsitter.nvim', config = function()
-    --     require('spellsitter').setup {
-    --       hl = 'SpellBad',
-    --       captures = {'comment'},  -- set to {} to spellcheck everything
-    --     }
-    --   end
-    -- }
+    use {
+      'lewis6991/spellsitter.nvim', config = function()
+        require('spellsitter').setup {
+          -- Whether enabled, can be a list of filetypes, e.g. {'python', 'lua'}
+          enabled = true
+        }
+      end
+    }
     use { 'neovim/nvim-lspconfig' }
     use {
       "ray-x/lsp_signature.nvim",
@@ -127,7 +127,7 @@ return require('packer').startup({
       end,
     }
     use { 'windwp/nvim-autopairs', config = conf("nvim-autopairs") }
-    use { 'norcalli/nvim-colorizer.lua', config = conf("nvim-colorizer") }
+    use { 'sindrets/nvim-colorizer.lua', config = conf("nvim-colorizer") }
     use { 'hrsh7th/vim-vsnip' }
     use { 'hrsh7th/vim-vsnip-integ' }
     use {
@@ -178,6 +178,7 @@ return require('packer').startup({
           "DiffviewFileHistory",
           "Outline",
           "lir",
+          "fugitive",
         }
       end
     }
@@ -205,34 +206,17 @@ return require('packer').startup({
     use { 'tpope/vim-fugitive' }
     use {
       'akinsho/git-conflict.nvim',
-      config = {
-        default_mappings = true, -- disable buffer local mapping created by this plugin
-        disable_diagnostics = true, -- This will disable the diagnostics in a buffer whilst it is conflicted
-        highlights = { -- They must have background color, otherwise the default color will be used
-          incoming = 'DiffChange',
-          current = 'DiffAdd',
-        },
-      },
+      config = function()
+        require("git-conflict").setup({
+          default_mappings = true, -- disable buffer local mapping created by this plugin
+          disable_diagnostics = true, -- This will disable the diagnostics in a buffer whilst it is conflicted
+          highlights = { -- They must have background color, otherwise the default color will be used
+            incoming = 'DiffChange',
+            current = 'DiffAdd',
+          },
+        })
+      end
     }
-    -- use {
-    --   'rhysd/conflict-marker.vim',
-    --   setup = function ()
-    --     vim.g.conflict_marker_begin = '^<<<<<<< .*$'
-    --     vim.g.conflict_marker_common_ancestors = '^||||||| .*$'
-    --     vim.g.conflict_marker_separator = '^=======$'
-    --     vim.g.conflict_marker_end   = '^>>>>>>> .*$'
-    --     vim.g.conflict_marker_highlight_group = ''
-    --     vim.api.nvim_exec([[
-    --       hi! link ConflictMarkerBegin DiffAdd
-    --       hi! link ConflictMarkerOurs DiffAdd
-    --       hi! link ConflictMarkerCommonAncestors DiffText
-    --       hi! link ConflictMarkerCommonAncestorsHunk DiffText
-    --       hi! link ConflictMarkerSeparator DiffText
-    --       hi! link ConflictMarkerTheirs DiffChange
-    --       hi! link ConflictMarkerEnd DiffText
-    --     ]], false)
-    --   end
-    -- }
     use { 'glepnir/dashboard-nvim', setup = conf("dashboard") }
     use { 'ryanoasis/vim-devicons' }
     use {
@@ -251,35 +235,20 @@ return require('packer').startup({
 
     -- THEMES
     use { 'rktjmp/lush.nvim' }
-    use { 'rakr/vim-one' }
-    use { 'ayu-theme/ayu-vim' }
-    use { 'phanviet/vim-monokai-pro' }
-    use { 'tomasiser/vim-code-dark' }
     use { 'w0ng/vim-hybrid' }
-    use { 'nanotech/jellybeans.vim' }
-    use { 'cocopon/iceberg.vim' }
-    use { 'junegunn/seoul256.vim' }
     use { 'arzg/vim-colors-xcode' }
-    use { 'haishanh/night-owl.vim' }
-    use { 'KeitaNakamura/neodark.vim' }
-    use { 'dim13/smyck.vim' }
-    use { 'barlog-m/oceanic-primal-vim', branch = 'main', }
     use { 'jacoborus/tender.vim' }
     use { 'ntk148v/vim-horizon' }
-    use { 'ajh17/Spacegray.vim' }
     use { 'sainnhe/gruvbox-material' }
     use { 'gruvbox-community/gruvbox' }
-    use { 'kjssad/quantum.vim' }
-    use { 'juanedi/predawn.vim' }
     use { 'folke/tokyonight.nvim' }
-    use { 'Mofiqul/dracula.nvim' }
+    use { 'sindrets/dracula-vim', as = "dracula" }
     use { 'sindrets/material.nvim' }
     use { 'sindrets/rose-pine-neovim', as = 'rose-pine' }
     use { 'mcchrish/zenbones.nvim', requires = 'rktjmp/lush.nvim' }
     use { 'sainnhe/everforest' }
     use { 'Cybolic/palenight.vim' }
     use { 'olimorris/onedarkpro.nvim', branch = 'main' }
-    use { 'RRethy/nvim-base16' }
     use { 'NTBBloodbath/doom-one.nvim' }
     use { 'catppuccin/nvim', as = "catppuccin" }
   end

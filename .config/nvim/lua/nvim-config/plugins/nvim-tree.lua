@@ -258,5 +258,5 @@ return function ()
     augroup END
     ]], false)
 
-  _G.Config.nvim_tree = M
+  _G.Config.plugin.nvim_tree = M
 end

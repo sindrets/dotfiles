@@ -26,6 +26,7 @@ opt.splitbelow = true
 opt.splitright = true
 opt.wrap = true
 opt.linebreak = true
+opt.breakindent = true
 opt.swapfile = true
 opt.shortmess = "filnxtToOFIA"
 opt.updatetime = 4096 -- change cursorhold time with 'vim.g.cursorhold_updatetime'
@@ -34,7 +35,7 @@ opt.backspace = list { "indent", "eol", "start" }
 opt.inccommand = "split"
 -- opt.foldmethod = "expr"
 -- opt.foldexpr = "nvim_treesitter#foldexpr()"
-opt.foldlevelstart = 99
+-- opt.foldlevelstart = 99
 opt.foldlevel = 99 -- 'foldlevelstart' isn't working correctly?
 opt.scrolloff = 3
 opt.completeopt = list { "menuone", "noselect" }
@@ -93,6 +94,7 @@ opt.writebackup = true
 opt.undofile = true
 opt.isfname:append(":")
 opt.laststatus = 3
+opt.lazyredraw = true
 
 local data_backup = vim.fn.stdpath("data") .. "/backup"
 local data_undo = vim.fn.stdpath("data") .. "/undo"
@@ -118,6 +120,8 @@ if vim.fn.executable("nvr") == 1 then
   vim.env.EDITOR = "nvr -l --remote"
   vim.env.VISUAL = "nvr -l --remote"
 end
+
+vim.env.MANWIDTH = 80 -- Text width in man pages.
 
 -- vim.cmd("syntax on")
 vim.cmd("filetype plugin indent on")

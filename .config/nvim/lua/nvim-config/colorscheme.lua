@@ -1,48 +1,18 @@
 local Color = Config.common.color.Color
-local utils = Config.common.utils
 local hl = Config.common.hl
 local api = vim.api
 local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
-local colorscheme = "catppuccin"
+local colorscheme = "dracula"
 vim.opt.bg = "dark"
 
-vim.g.ayucolor = "dark"
-vim.g.gruvbox_italic = 1
-vim.g.gruvbox_contrast_dark = "medium"
-vim.g.gruvbox_invert_selection = 0
-vim.g.gruvbox_material_background = 'medium'
-vim.g.gruvbox_material_enable_italic = 1
-vim.g.gruvbox_material_diagnostic_line_highlight = 1
-vim.g.base16colorspace = 256
-vim.g.seoul256_background = 234
-vim.g.palenight_terminal_italics = 1
-vim.g.neodark = '#202020'
-vim.g.neodark = 0
-vim.g.neodark = 1
-vim.g.spacegray_use_italics = 1
-vim.g.spacegray_low_contrast = 1
-vim.g.rose_pine_variant = "moon"
-vim.g.rose_pine_enable_italics = true
-vim.g.tokyonight_style = "storm"
-vim.g.tokyonight_dark_sidebar = 1
-vim.g.tokyonight_sidebars = { "qf", "packer", "DiffviewFiles" }
-
-if vim.g.tokyonight_style == "night" then
-  vim.g.tokyonight_colors = {
-    ["bg_dark"] = "#16161F",
-    ["bg_popup"] = "#16161F",
-    ["bg_statusline"] = "#16161F",
-    ["bg_sidebar"] = "#16161F",
-    ["bg_float"] = "#16161F",
-  }
-else
-  vim.g.tokyonight_colors = nil
-end
-
-require("nvim-config.plugins.material")()
-
 local M = {}
+
+function M.clear_terminal_colors()
+  for i = 0, 15 do
+    vim.g["terminal_color_" .. i] = nil
+  end
+end
 
 function M.apply_terminal_defaults()
    -- black
@@ -71,14 +41,15 @@ function M.apply_terminal_defaults()
   vim.g.terminal_color_15 = "#ffffff"
 end
 
-function M.generate_diff_colors()
+---@param no_override? boolean
+function M.generate_diff_colors(no_override)
   local bg = vim.o.bg
   local hl_bg_normal = hl.get_bg("Normal") or (bg == "dark" and "#111111" or "#eeeeee")
 
   local bg_normal = Color.from_hex(hl_bg_normal)
 
-  local base_add = Color.from_hex(hl.get_fg("diffAdded") or "#b7ce42")
-  local base_del = Color.from_hex(hl.get_fg("diffRemoved") or "#e84f4f")
+  local base_add = Color.from_hex(hl.get_fg("diffAdded") or "#97BE65")
+  local base_del = Color.from_hex(hl.get_fg("diffRemoved") or "#FF6C69")
   local base_mod = Color.from_hex(hl.get_fg("diffChanged") or "#51afef")
 
   local bg_add = base_add:blend(bg_normal, 0.85):mod_saturation(0.05)
@@ -86,10 +57,20 @@ function M.generate_diff_colors()
   local bg_mod = base_mod:blend(bg_normal, 0.85):mod_saturation(0.05)
   local bg_mod_text = base_mod:blend(bg_normal, 0.7):mod_saturation(0.05)
 
-  hi("DiffAdd", { bg = bg_add:to_css(), fg = "NONE", gui = "NONE" })
-  hi("DiffDelete", { bg = bg_del:to_css(), fg = "NONE", gui = "NONE" })
-  hi("DiffChange", { bg = bg_mod:to_css(), fg = "NONE", gui = "NONE" })
-  hi("DiffText", { bg = bg_mod_text:to_css(), fg = "NONE", gui = "NONE" })
+  if not no_override then
+    hi("DiffAdd", { bg = bg_add:to_css(), fg = "NONE", gui = "NONE" })
+    hi("DiffDelete", { bg = bg_del:to_css(), fg = "NONE", gui = "NONE" })
+    hi("DiffChange", { bg = bg_mod:to_css(), fg = "NONE", gui = "NONE" })
+    hi("DiffText", { bg = bg_mod_text:to_css(), fg = "NONE", gui = "NONE" })
+
+    hi("diffAdded", { fg = base_add:to_css(), bg = "NONE", gui = "NONE" })
+    hi("diffRemoved", { fg = base_del:to_css(), bg = "NONE", gui = "NONE" })
+    hi("diffChanged", { fg = base_mod:to_css(), bg = "NONE", gui = "NONE" })
+  end
+
+  hi("DiffInlineAdd", { bg = bg_add:to_css(), fg = base_add:to_css(), gui = "NONE" })
+  hi("DiffInlineDelete", { bg = bg_del:to_css(), fg = base_del:to_css(), gui = "NONE" })
+  hi("DiffInlineChange", { bg = bg_mod:to_css(), fg = base_mod:to_css(), gui = "NONE" })
 end
 
 function M.apply_log_defaults()
@@ -99,13 +80,52 @@ function M.apply_log_defaults()
   hi_link({ "logLevelError", "logLevelCritical", "logLevelEmergency" }, "DiagnosticError")
 end
 
-function M.apply_tweaks()
-  if not vim.g.colors_name then
-    utils.warn("'g:colors_name' is not defined!")
-    vim.g.colors_name = "UNKNOWN"
-  end
+---Configure the colorscheme before it's loaded.
+---@param colors_name string The name of the new colorscheme.
+function M.setup_colorscheme(colors_name)
+  M.clear_terminal_colors()
 
-  colorscheme = vim.g.colors_name
+  if colors_name == "ayucolor" then
+    vim.g.ayucolor = "dark"
+  elseif colors_name == "gruvbox" then
+    vim.g.gruvbox_italic = 1
+    vim.g.gruvbox_contrast_dark = "medium"
+    vim.g.gruvbox_invert_selection = 0
+  elseif colors_name == "gruvbox-material" then
+    vim.g.gruvbox_material_background = 'medium'
+    vim.g.gruvbox_material_enable_italic = 1
+    vim.g.gruvbox_material_diagnostic_line_highlight = 1
+  elseif colors_name:match("^base16") then
+    vim.g.base16colorspace = 256
+  elseif colors_name == "palenight" then
+    vim.g.palenight_terminal_italics = 1
+  elseif colors_name == "rose-pine" then
+    vim.g.rose_pine_variant = "moon"
+    vim.g.rose_pine_enable_italics = true
+  elseif colors_name == "tokyonight" then
+    vim.g.tokyonight_style = "storm"
+    vim.g.tokyonight_dark_sidebar = 1
+    vim.g.tokyonight_sidebars = { "qf", "packer", "DiffviewFiles" }
+
+    if vim.g.tokyonight_style == "night" then
+      vim.g.tokyonight_colors = {
+        ["bg_dark"] = "#16161F",
+        ["bg_popup"] = "#16161F",
+        ["bg_statusline"] = "#16161F",
+        ["bg_sidebar"] = "#16161F",
+        ["bg_float"] = "#16161F",
+      }
+    else
+      vim.g.tokyonight_colors = nil
+    end
+  elseif colors_name == "material" then
+    require("nvim-config.plugins.material")()
+  end
+end
+
+---Tweaks applied after loading a colorscheme.
+---@param colors_name string The name of the new colorscheme.
+function M.apply_tweaks(colors_name)
   local bg = vim.o.bg
   ---@type Color
   local bg_normal = Color.from_hl("Normal", "bg")
@@ -113,19 +133,22 @@ function M.apply_tweaks()
   ---@diagnostic disable-next-line: unused-local
   local fg_normal = Color.from_hl("Normal", "fg")
 
-  hi_clear("Cursor")
+  hi_clear({ "Cursor", "TermCursor" }, true)
+  hi("TermCursor", { gui = "reverse" })
 
-  if colorscheme == "codedark" then
+  M.generate_diff_colors(true)
+
+  if colors_name == "codedark" then
     hi("NonText", { bg = "NONE", })
     M.generate_diff_colors()
 
-  elseif colorscheme == "tender" then
+  elseif colors_name == "tender" then
     hi("Visual", { gui = "NONE", bg = "#293b44", })
     hi("VertSplit", { fg = "#202020", bg = "NONE", })
     hi("Search", { gui = "bold", fg = "#dddddd", bg = "#7a6a24", })
     M.generate_diff_colors()
 
-  elseif colorscheme == "horizon" then
+  elseif colors_name == "horizon" then
     hi("NonText", { fg = "#414559", bg = "NONE", })
     hi("VertSplit", { gui = "bold", fg = "#0f1117", bg = "NONE", })
     hi("Pmenu", { bg = "#272c42", fg = "#eff0f4", })
@@ -140,7 +163,7 @@ function M.apply_tweaks()
     hi_link("jsonQuote")
     M.generate_diff_colors()
 
-  elseif colorscheme == "monokai_pro" then
+  elseif colors_name == "monokai_pro" then
     hi("NonText", { fg = "#5b595c", bg = "None", })
     hi("VertSplit", { fg = "#696769", bg = "None", })
     hi("Pmenu", { fg = "#a9dc76", bg = "#252226", })
@@ -158,11 +181,11 @@ function M.apply_tweaks()
     hi_link("jsonQuote")
     M.generate_diff_colors()
 
-  elseif colorscheme == "gruvbox-material" then
+  elseif colors_name == "gruvbox-material" then
     hi("CursorLineNr", { gui = "bold", fg = "#a9b665", })
     M.generate_diff_colors()
 
-  elseif colorscheme == "predawn" then
+  elseif colors_name == "predawn" then
     hi("NonText", { fg = "#3c3c3c", bg = "None", })
     hi("CursorLine", { bg = "#303030", })
     hi("SignColumn", { fg = "#8c8c8c", bg = "#3c3c3c", })
@@ -170,23 +193,17 @@ function M.apply_tweaks()
     hi_link("vimFuncVar")
     hi_link("vimUserFunc")
     hi_link("jsonQuote")
-    hi("GitGutterAdd", { fg = "#46830d", bg = "None", })
-    hi("GitGutterChange", { fg = "#243958", bg = "None", })
-    hi("GitGutterDelete", { fg = "#8b0808", bg = "None", })
 
-  elseif colorscheme == "nvcode" then
+  elseif colors_name == "nvcode" then
     hi("CocExplorerGitIgnored", { fg = "#5C6370", })
-    hi_link("GitGutterAdd", "diffAdded")
-    hi_link("GitGutterRemoved", "diffRemoved")
-    hi_link("GitGutterChange", "diffChanged")
     hi_link("vimVar")
     hi_link("vimFuncVar")
     hi_link("vimUserFunc")
 
-  elseif colorscheme == "zephyr" then
+  elseif colors_name == "zephyr" then
     hi("Visual", { fg = "NONE", bg = "#393e49", })
 
-  elseif colorscheme == "tokyonight" then
+  elseif colors_name == "tokyonight" then
     hi_link("ColorColumn", "CursorLine")
     if bg == "dark" then
       hi("DiffAdd", { bg = "#283B4D", fg = "NONE", })
@@ -196,7 +213,7 @@ function M.apply_tweaks()
     hi_link("GitsignsAdd", "String")
     -- hi_link("DiffviewNormal", "NormalSB")
 
-  elseif colorscheme == "everforest" then
+  elseif colors_name == "everforest" then
     hi("SignColumn", { bg = "NONE", })
     hi("FoldColumn", { bg = "NONE", })
     hi("OrangeSign", { bg = "NONE", })
@@ -219,7 +236,7 @@ function M.apply_tweaks()
       M.generate_diff_colors()
     end
 
-  elseif colorscheme == "palenight" then
+  elseif colors_name == "palenight" then
     hi("Visual", { bg = bg_normal:clone():mod_value(0.18):mod_saturation(0.2):to_css() })
     hi("CursorLine", { bg = "#212433", })
     hi("StatusLine", { bg = "#212433", })
@@ -232,6 +249,7 @@ function M.apply_tweaks()
     hi("EndOfBuffer", { fg = "#292D3E", })
     hi("PmenuThumb", { bg = "#6A3EB5" })
     hi_link("QuickFixLine", "DiffText")
+    hi_link("TSComment", "Comment")
     hi_link("NvimTreeIndentMarker", "LineNr")
     hi_link("TelescopeBorder", "Directory")
     hi("DiffAdd", { bg = "#344a4d", fg = "NONE", })
@@ -249,45 +267,54 @@ function M.apply_tweaks()
     hi("NvimTreeCursorLine", { bg = "#33374c", })
     hi("NvimTreeGitDirty", { fg = "#ffcb6b", })
 
-  elseif colorscheme == "onedarkpro" then
+  elseif colors_name == "onedarkpro" then
+    hi({ "Cursor", "TermCursor" }, { gui = "reverse", bg = "NONE", })
+    hi("NormalFloat", { bg = bg_normal:clone():mod_value(-0.025):to_css(), })
+    hi_link("TelescopeSelection", "CursorLine")
+    hi_link("TelescopeBorder", "Directory")
+    hi_link("diffChanged", "Directory")
     if bg == "dark" then
-      hi("Cursor", { bg = "#61afef", })
       hi("Identifier", { fg = "#c678dd", })
       hi("TabLineSel", { fg = "#61afef", bg = "NONE", })
-      hi("Whitespace", { fg = "#303030", })
-      hi("NonText", { fg = "#303030", })
+      hi("Whitespace", { fg = bg_normal:clone():mod_value(0.2):to_css(), })
+      hi("NonText", { fg = bg_normal:clone():mod_value(0.2):to_css(), bg = "NONE" })
       hi("IndentBlanklineContextChar", { fg = "#61afef", })
       hi("CursorLine", { bg = bg_normal:clone():mod_value(-0.05):to_css(), })
-      hi("FoldColumn", { bg = "#1e1e1e", fg = "#61afef", })
+      hi("FoldColumn", { fg = "#61afef", })
       hi("StatusLine", { bg = bg_normal:clone():mod_value(-0.03):to_css(), })
-      hi("LspReferenceText", { bg = "#2e2e2e", })
+      hi("LspReferenceText", { bg = bg_normal:clone():mod_value(0.1):to_css(), })
       hi("NvimTreeOpenedFolderName", { fg = "#61afef", gui = "italic,bold", })
       hi("NvimTreeRootFolder", { fg = "#98c379", })
       hi("NvimTreeGitDirty", { fg = "#e5c07b", })
       hi("NvimTreeGitStaged", { fg = "#98c379", })
-      hi("TelescopeSelection", { fg = "#c678dd", bg = "#2e2e2e", })
-      hi_link("TelescopeBorder", "Directory")
-      M.generate_diff_colors()
     end
+    M.generate_diff_colors()
 
-  elseif colorscheme == "doom-one" then
+  elseif colors_name == "doom-one" then
     if bg == "dark" then
-      hi("diffAdded", { bg = "#3E493D", fg = "#97BE65", })
-      hi("diffRemoved", { bg = "#4F343A", fg = "#FF6C69", })
+      hi("diffAdded", { bg = "NONE", fg = "#97BE65", })
+      hi("diffRemoved", { bg = "NONE", fg = "#FF6C69", })
       hi("diffChanged", { fg = "#51afef", })
+      hi("SignColumn", { bg = "NONE", })
+      hi("CursorLine", { bg = bg_normal:clone():highlight(0.05):to_css() })
+      hi("CursorLineNr", { bg = bg_normal:clone():highlight(0.05):to_css(), gui = "bold" })
+      hi("DiagnosticError", { fg = "#ff6c6b"} )
+      hi("DiagnosticWarn", { fg = "#ECBE7B"} )
+      hi("DiagnosticInfo", { fg = "#51afef"} )
+      hi("DiagnosticHint", { fg = "LightBlue"} )
       hi("GitSignsChange", { fg = "#51afef", })
-      hi("TermCursor", { fg = "NONE", })
-      hi_link("TermCursor")
       hi("NvimTreeRootFolder", { gui = "bold", })
       hi("SpellCap", { sp = "#51afef", })
       hi("SpellBad", { sp = "#FF6C69", })
       hi("SpellRare", { sp = "#a9a1e1", })
       hi("SpellLocal", { sp = "#da8548", })
+      hi("Visual", { bg = Color.from_hl("WildMenu", "bg"):blend(bg_normal, 0.7):to_css() })
+      hi("LspReferenceText", { bg = bg_normal:clone():mod_value(0.1):to_css()})
       M.generate_diff_colors()
       vim.opt.pumblend = 0
     end
 
-  elseif colorscheme == "catppuccin" then
+  elseif colors_name == "catppuccin" then
     hi_link("ColorColumn", "CursorLine", { force = true })
     hi("diffAdded", { fg = "#B3E1A3" })
     hi("diffChanged", { fg = "#A4B9EF" })
@@ -302,6 +329,21 @@ function M.apply_tweaks()
     M.apply_log_defaults()
     M.generate_diff_colors()
 
+  elseif colors_name == "dracula" then
+    hi("Primary", { fg = "#50FA7B" })
+    hi("Accent", { fg = "#FF79C6" })
+    -- hi("WinSeparator", { fg = bg_normal:clone():highlight(0.4):to_css(), bg = "NONE" })
+    -- hi({ "Whitespace", "NonText" }, { fg = bg_normal:clone():highlight(0.2):to_css(), bg = "NONE" })
+    -- hi({ "StatusLine", "StatusLineNC" }, { bg = "#343746", fg = "#6b7cb2" })
+    -- hi("CursorLine", { bg = bg_normal:clone():highlight(0.1):to_css() })
+    -- hi("Visual", {
+    --   bg = Color.from_hl("DraculaComment", "fg")
+    --       :blend(bg_normal, 0.7)
+    --       :mod_saturation(0.1)
+    --       :to_css()
+    -- })
+    M.generate_diff_colors()
+
   end
 
   -- FloatBorder
@@ -310,17 +352,46 @@ function M.apply_tweaks()
     fg = hl.get_fg({ "FloatBorder", "Normal" }),
   })
 
+  -- Normalize diagnostic underlines
+  local diagnostic_names = { "Error", "Warn", "Info", "Hint" }
+  for _, name in ipairs(diagnostic_names) do
+    hi_clear("DiagnosticUnderline" .. name, true)
+    hi("DiagnosticUnderline" .. name, { gui = "underline", sp = hl.get_fg("Diagnostic" .. name)})
+  end
+
   -- Custom diff hl
   hi("DiffAddAsDelete", {
-    bg = hl.get_bg("DiffDelete", false) or "#FF6C69",
-    fg = hl.get_fg("DiffDelete", false) or "NONE",
-    gui = hl.get_gui("DiffDelete", false) or "NONE"
+    bg = hl.get_bg("DiffDelete", true) or "#FF6C69",
+    fg = hl.get_fg("DiffDelete", true) or "NONE",
+    gui = hl.get_gui("DiffDelete", true) or "NONE",
   })
   hi_link("DiffDelete", "Comment")
 
+  hi_link("GitSignsAddLn", "DiffInlineAdd")
+  hi_link("GitSignsDeleteLn", "DiffInlineDelete")
+  hi_link("GitSignsChangeLn", "DiffInlineChange")
+  hi_link("GitSignsAdd", "diffAdded")
+  hi_link("GitSignsDelete", "diffRemoved")
+  hi_link("GitSignsChange", "diffChanged")
+
+  hi_link({ "LspReferenceRead", "LspReferenceWrite" }, "LspReferenceText")
+  hi_link(
+    { "illuminateWord", "illuminatedWord", "illuminateCurWord" },
+    "LspReferenceText"
+  )
+
+  hi_link("IndentBlanklineSpaceChar", "Whitespace", { force = true })
+
+  hl.hi("LirFloatCursorLine", {
+    bg = Color.from_hl("NormalFloat", "bg"):highlight(0.06):to_css()
+  })
+  hl.hi_link("LirFloatNormal", "NormalFloat", { force = true })
+  hl.hi_link("LirFolderIcon", "Directory", { default = true })
+  hl.hi_link("DevIconLirFolderNode", "LirFolderIcon")
+
   hi("BufferLineTabSelected", {
-    bg = Color.from_hl("Normal", "bg"):mod_value(0.1):to_css(),
-    fg = hl.get_fg({ "Title", "Normal" }),
+    bg = Color.from_hl("Normal", "bg"):highlight(0.1):to_css(),
+    fg = hl.get_fg({ "Accent", "Title", "Normal" }),
     gui = "bold",
   })
 
@@ -328,13 +399,16 @@ function M.apply_tweaks()
     bg = bg_normal:clone():mod_value(-0.05):to_css(),
     fg = "NONE",
   })
+
+  if Config.plugin.feline then
+    Config.plugin.feline.reload()
+  end
 end
 
 do
   hi("NonText", { gui = "nocombine" })
   hi_link("LspReferenceText", "Visual", { default = true })
-  hi_link("LspReferenceRead", "Visual", { default = true })
-  hi_link("LspReferenceWrite", "Visual", { default = true })
+  hi_link({ "LspReferenceRead", "LspReferenceWrite" }, "LspReferenceText", { default = true })
   hi_link(
     { "illuminateWord", "illuminatedWord", "illuminateCurWord" },
     "LspReferenceText",
@@ -346,7 +420,8 @@ do
   api.nvim_exec([[
     augroup colorscheme_config
       au!
-      au ColorScheme * call v:lua.Config.colorscheme.apply_tweaks()
+      au ColorSchemePre * lua Config.colorscheme.setup_colorscheme(vim.fn.expand("<amatch>"))
+      au ColorScheme * lua Config.colorscheme.apply_tweaks(vim.fn.expand("<amatch>"))
     augroup END
   ]], false)
 end

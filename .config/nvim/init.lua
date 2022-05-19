@@ -1,5 +1,7 @@
 _G.Config = {
   common = require("nvim-config.common"),
+  fn = {},
+  plugin = {},
 }
 
 Config.lib = require("nvim-config.lib")
@@ -16,9 +18,9 @@ _G.uv = vim.loop
 
 require("nvim-config")
 
-ToggleTermSplit = lib.create_buf_toggler(
+Config.fn.toggle_term_split = lib.create_buf_toggler(
   function()
-    return utils.find_buf_with_pattern("term_split")
+    return utils.find_buf_with_pattern("term_split", { no_hidden = true, tabpage = 0 })
   end,
   function()
     vim.cmd("100 wincmd j")
@@ -34,7 +36,7 @@ ToggleTermSplit = lib.create_buf_toggler(
     vim.cmd("startinsert")
   end,
   function()
-    local bufid = utils.find_buf_with_pattern("term_split")
+    local bufid = utils.find_buf_with_pattern("term_split", { no_hidden = true, tabpage = 0 })
     if bufid then
       local wins = vim.fn.win_findbuf(bufid)
       if #wins > 0 then
@@ -45,8 +47,10 @@ ToggleTermSplit = lib.create_buf_toggler(
   { focus = true, height = 16, remember_height = true }
 )
 
-ToggleQF = lib.create_buf_toggler(
-  function() return utils.find_buf_with_option("buftype", "quickfix") end,
+Config.fn.toggle_quickfix = lib.create_buf_toggler(
+  function()
+    return utils.find_buf_with_option("buftype", "quickfix", { no_hidden = true, tabpage = 0 })
+  end,
   function() vim.cmd("100 wincmd j | belowright cope") end,
   function()
     if vim.fn.win_gettype() == "quickfix" then
@@ -58,7 +62,7 @@ ToggleQF = lib.create_buf_toggler(
   { focus = true, remember_height = true }
 )
 
-ToggleSymbolsOutline = lib.create_buf_toggler(
+Config.fn.toggle_outline = lib.create_buf_toggler(
   function() return utils.find_buf_with_pattern("OUTLINE") end,
   function() vim.cmd("SymbolsOutlineOpen") end,
   function()
@@ -67,32 +71,50 @@ ToggleSymbolsOutline = lib.create_buf_toggler(
   end
 )
 
-function OpenMessagesWin()
-  local msgs = vim.api.nvim_exec("mes", true)
-  local lines = vim.split(msgs, "\n")
-  vim.cmd("belowright new")
+local function open_messages_win()
+  vim.cmd("belowright sp")
   vim.cmd("wincmd J")
-  vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
-  vim.api.nvim_buf_set_var(0, "bufid", "messages_window")
-  vim.cmd("setl nolist winfixheight nobuflisted bt=nofile bh=delete ft=log scl=no | f Messages")
-  vim.cmd("res " .. math.min(math.max(#lines, 3), 14))
+  local bufnr = utils.find_buf_with_var("bufid", "messages_window")
+  if not bufnr then
+    bufnr = api.nvim_create_buf(false, false)
+    api.nvim_buf_set_name(bufnr, "Messages")
+    api.nvim_buf_set_var(bufnr, "bufid", "messages_window")
+  end
+  local msgs = vim.api.nvim_exec("mes", true)
+  local lines = vim.split(msgs, "\n", {})
+  api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+  api.nvim_set_current_buf(bufnr)
+  api.nvim_win_set_height(0, math.min(math.max(#lines, 3), 14))
+  utils.set_local(0, {
+    list = false,
+    winfixheight = true,
+    buftype = "nofile",
+    bufhidden = "delete",
+    filetype = "log",
+    signcolumn = "no",
+    colorcolumn = {},
+  })
   vim.cmd("norm! G")
 end
 
-function UpdateMessagesWin()
-  local bufid = utils.find_buf_with_var("bufid", "messages_window")
-  if bufid then
+function Config.fn.update_messages_win()
+  local bufnr = utils.find_buf_with_var(
+    "bufid",
+    "messages_window",
+    { no_hidden = true, tabpage = 0 }
+  )
+  if bufnr then
     local msgs = vim.api.nvim_exec("mes", true)
-    local lines = vim.split(msgs, "\n")
-    vim.api.nvim_buf_set_lines(bufid, 0, -1, false, lines)
-    vim.bo[bufid].modified = false
-    local winids = vim.fn.win_findbuf(bufid)
+    local lines = vim.split(msgs, "\n", {})
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
+    vim.bo[bufnr].modified = false
+    local winids = utils.win_find_buf(bufnr, 0)
     if #winids > 0 then
       api.nvim_set_current_win(winids[1])
       vim.cmd("norm! G")
     end
   else
-    OpenMessagesWin()
+    open_messages_win()
   end
 end
 

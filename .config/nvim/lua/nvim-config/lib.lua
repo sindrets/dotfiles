@@ -173,7 +173,7 @@ function M.remove_buffer(force, bufid)
   if alt_bufid ~= -1 then
     api.nvim_set_current_buf(alt_bufid)
   else
-    local listed = utils.list_listed_bufs()
+    local listed = utils.list_bufs({ listed = true })
     if #listed > (vim.bo[0].buflisted and 1 or 0) then
       vim.cmd("silent! bp")
     else
@@ -294,12 +294,17 @@ function M.mkdp_open_in_new_window(url)
   vim.fn.system(string.format("$BROWSER --new-window %s", url))
 end
 
-function M.new_scratch_buf()
+---@param filetype? string
+function M.new_scratch_buf(filetype)
   local bufid = api.nvim_create_buf(true, true)
   local name = "Scratch " .. scratch_counter
   scratch_counter = scratch_counter + 1
   api.nvim_buf_set_name(bufid, name)
   api.nvim_win_set_buf(0, bufid)
+
+  if filetype then
+    vim.bo[bufid].filetype = filetype
+  end
 
   return bufid
 end

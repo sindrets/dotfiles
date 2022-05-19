@@ -22,10 +22,10 @@ local M = {}
 
 ---@param name string Syntax group name.
 ---@param attr string Attribute name.
----@param trans? boolean Translate the syntax group (follows links).
-function M.get_hl_attr(name, attr, trans)
+---@param no_trans? boolean Don't translate the syntax group (follow links).
+function M.get_hl_attr(name, attr, no_trans)
   local id = api.nvim_get_hl_id_by_name(name)
-  if id and trans then
+  if id and not no_trans then
     id = vim.fn.synIDtrans(id)
   end
   if not id then
@@ -42,45 +42,45 @@ end
 
 ---@param groups string|string[] Syntax group name, or an ordered list of
 ---groups where the first found value will be returned.
----@param trans boolean Translate the syntax group (follows links). True by default.
-function M.get_fg(groups, trans)
-  if type(trans) ~= "boolean" then trans = true end
+---@param no_trans? boolean Don't translate the syntax group (follow links).
+function M.get_fg(groups, no_trans)
+  no_trans = not not no_trans
 
   if type(groups) == "table" then
     local v
     for _, group in ipairs(groups) do
-      v = M.get_hl_attr(group, "fg", trans)
+      v = M.get_hl_attr(group, "fg", no_trans)
       if v then return v end
     end
     return
   end
 
-  return M.get_hl_attr(groups, "fg", trans)
+  return M.get_hl_attr(groups, "fg", no_trans)
 end
 
 ---@param groups string|string[] Syntax group name, or an ordered list of
 ---groups where the first found value will be returned.
----@param trans boolean Translate the syntax group (follows links). True by default.
-function M.get_bg(groups, trans)
-  if type(trans) ~= "boolean" then trans = true end
+---@param no_trans? boolean Don't translate the syntax group (follow links).
+function M.get_bg(groups, no_trans)
+  no_trans = not not no_trans
 
   if type(groups) == "table" then
     local v
     for _, group in ipairs(groups) do
-      v = M.get_hl_attr(group, "bg", trans)
+      v = M.get_hl_attr(group, "bg", no_trans)
       if v then return v end
     end
     return
   end
 
-  return M.get_hl_attr(groups, "bg", trans)
+  return M.get_hl_attr(groups, "bg", no_trans)
 end
 
 ---@param groups string|string[] Syntax group name, or an ordered list of
 ---groups where the first found value will be returned.
----@param trans boolean Translate the syntax group (follows links). True by default.
-function M.get_gui(groups, trans)
-  if type(trans) ~= "boolean" then trans = true end
+---@param no_trans? boolean Don't translate the syntax group (follow links).
+function M.get_gui(groups, no_trans)
+  no_trans = not not no_trans
   if type(groups) ~= "table" then groups = { groups } end
 
   local hls
@@ -97,7 +97,7 @@ function M.get_gui(groups, trans)
     }
 
     for _, attr in ipairs(attributes) do
-      if M.get_hl_attr(group, attr, trans) == "1" then
+      if M.get_hl_attr(group, attr, no_trans) == "1" then
         table.insert(hls, attr)
       end
     end
@@ -163,9 +163,18 @@ end
 
 ---Clear highlighting for a given syntax group, or all groups if no group is
 ---given.
----@param group? string
-function M.hi_clear(group)
-  vim.cmd(string.format("hi clear %s", group or ""))
+---@param groups? string
+---@param unlink? boolean Additionally unlink the groups.
+function M.hi_clear(groups, unlink)
+  if type(groups) ~= "table" then
+    groups = { groups or "" }
+  end
+  for _, g in ipairs(groups) do
+    vim.cmd(string.format("hi clear %s", g))
+    if unlink then
+      vim.cmd(string.format("hi link %s NONE", g))
+    end
+  end
 end
 
 return M

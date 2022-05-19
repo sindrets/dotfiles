@@ -256,7 +256,7 @@ function Color:to_hsl()
 end
 
 ---Convert the color to a hex number representation (`0xRRGGBB[AA]`).
----@param with_alpha boolean Include the alpha component.
+---@param with_alpha? boolean Include the alpha component.
 ---@return integer
 function Color:to_hex(with_alpha)
   local n = bit.bor(
@@ -267,7 +267,7 @@ function Color:to_hex(with_alpha)
 end
 
 ---Convert the color to a css hex color (`#RRGGBB[AA]`).
----@param with_alpha boolean Include the alpha component.
+---@param with_alpha? boolean Include the alpha component.
 ---@return string
 function Color:to_css(with_alpha)
   local n = self:to_hex(with_alpha)
@@ -537,6 +537,18 @@ function Color:mod_hsl(hsl)
     end
   end
   return self:set_from_hsl(cur)
+end
+
+---@param v number Float [-1,1].
+function Color:highlight(v)
+  local sign = self.lightness >= 0.5 and -1 or 1
+  local hsv = self:to_hsv()
+  hsv.value = utils.clamp(hsv.value + v * sign, 0, 1)
+  local c = Color.from_hsv(hsv.hue, hsv.saturation, hsv.value)
+  self._red = c.red
+  self._green = c.green
+  self._blue = c.blue
+  return self
 end
 
 do

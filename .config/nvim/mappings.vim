@@ -53,8 +53,8 @@ nnoremap - <Cmd>LirExplore<CR>
 nnoremap _ <Cmd>exe 'e ' . getcwd()<CR>
 nnoremap <leader>es <Cmd>sp <bar> LirExplore<CR>
 nnoremap <leader>ev <Cmd>vsp <bar> LirExplore<CR>
-nnoremap <leader>ee <Cmd>call v:lua.Config.lir.toggle_float()<CR>
-nnoremap <leader>E <Cmd>call v:lua.Config.lir.toggle_float(getcwd())<CR>
+nnoremap <leader>ee <Cmd>call v:lua.Config.plugin.lir.toggle_float()<CR>
+nnoremap <leader>E <Cmd>call v:lua.Config.plugin.lir.toggle_float(getcwd())<CR>
 
 inoremap <M-Space> <Esc>
 
@@ -85,6 +85,7 @@ nnoremap <leader>6 <Cmd>6tabn<CR>
 nnoremap <leader>7 <Cmd>7tabn<CR>
 nnoremap <leader>8 <Cmd>8tabn<CR>
 nnoremap <leader>9 <Cmd>9tabn<CR>
+nnoremap g<C-q> <Cmd>tabc<CR>
 
 " Navigate windows
 tnoremap <A-h> <C-\><C-N><C-w>h
@@ -202,6 +203,7 @@ nnoremap <leader>fl <Cmd>Telescope current_buffer_fuzzy_find theme=get_ivy<CR>
 
 " Git
 nnoremap <leader>gg <Cmd>Neogit<CR>
+nnoremap <leader>G <Cmd>Neogit<CR>
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
 nnoremap <leader>gl <Cmd>Git log -n256<CR>
 nnoremap <leader>gcs <Cmd>Git commit<CR>
@@ -211,18 +213,18 @@ nnoremap <leader>gb <Cmd>Git blame <bar> wincmd p<CR>
 nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 
 " LspTrouble and Symbols outline
-nnoremap <A-S-D> <Cmd>lua LspTroubleCustomToggle()<CR>
-nnoremap <C-M-o> <Cmd>lua ToggleSymbolsOutline()<CR>
-nnoremap <M-CR> <Cmd>lua UpdateMessagesWin()<CR>
+nnoremap <A-S-D> <Cmd>lua Config.fn.toggle_diagnostics()<CR>
+nnoremap <C-M-o> <Cmd>lua Config.fn.toggle_outline()<CR>
+nnoremap <M-CR> <Cmd>lua Config.fn.update_messages_win()<CR>
 
 " Open a terminal split
-nnoremap <silent> <C-l> <Cmd>lua ToggleTermSplit()<CR>
-tnoremap <silent> <C-l> <Cmd>lua ToggleTermSplit()<CR>
+nnoremap <silent> <C-l> <Cmd>lua Config.fn.toggle_term_split()<CR>
+tnoremap <silent> <C-l> <Cmd>lua Config.fn.toggle_term_split()<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
 tnoremap <silent> <C-q> <Esc>
 
 " Quickfix and Location list
-nnoremap <M-q> <Cmd>lua ToggleQF()<CR>
+nnoremap <M-q> <Cmd>lua Config.fn.toggle_quickfix()<CR>
 nnoremap [q <Cmd>cp<CR>
 nnoremap ]q <Cmd>cn<CR>
 nnoremap [Q <Cmd>cfirst<CR>
@@ -263,7 +265,7 @@ inoremap <silent> <Tab> <Cmd>lua require'nvim-config.lib'.full_indent()<CR>
 nnoremap <F10> <Cmd>lua require'nvim-config.lib'.print_syn_group()<CR>
 
 " COMMANDS
-command! -nargs=+ Rnew lua Config.lib.read_new(<q-args>)
+command! -nargs=+ -complete=shellcmd Rnew lua Config.lib.read_new(<q-args>)
 command! -bar Ssync syntax sync minlines=3000
 command! -bar DiffSaved lua Config.lib.diff_saved()
 command! -bar -range -bang -nargs=? SplitOn lua Config.lib.split_on_pattern(
@@ -273,10 +275,10 @@ command! -bar -bang BRemove lua Config.lib.remove_buffer("<bang>" == "!")
 command! -nargs=+ Grep lua Config.lib.comfy_grep(<f-args>)
 command! -bar Spectre lua require'spectre'.open()
 command! -bar SpectreFile lua require'spectre'.open_file_search()
-command! -bar HiShow exe 'redir=>a | silent hi | redir END | exe "e " . tempname() . "/Highlights" '
-            \ . '| call setline(1, split(g:a, "\n")) | setl bt=nofile | ColorizerAttachToBuffer'
-command! -bar Messages lua UpdateMessagesWin()
-command! -bar Scratch lua Config.lib.new_scratch_buf()
+command! -bar HiShow redir=>a | silent hi | redir END | exe "e " . tempname() . "/Highlights"
+            \ | call setline(1, split(g:a, "\n")) | setl bt=nofile | ColorizerAttachToBuffer
+command! -bar Messages lua Config.fn.update_messages_win()
+command! -bar -nargs=? -complete=filetype Scratch lua Config.lib.new_scratch_buf(<f-args>)
 command! -bar -nargs=1 -complete=help HelpHere lua Config.lib.cmd_help_here([[<args>]])
 command! -bar -nargs=* -complete=customlist,man#complete ManHere lua Config.lib.cmd_man_here(<f-args>)
 command! -bar -nargs=+ -complete=dir CompareDir
@@ -291,6 +293,7 @@ cnoreabbrev brm! BRemove!
 cnoreabbrev sch Scratch
 cnoreabbrev hh HelpHere
 cnoreabbrev mh ManHere
+cnoreabbrev gh Git ++curwin
 cnoreabbrev T Telescope
 cnoreabbrev gs Telescope git_status
 cnoreabbrev gb Telescope git_branches

@@ -1,7 +1,6 @@
 return function()
   local M = {}
   local utils = Config.common.utils
-  local hl = Config.common.hl
   local float = require("lir.float")
   local actions = require("lir.actions")
   local mark_actions = require("lir.mark.actions")
@@ -105,14 +104,10 @@ return function()
     float.toggle(abs_path and utils.path_remove_trailing(abs_path) or nil)
   end
 
-  hl.hi_link("LirFloatNormal", "NormalFloat", { force = true })
-  hl.hi_link("LirFolderIcon", "Directory", { default = true })
-  hl.hi_link("DevIconLirFolderNode", "LirFolderIcon")
-
   vim.api.nvim_exec([[
-    command! -bar -nargs=? -complete=dir LirExplore call v:lua.Config.lir.explore(<f-args>)
-    command! -bar -nargs=? -complete=dir LirFloat call v:lua.Config.lir.open_float(<f-args>)
+    command! -bar -nargs=? -complete=dir LirExplore call v:lua.Config.plugin.lir.explore(<f-args>)
+    command! -bar -nargs=? -complete=dir LirFloat call v:lua.Config.plugin.lir.open_float(<f-args>)
   ]], false)
 
-  Config.lir = M
+  Config.plugin.lir = M
 end

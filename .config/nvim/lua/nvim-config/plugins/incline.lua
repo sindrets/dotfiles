@@ -8,14 +8,28 @@ return function()
     render = function(props)
       local path = require("diffview.utils").path
       local p = vim.api.nvim_buf_get_name(props.buf)
-      local name = path:basename(p)
-      name = name == "" and "[No Name]" or name
+      local basename = path:basename(p)
+      local name = basename == "" and "[No Name]" or basename
+      local ext
+
+      if vim.bo[props.buf].buftype == "terminal" then
+        basename = "sh"
+      else
+        ext = path:extension(p)
+      end
+
+      if type(vim.b[props.buf].incline_state) == "nil" then
+        vim.b[props.buf].incline_state = {
+          ftype = path:type(p),
+        }
+      end
+      local state = vim.b[props.buf].incline_state
 
       local icon, color
-      if path:is_directory(p) then
+      if state.ftype == "directory" then
         icon, color = web_devicons.get_icon_color("lir_folder_icon")
       else
-        icon, color = web_devicons.get_icon_color(name, path:extension(p), { default = true })
+        icon, color = web_devicons.get_icon_color(basename, ext, { default = true })
       end
 
       return utils.vec_join(
@@ -26,10 +40,12 @@ return function()
     end,
     debounce_threshold = {
       falling = 50,
-      rising = 10
+      rising = 0,
     },
     hide = {
+      cursorline = true,
       focused_win = false,
+      only_win = false,
     },
     highlight = {
       groups = {
