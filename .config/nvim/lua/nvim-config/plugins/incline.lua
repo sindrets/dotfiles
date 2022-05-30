@@ -1,26 +1,31 @@
 return function()
   local web_devicons = require("nvim-web-devicons")
   local utils = Config.common.utils
+  local pl = Config.common.utils.path
 
   local USE_COLOR = false
+  local MAX_NAME_SIZE = 50
 
   require('incline').setup {
     render = function(props)
-      local path = require("diffview.utils").path
       local p = vim.api.nvim_buf_get_name(props.buf)
-      local basename = path:basename(p)
+      local basename = pl:basename(p)
       local name = basename == "" and "[No Name]" or basename
       local ext
+
+      if #name > MAX_NAME_SIZE + 1 then
+        name = "«" .. name:sub(-MAX_NAME_SIZE)
+      end
 
       if vim.bo[props.buf].buftype == "terminal" then
         basename = "sh"
       else
-        ext = path:extension(p)
+        ext = pl:extension(p)
       end
 
       if type(vim.b[props.buf].incline_state) == "nil" then
         vim.b[props.buf].incline_state = {
-          ftype = path:type(p),
+          ftype = pl:type(p),
         }
       end
       local state = vim.b[props.buf].incline_state
@@ -45,7 +50,7 @@ return function()
     hide = {
       cursorline = true,
       focused_win = false,
-      only_win = false,
+      only_win = true,
     },
     highlight = {
       groups = {

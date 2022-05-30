@@ -105,9 +105,13 @@ function M.execute_macro_over_visual_range()
   vim.fn.execute(":'<,'>normal @" .. vim.fn.nr2char(vim.fn.getchar()))
 end
 
-function M.read_new(exprression)
+function M.read_new(...)
+  local args = vim.tbl_map(function(v)
+    return ("'%s'"):format(vim.fn.expand(v):gsub("'", [['"'"']]))
+  end, { ... })
   vim.cmd("enew | set ft=log")
-  vim.fn.execute("r! " .. exprression)
+  vim.fn.execute("0r! " .. table.concat(args, " "))
+  vim.cmd("norm! Gdd")
 end
 
 ---@return string[]
@@ -143,15 +147,22 @@ end
 
 function M.workspace_files(opt)
   opt = opt or {}
+  local builtin = require("telescope.builtin")
+
   if opt.all then
-    require'telescope.builtin'.find_files({
+    builtin.find_files({
       hidden = true,
-      find_command = { "fd", "--type", "f", "-uu" }
+      find_command = { "fd", "--type", "f", "-uu", "--strip-cwd-prefix" },
     })
-  elseif #vim.fn.glob("./.git") > 0 then
-    vim.cmd("Telescope git_files")
+  elseif vim.env.GIT_DIR or utils.file_readable("./.git") then
+    builtin.git_files({
+      git_command = { "git", "ls-files", "--exclude-standard", "--cached", "--", uv.cwd() },
+    })
   else
-    require'telescope.builtin'.find_files({ hidden = true })
+    builtin.find_files({
+      hidden = true,
+      find_command = { "fd", "--type", "f", "--strip-cwd-prefix"},
+    })
   end
 end
 
@@ -322,7 +333,7 @@ function M.comfy_quit()
   end
 end
 
-function M.comfy_grep(...)
+function M.comfy_grep(use_loclist, ...)
   local args = {...}
   local cargs = vim.tbl_map(function(arg)
     return vim.fn.shellescape(arg):gsub("[|]", { ["'"] = "''", ["|"] = "\\|" })
@@ -336,7 +347,11 @@ function M.comfy_grep(...)
 
   vim.fn.setreg("/", M.regex_to_pattern(args[1]))
   vim.opt.hlsearch = true
-  vim.cmd("belowright cope")
+  if use_loclist then
+    vim.cmd("belowright lope")
+  else
+    vim.cmd("belowright cope")
+  end
 end
 
 ---Convert a PCRE regex to a vim pattern. WARN: Conversion is incomplete.
@@ -451,6 +466,7 @@ end
 function M.cmd_exec_selection(range)
   local ft = vim.bo.ft == "lua" and "lua" or "vim"
   local lines
+  ---@cast range integer[]
   if type(range) == "table" and range[1] ~= range[2] then
     table.sort(range)
     lines = api.nvim_buf_get_lines(0, range[1] - 1, range[2], false)

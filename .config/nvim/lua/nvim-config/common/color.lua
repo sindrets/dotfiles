@@ -108,7 +108,7 @@ end
 
 ---Create a color from a syntax group attribute.
 ---@param groups string|string[] Syntax group name or an ordered list of groups
----where the first foudn value will be used.
+---where the first found value will be used.
 ---@param attr string Attribute name.
 ---@return Color
 function Color.from_hl(groups, attr)

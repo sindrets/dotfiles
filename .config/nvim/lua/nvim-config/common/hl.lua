@@ -13,6 +13,7 @@ local M = {}
 ---@field sp string
 ---@field blend integer
 ---@field default boolean
+---@field unlink boolean
 
 ---@class HiLinkSpec
 ---@field force boolean
@@ -125,6 +126,10 @@ function M.hi(groups, opt)
   end
 
   for _, group in ipairs(groups) do
+    if opt.unlink then
+      vim.cmd(("hi! link %s NONE"):format(group))
+    end
+
     vim.cmd(string.format(
       "hi %s %s %s %s %s %s %s",
       opt.default and "def" or "",
@@ -145,6 +150,7 @@ function M.hi_link(from, to, opt)
   opt = vim.tbl_extend("keep", opt or {}, {
     force = true,
   })
+  ---@cast opt HiLinkSpec
 
   if type(from) ~= "table" then
     from = { from }

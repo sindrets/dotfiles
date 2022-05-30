@@ -1,3 +1,18 @@
+---@diagnostic disable-next-line: unused-local
+local ok, impatient = pcall(require, "impatient")
+-- TODO: Re-enable when [this](https://github.com/sindrets/diffview.nvim/issues/144) is resolved.
+-- if ok then
+--   impatient.enable_profile()
+-- end
+
+---Pretty print. Alias for `vim.inspect()`.
+_G.pp = function(a, opt)
+  print(vim.inspect(a, opt))
+end
+
+---LibUV
+_G.uv = vim.loop
+
 _G.Config = {
   common = require("nvim-config.common"),
   fn = {},
@@ -9,12 +24,6 @@ Config.lib = require("nvim-config.lib")
 local lib = Config.lib
 local utils = Config.common.utils
 local api = vim.api
-
-_G.pi = function(a, opt)
-  print(vim.inspect(a, opt))
-end
-
-_G.uv = vim.loop
 
 require("nvim-config")
 
@@ -51,7 +60,13 @@ Config.fn.toggle_quickfix = lib.create_buf_toggler(
   function()
     return utils.find_buf_with_option("buftype", "quickfix", { no_hidden = true, tabpage = 0 })
   end,
-  function() vim.cmd("100 wincmd j | belowright cope") end,
+  function()
+    if #vim.fn.getloclist(0) > 0 then
+      vim.cmd("belowright lope")
+    else
+      vim.cmd("100 wincmd j | belowright cope")
+    end
+  end,
   function()
     if vim.fn.win_gettype() == "quickfix" then
       vim.cmd("ccl")

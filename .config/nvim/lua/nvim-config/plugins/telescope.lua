@@ -64,6 +64,9 @@ return function ()
       git_files = {
         results_title = false,
       },
+      git_status = {
+        expand_dir = false,
+      },
       git_commits = {
         mappings = {
           i = {

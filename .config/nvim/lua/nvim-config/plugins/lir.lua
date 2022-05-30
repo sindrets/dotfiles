@@ -1,10 +1,12 @@
 return function()
-  local M = {}
-  local utils = Config.common.utils
-  local float = require("lir.float")
   local actions = require("lir.actions")
-  local mark_actions = require("lir.mark.actions")
   local clipboard_actions = require("lir.clipboard.actions")
+  local float = require("lir.float")
+  local mark_actions = require("lir.mark.actions")
+
+  local pl = Config.common.utils.path
+
+  local M = {}
 
   require('lir').setup({
     show_hidden_files = true,
@@ -18,9 +20,9 @@ return function()
       ['<C-v>'] = actions.vsplit,
       ['<C-t>'] = actions.tabedit,
 
-      ['-']     = actions.up,
-      ['h']     = actions.up,
-      ['q']     = function()
+      ['-'] = actions.up,
+      ['h'] = actions.up,
+      ['q'] = function()
         Config.lib.remove_buffer(true)
         if vim.w.lir_is_float then
           vim.cmd("wincmd q")
@@ -77,37 +79,47 @@ return function()
   })
 
   function M.explore(path)
-    local abs_path = vim.fn.expand(path or "%", ":p")
-    if vim.fn.filereadable(abs_path) == 0 then
-      abs_path = vim.fn.fnamemodify(vim.loop.cwd(), ":p")
-    elseif vim.fn.isdirectory(abs_path) == 0 then
-      abs_path = vim.fn.fnamemodify(abs_path, ":h")
+    local abs_path = pl:absolute(pl:vim_expand(path or "%"))
+    if not (pl:readable(abs_path) or pl:readable(pl:parent(abs_path))) then
+      abs_path = pl:absolute(uv.cwd())
+    elseif not pl:is_directory(abs_path) then
+      abs_path = pl:parent(abs_path)
     end
-    vim.cmd("e " .. vim.fn.fnameescape(utils.path_remove_trailing(abs_path)))
+    vim.cmd("e " .. vim.fn.fnameescape(abs_path))
   end
 
   function M.open_float(path)
     local abs_path
     if path then
-      abs_path = utils.path_remove_trailing(vim.fn.fnamemodify(vim.fn.expand(path), ":p"))
+      abs_path = pl:absolute(pl:vim_expand(path))
     end
     float.init(abs_path or nil)
   end
 
   function M.toggle_float(path)
-    local abs_path = vim.fn.expand(path or "%", ":p")
-    if vim.fn.filereadable(abs_path) == 0 then
-      abs_path = vim.fn.fnamemodify(vim.loop.cwd(), ":p")
-    elseif vim.fn.isdirectory(abs_path) == 0 then
-      abs_path = vim.fn.fnamemodify(abs_path, ":h")
+    local abs_path = pl:absolute(pl:vim_expand(path or "%"))
+    if not (pl:readable(abs_path) or pl:readable(pl:parent(abs_path))) then
+      abs_path = pl:absolute(uv.cwd())
+    elseif not pl:is_directory(abs_path) then
+      abs_path = pl:parent(abs_path)
     end
-    float.toggle(abs_path and utils.path_remove_trailing(abs_path) or nil)
+    float.toggle(abs_path or nil)
   end
 
-  vim.api.nvim_exec([[
-    command! -bar -nargs=? -complete=dir LirExplore call v:lua.Config.plugin.lir.explore(<f-args>)
-    command! -bar -nargs=? -complete=dir LirFloat call v:lua.Config.plugin.lir.open_float(<f-args>)
-  ]], false)
+  vim.api.nvim_create_user_command("LirExplore", function(state)
+    M.explore(state.fargs[1] ~= "" and state.fargs[1] or nil)
+  end, {
+    complete = "dir",
+    bar = true,
+    nargs = "?",
+  })
+  vim.api.nvim_create_user_command("LirFloat", function(state)
+    M.open_float(state.fargs[1] ~= "" and state.fargs[1] or nil)
+  end, {
+    complete = "dir",
+    bar = true,
+    nargs = "?",
+  })
 
   Config.plugin.lir = M
 end

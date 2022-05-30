@@ -1,0 +1,32 @@
+#!/usr/bin/bash
+
+input=""
+if [ -n "$1" ]; then
+    input="$(realpath "$1")"
+else
+    input="$(realpath .)"
+fi
+
+name="$(basename "$input")"
+
+target_dir=""
+if [ -n "$PACKER_LOCAL_PATH" ]; then
+    target_dir="$PACKER_LOCAL_PATH"
+else
+    target_dir="$HOME/Documents/dev/nvim/plugins"
+fi
+
+if [ ! -e "$target_dir" ]; then
+    mkdir -p "$target_dir"
+    echo "• Created local development plugin directory: '$target_dir'"
+fi
+
+target="$target_dir/$name"
+
+if [ -e "$target" ]; then
+    echo "• Deleting existing link."
+    rm "$target"
+fi
+
+ln -s "$input" "$target"
+echo "• Created new link: '$target'"

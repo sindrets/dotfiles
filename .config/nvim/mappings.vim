@@ -36,7 +36,6 @@ xnoremap <expr> <End> v:count == 0 ? "g$" : "$"
 inoremap <Home> <Cmd>normal g^<CR>
 inoremap <End> <C-\><C-O>g$
 
-
 " Yank, delete, paste
 nnoremap <expr> y PlusYank()
 nnoremap <expr> yy v:register == '"' ? '"+yy' : 'yy'
@@ -56,14 +55,6 @@ nnoremap <leader>ev <Cmd>vsp <bar> LirExplore<CR>
 nnoremap <leader>ee <Cmd>call v:lua.Config.plugin.lir.toggle_float()<CR>
 nnoremap <leader>E <Cmd>call v:lua.Config.plugin.lir.toggle_float(getcwd())<CR>
 
-inoremap <M-Space> <Esc>
-
-" Make session
-nnoremap <silent> <M-S> <Cmd>call MakeSession()<CR>
-
-" Begin new line above from insert mode
-inoremap <M-Return> <Esc>O
-
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR>
 nnoremap  <silent> <s-tab> :bp<CR>
@@ -74,8 +65,7 @@ nnoremap <leader>W <Cmd>bd<CR>
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 
 " Navigate tabs
-nnoremap <silent> <Leader><Tab> <Cmd>tabn<CR>
-nnoremap <silent> <Leader><S-Tab> <Cmd>tabp<CR>
+nnoremap <silent> <Leader><Tab> g<Tab>
 nnoremap <leader>1 <Cmd>1tabn<CR>
 nnoremap <leader>2 <Cmd>2tabn<CR>
 nnoremap <leader>3 <Cmd>3tabn<CR>
@@ -173,15 +163,6 @@ inoremap <C-Del> <C-\><C-o>dw
 nnoremap <Esc> <Cmd>noh<CR>
 nnoremap <expr> * v:lua.Config.lib.expr.comfy_star()
 
-" Search for selected text
-vnoremap * "vy/\V<C-R>=escape(@",'/\')<CR><CR>
-
-" Start search with very-magic mode
-nnoremap / /\v
-
-" Repeat prev macro
-nmap , @@
-
 " Toggle comments
 nnoremap <silent> <C-\> <Cmd>call nerdcommenter#Comment(0, "toggle")<CR>
 inoremap <silent> <C-\> <Esc>:call nerdcommenter#Comment(0, "toggle")<CR>a
@@ -211,6 +192,7 @@ nnoremap <leader>gcc <Cmd>Git commit -a<CR>
 nnoremap <leader>gca <Cmd>Git commit -a --amend<CR>
 nnoremap <leader>gb <Cmd>Git blame <bar> wincmd p<CR>
 nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
+nnoremap <leader>gh <Cmd>DiffviewFileHistory .<CR>
 
 " LspTrouble and Symbols outline
 nnoremap <A-S-D> <Cmd>lua Config.fn.toggle_diagnostics()<CR>
@@ -225,21 +207,17 @@ tnoremap <silent> <C-q> <Esc>
 
 " Quickfix and Location list
 nnoremap <M-q> <Cmd>lua Config.fn.toggle_quickfix()<CR>
-nnoremap [q <Cmd>cp<CR>
-nnoremap ]q <Cmd>cn<CR>
-nnoremap [Q <Cmd>cfirst<CR>
-nnoremap ]Q <Cmd>clast<CR>
-nnoremap [l <Cmd>lprevious<CR>
-nnoremap ]l <Cmd>lnext<CR>
-nnoremap [L <Cmd>lfirst<CR>
-nnoremap ]L <Cmd>llast<CR>
+nnoremap [q <Cmd>cp <bar> norm! zz<CR>
+nnoremap ]q <Cmd>cn <bar> norm! zz<CR>
+nnoremap [Q <Cmd>cfirst <bar> norm! zz<CR>
+nnoremap ]Q <Cmd>clast <bar> norm! zz<CR>
+nnoremap [l <Cmd>lprevious <bar> norm! zz<CR>
+nnoremap ]l <Cmd>lnext <bar> norm! zz<CR>
+nnoremap [L <Cmd>lfirst <bar> norm! zz<CR>
+nnoremap ]L <Cmd>llast <bar> norm! zz<CR>
 
 nnoremap <expr> [r v:lua.Config.lib.expr.next_reference(v:true)
 nnoremap <expr> ]r v:lua.Config.lib.expr.next_reference()
-
-" Trigger completion
-inoremap <silent><expr> <C-Space> compe#complete()
-" inoremap <silent><expr> <Cr> compe#confirm("<Cr>")
 
 " LSP
 nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>
@@ -250,29 +228,50 @@ nmap <silent> gi <Cmd>lua vim.lsp.buf.implementation()<CR>
 nmap <silent> gr <Cmd>Telescope lsp_references<CR>
 nmap <silent> <leader>rn <Cmd>lua vim.lsp.buf.rename()<CR>
 nmap <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap <silent> <leader>f <Cmd>lua vim.lsp.buf.formatting()<CR>
+nnoremap <silent> <leader>ff <Cmd>lua vim.lsp.buf.formatting()<CR>
+vnoremap <silent> <leader>ff <Cmd>lua vim.lsp.buf.range_formatting()<CR>
 nnoremap <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>. <Cmd>lua vim.lsp.buf.code_action()<CR>
 vnoremap <leader>. <Cmd>lua vim.lsp.buf.range_code_action()<CR>
-nnoremap <silent> <leader>ld <Cmd>lua vim.diagnostic.open_float({ scope = "line" })<CR>
+nnoremap <silent> <leader>ld <Cmd>lua vim.diagnostic.open_float({ scope = "line", border = "single" })<CR>
 " nnoremap <M-O> <Cmd>lua vim.lsp.buf.organize_imports()<CR>
 
-xnoremap @ :<C-u>lua require'nvim-config.lib'.execute_macro_over_visual_range()<CR>
+" Misc: {{{
 
+xnoremap @ :<C-u>lua require'nvim-config.lib'.execute_macro_over_visual_range()<CR>
 inoremap <silent> <Tab> <Cmd>lua require'nvim-config.lib'.full_indent()<CR>
+inoremap <M-Space> <Esc>
+
+" Change mapping for digraphs
+inoremap <C-d> <C-k>
+
+" Begin new line above from insert mode
+inoremap <M-Return> <Esc>O
+
+" Search for selected text
+vnoremap * "vy/\V<C-R>=escape(@",'/\')<CR><CR>
+
+" Start search with very-magic mode
+nnoremap / /\v
+
+" Repeat prev macro
+nmap , @@
+
+" }}}
 
 " Show highlight group under cursor
 nnoremap <F10> <Cmd>lua require'nvim-config.lib'.print_syn_group()<CR>
 
 " COMMANDS
-command! -nargs=+ -complete=shellcmd Rnew lua Config.lib.read_new(<q-args>)
+command! -nargs=+ -complete=shellcmd Rnew lua Config.lib.read_new(<f-args>)
 command! -bar Ssync syntax sync minlines=3000
 command! -bar DiffSaved lua Config.lib.diff_saved()
 command! -bar -range -bang -nargs=? SplitOn lua Config.lib.split_on_pattern(
             \ [[<args>]], { <range>, <line1>, <line2> }, <q-bang> == "!")
 command! -bar -range ExecuteSelection lua Config.lib.cmd_exec_selection({ <line1>, <line2> })
 command! -bar -bang BRemove lua Config.lib.remove_buffer("<bang>" == "!")
-command! -nargs=+ Grep lua Config.lib.comfy_grep(<f-args>)
+command! -nargs=+ Grep lua Config.lib.comfy_grep(false, <f-args>)
+command! -nargs=+ Lgrep lua Config.lib.comfy_grep(true, <f-args>)
 command! -bar Spectre lua require'spectre'.open()
 command! -bar SpectreFile lua require'spectre'.open_file_search()
 command! -bar HiShow redir=>a | silent hi | redir END | exe "e " . tempname() . "/Highlights"
@@ -335,3 +334,5 @@ function! PlusYank(type = "")
         let &selection = sel_save
     endtry
 endfunction
+
+" vim: fdm=marker

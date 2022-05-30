@@ -8,7 +8,7 @@ return function ()
       disable = {
         "vim",
         "help",
-        "markdown", -- NOTE: Parser seems immature. Revisit later.
+        -- "markdown", -- NOTE: Parser seems immature. Revisit later.
         "c", -- NOTE: Performance is abysmal in files of any notable length.
       },
     },

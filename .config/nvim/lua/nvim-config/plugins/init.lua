@@ -4,6 +4,37 @@ local function conf(config_name)
   return require(string.format("nvim-config.plugins.%s", config_name))
 end
 
+---Use local development version if it exists.
+---NOTE: Remember to run `:PackerClean :PackerInstall` to update symlinks.
+---@param spec table|string
+local function use_local(spec)
+  local use = require("packer").use
+  local name
+
+  if type(spec) ~= "table" then
+    spec = { spec }
+  end
+
+  ---@cast spec table
+  if spec.as then
+    name = spec.as
+  else
+    name = spec[1]:match(".*/(.*)")
+    name = name:gsub("%.git$", "")
+  end
+
+  local local_path = spec.local_path
+    or vim.env.PACKER_LOCAL_PATH
+    or (vim.env.HOME .. "/Documents/dev/nvim/plugins")
+  local path = local_path .. "/" .. name
+  if vim.fn.isdirectory(path) == 0 then
+    path = spec[1]
+  end
+
+  spec[1] = path
+  use(spec)
+end
+
 return require('packer').startup({
   ---@diagnostic disable-next-line: unused-local
   function (use, use_rocks)
@@ -33,6 +64,8 @@ return require('packer').startup({
     -- vim.cmd([[runtime! ftdetect/*.lua]])
 
     use 'wbthomason/packer.nvim'
+
+    use 'lewis6991/impatient.nvim'
 
     -- SYNTAX
     use { 'MTDL9/vim-log-highlighting' }
@@ -187,17 +220,25 @@ return require('packer').startup({
     use { 'feline-nvim/feline.nvim', config = conf("feline") }
     use { 'b0o/incline.nvim', config = conf("incline"), after = "nvim-web-devicons" }
     use { 'lewis6991/gitsigns.nvim', config = conf("gitsigns") }
-    use { 'lukas-reineke/indent-blankline.nvim', setup = conf("indent-blankline") }
-    use { 'folke/lsp-trouble.nvim', config = conf("lsp-trouble"), after = "nvim-web-devicons" }
-    use { 'sindrets/diffview.nvim', config = conf("diffview"), after = "nvim-web-devicons" }
-    -- use { '~/Documents/misc/diffview-api-test' }
-    use { 'sindrets/winshift.nvim', config = conf("winshift") }
+    use_local { 'lukas-reineke/indent-blankline.nvim', setup = conf("indent-blankline") }
     use {
+      'folke/lsp-trouble.nvim',
+      config = conf("lsp-trouble"), after = "nvim-web-devicons",
+      cmd = { "Trouble", "TroubleClose", "TroubleRefresh", "TroubleToggle" },
+    }
+    use_local { 'sindrets/diffview.nvim', config = conf("diffview") }
+    -- use { '~/Documents/misc/diffview-api-test' }
+    use_local { 'sindrets/winshift.nvim', config = conf("winshift") }
+    use_local {
       'TimUntersberger/neogit',
       config = conf("neogit"),
       requires = { 'nvim-lua/plenary.nvim', 'sindrets/diffview.nvim' },
     }
-    use { 'simrat39/symbols-outline.nvim', setup = conf("symbols-outline") }
+    use {
+      'simrat39/symbols-outline.nvim',
+      setup = conf("symbols-outline"),
+      cmd = { "SymbolsOutline", "SymbolsOutlineClose", "SymbolsOutlineOpen" },
+    }
     use {
       'p00f/nvim-ts-rainbow',
       requires = { 'nvim-treesitter/nvim-treesitter' },
@@ -231,6 +272,11 @@ return require('packer').startup({
         vim.g.mkdp_browserfunc = "MkdpOpenInNewWindow"
       end
     }
+    use {
+      'glacambre/firenvim',
+      run = function() vim.fn['firenvim#install'](0) end,
+      setup = conf("firenvim"),
+    }
     use { 'honza/vim-snippets' }
 
     -- THEMES
@@ -242,7 +288,6 @@ return require('packer').startup({
     use { 'sainnhe/gruvbox-material' }
     use { 'gruvbox-community/gruvbox' }
     use { 'folke/tokyonight.nvim' }
-    use { 'sindrets/dracula-vim', as = "dracula" }
     use { 'sindrets/material.nvim' }
     use { 'sindrets/rose-pine-neovim', as = 'rose-pine' }
     use { 'mcchrish/zenbones.nvim', requires = 'rktjmp/lush.nvim' }
@@ -251,5 +296,9 @@ return require('packer').startup({
     use { 'olimorris/onedarkpro.nvim', branch = 'main' }
     use { 'NTBBloodbath/doom-one.nvim' }
     use { 'catppuccin/nvim', as = "catppuccin" }
+    use_local { 'sindrets/dracula-vim', as = "dracula" }
+    use { 'https://gitlab.com/yorickpeterse/nvim-grey.git' }
+    use { 'https://gitlab.com/yorickpeterse/vim-paper.git' }
+    use { 'projekt0n/github-nvim-theme' }
   end
 })

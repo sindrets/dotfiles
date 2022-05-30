@@ -19,7 +19,7 @@ return function ()
     vim.opt.eventignore = "all"
     neoscroll[opr](...)
     vim.opt.eventignore = last
-    vim.cmd("do WinScrolled")
+    vim.cmd("do <nomodeline> WinScrolled")
   end
 
   local time = 180

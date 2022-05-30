@@ -20,8 +20,7 @@ augroup NvimConfig
 
     au BufWinEnter quickfix set nobuflisted | setl nowrap cc=
 
-    " Problem: treesitter(?) somehow keeps re-triggering the modelines.
-    " Solution: disable modelines after first exec.
+    " Disable modelines after the first time it's processed.
     au BufWinEnter * setl nomodeline
 
     au TermEnter * setl nonu nornu signcolumn=no | IlluminationDisable!
@@ -38,7 +37,14 @@ augroup NvimConfig
                 \ | PackerCompile
 
     au User PackerCompileDone exe 'lua Config.common.utils.info("Packer compiled!")'
-                \ | do ColorScheme
+                \ | do <nomodeline> ColorScheme
+
+    " Enable 'onemore' in visual mode.
+    au ModeChanged *:[v]* setl virtualedit+=onemore
+    au ModeChanged [v]*:* setl virtualedit<
+
+    " Automatically reload file if it's been changed outside vim.
+    au BufEnter,CursorHold * silent! checktime %
 
     " Handle opening buffers with the format`foo/bar/baz:128:17`
     au BufEnter *

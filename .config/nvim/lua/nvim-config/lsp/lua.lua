@@ -18,6 +18,7 @@ end
 
 lua_add_lib("$VIMRUNTIME")
 lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/plenary.nvim")
+lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
 
 local config = vim.tbl_deep_extend("force", LspGetDefaultConfig(), {
   cmd = {

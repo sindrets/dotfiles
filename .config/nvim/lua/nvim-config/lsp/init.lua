@@ -178,7 +178,7 @@ function M.show_position_diagnostics()
   end
   last_diagnostics_word = { cline, cword, bufnr }
 
-  vim.diagnostic.open_float({ scope = "cursor" })
+  vim.diagnostic.open_float({ scope = "cursor", border = "single" })
 end
 
 -- LSP auto commands
