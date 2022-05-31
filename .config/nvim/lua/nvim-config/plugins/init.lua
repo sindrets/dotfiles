@@ -258,7 +258,7 @@ return require('packer').startup({
         })
       end
     }
-    use { 'glepnir/dashboard-nvim', setup = conf("dashboard") }
+    use { 'goolord/alpha-nvim', config = conf("alpha") }
     use { 'ryanoasis/vim-devicons' }
     use {
       'iamcco/markdown-preview.nvim',

@@ -10,6 +10,7 @@ return function ()
     'help',
     'startify',
     'dashboard',
+    'alpha',
     'packer',
     'NeogitStatus',
     'NeogitCommitView',

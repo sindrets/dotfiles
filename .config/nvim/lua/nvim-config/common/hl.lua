@@ -132,7 +132,7 @@ function M.hi(groups, opt)
 
     vim.cmd(string.format(
       "hi %s %s %s %s %s %s %s",
-      opt.default and "def" or "",
+      opt.default and "default" or "",
       group,
       opt.fg and (g .. "fg=" .. opt.fg) or "",
       opt.bg and (g .. "bg=" .. opt.bg) or "",
@@ -159,7 +159,7 @@ function M.hi_link(from, to, opt)
   for _, f in ipairs(from) do
     vim.cmd(string.format(
       "hi%s %s link %s %s",
-      opt.force and "!" or "",
+      (opt.force and not opt.default) and "!" or "",
       opt.default and "default" or "",
       f,
       to or "NONE"
