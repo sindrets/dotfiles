@@ -1,6 +1,7 @@
 setl comments+=n:•
 setl formatoptions=tnqro
 
+" Send all helptags to loclist
 nnoremap <buffer> <M-o> <Cmd>lvimgrep /\v.*\*\S+\*$/j % <bar> lopen<CR>
 
 function! s:format_helptags() abort

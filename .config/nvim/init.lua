@@ -1,9 +1,7 @@
----@diagnostic disable-next-line: unused-local
 local ok, impatient = pcall(require, "impatient")
--- TODO: Re-enable when [this](https://github.com/sindrets/diffview.nvim/issues/144) is resolved.
--- if ok then
---   impatient.enable_profile()
--- end
+if ok then
+  impatient.enable_profile()
+end
 
 ---Pretty print. Alias for `vim.inspect()`.
 _G.pp = function(a, opt)

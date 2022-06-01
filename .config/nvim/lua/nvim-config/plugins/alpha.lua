@@ -75,6 +75,10 @@ return function()
 
   local function setup_buffer(bufnr)
     vim.opt_local.list = false
+    vim.opt_local.winhl = table.concat({
+      "Normal:DashboardNormal",
+      "EndOfBuffer:DashboardEndOfBuffer",
+    }, ",")
     for _, btn in ipairs(dashboard.section.buttons.val) do
       local m = utils.vec_slice(btn.keymap)
       m[4] = vim.tbl_extend("force", m[4] or {}, { buffer = bufnr })
@@ -83,6 +87,8 @@ return function()
   end
 
   local function setup_highlights()
+    hl.hi_link("DashboardNormal", "Normal", { default = true })
+    hl.hi("DashboardEndOfBuffer", { fg = "bg", bg = "bg", default = true })
     hl.hi_link("DashboardHeader", "Type", { default = true })
     hl.hi_link("DashboardCenter", "Keyword", { default = true })
     -- hl.hi_link("DashboardShortCut", "String", { default = true })

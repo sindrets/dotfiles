@@ -62,30 +62,30 @@ function M.clear_terminal_colors()
 end
 
 function M.apply_terminal_defaults()
-   -- black
-  vim.g.terminal_color_0  = "#222222"
-  vim.g.terminal_color_8  = "#666666"
-   -- red
-  vim.g.terminal_color_1  = "#e84f4f"
-  vim.g.terminal_color_9  = "#d23d3d"
-   -- green
-  vim.g.terminal_color_2  = "#b7ce42"
-  vim.g.terminal_color_10 = "#bde077"
-   -- yellow
-  vim.g.terminal_color_3  = "#fea63c"
-  vim.g.terminal_color_11 = "#ffe863"
-   -- blue
-  vim.g.terminal_color_4  = "#66a9b9"
-  vim.g.terminal_color_12 = "#aaccbb"
-   -- magenta
-  vim.g.terminal_color_5  = "#b7416e"
-  vim.g.terminal_color_13 = "#e16a98"
-   -- cyan
-  vim.g.terminal_color_6  = "#6dc1b6"
-  vim.g.terminal_color_14 = "#42717b"
-   -- white
-  vim.g.terminal_color_7  = "#cccccc"
-  vim.g.terminal_color_15 = "#ffffff"
+  -- black
+  vim.g.terminal_color_0  = "#15161E"
+  vim.g.terminal_color_8  = "#414868"
+  -- red
+  vim.g.terminal_color_1  = "#f7768e"
+  vim.g.terminal_color_9  = "#f7768e"
+  -- green
+  vim.g.terminal_color_2  = "#9ece6a"
+  vim.g.terminal_color_10 = "#9ece6a"
+  -- yellow
+  vim.g.terminal_color_3  = "#e0af68"
+  vim.g.terminal_color_11 = "#e0af68"
+  -- blue
+  vim.g.terminal_color_4  = "#7aa2f7"
+  vim.g.terminal_color_12 = "#7aa2f7"
+  -- magenta
+  vim.g.terminal_color_5  = "#bb9af7"
+  vim.g.terminal_color_13 = "#bb9af7"
+  -- cyan
+  vim.g.terminal_color_6  = "#7dcfff"
+  vim.g.terminal_color_14 = "#7dcfff"
+  -- white
+  vim.g.terminal_color_7  = "#a9b1d6"
+  vim.g.terminal_color_15 = "#c0caf5"
 end
 
 ---@class GenerateDiffColorsSpec
@@ -502,6 +502,7 @@ function M.apply_tweaks()
   hi_link("GitSignsDelete", "diffRemoved")
   hi_link("GitSignsChange", "diffChanged")
 
+  hi_link("NeogitCommitViewHeader", "Title")
   hi_link("NeogitDiffAddHighlight", "DiffInlineAdd")
   hi_link("NeogitDiffDeleteHighlight", "DiffInlineDelete")
 

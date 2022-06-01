@@ -20,16 +20,18 @@ M.path = lazy.require("diffview.path", function(m)
   local pl = m.PathLib({ separator = "/" })
 
   function pl:chain(...)
-    local result = M.tbl_pack(...)
-    return setmetatable({}, {
+    local t = {
+      _result = M.tbl_pack(...)
+    }
+    return setmetatable(t, {
       __index = function(chain, k)
         if k == "get" then
-          return function()
-            return M.tbl_unpack(result)
+          return function(_)
+            return M.tbl_unpack(t._result)
           end
         else
-          return function(...)
-            result = M.tbl_pack(pl[k](pl, M.tbl_unpack(result), ...))
+          return function(_, ...)
+            t._result = M.tbl_pack(pl[k](pl, M.tbl_unpack(t._result), ...))
             return chain
           end
         end

@@ -202,6 +202,7 @@ return require('packer').startup({
         vim.g.Illuminate_ftblacklist = {
           "qf",
           "dashboard",
+          "alpha",
           "packer",
           "NeogitStatus",
           "TelescopePrompt",

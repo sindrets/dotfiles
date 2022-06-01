@@ -31,7 +31,7 @@ return function()
   end
 
   if vim.g.started_by_firenvim then
-    vim.opt.guifont = "monospace:h9"
+    vim.opt.guifont = "monospace:h10"
 
     Config.common.au.declare_group("firenvim_config", {}, {
       {
@@ -48,6 +48,7 @@ return function()
                 timer:stop()
                 timer:close()
                 vim.opt.lines = math.max(vim.o.lines, 12)
+                vim.cmd("hi clear")
                 if Config.colorscheme.bg then
                   vim.opt.bg = Config.colorscheme.bg
                 end
