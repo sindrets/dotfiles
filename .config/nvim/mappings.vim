@@ -192,7 +192,8 @@ nnoremap <leader>gcc <Cmd>Git commit -a<CR>
 nnoremap <leader>gca <Cmd>Git commit -a --amend<CR>
 nnoremap <leader>gb <Cmd>Git blame <bar> wincmd p<CR>
 nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
-nnoremap <leader>gh <Cmd>DiffviewFileHistory .<CR>
+nnoremap <leader>gh <Cmd>DiffviewFileHistory<CR>
+nnoremap <leader>gH <Cmd>DiffviewFileHistory %<CR>
 
 " LspTrouble and Symbols outline
 nnoremap <A-S-D> <Cmd>lua Config.fn.toggle_diagnostics()<CR>

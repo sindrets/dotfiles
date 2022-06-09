@@ -144,9 +144,7 @@ function M.generate_diff_colors(opt)
 
   if not opt.no_override then
     hi("DiffAdd", { bg = bg_add:to_css(), fg = "NONE", gui = "NONE" })
-    hi("DiffAddText", { bg = bg_add_text:to_css(), fg = "NONE", gui = "NONE" })
     hi("DiffDelete", { bg = bg_del:to_css(), fg = "NONE", gui = "NONE" })
-    hi("DiffDeleteText", { bg = bg_del_text:to_css(), fg = "NONE", gui = "NONE" })
     hi("DiffChange", { bg = bg_mod:to_css(), fg = "NONE", gui = "NONE" })
     hi("DiffText", { bg = bg_mod_text:to_css(), fg = "NONE", gui = "NONE" })
 
@@ -154,6 +152,9 @@ function M.generate_diff_colors(opt)
     hi("diffRemoved", { fg = base_del:to_css(), bg = "NONE", gui = "NONE" })
     hi("diffChanged", { fg = base_mod:to_css(), bg = "NONE", gui = "NONE" })
   end
+
+  hi("DiffAddText", { bg = bg_add_text:to_css(), fg = "NONE", gui = "NONE" })
+  hi("DiffDeleteText", { bg = bg_del_text:to_css(), fg = "NONE", gui = "NONE" })
 
   hi("DiffInlineAdd", { bg = bg_add:to_css(), fg = base_add:to_css(), gui = "NONE" })
   hi("DiffInlineDelete", { bg = bg_del:to_css(), fg = base_del:to_css(), gui = "NONE" })
@@ -442,8 +443,9 @@ function M.apply_tweaks()
     if bg == "light" then
       hi("CursorLine", { bg = bg_normal:clone():highlight(0.05):to_css() })
       hi("ColorColumn", { bg = bg_normal:clone():highlight(0.1):to_css() })
-      hi("Comment", { fg = bg_normal:clone():highlight(0.3):to_css() })
+      hi("Comment", { fg = bg_normal:clone():highlight(0.4):to_css() })
       hi("Visual", { bg = Color.from_hl("Statement", "fg"):blend(bg_normal, 0.9):mod_hue(25):to_css() })
+      hi("StatusLine", { fg = hl.get_fg("String") })
       hi_link("NormalFloat", "Normal")
     end
     feline_theme = "basic"
@@ -460,8 +462,6 @@ function M.apply_tweaks()
     hl.hi("DashboardShortCut", { fg = hl.get_fg("String"), gui = "bold,reverse" })
     hi_link("DashboardFooter", "Comment")
     hi_link("DiffviewFolderName", "Special")
-    hi("DiffviewFilePanelTitle", { fg = hl.get_fg("Statement"), gui = "bold" })
-    hi("DiffviewFilePanelCounter", { fg = hl.get_fg("String"), gui = "bold" })
     diff_gen_opt = { no_derive = { mod = true } }
     feline_theme = "basic"
     M.apply_terminal_defaults()
@@ -516,9 +516,9 @@ function M.apply_tweaks()
 
   if bg_normal.lightness >= 0.5 then
     hi("rainbowcol1", { fg = "#e05661" })
-    hi("rainbowcol2", { fg = "#eea825" })
-    hi("rainbowcol3", { fg = "#ee9025" })
-    hi("rainbowcol4", { fg = "#1da912" })
+    hi("rainbowcol2", { fg = "#cc901f" })
+    hi("rainbowcol3", { fg = "#cc641f" })
+    hi("rainbowcol4", { fg = "#429e3b" })
     hi("rainbowcol5", { fg = "#118dc3" })
     hi("rainbowcol6", { fg = "#56b6c2" })
     hi("rainbowcol7", { fg = "#9a77cf" })
@@ -532,7 +532,7 @@ function M.apply_tweaks()
   hl.hi_link("DevIconLirFolderNode", "LirFolderIcon")
 
   hi("BufferLineTabSelected", {
-    bg = Color.from_hl("Normal", "bg"):highlight(0.1):to_css(),
+    bg = bg_normal:clone():highlight(0.1):to_css(),
     fg = hl.get_fg({ "Accent", "Title", "Normal" }),
     gui = "bold",
   })

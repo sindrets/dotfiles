@@ -34,12 +34,12 @@ return function ()
     },
     file_history_panel = {
       log_options = {
-        max_count = 256,
-        follow = false,
-        all = false,
-        merges = false,
-        no_merges = false,
-        reverse = false,
+        single_file = {
+          diff_merges = "combined",
+        },
+        multi_file = {
+          diff_merges = "first-parent",
+        },
       },
       win_config = {
         position = "bottom",
@@ -54,31 +54,8 @@ return function ()
       DiffviewFileHistory = {},
     },
     hooks = {
-      view_opened = function(view)
-        -- Update diffviews whenever the index changes.
-        -- TODO: should probably implement this in the plugin at some point.
-        local DiffView = require("diffview.views.diff.diff_view").DiffView
-        if view:instanceof(DiffView) then
-          local watcher = vim.loop.new_fs_poll()
-          ---@diagnostic disable-next-line: unused-local
-          watcher:start(view.git_dir .. "/index", 1000, function(err, prev, cur)
-            if not err then
-              vim.schedule(function()
-                vim.cmd("DiffviewRefresh")
-              end)
-            end
-          end)
-
-          ---@diagnostic disable-next-line: undefined-global
-          DiffviewGlobal.emitter:on("view_closed", function(v)
-            if v == view then
-              watcher:stop()
-              watcher:close()
-            end
-          end)
-        end
-      end,
       diff_buf_read = function(bufnr)
+        vim.fn.cursor(1, 1)
         -- Disable some performance heavy stuff in long files.
         if vim.api.nvim_buf_line_count(bufnr) >= 2500 then
           vim.cmd("IndentBlanklineDisable")

@@ -23,9 +23,7 @@ augroup NvimConfig
     " Disable modelines after the first time it's processed.
     au BufWinEnter * setl nomodeline
 
-    au TermEnter * setl nonu nornu signcolumn=no | IlluminationDisable!
-
-    au TermLeave * if &buftype ==# "terminal" | setl nu rnu | endif
+    au TermEnter * setl nonu nornu signcolumn=yes:1 | IlluminationDisable!
 
     au BufEnter * if &buftype ==# "terminal" | startinsert | endif
 

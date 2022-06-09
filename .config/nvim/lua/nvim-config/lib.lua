@@ -180,15 +180,26 @@ function M.remove_buffer(force, bufid)
     end
   end
 
+  local bufnr = api.nvim_get_current_buf()
   local alt_bufid = vim.fn.bufnr("#")
   if alt_bufid ~= -1 then
     api.nvim_set_current_buf(alt_bufid)
   else
     local listed = utils.list_bufs({ listed = true })
-    if #listed > (vim.bo[0].buflisted and 1 or 0) then
+    if #listed > (vim.bo[bufnr].buflisted and 1 or 0) then
       vim.cmd("silent! bp")
     else
       vim.cmd("enew")
+    end
+  end
+
+  local new_bufnr = api.nvim_get_current_buf()
+
+  -- Change the buffer in all windows that currently display the target
+  -- buffer.
+  for _, winid in ipairs(api.nvim_list_wins()) do
+    if api.nvim_win_get_buf(winid) == bufnr then
+      api.nvim_win_set_buf(winid, new_bufnr)
     end
   end
 

@@ -225,7 +225,6 @@ return require('packer').startup({
     use {
       'folke/lsp-trouble.nvim',
       config = conf("lsp-trouble"), after = "nvim-web-devicons",
-      cmd = { "Trouble", "TroubleClose", "TroubleRefresh", "TroubleToggle" },
     }
     use_local { 'sindrets/diffview.nvim', config = conf("diffview") }
     -- use { '~/Documents/misc/diffview-api-test' }
