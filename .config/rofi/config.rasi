@@ -1,5 +1,5 @@
 
-configuration {
-	theme: "~/.config/rofi/themes/colors-rofi-dark.rasi";
-}
+configuration {}
+
+@theme "~/.config/rofi/themes/colors-rofi-dark.rasi"
 

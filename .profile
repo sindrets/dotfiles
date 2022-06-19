@@ -6,7 +6,7 @@ umask 022
 export XDG_CONFIG_HOME="$HOME/.config"
 export VISUAL=nvim
 export EDITOR=nvim
-export BROWSER=/usr/bin/firefox
+export BROWSER=/usr/bin/firefox-beta
 export TERMINAL=kitty
 export GREP_COLORS='ms=01;33:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36'
 
