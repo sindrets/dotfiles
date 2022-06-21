@@ -7,9 +7,10 @@ local M = {}
 ---@class HiSpec
 ---@field fg string
 ---@field bg string
+---@field gui string
 ---@field ctermfg integer
 ---@field ctermbg integer
----@field gui string
+---@field cterm string
 ---@field sp string
 ---@field blend integer
 ---@field default boolean
@@ -112,15 +113,6 @@ end
 ---@param groups string|string[] Syntax group name or a list of group names.
 ---@param opt HiSpec
 function M.hi(groups, opt)
-  local use_tc = vim.o.termguicolors
-  local g = use_tc and "gui" or "cterm"
-
-  if not use_tc then
-    opt = Config.common.utils.tbl_clone(opt)
-    opt.fg = opt.ctermfg or opt.fg
-    opt.bg = opt.ctermbg or opt.bg
-  end
-
   if type(groups) ~= "table" then
     groups = { groups }
   end
@@ -134,9 +126,12 @@ function M.hi(groups, opt)
       "hi %s %s %s %s %s %s %s",
       opt.default and "default" or "",
       group,
-      opt.fg and (g .. "fg=" .. opt.fg) or "",
-      opt.bg and (g .. "bg=" .. opt.bg) or "",
-      opt.gui and (g .. "=" .. opt.gui) or "",
+      opt.fg and ("guifg=" .. opt.fg) or "",
+      opt.bg and ("guibg=" .. opt.bg) or "",
+      opt.gui and ("gui=" .. opt.gui) or "",
+      opt.ctermfg and ("ctermfg=" .. opt.ctermfg) or "",
+      opt.ctermbg and ("ctermbg=" .. opt.ctermbg) or "",
+      opt.cterm and ("cterm=" .. opt.cterm) or "",
       opt.sp and ("guisp=" .. opt.sp) or "",
       opt.blend and ("blend=" .. opt.blend) or ""
     ))
