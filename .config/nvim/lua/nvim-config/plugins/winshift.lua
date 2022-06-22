@@ -28,6 +28,6 @@ return function()
       cursorline = false,
       cursorcolumn = false,
       colorcolumn = "",
-    }
+    },
   })
 end
