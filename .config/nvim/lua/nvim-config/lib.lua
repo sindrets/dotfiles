@@ -312,10 +312,6 @@ function M.print_syn_group()
   print(vim.fn.synIDattr(id, "name") .. " -> " .. vim.fn.synIDattr(vim.fn.synIDtrans(id), "name"))
 end
 
-function M.mkdp_open_in_new_window(url)
-  vim.fn.system(string.format("$BROWSER --new-window %s", url))
-end
-
 ---@param filetype? string
 function M.new_scratch_buf(filetype)
   local bufid = api.nvim_create_buf(true, true)

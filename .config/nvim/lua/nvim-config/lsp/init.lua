@@ -64,8 +64,11 @@ require'nvim-config.lsp.lua'
 -- Teal
 -- require'nvim-config.lsp.teal'
 
+-- Bash
+lspconfig.bashls.setup(LspGetDefaultConfig())
+
 -- C#
-require'lspconfig'.omnisharp.setup({
+lspconfig.omnisharp.setup({
     cmd = { "/usr/bin/omnisharp", "--languageserver" , "--hostPID", tostring(PID) },
     filetypes = { "cs", "vb" },
     init_options = {},
@@ -75,13 +78,13 @@ require'lspconfig'.omnisharp.setup({
   })
 
 -- C, C++
-require'lspconfig'.clangd.setup(LspGetDefaultConfig())
+require('lspconfig').clangd.setup(LspGetDefaultConfig())
 
 -- Vim
-require'lspconfig'.vimls.setup(LspGetDefaultConfig())
+require('lspconfig').vimls.setup(LspGetDefaultConfig())
 
 -- Go
-require'lspconfig'.gopls.setup(LspGetDefaultConfig())
+require('lspconfig').gopls.setup(LspGetDefaultConfig())
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {

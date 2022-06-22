@@ -266,7 +266,7 @@ return require('packer').startup({
       setup = function ()
         vim.api.nvim_exec([[
           function! MkdpOpenInNewWindow(url)
-            lua require'nvim-config.lib'.mkdp_open_in_new_window(vim.fn.eval("a:url"))
+            call jobstart([ "chromium", "--app=" . a:url ])
           endfunction
           ]], false)
         vim.g.mkdp_browserfunc = "MkdpOpenInNewWindow"
