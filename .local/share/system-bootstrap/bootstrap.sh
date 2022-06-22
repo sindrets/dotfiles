@@ -69,11 +69,17 @@ function install_yay() {
 # Install config system dependencies
 function install_dependencies() {
   info "Installing config system dependencies..."
-  if [ -e "$script_home/pkg-dependencies.txt" ]; then
-    yay -S --needed - < "$script_home/pkg-dependencies.txt"
-  else
-    yay -S --needed - <(curl https://raw.githubusercontent.com/sindrets/dotfiles/master/.local/share/system-bootstrap/pkg-dependencies.txt)
+
+  local pkg_list="$script_home/pkg-dependencies.txt"
+
+  if [ ! -e "$pkg_list" ]; then
+    curl -o "./pkg-dependencies.txt" 'https://raw.githubusercontent.com/sindrets/dotfiles/master/.local/share/system-bootstrap/pkg-dependencies.txt'
+    pkg_list="./pkg-dependencies.txt"
   fi
+
+  sudo true
+  yay --sudoloop -S --needed --norebuild --noredownload --nocleanmenu --nodiffmenu --noremovemake - \
+    < "$pkg_list"
 }
 
 function setup_ssh() {
