@@ -75,7 +75,7 @@ nnoremap <leader>6 <Cmd>6tabn<CR>
 nnoremap <leader>7 <Cmd>7tabn<CR>
 nnoremap <leader>8 <Cmd>8tabn<CR>
 nnoremap <leader>9 <Cmd>9tabn<CR>
-nnoremap g<C-q> <Cmd>tabc<CR>
+nnoremap <leader>x <Cmd>tabc<CR>
 
 " Navigate windows
 tnoremap <A-h> <C-\><C-N><C-w>h

@@ -2,7 +2,7 @@
 
 syn clear qfPath
 
-syn match qfPathBasename /\v(.{-})(:\d+:\d+)@=/ nextgroup=qfPosition contained
+syn match qfPathBasename /\v(.{-})(:\d+(:\d+)?)@=/ nextgroup=qfPosition contained
 syn match qfPath /\v(\S*\/)/ nextgroup=qfPathBasename contained
 
 hi! link qfPath Comment
