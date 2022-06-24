@@ -38,17 +38,50 @@ function info() {
 }
 
 function warn() {
-  echo -e "\n${yellow}WARN: $1${reset}" > /dev/stderr
+  echo -e "\n${yellow}WARN: $1${reset}" >&2
 }
 
 function err() {
-  echo -e "\n${red}ERROR: $1${reset}" > /dev/stderr
+  echo -e "\n${red}ERROR: $1${reset}" >&2
 }
 
 function fatal() {
-  echo -e "\n${red}FATAL: $1${reset}" > /dev/stderr
+  echo -e "\n${red}FATAL: $1${reset}" >&2
   exit 1
 }
+
+function in_array() {
+  local i
+  for i in "${@:2}"; do
+    [[ $1 = "$i" ]] && return 0
+  done
+  return 1
+}
+
+args=($@)
+
+function usage() {
+  cat <<EOF
+usage: ${0##*/} [options] [tasks]
+
+  If no tasks are specified, then all tasks will be ran.
+
+  Options:
+    -h, --help  Print help and exit.
+
+  Tasks:
+    yay         Install yay.
+    deps        Install system config dependencies.
+    ssh         Set up and configure ssh.
+    dotfiles    Install dotfiles.
+
+EOF
+}
+
+if [[ -z $1 || $1 = @(-h|--help) ]]; then
+  usage
+  exit $(( $# ? 0 : 1 ))
+fi
 
 # Install yay
 function install_yay() {
@@ -119,7 +152,7 @@ function install_dotfiles() {
   )
 }
 
-function run() {
+function all() {
   install_yay
   install_dependencies
   setup_ssh
@@ -127,6 +160,13 @@ function run() {
   success "Bootstrap completed successfully!"
 }
 
-run
+if [ ${#args[@]} -eq 0 ]; then
+  all
+else
+  (in_array "yay" ${args[*]}) && install_yay
+  (in_array "deps" ${args[*]}) && install_dependencies
+  (in_array "ssh" ${args[*]}) && setup_ssh
+  (in_array "dotfiles" ${args[*]}) && install_dotfiles
+fi
 
 # vim:ft=bash
