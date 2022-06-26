@@ -111,6 +111,8 @@ return require('packer').startup({
       end
     }
     use { 'neovim/nvim-lspconfig' }
+    use { 'jose-elias-alvarez/null-ls.nvim' }
+    use { 'jose-elias-alvarez/nvim-lsp-ts-utils' }
     use {
       "ray-x/lsp_signature.nvim",
       config = function()
@@ -324,5 +326,6 @@ return require('packer').startup({
     display = {
       open_cmd = 'vnew \\[packer\\] | wincmd L | vert resize 65',
     },
+    max_jobs = 50
   },
 })
