@@ -75,7 +75,7 @@ end
 -- Null-ls
 local null_ls = require "null-ls"
 null_ls.setup {
-  on_attach = LspCommonOnAttach,
+  on_attach = M.common_on_attach,
   sources = {
     null_ls.builtins.formatting.prettier,
   },
@@ -88,7 +88,7 @@ require "nvim-config.lsp.php"
 require("nvim-config.lsp.java")
 
 -- Typescript
-require "nvim-config.lsp.typescript"
+require "nvim-config.lsp.typescript".setup(M.create_config())
 
 -- Python
 lspconfig.pyright.setup(M.create_config())
