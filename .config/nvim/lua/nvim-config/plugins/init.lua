@@ -111,6 +111,8 @@ return require('packer').startup({
       end
     }
     use { 'neovim/nvim-lspconfig' }
+    use { 'jose-elias-alvarez/null-ls.nvim' }
+    use { 'jose-elias-alvarez/nvim-lsp-ts-utils' }
     use {
       "ray-x/lsp_signature.nvim",
       config = function()
@@ -300,5 +302,6 @@ return require('packer').startup({
     use { 'https://gitlab.com/yorickpeterse/nvim-grey.git' }
     use { 'https://gitlab.com/yorickpeterse/vim-paper.git' }
     use { 'projekt0n/github-nvim-theme' }
-  end
+  end,
+  config = {max_jobs = 50}
 })

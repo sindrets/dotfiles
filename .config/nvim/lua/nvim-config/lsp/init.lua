@@ -49,11 +49,23 @@ _G.LspGetDefaultConfig = function()
   }, M.get_local_settings())
 end
 
+-- Null-ls
+local null_ls = require "null-ls"
+null_ls.setup {
+  on_attach = LspCommonOnAttach,
+  sources = {
+    null_ls.builtins.formatting.prettier,
+  },
+}
+
+-- PHP
+require "nvim-config.lsp.php"
+
 -- Java
 require'nvim-config.lsp.java'
 
 -- Typescript
-lspconfig.tsserver.setup(LspGetDefaultConfig())
+require "nvim-config.lsp.typescript"
 
 -- Python
 lspconfig.pyright.setup(LspGetDefaultConfig())
