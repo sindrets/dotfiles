@@ -1,8 +1,8 @@
-return function ()
+return function()
   local actions = require('telescope.actions')
   local action_state = require('telescope.actions.state')
 
-  require('telescope').setup{
+  require('telescope').setup {
     defaults = {
       vimgrep_arguments = {
         'rg',
@@ -35,28 +35,32 @@ return function ()
       path_display = {
         "absolute"
       },
-      file_sorter =  require'telescope.sorters'.get_fuzzy_file,
+      file_sorter = require 'telescope.sorters'.get_fuzzy_file,
       file_ignore_patterns = {},
-      generic_sorter =  require'telescope.sorters'.get_generic_fuzzy_sorter,
+      generic_sorter = require 'telescope.sorters'.get_generic_fuzzy_sorter,
       winblend = 0,
       border = {},
       borderchars = { '─', '│', '─', '│', '┌', '┐', '┘', '└' },
       color_devicons = true,
       use_less = true,
       set_env = { ['COLORTERM'] = 'truecolor' }, -- default = nil,
-      file_previewer = require'telescope.previewers'.vim_buffer_cat.new,
-      grep_previewer = require'telescope.previewers'.vim_buffer_vimgrep.new,
-      qflist_previewer = require'telescope.previewers'.vim_buffer_qflist.new,
+      file_previewer = require 'telescope.previewers'.vim_buffer_cat.new,
+      grep_previewer = require 'telescope.previewers'.vim_buffer_vimgrep.new,
+      qflist_previewer = require 'telescope.previewers'.vim_buffer_qflist.new,
 
       -- Developer configurations: Not meant for general override
-      buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker,
+      buffer_previewer_maker = require 'telescope.previewers'.buffer_previewer_maker,
       mappings = {
         i = {
           ["<c-q>"] = actions.send_to_qflist + actions.open_qflist,
+          ["<c-n>"] = require("telescope.actions").cycle_history_next,
+          ["<c-p>"] = require("telescope.actions").cycle_history_prev,
           ["<c-b>"] = actions.preview_scrolling_up,
           ["<c-f>"] = actions.preview_scrolling_down,
         },
         n = {
+          ["<c-n>"] = require("telescope.actions").cycle_history_next,
+          ["<c-p>"] = require("telescope.actions").cycle_history_prev,
           ["<c-b>"] = actions.preview_scrolling_up,
           ["<c-f>"] = actions.preview_scrolling_down,
         },
@@ -92,11 +96,11 @@ return function ()
     },
     extensions = {
       fzf = {
-        fuzzy = true,                    -- false will only do exact matching
+        fuzzy = true, -- false will only do exact matching
         override_generic_sorter = false, -- override the generic sorter
-        override_file_sorter = true,     -- override the file sorter
-        case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
-                                         -- the default case_mode is "smart_case"
+        override_file_sorter = true, -- override the file sorter
+        case_mode = "smart_case", -- or "ignore_case" or "respect_case"
+        -- the default case_mode is "smart_case"
       },
       media_files = {
         -- filetypes whitelist

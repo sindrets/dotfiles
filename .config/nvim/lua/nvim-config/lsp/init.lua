@@ -72,11 +72,23 @@ function M.create_config(...)
   return M.create_local_config(config)
 end
 
+-- Null-ls
+local null_ls = require "null-ls"
+null_ls.setup {
+  on_attach = LspCommonOnAttach,
+  sources = {
+    null_ls.builtins.formatting.prettier,
+  },
+}
+
+-- PHP
+require "nvim-config.lsp.php"
+
 -- Java
 require("nvim-config.lsp.java")
 
 -- Typescript
-lspconfig.tsserver.setup(M.create_config())
+require "nvim-config.lsp.typescript"
 
 -- Python
 lspconfig.pyright.setup(M.create_config())
