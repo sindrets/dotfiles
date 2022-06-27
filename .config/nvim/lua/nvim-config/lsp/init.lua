@@ -98,6 +98,9 @@ require('lspconfig').vimls.setup(LspGetDefaultConfig())
 -- Go
 require('lspconfig').gopls.setup(LspGetDefaultConfig())
 
+-- Json
+require'nvim-config.lsp.json'
+
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
     virtual_text = false,
