@@ -44,8 +44,10 @@ nnoremap <M-p> "+p
 nnoremap <M-P> "+P
 xnoremap <expr> y v:register == '"' ? '"+y' : 'y'
 xnoremap <expr> <S-Y> v:register == '"' ? '"+Y' : 'Y'
-inoremap <M-p> <Cmd>set paste \| exec 'normal "+p' \| set nopaste<CR><RIGHT>
-inoremap <M-P> <Cmd>set paste \| exec 'normal "+P' \| set nopaste<CR><RIGHT>
+xnoremap <expr> p v:register == '"' ? '"_dP' : '"_d"' . v:register . 'P'
+xnoremap <M-p> "_d"+P
+inoremap <M-p> <Cmd>set paste <bar> exe 'norm! "+p' <bar> set nopaste<CR><RIGHT>
+inoremap <M-P> <Cmd>set paste <bar> exe 'norm! "+P' <bar> set nopaste<CR><RIGHT>
 
 " File explorer
 nnoremap - <Cmd>LirExplore<CR>
@@ -254,6 +256,7 @@ vnoremap * "vy/\V<C-R>=escape(@",'/\')<CR><CR>
 
 " Start search with very-magic mode
 nnoremap / /\v
+nnoremap ? ?\v
 
 " Repeat prev macro
 nmap , @@
@@ -275,8 +278,8 @@ command! -nargs=+ Grep lua Config.lib.comfy_grep(false, <f-args>)
 command! -nargs=+ Lgrep lua Config.lib.comfy_grep(true, <f-args>)
 command! -bar Spectre lua require'spectre'.open()
 command! -bar SpectreFile lua require'spectre'.open_file_search()
-command! -bar HiShow redir=>a | silent hi | redir END | exe "e " . tempname() . "/Highlights"
-            \ | call setline(1, split(g:a, "\n")) | setl bt=nofile | ColorizerAttachToBuffer
+command! -bar HiShow redir @x | silent hi | redir END | exe "e " . tempname() . "/Highlights"
+            \ | call setline(1, split(getreg("x"), "\n")) | setl bt=nofile | ColorizerAttachToBuffer
 command! -bar Messages lua Config.fn.update_messages_win()
 command! -bar -nargs=? -complete=filetype Scratch lua Config.lib.new_scratch_buf(<f-args>)
 command! -bar -nargs=1 -complete=help HelpHere lua Config.lib.cmd_help_here([[<args>]])

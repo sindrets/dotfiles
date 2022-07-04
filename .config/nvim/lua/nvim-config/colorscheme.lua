@@ -416,7 +416,14 @@ function M.apply_tweaks()
     hi_link("ColorColumn", "CursorLine", { force = true })
     hi("diffAdded", { fg = "#B3E1A3" })
     hi("diffChanged", { fg = "#A4B9EF" })
-    hi("Visual", { gui = "NONE", bg = bg_normal:clone():mod_value(0.1):to_css() })
+    hi("CursorLine", { gui = "NONE", bg = bg_normal:clone():mod_value(0.07):to_css() })
+    hi("Visual", {
+      gui = "NONE",
+      bg = Color.from_hl("Directory", "fg")
+        :mod_lightness(-0.1)
+        :blend(bg_normal, 0.85)
+        :to_css()
+    })
     hi({ "NormalFloat", "StatusLine" }, { bg = bg_normal:clone():mod_value(-0.025):to_css() })
     hi("ModeMsg", { fg = "#98BBF5" })
     hi({ "TsNumber", "TsFloat" }, { gui = "NONE" })
@@ -424,7 +431,14 @@ function M.apply_tweaks()
     hi("TablineSel", { bg = "NONE" })
     hi("TelescopeBorder", { fg = hl.get_fg("FloatBorder") })
     hi("TelescopePromptPrefix", { fg = "#F08FA9" })
+    hi("BufferLineFill", { bg = bg_normal:clone():highlight(-0.07):to_css() })
+    hi("BufferLineCloseButtonSelected", { fg = fg_normal:clone():blend(bg_normal, 0.3):to_css() })
     M.apply_log_defaults()
+
+    -- Remove bg for diagnostics.
+    for _, name in ipairs({ "Error", "Warn", "Info", "Hint" }) do
+      hi("Diagnostic" .. name, { bg = "NONE" })
+    end
 
   elseif colors_name == "dracula" then
     hi("Primary", { fg = "#50FA7B" })
@@ -511,14 +525,21 @@ function M.apply_tweaks()
   hi_link("NeogitDiffAddHighlight", "DiffInlineAdd")
   hi_link("NeogitDiffDeleteHighlight", "DiffInlineDelete")
 
-  hi_link({ "LspReferenceRead", "LspReferenceWrite" }, "LspReferenceText")
+  hi("LspReferenceText", {
+    bg = Color.from_hl("CursorLine", "bg"):highlight(0.08):to_css(),
+    unlink = true,
+    explicit = true,
+  })
+  hi_link({ "LspReferenceRead", "LspReferenceWrite" }, "LspReferenceText", { clear = true })
   hi_link(
-    { "illuminateWord", "illuminatedWord", "illuminateCurWord" },
-    "LspReferenceText"
+    { "illuminateWord", "illuminatedWord", "illuminatedCurWord" },
+    "LspReferenceText",
+    { clear = true }
   )
 
   hi_link("IndentBlanklineSpaceChar", "Whitespace")
 
+  -- Adjust ts-rainbow colors for light color schemes
   if bg_normal.lightness >= 0.5 then
     hi("rainbowcol1", { fg = "#e05661" })
     hi("rainbowcol2", { fg = "#cc901f" })

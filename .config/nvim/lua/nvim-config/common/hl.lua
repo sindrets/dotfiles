@@ -15,10 +15,13 @@ local M = {}
 ---@field blend integer
 ---@field default boolean
 ---@field unlink boolean
+---@field clear boolean
+---@field explicit boolean
 
 ---@class HiLinkSpec
 ---@field force boolean
 ---@field default boolean
+---@field clear boolean
 
 --#endregion
 
@@ -117,9 +120,25 @@ function M.hi(groups, opt)
     groups = { groups }
   end
 
+  if opt.explicit then
+    opt = vim.tbl_extend("keep", opt, {
+      fg = "NONE",
+      bg = "NONE",
+      gui = "NONE",
+      ctermfg = "NONE",
+      ctermbg = "NONE",
+      cterm = "NONE",
+      sp = "NONE",
+      blend = "NONE",
+    })
+  end
+
   for _, group in ipairs(groups) do
     if opt.unlink then
       vim.cmd(("hi! link %s NONE"):format(group))
+    end
+    if opt.clear then
+      vim.cmd("hi clear " .. group)
     end
 
     vim.cmd(string.format(
@@ -152,6 +171,10 @@ function M.hi_link(from, to, opt)
   end
 
   for _, f in ipairs(from) do
+    if opt.clear then
+      vim.cmd("hi clear " .. f)
+    end
+
     vim.cmd(string.format(
       "hi%s %s link %s %s",
       (opt.force and not opt.default) and "!" or "",

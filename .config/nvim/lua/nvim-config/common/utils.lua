@@ -165,21 +165,42 @@ function M.str_center_pad(s, min_size, fill)
   return string.rep(fill, left_len) .. s .. string.rep(fill, right_len)
 end
 
+---@class utils.StrQuoteSpec
+---@field esc_fmt string Format string for escaping quotes. Passed to `string.format()`.
+---@field prefer_single boolean Prefer single quotes.
+---@field only_if_whitespace boolean Only quote the string if it contains whitespace.
+
 ---@param s string
----@param esc_char? string
-function M.str_quote(s, esc_char)
-  esc_char = esc_char or "\\"
-  local has_single = s:find([[']]) ~= nil
-  local has_double = s:find([["]]) ~= nil
-  local result, _ = s:gsub("['|\"]", {
-    ["'"] = esc_char .. "'",
-    ['"'] = esc_char .. '"',
+---@param opt? utils.StrQuoteSpec
+function M.str_quote(s, opt)
+  ---@cast opt StrQuoteSpec
+  s = tostring(s)
+  opt = vim.tbl_extend("keep", opt or {}, {
+    esc_fmt = [[\%s]],
+    prefer_single = false,
+    only_if_whitespace = false,
   })
 
-  if has_double and not has_single then
-    return "'" .. result .. "'"
+  if opt.only_if_whitespace and not s:find("%s") then
+    return s
+  end
+
+  local primary, secondary = [["]], [[']]
+  if opt.prefer_single then
+    primary, secondary = [[']], [["]]
+  end
+
+  local has_primary = s:find(primary) ~= nil
+  local has_secondary = s:find(secondary) ~= nil
+
+  if has_primary and not has_secondary then
+    return secondary .. s .. secondary
   else
-    return '"' .. result .. '"'
+    local esc = opt.esc_fmt:format(primary)
+    -- First un-escape already escaped quotes to avoid incorrectly applied escapes.
+    s, _ = s:gsub(vim.pesc(esc), primary)
+    s, _ = s:gsub(primary, esc)
+    return primary .. s .. primary
   end
 end
 

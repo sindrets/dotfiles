@@ -156,7 +156,7 @@ function M.workspace_files(opt)
     })
   elseif vim.env.GIT_DIR or utils.file_readable("./.git") then
     builtin.git_files({
-      git_command = { "git", "ls-files", "--exclude-standard", "--cached", "--", uv.cwd() },
+      git_command = { "git", "ls-files", "--exclude-standard", "--others", "--cached", "--", uv.cwd() },
     })
   else
     builtin.find_files({
@@ -169,24 +169,24 @@ end
 ---Delete a buffer while also preserving the window layout. Changes the current
 ---buffer to the alt buffer if available, and then deletes it.
 ---@param force boolean Ignore unsaved changes.
----@param bufid? integer
-function M.remove_buffer(force, bufid)
-  bufid = bufid or api.nvim_get_current_buf()
+---@param bufnr? integer
+function M.remove_buffer(force, bufnr)
+  bufnr = bufnr or api.nvim_get_current_buf()
   if not force then
-    local modified = vim.bo[bufid].modified
+    local modified = vim.bo[bufnr].modified
     if modified then
       utils.err("No write since last change!")
       return
     end
   end
 
-  local bufnr = api.nvim_get_current_buf()
-  local alt_bufid = vim.fn.bufnr("#")
-  if alt_bufid ~= -1 then
-    api.nvim_set_current_buf(alt_bufid)
+  local cur_bufnr = api.nvim_get_current_buf()
+  local alt_bufnr = vim.fn.bufnr("#")
+  if alt_bufnr ~= -1 then
+    api.nvim_set_current_buf(alt_bufnr)
   else
     local listed = utils.list_bufs({ listed = true })
-    if #listed > (vim.bo[bufnr].buflisted and 1 or 0) then
+    if #listed > (vim.bo[cur_bufnr].buflisted and 1 or 0) then
       vim.cmd("silent! bp")
     else
       vim.cmd("enew")
@@ -198,13 +198,13 @@ function M.remove_buffer(force, bufid)
   -- Change the buffer in all windows that currently display the target
   -- buffer.
   for _, winid in ipairs(api.nvim_list_wins()) do
-    if api.nvim_win_get_buf(winid) == bufnr then
+    if api.nvim_win_get_buf(winid) == cur_bufnr then
       api.nvim_win_set_buf(winid, new_bufnr)
     end
   end
 
-  if api.nvim_buf_is_valid(bufid) then
-    api.nvim_buf_delete(bufid, { force = true })
+  if api.nvim_buf_is_valid(bufnr) then
+    api.nvim_buf_delete(bufnr, { force = true })
   end
 end
 
