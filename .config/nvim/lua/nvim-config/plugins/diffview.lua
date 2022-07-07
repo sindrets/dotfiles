@@ -56,7 +56,7 @@ return function ()
     },
     hooks = {
       diff_buf_read = function(bufnr)
-        vim.fn.cursor(1, 1)
+        -- vim.fn.cursor(1, 1)
         -- Disable some performance heavy stuff in long files.
         if vim.api.nvim_buf_line_count(bufnr) >= 2500 then
           vim.cmd("IndentBlanklineDisable")

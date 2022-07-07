@@ -116,6 +116,7 @@ if vim.fn.executable("ag") == 1 then
 end
 
 if vim.fn.executable("nvr") == 1 then
+  vim.env.NVIM_LISTEN_ADDRESS = vim.v.servername
   vim.env.GIT_EDITOR = "nvr -cc split +'setl bh=delete' --remote-wait"
   vim.env.EDITOR = "nvr -l --remote"
   vim.env.VISUAL = "nvr -l --remote"

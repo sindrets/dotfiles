@@ -218,6 +218,7 @@ return require('packer').startup({
         }
       end
     }
+    use { 'troydm/zoomwintab.vim' }
 
     -- MISC
     use { 'feline-nvim/feline.nvim', config = conf("feline") }
@@ -268,7 +269,15 @@ return require('packer').startup({
       setup = function ()
         vim.api.nvim_exec([[
           function! MkdpOpenInNewWindow(url)
-            call jobstart([ "chromium", "--app=" . a:url ])
+            if executable("qutebrowser")
+              call jobstart([ "qutebrowser", "--target", "window", a:url ])
+            elseif executable("chromium")
+              call jobstart([ "chromium", "--app=" . a:url ])
+            elseif executable("firefox")
+              call jobstart([ "firefox", "--new-window", a:url ])
+            else
+              echoerr '[MKDP] No suitable browser!'
+            endif
           endfunction
           ]], false)
         vim.g.mkdp_browserfunc = "MkdpOpenInNewWindow"
