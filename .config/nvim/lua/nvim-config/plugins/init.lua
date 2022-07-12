@@ -159,6 +159,7 @@ return require('packer').startup({
         })
       end,
     }
+    use { 'kevinhwang91/nvim-bqf', config = conf("nvim-bqf") }
     use { 'windwp/nvim-autopairs', config = conf("nvim-autopairs") }
     use { 'sindrets/nvim-colorizer.lua', config = conf("nvim-colorizer") }
     use { 'hrsh7th/vim-vsnip' }

@@ -230,6 +230,7 @@ function M.apply_tweaks()
   hi_clear({ "Cursor", "TermCursor" }, true)
   hi("TermCursor", { gui = "reverse" })
   hi("NonText", { gui = "nocombine" })
+  hi("Hidden", { fg = "bg", bg = "bg" })
 
   -- Explicitly redefine Normal to circumvent bug in upstream 0.7.0.
   -- TODO: Remove once 0.8.0 becomes stable.
@@ -524,6 +525,8 @@ function M.apply_tweaks()
   hi_link("NeogitCommitViewHeader", "Title")
   hi_link("NeogitDiffAddHighlight", "DiffInlineAdd")
   hi_link("NeogitDiffDeleteHighlight", "DiffInlineDelete")
+
+  hi_link("BqfSign", "DiagnosticSignInfo")
 
   hi("LspReferenceText", {
     bg = Color.from_hl("CursorLine", "bg"):highlight(0.08):to_css(),
