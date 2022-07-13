@@ -346,7 +346,9 @@ function M.comfy_grep(use_loclist, ...)
     return vim.fn.shellescape(arg):gsub("[|]", { ["'"] = "''", ["|"] = "\\|" })
   end, args)
 
-  local ok, err = pcall(vim.api.nvim_exec, "grep! " .. table.concat(cargs, " "), true)
+  local command = use_loclist and "lgrep! " or "grep! "
+
+  local ok, err = pcall(vim.api.nvim_exec, command .. table.concat(cargs, " "), true)
   if not ok then
     utils.err(err)
     return
@@ -474,9 +476,9 @@ function M.cmd_exec_selection(range)
   local ft = vim.bo.ft == "lua" and "lua" or "vim"
   local lines
   ---@cast range integer[]
-  if type(range) == "table" and range[1] ~= range[2] then
+  if type(range) == "table" and range[1] > 0 then
     table.sort(range)
-    lines = api.nvim_buf_get_lines(0, range[1] - 1, range[2], false)
+    lines = api.nvim_buf_get_lines(0, range[2] - 1, range[3], false)
   else
     lines = M.get_visual_selection()
   end
@@ -494,6 +496,73 @@ function M.cmd_exec_selection(range)
   if not ok and out then
     utils.err(out)
   end
+end
+
+---Open a new tabpage for editing markdown.
+---@param new boolean
+---@param name? string
+function M.cmd_md_view(new, name)
+  vim.cmd([[tab sp]])
+  local tabid = api.nvim_get_current_tabpage()
+  local winid = api.nvim_get_current_win()
+  vim.t.mdview = 1
+  vim.cmd([[belowright vnew]])
+  local margin_winid = api.nvim_get_current_win()
+
+  utils.set_local(0, {
+    list = false,
+    number = false,
+    relativenumber = false,
+    buflisted = false,
+    cursorline = false,
+    cursorcolumn = false,
+    foldcolumn = 0,
+    signcolumn = "no",
+    colorcolumn = "",
+    swapfile = false,
+    undolevels = -1,
+    bufhidden = "wipe",
+    winhl = "EndOfBuffer:Hidden",
+  })
+
+  api.nvim_set_current_win(winid)
+  api.nvim_win_set_width(winid, 100)
+
+  if not new and name then
+    vim.cmd(("e %s"):format(vim.fn.fnameescape(vim.fn.expand(name))))
+  elseif not (not new and not name and vim.bo[0].filetype == "markdown") then
+    vim.cmd("enew")
+  end
+
+  utils.set_local(0, {
+    colorcolumn = "",
+    winfixwidth = true,
+    spell = true,
+  })
+
+  if vim.bo[0].filetype == "" then
+    vim.opt_local.filetype = "markdown"
+  end
+
+  -- Auto close the tabpage id the margin is the last window
+  api.nvim_create_autocmd("WinClosed", {
+    pattern = "*",
+    callback = function(state)
+      if not api.nvim_tabpage_is_valid(tabid) then
+        api.nvim_del_autocmd(state.id)
+        return
+      end
+
+      local wins = vim.tbl_filter(function(v)
+        return api.nvim_win_get_config(v).relative == ""
+      end, api.nvim_tabpage_list_wins(tabid))
+
+      if #wins == 1 and wins[1] == margin_winid then
+        api.nvim_win_close(margin_winid, true)
+        api.nvim_del_autocmd(state.id)
+      end
+    end,
+  })
 end
 
 --#region TYPES
