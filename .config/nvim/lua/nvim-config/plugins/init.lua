@@ -218,6 +218,12 @@ return require('packer').startup({
       end
     }
     use { 'troydm/zoomwintab.vim' }
+    use {
+      'rcarriga/nvim-notify',
+      config = function()
+        require("notify").setup({})
+      end,
+    }
 
     -- MISC
     use { 'feline-nvim/feline.nvim', config = conf("feline") }

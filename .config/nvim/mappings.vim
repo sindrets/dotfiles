@@ -189,6 +189,8 @@ nnoremap <leader>gg <Cmd>Neogit<CR>
 nnoremap <leader>G <Cmd>Neogit<CR>
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
 nnoremap <leader>gl <Cmd>Git log -n256<CR>
+nnoremap <leader>ga <Cmd>silent !git add %<CR>
+nnoremap <leader>gA <Cmd>silent !git add .<CR>
 nnoremap <leader>gcs <Cmd>Git commit<CR>
 nnoremap <leader>gcc <Cmd>Git commit -a<CR>
 nnoremap <leader>gca <Cmd>Git commit -a --amend<CR>
