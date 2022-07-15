@@ -4,7 +4,7 @@ return function()
   local float = require("lir.float")
   local mark_actions = require("lir.mark.actions")
 
-  local pl = Config.common.utils.path
+  local pl = Config.common.utils.pl
 
   local M = {}
 

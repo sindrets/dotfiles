@@ -1,20 +1,26 @@
-USER = vim.fn.expand("$USER")
-HOME = vim.fn.expand("$HOME")
-PID = vim.fn.getpid()
 local cmp_lsp = require("cmp_nvim_lsp")
 local lspconfig = require("lspconfig")
+
 local utils = Config.common.utils
+local local_settings
 
 local M = {}
+_G.Config.lsp = M
 
-local diagnostic_signs = {
-  error = "",
-  warn = "",
-  hint = "",
-  info = ""
+function M.common_on_attach(client, bufnr)
+  require("illuminate").on_attach(client)
+  require("lsp_signature").on_attach({
+    bind = true, -- This is mandatory, otherwise border config won't get registered.
+    handler_opts = {
+      border = "single",
+    },
+  }, bufnr)
+end
+
+M.base_config = {
+  on_attach = M.common_on_attach,
+  capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()),
 }
-
-local local_settings
 
 function M.get_local_settings()
   if local_settings then return local_settings end
@@ -31,32 +37,28 @@ function M.get_local_settings()
   return local_settings
 end
 
----@diagnostic disable-next-line: unused-local
-_G.LspCommonOnAttach = function(client, bufnr)
-  require("illuminate").on_attach(client)
-  require("lsp_signature").on_attach({
-    bind = true, -- This is mandatory, otherwise border config won't get registered.
-    handler_opts = {
-      border = "single",
-    },
-  }, bufnr)
-end
+---Create lsp config from base + server defaults + local config.
+---@param server_defaults? table
+---@return table
+function M.create_config(server_defaults)
+  server_defaults = server_defaults or {}
 
-_G.LspGetDefaultConfig = function()
-  return vim.tbl_deep_extend("force", {
-    on_attach = LspCommonOnAttach,
-    capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()),
-  }, M.get_local_settings())
+  return vim.tbl_deep_extend(
+    "force",
+    M.base_config,
+    server_defaults,
+    M.get_local_settings()
+  )
 end
 
 -- Java
 require'nvim-config.lsp.java'
 
 -- Typescript
-lspconfig.tsserver.setup(LspGetDefaultConfig())
+lspconfig.tsserver.setup(M.create_config())
 
 -- Python
-lspconfig.pyright.setup(LspGetDefaultConfig())
+lspconfig.pyright.setup(M.create_config())
 
 -- Lua
 require'nvim-config.lsp.lua'
@@ -65,26 +67,25 @@ require'nvim-config.lsp.lua'
 -- require'nvim-config.lsp.teal'
 
 -- Bash
-lspconfig.bashls.setup(LspGetDefaultConfig())
+lspconfig.bashls.setup(M.create_config())
 
 -- C#
-lspconfig.omnisharp.setup({
-    cmd = { "/usr/bin/omnisharp", "--languageserver" , "--hostPID", tostring(PID) },
-    filetypes = { "cs", "vb" },
-    init_options = {},
-    on_attach = LspCommonOnAttach,
-    -- root_dir = lspconfig.util.root_pattern(".csproj", ".sln"),
-    -- root_dir = vim.fn.getcwd
-  })
+lspconfig.omnisharp.setup(M.create_config({
+  cmd = { "/usr/bin/omnisharp", "--languageserver" , "--hostPID", tostring(vim.fn.getpid()) },
+  filetypes = { "cs", "vb" },
+  init_options = {},
+  -- root_dir = lspconfig.util.root_pattern(".csproj", ".sln"),
+  -- root_dir = vim.fn.getcwd
+}))
 
 -- C, C++
-require('lspconfig').clangd.setup(LspGetDefaultConfig())
+require('lspconfig').clangd.setup(M.create_config())
 
 -- Vim
-require('lspconfig').vimls.setup(LspGetDefaultConfig())
+require('lspconfig').vimls.setup(M.create_config())
 
 -- Go
-require('lspconfig').gopls.setup(LspGetDefaultConfig())
+require('lspconfig').gopls.setup(M.create_config())
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
@@ -147,8 +148,6 @@ function M.define_diagnostic_signs(opts)
   end
 end
 
-M.define_diagnostic_signs(diagnostic_signs)
-
 -- Highlight references on cursor hold
 
 function M.highlight_cursor_symbol()
@@ -184,20 +183,22 @@ function M.show_position_diagnostics()
   vim.diagnostic.open_float({ scope = "cursor", border = "single" })
 end
 
+M.define_diagnostic_signs({
+  error = "",
+  warn = "",
+  hint = "",
+  info = ""
+})
+
 -- LSP auto commands
-vim.api.nvim_exec([[
-  augroup init_lsp
-    au!
-    " au CursorHold   * silent! lua Config.lsp.highlight_cursor_symbol()
-    " au CursorHoldI  * silent! lua Config.lsp.highlight_cursor_symbol()
-    " au CursorMoved  * silent! lua Config.lsp.highlight_cursor_clear()
-    " au CursorMovedI * silent! lua Config.lsp.highlight_cursor_clear()
+Config.common.au.declare_group("lsp_init", {}, {
+  { "CursorHold", callback = M.show_position_diagnostics, },
 
-    au CursorHold * silent! lua Config.lsp.show_position_diagnostics()
-    " au ModeChanged *:[vVsSi]* IlluminationDisable!
-    " au ModeChanged *:[n]* IlluminationEnable!
-  augroup END
-  ]], false)
+  -- { "ModeChanged", pattern = "*:[vVsSi]*", command = "IlluminationDisable!" },
+  -- { "ModeChanged", pattern = "*:[n]*", command = "IlluminationEnable!" },
 
-_G.Config.lsp = M
+  -- { "CursorHold",  callback = M.highlight_cursor_symbol() },
+  -- { "CursorMoved", callback = M.highlight_cursor_clear(), },
+})
+
 return M

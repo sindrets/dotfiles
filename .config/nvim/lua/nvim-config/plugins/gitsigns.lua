@@ -1,4 +1,6 @@
 return function ()
+  local hi_link = Config.common.hl.hi_link
+
   require('gitsigns').setup {
     signs = {
       add = {
@@ -77,9 +79,7 @@ return function ()
     end
   }
 
-  vim.api.nvim_exec([[
-    hi def link GitSignsAdd diffAdded
-    hi def link GitSignsChange diffChanged
-    hi def link GitSignsDelete diffRemoved
-  ]], false)
+  hi_link("GitSignsAdd", "diffAdded", { default = true })
+  hi_link("GitSignsChange", "diffChanged", { default = true })
+  hi_link("GitSignsDelete", "diffRemoved", { default = true })
 end

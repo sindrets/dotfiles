@@ -11,8 +11,8 @@ local last_sourced_session = nil
 
 function M.source_project_config()
   for _, file in ipairs({ ".vim/init.vim", ".vim/init.lua" }) do
-    if utils.path:readable(file) then
-      local project_config_path = utils.path:realpath(file)
+    if utils.pl:readable(file) then
+      local project_config_path = utils.pl:realpath(file)
       if last_sourced_config ~= project_config_path then
         vim.cmd("source " .. file)
         last_sourced_config = project_config_path
@@ -28,8 +28,8 @@ function M.source_project_config()
 end
 
 function M.source_project_session()
-  if #vim.v.argv == 1 and utils.path:readable(".vim/Session.vim") then
-    local project_config_path = utils.path:realpath(".vim/Session.vim")
+  if #vim.v.argv == 1 and utils.pl:readable(".vim/Session.vim") then
+    local project_config_path = utils.pl:realpath(".vim/Session.vim")
     if last_sourced_session ~= project_config_path then
       vim.cmd("source .vim/Session.vim")
       last_sourced_session = project_config_path
@@ -48,8 +48,8 @@ function M.open_file_location(location)
 
   bufnr = tonumber(bufnr)
   local l = vim.trim(location)
-  local file = l:match("(.*):%d+:%d+:?$") or l:match("(.*):%d+:?$") or l:match("(.*):$")
-  local line = tonumber(l:match(".*:(%d+):%d+:?$") or l:match(".*:(%d+):?$"))
+  local file = utils.str_match(l, { "(.*):%d+:%d+:?$", "(.*):%d+:?$", "(.*):$" })
+  local line = tonumber(utils.str_match(l, { ".*:(%d+):%d+:?$", ".*:(%d+):?$" }))
   local col = tonumber(l:match(".*:%d+:(%d+):?$")) or 1
 
   if vim.fn.filereadable(file) == 1 then

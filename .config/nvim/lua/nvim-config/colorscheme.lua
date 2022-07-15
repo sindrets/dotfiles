@@ -5,7 +5,7 @@
 ---
 ---Override the default colorscheme by defining the environment variable
 ---`NVIM_COLORSCHEME` using the same format.
-local DEFAULT_COLORSCHEME = "github_dark dark"
+local DEFAULT_COLORSCHEME = "catppuccin dark"
 
 local Color = Config.common.color.Color
 local utils = Config.common.utils
@@ -587,8 +587,8 @@ hi_link(
 M.apply_log_defaults()
 
 Config.common.au.declare_group("colorscheme_config", {}, {
-  { "ColorSchemePre", { callback = function(state) M.setup_colorscheme(state.match) end, } },
-  { "ColorScheme", { callback = function(_) M.apply_tweaks() end, } },
+  { "ColorSchemePre", callback = function(state) M.setup_colorscheme(state.match) end, },
+  { "ColorScheme", callback = function(_) M.apply_tweaks() end, },
 })
 
 Config.colorscheme = M

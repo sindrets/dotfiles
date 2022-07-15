@@ -1,32 +1,95 @@
 #!/usr/bin/bash
 
-input=""
-if [ -n "$1" ]; then
-    input="$(realpath "$1")"
-else
-    input="$(realpath .)"
+usage() {
+  cat <<EOF
+usage: ${0##*/} [options] TARGET
+
+Create a link from TARGET to a local neovim plugin directory.
+
+  Options:
+    -D [target]    Delete an existing link to [target]. (default: current directory)
+    -h             Print this help message
+
+  Environment Variables:
+    PACKER_LOCAL_PATH   Path to the directory where the local plugin links will
+                        be created. The path will be created if it doesn't
+                        exist. (default: "~/Documents/dev/nvim/plugins")
+
+EOF
+}
+
+if [[ $1 = @(-h|--help) ]]; then
+  usage
+  exit $(( $# ? 0 : 1 ))
 fi
 
-name="$(basename "$input")"
+dpath=""
 
-target_dir=""
+while getopts ':D:' flag; do
+  case "$flag" in
+    D)
+      dpath="$OPTARG"
+      ;;
+    :)
+      if [ "$OPTARG" = "D" ]; then
+        dpath="$(realpath .)"
+      fi
+      ;;
+  esac
+done
+
+shift $(( OPTIND - 1 ))
+
+plug_path=""
 if [ -n "$PACKER_LOCAL_PATH" ]; then
-    target_dir="$PACKER_LOCAL_PATH"
+  plug_path="$PACKER_LOCAL_PATH"
 else
-    target_dir="$HOME/Documents/dev/nvim/plugins"
+  plug_path="$HOME/Documents/dev/nvim/plugins"
 fi
 
-if [ ! -e "$target_dir" ]; then
-    mkdir -p "$target_dir"
-    echo "• Created local development plugin directory: '$target_dir'"
+target=""
+if [ -n "$1" ]; then
+  target="$(realpath "$1")"
+else
+  target="$(realpath .)"
 fi
 
-target="$target_dir/$name"
+function get_link_name() {
+  name="$(basename "$1")"
+  link_name="$plug_path/$name"
 
-if [ -e "$target" ]; then
+  echo "$link_name"
+}
+
+function create_link() {
+  if [ ! -e "$plug_path" ]; then
+    mkdir -p "$plug_path"
+    echo "• Created local development plugin directory: '$plug_path'"
+  fi
+
+  link_name="$(get_link_name "$1")"
+
+  if [ -e "$link_name" ]; then
     echo "• Deleting existing link."
-    rm "$target"
+    rm "$link_name"
+  fi
+
+  ln -s "$1" "$link_name"
+  echo "• Created new link: '$link_name'"
+}
+
+function delete_link() {
+  if [ -e "$1" ]; then
+    echo "• Deleting existing link."
+    rm "$1"
+  else
+    echo "• Link doesn't exist. Nothing to do. ($1)"
+  fi
+}
+
+if [ -n "$dpath" ]; then
+  delete_link "$(get_link_name "$dpath")"
+  exit 0
 fi
 
-ln -s "$input" "$target"
-echo "• Created new link: '$target'"
+create_link "$target"

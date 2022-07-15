@@ -1,4 +1,6 @@
 return function ()
+  local hi_link = Config.common.hl.hi_link
+
   vim.g.symbols_outline = {
     highlight_hovered_item = true,
     show_guides = true,
@@ -15,11 +17,5 @@ return function ()
     lsp_blacklist = {},
   }
 
-  vim.api.nvim_exec([[
-    hi! link FocusedSymbol Visual
-    augroup SymbolsOutlineConfig
-      au!
-      au FileType Outline set nolist winfixwidth winfixheight signcolumn=no
-    augroup END
-    ]], false)
+  hi_link("FocusedSymbol", "Visual")
 end

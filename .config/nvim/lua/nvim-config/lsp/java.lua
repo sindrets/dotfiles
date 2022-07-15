@@ -13,7 +13,7 @@ function M.start_jdtls()
   extendedClientCapabilities.resolveAdditionalTextEditsSupport = true
 
   local function jdtls_on_attch(client, bufnr)
-    LspCommonOnAttach(client, bufnr)
+    Config.lsp.common_on_attach(client, bufnr)
     require'jdtls.setup'.add_commands()
     -- local opts = { noremap = true, silent = true; }
   end
@@ -46,7 +46,7 @@ function M.start_jdtls()
       extendedClientCapabilities = extendedClientCapabilities
     },
     cmd = {
-      "jdtls", "-data", vim.fn.expand("$HOME") .. "/.cache/jdtls"
+      "jdtls", "-data", vim.env.HOME .. "/.cache/jdtls"
     },
     filetypes = { "java" }, -- Not used by jdtls, but used by lspsaga
     on_attach = jdtls_on_attch,
@@ -75,12 +75,9 @@ function M.attach_mappings()
   map("n", "<M-O>", "<Cmd>lua require'jdtls'.organize_imports()<CR>")
 end
 
-vim.api.nvim_exec([[
-  augroup JdtlsConfig
-    au!
-    au FileType java lua require'nvim-config.lsp.java'.start_jdtls()
-    au FileType java lua require'nvim-config.lsp.java'.attach_mappings()
-  augroup END
-  ]], false)
+Config.common.au.declare_group("jdtls_config", {}, {
+  { "FileType", pattern = "java", callback = M.start_jdtls },
+  { "FileType", pattern = "java", callback = M.attach_mappings },
+})
 
 return M

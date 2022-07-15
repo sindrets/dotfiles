@@ -21,7 +21,11 @@ opt.showcmd = true
 opt.mouse = "a"
 opt.hidden = true
 opt.cursorline = true
-opt.guicursor = "n-v-c-sm:block-Cursor/lCursor,i-ci-ve:ver25-Cursor/lCursor,r-cr-o:hor20"
+opt.guicursor = list {
+  "n-v-c-sm:block-Cursor/lCursor",
+  "i-ci-ve:ver25-Cursor/lCursor",
+  "r-cr-o:hor20",
+}
 opt.splitbelow = true
 opt.splitright = true
 opt.wrap = true

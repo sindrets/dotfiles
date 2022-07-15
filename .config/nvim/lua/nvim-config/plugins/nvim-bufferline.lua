@@ -1,4 +1,6 @@
-return function ()
+return function()
+  local hi = Config.common.hl.hi
+
   local symbol_map = {
     error = "",
     warning = "",
@@ -10,7 +12,7 @@ return function ()
     options = {
       view = "default",
       numbers = "none",
-      buffer_close_icon= '',
+      buffer_close_icon = '',
       modified_icon = '●',
       close_icon = '',
       left_trunc_marker = '',
@@ -32,31 +34,30 @@ return function ()
       persist_buffer_sort = true, -- whether or not custom sorted buffers should persist
       -- can also be a table containing 2 custom separators
       -- [focused and unfocused]. eg: { '|', '|' }
-      separator_style = { "▏", "▕" },
+      -- separator_style = { "▏", "▕" },
+      separator_style = { "│", "│" },
       -- separator_style = "thin",        --  "slant" | "thick" | "thin" | { 'any', 'any' },
       enforce_regular_tabs = false,
       always_show_bufferline = true,
       -- sort_by = 'extension' | 'relative_directory' | 'directory' | function(buffer_a, buffer_b)
-        --   -- add custom logic
-        --   return buffer_a.modified > buffer_b.modified
-        -- end
-        offsets = {
-          {
-            filetype = "NvimTree",
-            text = "Files",
-            text_align = "center"
-          },
-          {
-            filetype = "DiffviewFiles",
-            text = "Source Control",
-            text_align = "center"
-          },
+      --   -- add custom logic
+      --   return buffer_a.modified > buffer_b.modified
+      -- end
+      offsets = {
+        {
+          filetype = "NvimTree",
+          text = "Files",
+          text_align = "center",
+        },
+        {
+          filetype = "DiffviewFiles",
+          text = "Source Control",
+          text_align = "center",
         },
       },
-    })
+    },
+  })
 
-  vim.api.nvim_exec([[
-    hi! BufferLineDiagnostic gui=bold
-    hi! BufferLineDiagnosticVisible gui=bold
-  ]], false)
+  hi("BufferLineDiagnostic", { gui = "bold" })
+  hi("BufferLineDiagnosticVisible", { gui = "bold" })
 end

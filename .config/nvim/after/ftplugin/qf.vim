@@ -1,3 +1,3 @@
 setl nolist
-setl scl=yes:1
+setl scl=yes:2
 setl nonu nornu

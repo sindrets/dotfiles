@@ -188,8 +188,8 @@ return require('packer').startup({
     end }
     use { 'tpope/vim-abolish' }
     use { 'alvan/vim-closetag', setup = function ()
-      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml"
-      vim.g.closetag_filetypes = "html,xhtml,phtml,xml"
+      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md"
+      vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown"
     end }
     use { 'Rasukarusan/nvim-block-paste' }
     use { 'godlygeek/tabular' }
