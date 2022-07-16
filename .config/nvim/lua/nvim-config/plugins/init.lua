@@ -316,5 +316,9 @@ return require('packer').startup({
     use { 'https://gitlab.com/yorickpeterse/nvim-grey.git' }
     use { 'https://gitlab.com/yorickpeterse/vim-paper.git' }
     use { 'projekt0n/github-nvim-theme' }
-  end
+  end,
+
+  config = {
+    snapshot_path = vim.fn.stdpath("config"),
+  },
 })
