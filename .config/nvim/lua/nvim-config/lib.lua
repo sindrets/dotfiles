@@ -1,4 +1,5 @@
 local utils = Config.common.utils
+local pl = utils.pl
 
 local api = vim.api
 local M = { expr = {} }
@@ -154,7 +155,7 @@ function M.workspace_files(opt)
       hidden = true,
       find_command = { "fd", "--type", "f", "-uu", "--strip-cwd-prefix" },
     })
-  elseif vim.env.GIT_DIR or utils.file_readable("./.git") then
+  elseif vim.env.GIT_DIR or pl:readable("./.git") then
     builtin.git_files({
       git_command = { "git", "ls-files", "--exclude-standard", "--others", "--cached", "--", uv.cwd() },
     })

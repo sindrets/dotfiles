@@ -208,7 +208,7 @@ nnoremap <M-CR> <Cmd>lua Config.fn.update_messages_win()<CR>
 nnoremap <silent> <C-l> <Cmd>lua Config.fn.toggle_term_split()<CR>
 tnoremap <silent> <C-l> <Cmd>lua Config.fn.toggle_term_split()<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
-tnoremap <silent> <C-q> <Esc>
+tnoremap <silent> <C-\> <Esc>
 
 " Quickfix, Location list, Jumps
 nnoremap <M-q> <Cmd>lua Config.fn.toggle_quickfix()<CR>

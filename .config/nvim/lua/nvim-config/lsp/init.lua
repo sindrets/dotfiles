@@ -2,6 +2,7 @@ local cmp_lsp = require("cmp_nvim_lsp")
 local lspconfig = require("lspconfig")
 
 local utils = Config.common.utils
+local pl = utils.pl
 local local_settings
 
 local M = {}
@@ -25,7 +26,7 @@ M.base_config = {
 function M.get_local_settings()
   if local_settings then return local_settings end
 
-  if utils.file_readable(".vim/lsp-settings.lua") then
+  if pl:readable(".vim/lsp-settings.lua") then
     local code_chunk = loadfile(".vim/lsp-settings.lua")
     if code_chunk then
       local_settings = code_chunk()

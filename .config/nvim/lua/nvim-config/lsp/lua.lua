@@ -20,42 +20,6 @@ lua_add_lib("$VIMRUNTIME")
 lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/plenary.nvim")
 lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
 
-pp(Config.lsp.create_config({
-  cmd = {
-    "lua-language-server"
-  },
-  filetypes = { "lua" },
-  settings = {
-    Lua = {
-      runtime = {
-        version = "LuaJIT",
-        path = lua_path,
-        fileEncoding = "utf8",
-        unicodeName = true
-      },
-      diagnostics = {
-        globals = { "vim", "jit", "bit", "Config" }
-      },
-      workspace = {
-        library = lua_lib,
-        maxPreload = 2000,
-        preloadFileSize = 50000
-      },
-      telemetry = {
-        enable = false,
-      },
-      format = {
-        enable = true,
-        -- NOTE: all the values need to be of type 'string'
-        defaultConfig = {
-          indent_style = "space",
-          indent_size = "2",
-        },
-      },
-    },
-  },
-}))
-
 require'lspconfig'.sumneko_lua.setup(Config.lsp.create_config({
   cmd = {
     "lua-language-server"

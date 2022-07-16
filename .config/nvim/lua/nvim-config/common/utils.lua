@@ -675,14 +675,6 @@ function M.win_find_buf(bufid, tabpage)
   return result
 end
 
-function M.file_readable(path)
-  local p = uv.fs_realpath(path)
-  if p then
-    return uv.fs_access(p, "R")
-  end
-  return false
-end
-
 function M.git_get_detached_head()
   local git_branches_file = io.popen("git branch -a --no-abbrev --contains", "r")
   if not git_branches_file then return end

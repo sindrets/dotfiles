@@ -1,3 +1,4 @@
+local pl = Config.common.utils.pl
 local opt = vim.opt
 
 local function list(value, str, sep)
@@ -106,11 +107,11 @@ local data_undo = vim.fn.stdpath("data") .. "/undo"
 opt.backupdir = data_backup
 opt.undodir = data_undo
 
-if vim.fn.isdirectory(data_backup) ~= 1 then
+if pl:is_directory(data_backup) then
   vim.fn.mkdir(data_backup, "p")
 end
 
-if vim.fn.isdirectory(data_undo) ~= 1 then
+if pl:is_directory(data_undo) then
   vim.fn.mkdir(data_undo, "p")
 end
 
@@ -131,8 +132,8 @@ vim.env.MANWIDTH = 80 -- Text width in man pages.
 -- vim.cmd("syntax on")
 vim.cmd("filetype plugin indent on")
 
-local init_extra_path = vim.fn.fnamemodify(vim.fn.expand("$MYVIMRC"), ":h") .. "/init_extra.vim"
-if vim.fn.filereadable(init_extra_path) == 1 then
+local init_extra_path = pl:parent(pl:vim_expand("$MYVIMRC")) .. "/init_extra.vim"
+if pl:readable(init_extra_path) then
   vim.cmd("source " .. vim.fn.fnameescape(init_extra_path))
 end
 

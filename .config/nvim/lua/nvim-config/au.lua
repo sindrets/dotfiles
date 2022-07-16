@@ -2,6 +2,7 @@
 -- Auto command callbacks etc.
 --]
 local utils = Config.common.utils
+local pl = utils.pl
 local api = vim.api
 
 local M = {}
@@ -52,7 +53,7 @@ function M.open_file_location(location)
   local line = tonumber(utils.str_match(l, { ".*:(%d+):%d+:?$", ".*:(%d+):?$" }))
   local col = tonumber(l:match(".*:%d+:(%d+):?$")) or 1
 
-  if vim.fn.filereadable(file) == 1 then
+  if pl:readable(file) then
     vim.cmd("edit " .. vim.fn.fnameescape(file))
     if line then
       vim.cmd("do BufRead")
