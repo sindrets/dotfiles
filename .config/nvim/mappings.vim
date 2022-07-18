@@ -114,9 +114,6 @@ tnoremap <C-M-k> <Cmd>res -1<CR>
 nnoremap <Leader>q <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
 nnoremap <C-q> <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
 
-" Remap jump forward
-nnoremap <C-S> <C-I>
-
 " Move lines
 nnoremap <A-K> <Cmd>m-2<CR>==
 nnoremap <A-J> <Cmd>m+<CR>==
@@ -228,6 +225,10 @@ nnoremap ]D <Cmd>exe 'norm! G0' <bar> exe 'lua vim.diagnostic.goto_prev({ float 
 
 nnoremap <expr> [r v:lua.Config.lib.expr.next_reference(v:true)
 nnoremap <expr> ]r v:lua.Config.lib.expr.next_reference()
+
+" Center jumplist jumps and remap jump forward
+nnoremap <C-o> <C-o><Cmd>norm! zz<CR>
+nnoremap <C-s> <C-i><Cmd>norm! zz<CR>
 
 " LSP
 nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>

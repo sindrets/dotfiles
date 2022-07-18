@@ -222,6 +222,7 @@ return require('packer').startup({
       'rcarriga/nvim-notify',
       config = function()
         require("notify").setup({})
+        vim.notify = require("notify")
       end,
     }
 
@@ -320,5 +321,8 @@ return require('packer').startup({
 
   config = {
     snapshot_path = vim.fn.stdpath("config"),
+    display = {
+      open_cmd = 'vnew \\[packer\\] | wincmd L | vert resize 65',
+    },
   },
 })

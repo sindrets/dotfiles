@@ -502,6 +502,8 @@ function M.apply_tweaks()
     fg = hl.get_fg({ "FloatBorder", "Normal" }),
   })
 
+  hi("MsgSeparator", { fg = hl.get_fg("FloatBorder"), bg = hl.get_bg("MsgArea") })
+
   -- Use special underlines if supported
   if M.supports_sp_underline() then
     M.apply_sp_underline()
@@ -527,6 +529,8 @@ function M.apply_tweaks()
   hi_link("NeogitDiffDeleteHighlight", "DiffInlineDelete")
 
   hi_link("BqfSign", "DiagnosticSignInfo")
+
+  hi("TroubleText", { bg = "NONE", fg = hl.get_fg("TroubleNormal") })
 
   hi("LspReferenceText", {
     bg = Color.from_hl("CursorLine", "bg"):highlight(0.08):to_css(),

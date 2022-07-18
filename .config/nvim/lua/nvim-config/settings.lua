@@ -92,7 +92,8 @@ opt.fillchars = list {
   "vert:│",
   "diff:╱",
   "foldclose:",
-  "foldopen:"
+  "foldopen:",
+  "msgsep:─",
 }
 opt.showbreak = "⤷ "
 opt.writebackup = true
