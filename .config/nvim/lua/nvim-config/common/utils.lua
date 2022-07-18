@@ -145,7 +145,7 @@ end
 ---@param s string
 ---@param opt? utils.StrQuoteSpec
 function M.str_quote(s, opt)
-  ---@cast opt StrQuoteSpec
+  ---@cast opt utils.StrQuoteSpec
   s = tostring(s)
   opt = vim.tbl_extend("keep", opt or {}, {
     esc_fmt = [[\%s]],
