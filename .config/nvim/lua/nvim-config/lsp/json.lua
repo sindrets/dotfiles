@@ -43,30 +43,35 @@ local schemas = {
   },
 }
 
+local M = {}
 
-local capabilities = vim.tbl_deep_extend("force", LspGetDefaultConfig()["capabilities"], {
-  textDocument = {
-    completion = {
-      completionItem = {
-        snippetSupport = true,
+M.setup = function(config)
+  local capabilities = vim.tbl_deep_extend("force", config["capabilities"], {
+    textDocument = {
+      completion = {
+        completionItem = {
+          snippetSupport = true,
+        },
       },
     },
-  },
-})
+  })
 
-lspconfig.jsonls.setup {
-  on_attach = function(client, bufnr)
-    client.resolved_capabilities.document_formatting = false
-    LspCommonOnAttach(client, bufnr)
-  end,
-  capabilities = capabilities,
-  settings = {
-    json = {
-      schemas = schemas,
+  lspconfig.jsonls.setup {
+    on_attach = config.on_attach,
+    capabilities = capabilities,
+    settings = {
+      json = {
+        schemas = schemas,
+      },
     },
-  },
-}
+    init_options = {
+      provideFormatter = true
+    }
+  }
 
-null_ls.register(null_ls.builtins.formatting.prettier.with {
-  filetypes = { "json", "jsonc", "yaml", "markdown" },
-})
+  null_ls.register(null_ls.builtins.formatting.prettier.with {
+    filetypes = { "json", "jsonc", "yaml", "markdown" },
+  })
+end
+
+return M
