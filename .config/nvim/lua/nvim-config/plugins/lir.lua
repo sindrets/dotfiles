@@ -336,9 +336,9 @@ return function()
     },
   })
 
-  require('lir.git_status').setup({
-    show_ignored = true
-  })
+  -- require('lir.git_status').setup({
+  --   show_ignored = true
+  -- })
 
   ---@param path? string
   local function derive_dir(path)

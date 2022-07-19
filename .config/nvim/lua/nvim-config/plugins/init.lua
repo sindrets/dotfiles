@@ -20,8 +20,8 @@ local function wrap_local(spec)
   end
 
   local local_path = spec.local_path
-    or vim.env.PACKER_LOCAL_PATH
-    or (vim.env.HOME .. "/Documents/dev/nvim/plugins")
+      or vim.env.PACKER_LOCAL_PATH
+      or (vim.env.HOME .. "/Documents/dev/nvim/plugins")
   local path = local_path .. "/" .. name
   if vim.fn.isdirectory(path) == 0 then
     path = spec[1]
@@ -42,7 +42,7 @@ end
 
 return require('packer').startup({
   ---@diagnostic disable-next-line: unused-local
-  function (use, use_rocks)
+  function(use, use_rocks)
 
     -- vim.g.did_load_filetypes = 1
     -- vim.g.loaded_netrwPlugin = 1
@@ -123,14 +123,14 @@ return require('packer').startup({
       "ray-x/lsp_signature.nvim",
       config = function()
         require("lsp_signature").setup({
-            hint_enable = false,
-            hint_prefix = "● ",
-            max_width = 80,
-            max_height = 12,
-            handler_opts = {
-              border = "single"
-            }
-          })
+          hint_enable = false,
+          hint_prefix = "● ",
+          max_width = 80,
+          max_height = 12,
+          handler_opts = {
+            border = "single"
+          }
+        })
       end
     }
     use { 'mfussenegger/nvim-jdtls' }
@@ -179,7 +179,7 @@ return require('packer').startup({
     use { 'hrsh7th/vim-vsnip-integ' }
     use {
       'scrooloose/nerdcommenter',
-      setup = function ()
+      setup = function()
         vim.g.NERDSpaceDelims = 1
         vim.g.NERDDefaultAlign = "left"
       end
@@ -196,7 +196,7 @@ return require('packer').startup({
     }
     use { 'windwp/nvim-spectre', config = conf("spectre"), after = "nvim-web-devicons" }
     use { 'mileszs/ack.vim' }
-    use { 'mattn/emmet-vim', setup = function ()
+    use { 'mattn/emmet-vim', setup = function()
       vim.g.user_emmet_leader_key = "<C-Z>"
     end }
     use { 'tpope/vim-abolish' }
@@ -288,7 +288,7 @@ return require('packer').startup({
     use {
       'iamcco/markdown-preview.nvim',
       run = 'cd app && yarn install',
-      setup = function ()
+      setup = function()
         vim.api.nvim_exec([[
           function! MkdpOpenInNewWindow(url)
             if executable("qutebrowser")
@@ -311,6 +311,38 @@ return require('packer').startup({
       setup = conf("firenvim"),
     }
     use { 'honza/vim-snippets' }
+    use {
+      "vim-test/vim-test",
+      setup = function()
+
+        vim.cmd [[
+            let test#strategy = "vimux"
+            let test#php#phpunit#executable = './vendor/bin/phpunit'
+            let g:test#javascript#runner = 'jest'
+        ]]
+
+        local wk = require "which-key"
+        wk.register({
+          ["<leader>t"] = {
+            name = "+Testing",
+            n = { "<cmd>TestNearest<cr>", "Test nearest" },
+            f = { "<cmd>TestFile<cr>", "Test file" },
+            l = { "<cmd>TestLast<cr>", "Test Last" },
+          },
+        }, {
+          mode = "n",
+        })
+      end,
+      requires = {
+        "preservim/vimux",
+      },
+    }
+    use {
+      "folke/which-key.nvim",
+      config = function()
+        require("which-key").setup()
+      end,
+    }
 
     -- THEMES
     use { 'rktjmp/lush.nvim' }
