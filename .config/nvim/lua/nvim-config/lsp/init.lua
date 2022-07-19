@@ -82,13 +82,13 @@ null_ls.setup {
 }
 
 -- PHP
-require "nvim-config.lsp.php"
+require'nvim-config.lsp.php'.setup(M.create_config())
 
 -- Java
 require("nvim-config.lsp.java")
 
 -- Typescript
-require "nvim-config.lsp.typescript".setup(M.create_config())
+require'nvim-config.lsp.typescript'.setup(M.create_config())
 
 -- Python
 lspconfig.pyright.setup(M.create_config())
@@ -121,10 +121,7 @@ lspconfig.vimls.setup(M.create_config())
 lspconfig.gopls.setup(M.create_config())
 
 -- Json
-require'nvim-config.lsp.json'
-
--- Json
-require'nvim-config.lsp.json'
+require'nvim-config.lsp.json'.setup(M.create_config())
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
