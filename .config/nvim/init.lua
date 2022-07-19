@@ -84,6 +84,14 @@ Config.fn.toggle_outline = lib.create_buf_toggler(
   end
 )
 
+local function get_messages()
+  local msgs = vim.api.nvim_exec("message", true)
+  -- Filter out empty lines.
+  return vim.tbl_filter(function(v)
+    return v ~= ""
+  end, vim.split(msgs, "\n", {}))
+end
+
 local function open_messages_win()
   vim.cmd("belowright sp")
   vim.cmd("wincmd J")
@@ -93,8 +101,7 @@ local function open_messages_win()
     api.nvim_buf_set_name(bufnr, "Messages")
     api.nvim_buf_set_var(bufnr, "bufid", "messages_window")
   end
-  local msgs = vim.api.nvim_exec("mes", true)
-  local lines = vim.split(msgs, "\n", {})
+  local lines = get_messages()
   api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
   api.nvim_set_current_buf(bufnr)
   api.nvim_win_set_height(0, math.min(math.max(#lines, 3), 14))
@@ -111,16 +118,12 @@ local function open_messages_win()
 end
 
 function Config.fn.update_messages_win()
-  local bufnr = utils.find_buf_with_var(
-    "bufid",
-    "messages_window",
-    { no_hidden = true, tabpage = 0 }
-  )
+  local bufnr = utils.find_buf_with_var("bufid", "messages_window", {
+    no_hidden = true,
+    tabpage = 0,
+  })
   if bufnr then
-    local msgs = vim.api.nvim_exec("mes", true)
-    local lines = vim.split(msgs, "\n", {})
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, lines)
-    vim.bo[bufnr].modified = false
+    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_messages())
     local winids = utils.win_find_buf(bufnr, 0)
     if #winids > 0 then
       api.nvim_set_current_win(winids[1])

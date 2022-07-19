@@ -190,8 +190,8 @@ return require('packer').startup({
     end }
     use { 'tpope/vim-abolish' }
     use { 'alvan/vim-closetag', setup = function ()
-      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml"
-      vim.g.closetag_filetypes = "html,xhtml,phtml,xml"
+      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md"
+      vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown"
     end }
     use { 'Rasukarusan/nvim-block-paste' }
     use { 'godlygeek/tabular' }
@@ -220,6 +220,13 @@ return require('packer').startup({
       end
     }
     use { 'troydm/zoomwintab.vim' }
+    use {
+      'rcarriga/nvim-notify',
+      config = function()
+        require("notify").setup({})
+        vim.notify = require("notify")
+      end,
+    }
 
     -- MISC
     use { 'feline-nvim/feline.nvim', config = conf("feline") }
@@ -313,5 +320,12 @@ return require('packer').startup({
     use { 'https://gitlab.com/yorickpeterse/vim-paper.git' }
     use { 'projekt0n/github-nvim-theme' }
   end,
-  config = {max_jobs = 50}
+
+  config = {
+    snapshot_path = vim.fn.stdpath("config"),
+    display = {
+      open_cmd = 'vnew \\[packer\\] | wincmd L | vert resize 65',
+    },
+    max_jobs = 50
+  },
 })

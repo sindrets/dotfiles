@@ -13,4 +13,5 @@ if not lspconfig.teal then
       },
    }
 end
-lspconfig.teal.setup(LspGetDefaultConfig())
+
+lspconfig.teal.setup(Config.lsp.create_config())

@@ -110,21 +110,17 @@ return function()
   au.declare_group("alpha_config", {}, {
     {
       "User",
-      {
-        pattern = "AlphaReady",
-        callback = function(state)
-          setup_buffer(state.buf)
-        end,
-      },
+      pattern = "AlphaReady",
+      callback = function(state)
+        setup_buffer(state.buf)
+      end,
     },
     {
       "ColorScheme",
-      {
-        pattern = "*",
-        callback = function(_)
-          setup_highlights()
-        end,
-      }
+      pattern = "*",
+      callback = function(_)
+        setup_highlights()
+      end,
     }
   })
 

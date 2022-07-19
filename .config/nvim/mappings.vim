@@ -114,9 +114,6 @@ tnoremap <C-M-k> <Cmd>res -1<CR>
 nnoremap <Leader>q <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
 nnoremap <C-q> <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
 
-" Remap jump forward
-nnoremap <C-S> <C-I>
-
 " Move lines
 nnoremap <A-K> <Cmd>m-2<CR>==
 nnoremap <A-J> <Cmd>m+<CR>==
@@ -189,6 +186,8 @@ nnoremap <leader>gg <Cmd>Neogit<CR>
 nnoremap <leader>G <Cmd>Neogit<CR>
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
 nnoremap <leader>gl <Cmd>Git log -n256<CR>
+nnoremap <leader>ga <Cmd>silent !git add %<CR>
+nnoremap <leader>gA <Cmd>silent !git add .<CR>
 nnoremap <leader>gcs <Cmd>Git commit<CR>
 nnoremap <leader>gcc <Cmd>Git commit -a<CR>
 nnoremap <leader>gca <Cmd>Git commit -a --amend<CR>
@@ -206,7 +205,7 @@ nnoremap <M-CR> <Cmd>lua Config.fn.update_messages_win()<CR>
 nnoremap <silent> <C-l> <Cmd>lua Config.fn.toggle_term_split()<CR>
 tnoremap <silent> <C-l> <Cmd>lua Config.fn.toggle_term_split()<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
-tnoremap <silent> <C-q> <Esc>
+tnoremap <silent> <C-\> <Esc>
 
 " Quickfix, Location list, Jumps
 nnoremap <M-q> <Cmd>lua Config.fn.toggle_quickfix()<CR>
@@ -226,6 +225,10 @@ nnoremap ]D <Cmd>exe 'norm! G0' <bar> exe 'lua vim.diagnostic.goto_prev({ float 
 
 nnoremap <expr> [r v:lua.Config.lib.expr.next_reference(v:true)
 nnoremap <expr> ]r v:lua.Config.lib.expr.next_reference()
+
+" Center jumplist jumps and remap jump forward
+nnoremap <C-o> <C-o><Cmd>norm! zz<CR>
+nnoremap <C-s> <C-i><Cmd>norm! zz<CR>
 
 " LSP
 nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>

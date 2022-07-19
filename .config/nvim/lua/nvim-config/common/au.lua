@@ -11,6 +11,7 @@ local M = {}
 ---@field file string Expand value of `<afile>`.
 
 ---@class AucmdSpec
+---@field [1] string|string[]
 ---@field group string|integer
 ---@field pattern string|string[]
 ---@field buffer integer
@@ -20,17 +21,16 @@ local M = {}
 ---@field once boolean
 ---@field nested boolean
 
----@alias AucmdEntry { [1]: string|string[], [2]: AucmdSpec }
-
 ---Declare an autocommand group.
 ---@param name string
 ---@param opts { clear: boolean } Augroup options.
----@param aucmds AucmdEntry[]
+---@param aucmds AucmdSpec[]
 ---@return integer group_id
 function M.declare_group(name, opts, aucmds)
   local id = api.nvim_create_augroup(name, opts)
   for _, aucmd in ipairs(aucmds) do
-    local auopts = vim.tbl_extend("force", aucmd[2] or {}, { group = id })
+    local auopts = vim.tbl_extend("force", aucmd, { group = id })
+    auopts[1] = nil
     api.nvim_create_autocmd(aucmd[1], auopts)
   end
   return id

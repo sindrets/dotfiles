@@ -5,7 +5,7 @@
 ---
 ---Override the default colorscheme by defining the environment variable
 ---`NVIM_COLORSCHEME` using the same format.
-local DEFAULT_COLORSCHEME = "github_dark dark"
+local DEFAULT_COLORSCHEME = "catppuccin dark"
 
 local Color = Config.common.color.Color
 local utils = Config.common.utils
@@ -502,6 +502,8 @@ function M.apply_tweaks()
     fg = hl.get_fg({ "FloatBorder", "Normal" }),
   })
 
+  hi("MsgSeparator", { fg = hl.get_fg("FloatBorder"), bg = hl.get_bg("MsgArea") })
+
   -- Use special underlines if supported
   if M.supports_sp_underline() then
     M.apply_sp_underline()
@@ -527,6 +529,8 @@ function M.apply_tweaks()
   hi_link("NeogitDiffDeleteHighlight", "DiffInlineDelete")
 
   hi_link("BqfSign", "DiagnosticSignInfo")
+
+  hi("TroubleText", { bg = "NONE", fg = hl.get_fg("TroubleNormal") })
 
   hi("LspReferenceText", {
     bg = Color.from_hl("CursorLine", "bg"):highlight(0.08):to_css(),
@@ -587,8 +591,8 @@ hi_link(
 M.apply_log_defaults()
 
 Config.common.au.declare_group("colorscheme_config", {}, {
-  { "ColorSchemePre", { callback = function(state) M.setup_colorscheme(state.match) end, } },
-  { "ColorScheme", { callback = function(_) M.apply_tweaks() end, } },
+  { "ColorSchemePre", callback = function(state) M.setup_colorscheme(state.match) end, },
+  { "ColorScheme", callback = function(_) M.apply_tweaks() end, },
 })
 
 Config.colorscheme = M

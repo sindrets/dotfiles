@@ -8,7 +8,7 @@ local lsp = lazy.require("feline.providers.lsp")
 local styles = lazy.require("nvim-config.plugins.feline.styles")
 
 local utils = Config.common.utils
-local pl = utils.path
+local pl = utils.pl
 local hl = Config.common.hl
 local api = vim.api
 

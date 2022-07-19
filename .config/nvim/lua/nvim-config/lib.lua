@@ -1,4 +1,5 @@
 local utils = Config.common.utils
+local pl = utils.pl
 
 local api = vim.api
 local M = { expr = {} }
@@ -154,7 +155,7 @@ function M.workspace_files(opt)
       hidden = true,
       find_command = { "fd", "--type", "f", "-uu", "--strip-cwd-prefix" },
     })
-  elseif vim.env.GIT_DIR or utils.file_readable("./.git") then
+  elseif vim.env.GIT_DIR or pl:readable("./.git") then
     builtin.git_files({
       git_command = { "git", "ls-files", "--exclude-standard", "--others", "--cached", "--", uv.cwd() },
     })
@@ -327,11 +328,29 @@ function M.new_scratch_buf(filetype)
   return bufid
 end
 
+---@class lib.comfy_quit.Opt
+---@field keep_last boolean Don't close the window if it's the last window.
+
 ---Close the current window and bring focus to the last used window.
-function M.comfy_quit()
+---@param opt? lib.comfy_quit.Opt
+function M.comfy_quit(opt)
+  opt = opt or {}
   local cur_win = api.nvim_get_current_win()
   local prev_win = vim.fn.win_getid(vim.fn.winnr("#"))
-  local ok, err = pcall(vim.cmd, "silent q")
+  local cmd = "silent q"
+  local ok, err
+
+  if opt.keep_last then
+    local wins = vim.tbl_filter(function(v)
+      return api.nvim_win_get_config(v).relative == ""
+    end, api.nvim_list_wins())
+
+    if #wins == 1 then
+      cmd = "bd"
+    end
+  end
+
+  ok, err = pcall(vim.cmd, cmd)
 
   if not ok then
     utils.err(err)
@@ -340,6 +359,10 @@ function M.comfy_quit()
   end
 end
 
+---Perform a `:grep` command, populate and open the quickfix list, and set the
+---`/` register to a vim pattern matching the given regex pattern.
+---@param use_loclist boolean Use the location list for the current window.
+---@param ... string[] Args passed to the 'grepprg'.
 function M.comfy_grep(use_loclist, ...)
   local args = {...}
   local cargs = vim.tbl_map(function(arg)
@@ -516,7 +539,7 @@ function M.cmd_md_view(new, name)
     buflisted = false,
     cursorline = false,
     cursorcolumn = false,
-    foldcolumn = 0,
+    foldcolumn = "0",
     signcolumn = "no",
     colorcolumn = "",
     swapfile = false,

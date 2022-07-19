@@ -4,15 +4,22 @@ return function()
   local float = require("lir.float")
   local mark_actions = require("lir.mark.actions")
 
-  local pl = Config.common.utils.path
+  local pl = Config.common.utils.pl
 
   local M = {}
+
+  actions.reload = function()
+    local pos = vim.api.nvim_win_get_cursor(0)
+    vim.cmd("edit")
+    vim.fn.cursor(pos[1], 0)
+  end
 
   require('lir').setup({
     show_hidden_files = true,
     devicons_enable = true,
     hide_cursor = true,
     mappings = {
+      ['R']     = actions.reload,
       ['<CR>']  = actions.edit,
       ['o']     = actions.edit,
       ['l']     = actions.edit,

@@ -1,57 +1,63 @@
-local lspconfig = require "lspconfig"
+local M = {}
 
-lspconfig.tsserver.setup {
-  init_options = require("nvim-lsp-ts-utils").init_options,
-  on_attach = function(client, bufnr)
-    -- disable tsserver formatting if you plan on formatting via null-ls
-    client.resolved_capabilities.document_formatting = false
-    client.resolved_capabilities.document_range_formatting = false
+M.setup = function(config)
+  local lspconfig = require "lspconfig"
 
-    local ts_utils = require "nvim-lsp-ts-utils"
+  lspconfig.tsserver.setup {
+    init_options = require("nvim-lsp-ts-utils").init_options,
+    on_attach = function(client, bufnr)
+      -- disable tsserver formatting if you plan on formatting via null-ls
+      client.resolved_capabilities.document_formatting = false
+      client.resolved_capabilities.document_range_formatting = false
 
-    ts_utils.setup {
-      -- debug = true,
-      enable_import_on_completion = true,
-      import_all_scan_buffers = 100,
+      local ts_utils = require "nvim-lsp-ts-utils"
 
-      update_imports_on_move = true,
-      -- filter out dumb module warning
-      filter_out_diagnostics_by_code = { 80001 },
+      ts_utils.setup {
+        -- debug = true,
+        enable_import_on_completion = true,
+        import_all_scan_buffers = 100,
 
-      -- inlay hints
-      auto_inlay_hints = true, -- getting many annoynig errors
-      inlay_hints_highlight = "Comment",
-    }
+        update_imports_on_move = true,
+        -- filter out dumb module warning
+        filter_out_diagnostics_by_code = { 80001 },
 
-    ts_utils.setup_client(client)
-    LspCommonOnAttach(client, bufnr)
-  end,
-  capabilities = LspGetDefaultConfig()["capabilities"],
-}
+        -- inlay hints
+        auto_inlay_hints = true, -- getting many annoynig errors
+        inlay_hints_highlight = "Comment",
+      }
 
-lspconfig.eslint.setup(LspGetDefaultConfig())
--- vim.api.nvim_exec([[
---   augroup eslint_format
---     au!
---     au BufEnter *.ts,*.tsx,*.js,*.jsx nnoremap <buffer> <silent> <leader>f <Cmd>EslintFixAll<CR>
---   augroup END
--- ]], false)
+      ts_utils.setup_client(client)
+      config.on_attach(client, bufnr)
+    end,
+    capabilities = config["capabilities"],
+  }
 
-local null_ls = require "null-ls"
-null_ls.register(null_ls.builtins.diagnostics.stylelint.with {
-  filetypes = { "typescript", "typescriptreact" },
-  command = "./node_modules/.bin/stylelint",
-  -- args = { "--formatter", "json", "--stdin", "$FILENAME" },
-  condition = function(utils)
-    return utils.root_has_file ".stylelintrc"
-  end,
-})
-null_ls.register(null_ls.builtins.formatting.stylelint.with {
-  filetypes = { "typescript", "typescriptreact" },
-  command = "./node_modules/.bin/stylelint",
-  condition = function(utils)
-    -- Temp disable
-    return false
-    -- return utils.root_has_file ".stylelintrc"
-  end,
-})
+  lspconfig.eslint.setup(config)
+  -- vim.api.nvim_exec([[
+  --   augroup eslint_format
+  --     au!
+  --     au BufEnter *.ts,*.tsx,*.js,*.jsx nnoremap <buffer> <silent> <leader>f <Cmd>EslintFixAll<CR>
+  --   augroup END
+  -- ]], false)
+
+  local null_ls = require "null-ls"
+  null_ls.register(null_ls.builtins.diagnostics.stylelint.with {
+    filetypes = { "typescript", "typescriptreact" },
+    command = "./node_modules/.bin/stylelint",
+    -- args = { "--formatter", "json", "--stdin", "$FILENAME" },
+    condition = function(utils)
+      return utils.root_has_file ".stylelintrc"
+    end,
+  })
+  null_ls.register(null_ls.builtins.formatting.stylelint.with {
+    filetypes = { "typescript", "typescriptreact" },
+    command = "./node_modules/.bin/stylelint",
+    condition = function(utils)
+      -- Temp disable
+      return false
+      -- return utils.root_has_file ".stylelintrc"
+    end,
+  })
+end
+
+return M
