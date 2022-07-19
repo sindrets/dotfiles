@@ -81,9 +81,9 @@ return function()
     },
   })
 
-  require('lir.git_status').setup({
-    show_ignored = true
-  })
+  -- require('lir.git_status').setup({
+  --   show_ignored = true
+  -- })
 
   function M.explore(path)
     local abs_path = pl:absolute(pl:vim_expand(path or "%"))
