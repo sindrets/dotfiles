@@ -181,6 +181,22 @@ function mkcd (){
     mkdir -p "$1" && cd "$1"
 }
 
+# Switch between git worktrees.
+function wt () {
+    if [[ "$1" =~ ^(list|version|update|help)$ ]]; then
+        eval "$(whence -p wt)" $@
+    else
+        local s="$("$(whence -p wt)" $@)"
+        local code=$?
+
+        if [ $code -eq 0 ]; then
+            eval "$s"
+        else
+            exit $code
+        fi
+    fi
+}
+
 function man-color () {
     LESS_TERMCAP_mb=$'\e[1;32m' \
     LESS_TERMCAP_md=$'\e[1;32m' \

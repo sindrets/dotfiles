@@ -55,9 +55,21 @@ else
 fi
 
 function get_link_name() {
-  name="$(basename "$1")"
-  link_name="$plug_path/$name"
+  pushd "$1" > /dev/null
 
+  toplevel="$(git rev-parse --path-format=absolute --show-toplevel)"
+  gitdir="$(git rev-parse --path-format=absolute --git-common-dir)"
+
+  popd > /dev/null
+
+  if [ "$(realpath -m $gitdir/..)" = "$toplevel" ]; then
+    name="$(basename "$1")"
+  else
+    # Assume we are inside a worktree
+    name="$(perl -pe 's/(.*\/)?(.*?)(\.git)?$/\2/g' <<< "$gitdir")"
+  fi
+
+  link_name="$plug_path/$name"
   echo "$link_name"
 }
 
