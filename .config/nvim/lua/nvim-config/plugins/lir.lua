@@ -2,16 +2,162 @@ return function()
   local actions = require("lir.actions")
   local clipboard_actions = require("lir.clipboard.actions")
   local float = require("lir.float")
+  local lazy = require("nvim-config.lazy")
+  local lir = require("lir")
   local mark_actions = require("lir.mark.actions")
 
+  ---@module "diffview.arg_parser"
+  local arg_parser = lazy.require("diffview.arg_parser")
+
   local pl = Config.common.utils.pl
+  local utils = Config.common.utils
 
   local M = {}
 
-  actions.reload = function()
+  local function cd(path)
+    vim.cmd("noau cd " .. vim.fn.fnameescape(path))
+  end
+
+  ---Bring the cursor to the item matching the given name.
+  ---@param name string
+  local function highlight_item(name)
+    local ctx = lir.get_context()
+    local rel_path = pl:relative(name, ctx.dir)
+
+    local lnum = ctx:indexof(pl:explode(rel_path)[1])
+    if lnum then
+      vim.fn.cursor(lnum, 1)
+    end
+  end
+
+  function actions.reload()
     local pos = vim.api.nvim_win_get_cursor(0)
     vim.cmd("edit")
     vim.fn.cursor(pos[1], 0)
+  end
+
+  ---Move a file, close all its currently open buffers, and bring the cursor to
+  ---the moved item.
+  function actions.move()
+    local ctx = lir.get_context()
+    local cur = ctx:current()
+    local old_name = string.gsub(cur.value, pl.sep .. "$", "")
+    local old_dir = uv.cwd()
+    local old_path = cur.fullpath
+
+    cd(ctx.dir)
+
+    utils.input("Move: ", {
+      completion = "file",
+      default = old_name,
+
+      callback = function(new_name)
+        cd(old_dir)
+        utils.clear_prompt()
+
+        if new_name == nil or new_name == old_name then
+          return
+        end
+
+        -- If target is a directory, move the file into the directory.
+        -- Makes it work like linux `mv`
+        local stat = uv.fs_stat(new_name)
+        if stat and stat.type == "directory" then
+          new_name = pl:join(new_name, old_name)
+        end
+
+        -- Delete any currently open buffers 
+        local bufnr = utils.find_file_buffer(old_path)
+        if bufnr then
+          Config.lib.remove_buffer(false, bufnr)
+        end
+
+        local ok = uv.fs_rename(pl:join(ctx.dir, old_name), pl:join(ctx.dir, new_name))
+        actions.reload()
+
+        if not ok then
+          utils.err("Rename failed!")
+          return
+        end
+
+        highlight_item(new_name)
+      end
+    })
+  end
+
+  ---Create the path structures described by the given path arguments.
+  ---Intermediate directories are created as necessary. Create empty
+  ---directories by ending a path with a "/". Arguments are separated by
+  ---whitespace, and may be quoted if they contain whitespace.
+  ---
+  ---```sh
+  ---Create paths: foo/bar/baz "some/path with/whitespace" dir/
+  ---````
+  function actions.create_paths()
+    local ctx = lir.get_context()
+    local old_dir = uv.cwd()
+
+    cd(ctx.dir)
+
+    utils.input("Create paths: ", {
+      completion = function(_, cmd_line, cur_pos)
+        local args, argidx = arg_parser.scan_sh_args(cmd_line, cur_pos)
+        argidx = math.max(1, argidx)
+        local leading_args = utils.vec_slice(args, 1, argidx)
+
+        return vim.tbl_map(function(v)
+          leading_args[argidx] = utils.str_quote(v, { only_if_whitespace = true })
+          return table.concat(leading_args, " ")
+        end, vim.fn.getcompletion(args[argidx] or "", "file"))
+      end,
+
+      callback = function(new_paths)
+        cd(old_dir)
+        utils.clear_prompt()
+
+        if not new_paths then
+          return
+        end
+
+        local args = arg_parser.scan_sh_args(new_paths, #new_paths)
+        local new_abs, new_dir
+
+        for _, arg in ipairs(args) do
+          new_abs = pl:absolute(arg, ctx.dir)
+
+          if vim.endswith(arg, "/") then
+            new_abs = new_abs .. "/"
+          end
+
+          new_dir = new_abs:match("(.*)/")
+
+          if not pl:readable(new_abs) then
+            if new_dir and not pl:is_directory(new_dir) then
+              local ok, ret = pcall(vim.fn.mkdir, new_dir, "p")
+
+              if not ok or ret ~= 1 then
+                utils.err({ "Failed to create path!", type(ret) == "string" and ret or nil })
+                return
+              end
+            end
+
+            if new_dir .. "/" ~= new_abs then
+              local fd = uv.fs_open(new_abs, "w", 420)
+
+              if not fd then
+                utils.err("Could not create file: " .. new_abs)
+                return
+              end
+
+              uv.fs_close(fd)
+            end
+          end
+        end
+
+        vim.cmd("e " .. vim.fn.fnameescape(new_dir))
+        highlight_item(new_abs)
+      end,
+    })
   end
 
   require('lir').setup({
@@ -37,8 +183,9 @@ return function()
       end,
 
       ['m']     = actions.mkdir,
-      ['a']     = actions.newfile,
-      ['r']     = actions.rename,
+      ['e']     = actions.newfile,
+      ['a']     = actions.create_paths,
+      ['r']     = actions.move,
       ['<C-]>'] = actions.cd,
       ['gy']    = actions.yank_path,
       ['<C-h>'] = actions.toggle_show_hidden,

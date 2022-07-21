@@ -185,7 +185,7 @@ nnoremap <leader>fl <Cmd>Telescope current_buffer_fuzzy_find theme=get_ivy<CR>
 nnoremap <leader>gg <Cmd>Neogit<CR>
 nnoremap <leader>G <Cmd>Neogit<CR>
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
-nnoremap <leader>gl <Cmd>Git log -n256<CR>
+nnoremap <leader>gl <Cmd>Git log -n256 --shortstat<CR>
 nnoremap <leader>ga <Cmd>silent !git add %<CR>
 nnoremap <leader>gA <Cmd>silent !git add .<CR>
 nnoremap <leader>gcs <Cmd>Git commit<CR>

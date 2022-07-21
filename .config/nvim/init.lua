@@ -15,6 +15,7 @@ _G.Config = {
   common = require("nvim-config.common"),
   fn = {},
   plugin = {},
+  state = {},
 }
 
 Config.lib = require("nvim-config.lib")
