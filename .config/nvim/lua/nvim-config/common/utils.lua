@@ -14,6 +14,14 @@ M.pl = lazy.require("diffview.path", function(m)
   return m.PathLib({ separator = "/" })
 end)
 
+-- Set up completion wrapper used by `vim.ui.input()`
+vim.cmd([[
+  function! Config__ui_input_completion(...) abort
+    return luaeval("Config.state.current_completer(
+          \ unpack(vim.fn.eval('a:000')))")
+  endfunction
+]])
+
 ---Echo string with multiple lines.
 ---@param msg string|string[]
 ---@param hl? string Highlight group name.
@@ -554,6 +562,87 @@ function M.get_unique_file_bufname(filename)
   end
 
   return string.reverse(string.sub(filename, 1, idx))
+end
+
+function M.clear_prompt()
+  vim.api.nvim_echo({ { "" } }, false, {})
+  vim.cmd("redraw")
+end
+
+---@class InputCharSpec
+---@field clear_prompt boolean (default: true)
+---@field allow_non_ascii boolean (default: true)
+---@field prompt_hl string (default: nil)
+
+---@param prompt string
+---@param opt InputCharSpec
+---@return string? Char
+---@return string|number Raw
+function M.input_char(prompt, opt)
+  opt = vim.tbl_extend("keep", opt or {}, {
+    clear_prompt = true,
+    allow_non_ascii = false,
+    prompt_hl = nil,
+  })
+
+  if prompt then
+    vim.api.nvim_echo({ { prompt, opt.prompt_hl } }, false, {})
+  end
+
+  local c
+  if not opt.allow_non_ascii then
+    while type(c) ~= "number" do
+      c = vim.fn.getchar()
+    end
+  else
+    c = vim.fn.getchar()
+  end
+
+  if opt.clear_prompt then
+    M.clear_prompt()
+  end
+
+  local s = type(c) == "number" and vim.fn.nr2char(c) or nil
+  local raw = type(c) == "number" and s or c
+  return s, raw
+end
+
+---@class InputSpec
+---@field default string
+---@field completion string|function
+---@field cancelreturn string
+---@field callback fun(response: string?)
+
+---@param prompt string
+---@param opt InputSpec
+function M.input(prompt, opt)
+  local completion = opt.completion
+  if type(completion) == "function" then
+    Config.state.current_completer = completion
+    completion = "customlist,Config__ui_input_completion"
+  end
+
+  vim.ui.input({
+    prompt = prompt,
+    default = opt.default,
+    completion = completion,
+    cancelreturn = opt.cancelreturn,
+  }, opt.callback)
+
+  M.clear_prompt()
+end
+
+function M.raw_key(vim_key)
+  return api.nvim_eval(string.format([["\%s"]], vim_key))
+end
+
+---@param msg? string
+function M.pause(msg)
+  vim.cmd("redraw")
+  M.input_char(
+    "-- PRESS ANY KEY TO CONTINUE -- " .. (msg or ""),
+    { allow_non_ascii = true, prompt_hl = "Directory" }
+  )
 end
 
 ---Map of options that accept comma separated, list-like values, but don't work

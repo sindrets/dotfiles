@@ -255,7 +255,10 @@ return require('packer').startup({
       requires = { 'nvim-treesitter/nvim-treesitter' },
       config = conf("nvim-ts-rainbow")
     }
-    use { 'tpope/vim-fugitive' }
+    use {
+      'tpope/vim-fugitive',
+      requires = { 'tpope/vim-rhubarb', },
+    }
     use {
       'akinsho/git-conflict.nvim',
       config = function()
