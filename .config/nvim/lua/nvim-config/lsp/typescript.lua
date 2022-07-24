@@ -7,8 +7,7 @@ M.setup = function(config)
     init_options = require("nvim-lsp-ts-utils").init_options,
     on_attach = function(client, bufnr)
       -- disable tsserver formatting if you plan on formatting via null-ls
-      client.resolved_capabilities.document_formatting = false
-      client.resolved_capabilities.document_range_formatting = false
+      client.server_capabilities.documentFormattingProvider = false
 
       local ts_utils = require "nvim-lsp-ts-utils"
 
