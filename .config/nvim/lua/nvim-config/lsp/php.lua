@@ -7,8 +7,8 @@ M.setup = function(config)
   lspconfig.intelephense.setup {
     on_attach = function(client, bufnr)
       -- null-ls handles formatting using phpcbf or phpcsfixer
-      client.resolved_capabilities.document_formatting = false
-      client.resolved_capabilities.document_range_formatting = false
+      client.server_capabilities.documentFormattingProvider = false
+      -- client.resolved_capabilities.document_range_formatting = false
 
       config.on_attach(client, bufnr)
     end,
