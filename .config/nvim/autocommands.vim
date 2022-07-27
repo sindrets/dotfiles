@@ -53,12 +53,8 @@ augroup NvimConfig
     " Automatically reload file if it's been changed outside vim.
     au BufEnter,CursorHold * silent! checktime %
 
-    " Handle opening buffers with the format`foo/bar/baz:128:17`
-    au BufNewFile *
-                \ if expand("<afile>") =~ '\v.*:(\d+)?(:\d+:?)?$'
-                \ |     exe "lua require'nvim-config.au'"
-                \           . ".open_file_location(vim.fn.expand('<afile>'))"
-                \ | endif
+    " Open file location. Example: `foo/bar/baz:128:17`
+    au BufReadCmd *:[0-9]\+ lua require("nvim-config.au").open_file_location(vim.fn.expand("<afile>"))
 
     au BufWinLeave * if get(t:, "compare_mode", 0) | diffoff | endif
     au BufEnter * if get(t:, "compare_mode", 0)

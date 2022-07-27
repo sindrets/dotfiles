@@ -5,7 +5,7 @@
 ---
 ---Override the default colorscheme by defining the environment variable
 ---`NVIM_COLORSCHEME` using the same format.
-local DEFAULT_COLORSCHEME = "catppuccin dark"
+local DEFAULT_COLORSCHEME = "kanagawa dark"
 
 local Color = Config.common.color.Color
 local utils = Config.common.utils
@@ -486,6 +486,12 @@ function M.apply_tweaks()
     feline_theme = "basic"
     M.apply_terminal_defaults()
 
+  elseif colors_name == "kanagawa" then
+    hi("VertSplit", { bg = "NONE", fg = "#0f0f0f" })
+    hi("diffChanged", { fg = "#7E9CD8" })
+    hi("Whitespace", { fg = bg_normal:clone():highlight(0.18):to_css() })
+    hi("BufferLineIndicatorSelected", { fg = "#7E9CD8" })
+
   end
 
   -- Generate diff hl
@@ -544,6 +550,7 @@ function M.apply_tweaks()
     { clear = true }
   )
 
+  hi_link("IndentBlanklineChar", "Whitespace")
   hi_link("IndentBlanklineSpaceChar", "Whitespace")
 
   -- Adjust ts-rainbow colors for light color schemes

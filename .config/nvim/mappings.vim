@@ -111,8 +111,10 @@ tnoremap <C-M-l> <Cmd>vertical res +2<CR>
 tnoremap <C-M-j> <Cmd>res +1<CR>
 tnoremap <C-M-k> <Cmd>res -1<CR>
 
-nnoremap <Leader>q <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
-nnoremap <C-q> <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
+nnoremap <Leader>q <Cmd>lua Config.lib.comfy_quit()<CR>
+nnoremap <C-q> <Cmd>lua Config.lib.comfy_quit()<CR>
+
+nnoremap <leader>z <Cmd>lua Config.lib.set_center_cursor()<CR>
 
 " Move lines
 nnoremap <A-K> <Cmd>m-2<CR>==

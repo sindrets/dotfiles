@@ -301,10 +301,7 @@ return require('packer').startup({
 
     -- THEMES
     use { 'rktjmp/lush.nvim' }
-    use { 'w0ng/vim-hybrid' }
     use { 'arzg/vim-colors-xcode' }
-    use { 'jacoborus/tender.vim' }
-    use { 'ntk148v/vim-horizon' }
     use { 'sainnhe/gruvbox-material' }
     use { 'gruvbox-community/gruvbox' }
     use { 'folke/tokyonight.nvim' }
@@ -317,9 +314,8 @@ return require('packer').startup({
     use { 'NTBBloodbath/doom-one.nvim' }
     use { 'catppuccin/nvim', as = "catppuccin" }
     use_local { 'sindrets/dracula-vim', as = "dracula" }
-    use { 'https://gitlab.com/yorickpeterse/nvim-grey.git' }
-    use { 'https://gitlab.com/yorickpeterse/vim-paper.git' }
     use { 'projekt0n/github-nvim-theme' }
+    use { 'rebelot/kanagawa.nvim' }
   end,
 
   config = {

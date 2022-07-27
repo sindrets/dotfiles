@@ -11,7 +11,17 @@ local path_sep = package.config:sub(1, 1)
 ---Path lib
 ---@type PathLib
 M.pl = lazy.require("diffview.path", function(m)
-  return m.PathLib({ separator = "/" })
+  local pl = m.PathLib({ separator = "/" })
+
+  -- TODO: remove when pushed to upstream diffview.nvim
+  if not pl.is_dir then
+    ---@class PathLib
+    ---@field is_dir fun(self: PathLib, path: string): boolean
+
+    pl.is_dir = pl.is_directory
+  end
+
+  return pl
 end)
 
 -- Set up completion wrapper used by `vim.ui.input()`
@@ -222,9 +232,6 @@ function M.tbl_clear(t)
 end
 
 function M.tbl_clone(t)
-  if not t then
-    return
-  end
   local clone = {}
 
   for k, v in pairs(t) do
@@ -285,7 +292,7 @@ function M.vec_slice(t, first, last)
 end
 
 ---Join multiple vectors into one.
----@vararg vector
+---@param ... any
 ---@return vector
 function M.vec_join(...)
   local result = {}
@@ -310,7 +317,7 @@ function M.vec_join(...)
 end
 
 ---Get the result of the union of the given vectors.
----@vararg vector
+---@param ... vector
 ---@return vector
 function M.vec_union(...)
   local result = {}
@@ -337,7 +344,7 @@ function M.vec_union(...)
 end
 
 ---Get the result of the difference of the given vectors.
----@vararg vector
+---@param ... vector
 ---@return vector
 function M.vec_diff(...)
   local args = {...}
@@ -367,7 +374,7 @@ function M.vec_diff(...)
 end
 
 ---Get the result of the symmetric difference of the given vectors.
----@vararg vector
+---@param ... vector
 ---@return vector
 function M.vec_symdiff(...)
   local result = {}
@@ -514,16 +521,23 @@ function M.wipe_all_buffers()
   end
 end
 
+---Get the filename with the least amount of path segments necessary to make it
+---unique among the currently listed buffers.
+---
+---Derived from feline.nvim.
+---@see [feline.nvim](https://github.com/feline-nvim/feline.nvim)
+---@param filename string
+---@return string
 function M.get_unique_file_bufname(filename)
   local basename = vim.fn.fnamemodify(filename, ":t")
+
   local collisions = vim.tbl_map(function(bufnr)
     return api.nvim_buf_get_name(bufnr)
   end, M.list_bufs({ listed = true }))
+
   collisions = vim.tbl_filter(function(name)
     return name ~= filename and vim.fn.fnamemodify(name, ":t") == basename
   end, collisions)
-
-  -- Derived from: feline.nvim
 
   -- Reverse filenames in order to compare their names
   filename = string.reverse(filename)
@@ -762,6 +776,21 @@ function M.win_find_buf(bufid, tabpage)
   end
 
   return result
+end
+
+---Set the (1,0)-indexed cursor position without having to worry about
+---out-of-bounds coordinates. The line number is clamped to the number of lines
+---in the target buffer.
+---@param winid integer
+---@param line? integer
+---@param column? integer
+function M.set_cursor(winid, line, column)
+  local bufnr = api.nvim_win_get_buf(winid)
+
+  pcall(api.nvim_win_set_cursor, winid, {
+    M.clamp(line or 1, 1, api.nvim_buf_line_count(bufnr)),
+    math.max(0, column or 0)
+  })
 end
 
 function M.git_get_detached_head()

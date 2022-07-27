@@ -20,7 +20,7 @@ lua_add_lib("$VIMRUNTIME")
 lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/plenary.nvim")
 lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
 
-require'lspconfig'.sumneko_lua.setup(Config.lsp.create_config({
+require("lspconfig").sumneko_lua.setup(Config.lsp.create_config({
   cmd = {
     "lua-language-server"
   },

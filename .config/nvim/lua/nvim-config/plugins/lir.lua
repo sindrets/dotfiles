@@ -26,14 +26,14 @@ return function()
 
     local lnum = ctx:indexof(pl:explode(rel_path)[1])
     if lnum then
-      vim.fn.cursor(lnum, 1)
+      utils.set_cursor(0, lnum, 0)
     end
   end
 
   function actions.reload()
     local pos = vim.api.nvim_win_get_cursor(0)
     vim.cmd("edit")
-    vim.fn.cursor(pos[1], 0)
+    utils.set_cursor(0, pos[1], 0)
   end
 
   ---Move a file, close all its currently open buffers, and bring the cursor to
@@ -132,7 +132,7 @@ return function()
           new_dir = new_abs:match("(.*)/")
 
           if not pl:readable(new_abs) then
-            if new_dir and not pl:is_directory(new_dir) then
+            if new_dir and not pl:is_dir(new_dir) then
               local ok, ret = pcall(vim.fn.mkdir, new_dir, "p")
 
               if not ok or ret ~= 1 then
@@ -234,9 +234,9 @@ return function()
 
   function M.explore(path)
     local abs_path = pl:absolute(pl:vim_expand(path or "%"))
-    if not (pl:readable(abs_path) or pl:readable(pl:parent(abs_path))) then
+    if not (pl:readable(abs_path) or pl:readable(pl:parent(abs_path) or "")) then
       abs_path = pl:absolute(uv.cwd())
-    elseif not pl:is_directory(abs_path) then
+    elseif not pl:is_dir(abs_path) then
       abs_path = pl:parent(abs_path)
     end
     vim.cmd("e " .. vim.fn.fnameescape(abs_path))
@@ -252,9 +252,9 @@ return function()
 
   function M.toggle_float(path)
     local abs_path = pl:absolute(pl:vim_expand(path or "%"))
-    if not (pl:readable(abs_path) or pl:readable(pl:parent(abs_path))) then
+    if not (pl:readable(abs_path) or pl:readable(pl:parent(abs_path) or "")) then
       abs_path = pl:absolute(uv.cwd())
-    elseif not pl:is_directory(abs_path) then
+    elseif not pl:is_dir(abs_path) then
       abs_path = pl:parent(abs_path)
     end
     float.toggle(abs_path or nil)

@@ -3,7 +3,7 @@ local lspconfig = require("lspconfig")
 
 local utils = Config.common.utils
 local pl = utils.pl
-local local_settings
+local config_store = {}
 
 local M = {}
 _G.Config.lsp = M
@@ -23,19 +23,43 @@ M.base_config = {
   capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()),
 }
 
-function M.get_local_settings()
-  if local_settings then return local_settings end
+local local_config_paths = {
+  ".vim/lsp_init.lua",
+  ".vim/lsp_settings.lua",
+  ".vim/lsp-settings.lua",
+}
 
-  if pl:readable(".vim/lsp-settings.lua") then
-    local code_chunk = loadfile(".vim/lsp-settings.lua")
-    if code_chunk then
-      local_settings = code_chunk()
+function M.create_local_config(config)
+  local cwd = uv.cwd()
+  local local_config = config_store[cwd]
+  config = config or {}
+
+  if not local_config then
+    for _, path in ipairs(local_config_paths) do
+      if pl:readable(path) then
+        utils.info("Using project-local LSP config: " .. utils.str_quote(path), true)
+        local code_chunk = loadfile(path)
+        if code_chunk then
+          local_config = code_chunk()
+          break
+        end
+      end
     end
-  else
-    local_settings = {}
+
+    if not local_config then
+      local_config = {}
+    end
+
+    config_store[cwd] = local_config
   end
 
-  return local_settings
+  if vim.is_callable(local_config) then
+    local_config = local_config(config)
+  else
+    local_config = vim.tbl_deep_extend("force", config, local_config)
+  end
+
+  return local_config
 end
 
 ---Create lsp config from base + server defaults + local config.
@@ -44,16 +68,13 @@ end
 function M.create_config(server_defaults)
   server_defaults = server_defaults or {}
 
-  return vim.tbl_deep_extend(
-    "force",
-    M.base_config,
-    server_defaults,
-    M.get_local_settings()
-  )
+  local config = vim.tbl_deep_extend("force", M.base_config, server_defaults)
+
+  return M.create_local_config(config)
 end
 
 -- Java
-require'nvim-config.lsp.java'
+require("nvim-config.lsp.java")
 
 -- Typescript
 lspconfig.tsserver.setup(M.create_config())
@@ -62,10 +83,10 @@ lspconfig.tsserver.setup(M.create_config())
 lspconfig.pyright.setup(M.create_config())
 
 -- Lua
-require'nvim-config.lsp.lua'
+require("nvim-config.lsp.lua")
 
 -- Teal
--- require'nvim-config.lsp.teal'
+-- require("nvim-config.lsp.teal")
 
 -- Bash
 lspconfig.bashls.setup(M.create_config())
@@ -80,13 +101,13 @@ lspconfig.omnisharp.setup(M.create_config({
 }))
 
 -- C, C++
-require('lspconfig').clangd.setup(M.create_config())
+lspconfig.clangd.setup(M.create_config())
 
 -- Vim
-require('lspconfig').vimls.setup(M.create_config())
+lspconfig.vimls.setup(M.create_config())
 
 -- Go
-require('lspconfig').gopls.setup(M.create_config())
+lspconfig.gopls.setup(M.create_config())
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {

@@ -38,7 +38,7 @@ function M.start_jdtls()
         }
       };
     }
-  }, require'nvim-config.lsp'.get_local_settings())
+  }, require'nvim-config.lsp'.create_local_config())
 
   jdtls.start_or_attach({
     capabilities = capabilities,
