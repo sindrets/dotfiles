@@ -15,7 +15,11 @@ _G.Config = {
   common = require("nvim-config.common"),
   fn = {},
   plugin = {},
-  state = {},
+  state = {
+    git = {
+      rev_name_cache = {},
+    },
+  },
 }
 
 Config.lib = require("nvim-config.lib")

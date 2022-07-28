@@ -339,7 +339,42 @@ M.components = {
   },
   git = {
     branch = {
-      provider = "git_branch",
+      provider = function()
+        local rev, path
+
+        if vim.b[0].gitsigns_head then
+          rev = vim.b[0].gitsigns_head
+          path = api.nvim_buf_get_name(0)
+        else
+          rev = vim.g.gitsigns_head or ""
+          path = uv.cwd()
+        end
+
+        if rev == "" then
+          return ""
+        end
+
+        local cache = Config.state.git.rev_name_cache
+        local key = path .. "#" .. rev
+
+        if cache[key] then
+          return cache[key]
+        else
+          -- Problem: Gitsigns shows the current HEAD as a commit SHA if it's
+          -- anything other than the HEAD of a branch.
+          -- Solution: Use git-name-rev to get more meaningful names.
+          local name = vim.fn.systemlist({ "git", "name-rev", "--name-only", "--always", rev })[1]
+
+          if vim.v.shell_error ~= 0 then
+            name = ""
+          end
+
+          name = utils.str_match(name, { "(.*)%^0", "(.*)" })
+          cache[key] = name
+
+          return name
+        end
+      end,
       icon = icons.git.branch .. " ",
     },
     diff_add = {

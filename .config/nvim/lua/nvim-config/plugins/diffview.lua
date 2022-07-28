@@ -101,10 +101,12 @@ return function ()
         ["<cr>"] = actions.focus_entry,
         ["s"] = actions.toggle_stage_entry,
         ["gf"] = actions.goto_file_edit,
+        ["?"] = "<Cmd>h diffview-maps-file-panel<CR>",
       },
       file_history_panel = {
         ["<cr>"] = actions.focus_entry,
         ["gf"] = actions.goto_file_edit,
+        ["?"] = "<Cmd>h diffview-maps-file-history-panel<CR>",
       },
     }
   })

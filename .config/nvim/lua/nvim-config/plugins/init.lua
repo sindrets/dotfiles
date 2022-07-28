@@ -136,6 +136,7 @@ return require('packer').startup({
         { 'hrsh7th/cmp-vsnip' },
         { 'hrsh7th/cmp-cmdline' },
         { 'hrsh7th/cmp-nvim-lua' },
+        { 'petertriho/cmp-git' },
       },
       after = 'nvim-autopairs',
       config = conf("nvim-cmp"),

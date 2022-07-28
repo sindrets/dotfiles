@@ -793,40 +793,4 @@ function M.set_cursor(winid, line, column)
   })
 end
 
-function M.git_get_detached_head()
-  local git_branches_file = io.popen("git branch -a --no-abbrev --contains", "r")
-  if not git_branches_file then return end
-  local git_branches_data = git_branches_file:read("*l")
-  io.close(git_branches_file)
-  if not git_branches_data then return end
-
-  local branch_name = git_branches_data:match('.*HEAD (detached %w+ [%w/-]+)')
-  if branch_name and string.len(branch_name) > 0 then
-    return branch_name
-  end
-end
-
-function M.lsp_organize_imports()
-  local context = { source = { organizeImports = true } }
-
-  local params = vim.lsp.util.make_range_params(0, nil)
-  params.context = context
-
-  local method = "textDocument/codeAction"
-  local timeout = 1000 -- ms
-
-  local resp = vim.lsp.buf_request_sync(0, method, params, timeout)
-  if not resp then return end
-
-  for _, client in ipairs(vim.lsp.get_active_clients()) do
-    if resp[client.id] then
-      local result = resp[client.id].result
-      if not result or not result[1] then return end
-
-      local edit = result[1].edit
-      vim.lsp.util.apply_workspace_edit(edit, "utf-8")
-    end
-  end
-end
-
 return M
