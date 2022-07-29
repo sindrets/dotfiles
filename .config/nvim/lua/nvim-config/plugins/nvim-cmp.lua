@@ -55,7 +55,6 @@ return function()
         vim_item.kind = lsp_kinds[vim_item.kind]
         vim_item.menu = ({
           nvim_lsp = "[LSP]",
-          nvim_lua = "[Lua]",
           emoji = "[Emoji]",
           path = "[Path]",
           calc = "[Calc]",

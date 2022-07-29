@@ -1,6 +1,8 @@
 local lua_path = {
   "lua/?.lua",
   "lua/?/init.lua",
+  "?.lua",
+  "?/init.lua",
 }
 
 for _, v in ipairs(vim.split(package.path, ";", {})) do
@@ -16,42 +18,57 @@ local function lua_add_lib(lib)
   end
 end
 
-lua_add_lib("$VIMRUNTIME")
-lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/plenary.nvim")
+local function get_lib()
+  return vim.tbl_keys(lua_lib)
+end
+
+-- lua_add_lib("$VIMRUNTIME")
 lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
 
-require("lspconfig").sumneko_lua.setup(Config.lsp.create_config({
-  cmd = {
-    "lua-language-server"
-  },
-  filetypes = { "lua" },
-  settings = {
-    Lua = {
-      runtime = {
-        version = "LuaJIT",
-        path = lua_path,
-        fileEncoding = "utf8",
-        unicodeName = true
-      },
-      diagnostics = {
-        globals = { "vim", "jit", "bit", "Config" }
-      },
-      workspace = {
-        library = lua_lib,
-        maxPreload = 2000,
-        preloadFileSize = 50000
-      },
-      telemetry = {
-        enable = false,
-      },
-      format = {
-        enable = true,
-        -- NOTE: all the values need to be of type 'string'
-        defaultConfig = {
-          indent_style = "space",
-          indent_size = "2",
+require("lspconfig").sumneko_lua.setup(Config.lsp.create_config(
+  require("lua-dev").setup({
+    library = {
+      vimruntime = false, -- runtime path
+      types = true, -- full signature, docs and completion of vim.api, vim.treesitter, vim.lsp and others
+      -- plugins = false, -- installed opt or start plugins in packpath
+      -- you can also specify the list of plugins to make available as a workspace library
+      plugins = { "plenary.nvim" },
+    },
+    runtime_path = false, -- enable this to get completion in require strings. Slow!
+  }),
+  {
+    cmd = {
+      "lua-language-server"
+    },
+    filetypes = { "lua" },
+    settings = {
+      Lua = {
+        runtime = {
+          version = "LuaJIT",
+          path = lua_path,
+          fileEncoding = "utf8",
+          unicodeName = true
+        },
+        diagnostics = {
+          globals = { "vim", "jit", "bit", "Config" }
+        },
+        workspace = {
+          library = get_lib(),
+          maxPreload = 2000,
+          preloadFileSize = 50000
+        },
+        telemetry = {
+          enable = false,
+        },
+        format = {
+          enable = true,
+          -- NOTE: all the values need to be of type 'string'
+          defaultConfig = {
+            indent_style = "space",
+            indent_size = "2",
+          },
         },
       },
     },
-  },
-}))
+  }
+))

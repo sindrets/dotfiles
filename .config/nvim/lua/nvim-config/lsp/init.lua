@@ -56,19 +56,18 @@ function M.create_local_config(config)
   if vim.is_callable(local_config) then
     local_config = local_config(config)
   else
-    local_config = vim.tbl_deep_extend("force", config, local_config)
+    local_config = utils.tbl_union_extend(config, local_config)
   end
 
   return local_config
 end
 
 ---Create lsp config from base + server defaults + local config.
----@param server_defaults? table
+---@param ... table Set of LSP configs sorted by order of precedence: later
+---configs will overwrite earlier configs.
 ---@return table
-function M.create_config(server_defaults)
-  server_defaults = server_defaults or {}
-
-  local config = vim.tbl_deep_extend("force", M.base_config, server_defaults)
+function M.create_config(...)
+  local config = utils.tbl_union_extend(M.base_config, {}, ...)
 
   return M.create_local_config(config)
 end

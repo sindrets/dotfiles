@@ -110,6 +110,7 @@ return require('packer').startup({
         }
       end
     }
+    use { 'folke/lua-dev.nvim' }
     use { 'neovim/nvim-lspconfig' }
     use {
       "ray-x/lsp_signature.nvim",
@@ -135,7 +136,6 @@ return require('packer').startup({
         { 'hrsh7th/cmp-buffer' },
         { 'hrsh7th/cmp-vsnip' },
         { 'hrsh7th/cmp-cmdline' },
-        { 'hrsh7th/cmp-nvim-lua' },
         { 'petertriho/cmp-git' },
       },
       after = 'nvim-autopairs',
@@ -163,7 +163,12 @@ return require('packer').startup({
     use { 'kevinhwang91/nvim-bqf', config = conf("nvim-bqf") }
     use { 'windwp/nvim-autopairs', config = conf("nvim-autopairs") }
     use { 'sindrets/nvim-colorizer.lua', config = conf("nvim-colorizer") }
-    use { 'hrsh7th/vim-vsnip' }
+    use {
+      'hrsh7th/vim-vsnip',
+      setup = function()
+        vim.g.vsnip_snippet_dir = vim.fn.stdpath("config") .. "/snippets"
+      end,
+    }
     use { 'hrsh7th/vim-vsnip-integ' }
     use {
       'scrooloose/nerdcommenter',

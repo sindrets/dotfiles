@@ -96,7 +96,7 @@ end
 ---@param s string
 ---@return string
 function M.t(s)
-  return api.nvim_replace_termcodes(s, true, true, true)
+  return api.nvim_replace_termcodes(s, true, true, true) --[[@as string ]]
 end
 
 function M.exec_lua(code, ...)
@@ -169,7 +169,7 @@ function M.str_quote(s, opt)
     esc_fmt = [[\%s]],
     prefer_single = false,
     only_if_whitespace = false,
-  })
+  }) --[[@as utils.StrQuoteSpec ]]
 
   if opt.only_if_whitespace and not s:find("%s") then
     return s
@@ -254,6 +254,43 @@ function M.tbl_deep_clone(t)
   end
 
   return clone
+end
+
+---Deep extend a table, and also perform a union on all sub-tables.
+---@param t table
+---@param ... table
+---@return table
+function M.tbl_union_extend(t, ...)
+  local res = M.tbl_clone(t)
+
+  local function recurse(ours, theirs)
+    -- Get the union of the two tables
+    local sub = M.vec_union(ours, theirs)
+
+    for k, v in pairs(ours) do
+      if type(k) ~= "number" then
+        sub[k] = v
+      end
+    end
+
+    for k, v in pairs(theirs) do
+      if type(k) ~= "number" then
+        if type(v) == "table" then
+          sub[k] = recurse(sub[k] or {}, v)
+        else
+          sub[k] = v
+        end
+      end
+    end
+
+    return sub
+  end
+
+  for _, theirs in ipairs({ ... }) do
+    res = recurse(res, theirs)
+  end
+
+  return res
 end
 
 ---Perform a map and also filter out index values that would become `nil`.
@@ -434,6 +471,7 @@ end
 ---@field tabpage integer Filter out buffers that are not displayed in a given tabpage.
 
 ---@param opt? ListBufsSpec
+---@return integer[] #Buffer numbers of matched buffers.
 function M.list_bufs(opt)
   opt = opt or {}
   local bufs
@@ -462,7 +500,7 @@ function M.list_bufs(opt)
       return false
     end
     return true
-  end, bufs)
+  end, bufs) --[[@as integer[] ]]
 end
 
 ---@param pattern string Lua pattern mathed against the buffer name.
@@ -541,7 +579,7 @@ function M.get_unique_file_bufname(filename)
 
   -- Reverse filenames in order to compare their names
   filename = string.reverse(filename)
-  collisions = vim.tbl_map(string.reverse, collisions)
+  collisions = vim.tbl_map(string.reverse, collisions) --[[@as string[] ]]
 
   local idx = 1
 
@@ -560,7 +598,7 @@ function M.get_unique_file_bufname(filename)
         return 1
       end,
       collisions
-    )
+    ) --[[@as integer[] ]]
     idx = math.max(unpack(delta_indices))
   end
 
@@ -597,7 +635,7 @@ function M.input_char(prompt, opt)
     clear_prompt = true,
     allow_non_ascii = false,
     prompt_hl = nil,
-  })
+  }) --[[@as InputCharSpec ]]
 
   if prompt then
     vim.api.nvim_echo({ { prompt, opt.prompt_hl } }, false, {})
@@ -685,8 +723,7 @@ function M.set_local(winids, option_map, opt)
     winids = { winids }
   end
 
-  ---@cast opt -?
-  opt = vim.tbl_extend("keep", opt or {}, { method = "set" })
+  opt = vim.tbl_extend("keep", opt or {}, { method = "set" }) --[[@as table ]]
 
   for _, id in ipairs(winids) do
     api.nvim_win_call(id, function()
@@ -698,7 +735,7 @@ function M.set_local(winids, option_map, opt)
 
         if type(value) == "table" then
           if value.opt then
-            o = vim.tbl_extend("force", opt, value.opt)
+            o = vim.tbl_extend("force", opt, value.opt) --[[@as table ]]
           end
 
           if is_list_like then

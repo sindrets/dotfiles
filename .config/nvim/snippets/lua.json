@@ -1,0 +1,34 @@
+{
+  "as_type": {
+    "prefix": "as",
+    "body": "--[[@as ${1:type} ]]"
+  },
+  "diffview_class": {
+    "prefix": "dclass",
+    "body": [
+      "---@class ${1:class_name} : ${2:diffview.Object}",
+      "local ${1} = oop.create_class(\"${1}\"${3})"
+    ],
+    "description": "A diffview class template."
+  },
+  "abstract_method": {
+    "prefix": "absm",
+    "body": [
+      "---@abstract",
+      "function ${1:class}:${2:method_name}(${3}) oop.abstract_stub() end"
+    ],
+    "description": "An abstract method."
+  },
+  "abstract_method_region": {
+    "prefix": "absr",
+    "body": [
+      "---@diagnostic disable: unused-local",
+      "",
+      "---@abstract",
+      "function ${1:class}:${2:method_name}(${3}) oop.abstract_stub() end",
+      "",
+      "---@diagnostic enable: unused-local"
+    ],
+    "description": "An abstract method region."
+  }
+}

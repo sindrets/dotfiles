@@ -18,7 +18,7 @@ function M.start_jdtls()
     -- local opts = { noremap = true, silent = true; }
   end
 
-  local settings = vim.tbl_deep_extend("force", {
+  local settings = require('nvim-config.lsp').create_local_config({
     ["java.project.referencedLibraries"] = {
       "lib/**/*.jar",
       "lib/*.jar"
@@ -37,8 +37,8 @@ function M.start_jdtls()
           "org.mockito.Mockito.*"
         }
       };
-    }
-  }, require'nvim-config.lsp'.create_local_config())
+    },
+  })
 
   jdtls.start_or_attach({
     capabilities = capabilities,

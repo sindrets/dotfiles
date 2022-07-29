@@ -6,7 +6,7 @@ return {
     Lua = {
       workspace = {
         library = {
-          [vim.fn.fnamemodify("~/.config/nvim", ":p")] = true
+          vim.fn.fnamemodify("~/.config/nvim", ":p"),
         }
       }
     }
