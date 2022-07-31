@@ -110,6 +110,7 @@ return require('packer').startup({
         }
       end
     }
+    use { 'folke/lua-dev.nvim' }
     use { 'neovim/nvim-lspconfig' }
     use { 'jose-elias-alvarez/null-ls.nvim' }
     use { 'jose-elias-alvarez/nvim-lsp-ts-utils' }
@@ -137,7 +138,7 @@ return require('packer').startup({
         { 'hrsh7th/cmp-buffer' },
         { 'hrsh7th/cmp-vsnip' },
         { 'hrsh7th/cmp-cmdline' },
-        { 'hrsh7th/cmp-nvim-lua' },
+        { 'petertriho/cmp-git' },
       },
       after = 'nvim-autopairs',
       config = conf("nvim-cmp"),
@@ -164,7 +165,12 @@ return require('packer').startup({
     use { 'kevinhwang91/nvim-bqf', config = conf("nvim-bqf") }
     use { 'windwp/nvim-autopairs', config = conf("nvim-autopairs") }
     use { 'sindrets/nvim-colorizer.lua', config = conf("nvim-colorizer") }
-    use { 'hrsh7th/vim-vsnip' }
+    use {
+      'hrsh7th/vim-vsnip',
+      setup = function()
+        vim.g.vsnip_snippet_dir = vim.fn.stdpath("config") .. "/snippets"
+      end,
+    }
     use { 'hrsh7th/vim-vsnip-integ' }
     use {
       'scrooloose/nerdcommenter',
@@ -335,10 +341,7 @@ return require('packer').startup({
 
     -- THEMES
     use { 'rktjmp/lush.nvim' }
-    use { 'w0ng/vim-hybrid' }
     use { 'arzg/vim-colors-xcode' }
-    use { 'jacoborus/tender.vim' }
-    use { 'ntk148v/vim-horizon' }
     use { 'sainnhe/gruvbox-material' }
     use { 'gruvbox-community/gruvbox' }
     use { 'folke/tokyonight.nvim' }
@@ -351,9 +354,8 @@ return require('packer').startup({
     use { 'NTBBloodbath/doom-one.nvim' }
     use { 'catppuccin/nvim', as = "catppuccin" }
     use_local { 'sindrets/dracula-vim', as = "dracula" }
-    use { 'https://gitlab.com/yorickpeterse/nvim-grey.git' }
-    use { 'https://gitlab.com/yorickpeterse/vim-paper.git' }
     use { 'projekt0n/github-nvim-theme' }
+    use { 'rebelot/kanagawa.nvim' }
   end,
 
   config = {

@@ -51,6 +51,11 @@ return function ()
         color = "#7ebae4",
         name = "LirFolderNode",
       },
+      ["patch"] = {
+        icon = "",
+        color = "#41535b",
+        name = "Patch",
+      },
     },
     default = true
   })

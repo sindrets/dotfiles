@@ -13,16 +13,16 @@ inoremap <silent> <expr> <UP> pumvisible()
             \ ? '<UP>' : '<Cmd>set ve+=onemore <bar> exe "norm! gk" <bar> set ve-=onemore<CR>'
 
 " Navigate in insert mode
-inoremap <C-h> <Left>
-inoremap <C-j> <Down>
-inoremap <C-k> <Up>
-inoremap <C-l> <Right>
+imap <C-h> <Left>
+imap <C-j> <Down>
+imap <C-k> <Up>
+imap <C-l> <Right>
 
 " Navigate snippet placeholders
-imap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<Down>'
-smap <expr> <C-j> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : '<C-j>'
-imap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<Up>'
-smap <expr> <C-k> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<C-k>'
+imap <expr> <C-f> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : ''
+smap <expr> <C-f> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : ''
+imap <expr> <C-b> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : ''
+smap <expr> <C-b> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : ''
 
 " Home moves to first non-whitespace on display line
 nnoremap H g^
@@ -111,8 +111,10 @@ tnoremap <C-M-l> <Cmd>vertical res +2<CR>
 tnoremap <C-M-j> <Cmd>res +1<CR>
 tnoremap <C-M-k> <Cmd>res -1<CR>
 
-nnoremap <Leader>q <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
-nnoremap <C-q> <Cmd>lua require'nvim-config.lib'.comfy_quit()<CR>
+nnoremap <Leader>q <Cmd>lua Config.lib.comfy_quit()<CR>
+nnoremap <C-q> <Cmd>lua Config.lib.comfy_quit()<CR>
+
+nnoremap <leader>z <Cmd>lua Config.lib.set_center_cursor()<CR>
 
 " Move lines
 nnoremap <A-K> <Cmd>m-2<CR>==

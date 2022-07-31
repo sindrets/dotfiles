@@ -108,11 +108,11 @@ local data_undo = vim.fn.stdpath("data") .. "/undo"
 opt.backupdir = data_backup
 opt.undodir = data_undo
 
-if pl:is_directory(data_backup) then
+if pl:is_dir(data_backup) then
   vim.fn.mkdir(data_backup, "p")
 end
 
-if pl:is_directory(data_undo) then
+if pl:is_dir(data_undo) then
   vim.fn.mkdir(data_undo, "p")
 end
 

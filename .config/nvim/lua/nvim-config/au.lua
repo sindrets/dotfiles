@@ -54,11 +54,10 @@ function M.open_file_location(location)
   local col = tonumber(l:match(".*:%d+:(%d+):?$")) or 1
 
   if pl:readable(file) then
-    vim.cmd("edit " .. vim.fn.fnameescape(file))
+    vim.cmd("keepalt edit " .. vim.fn.fnameescape(file))
     if line then
-      vim.cmd("do BufRead")
-      vim.cmd("do <nomodeline> BufEnter")
-      pcall(api.nvim_win_set_cursor, 0, { line, col - 1 })
+      api.nvim_exec_autocmds("BufRead", {})
+      utils.set_cursor(0, line, col - 1)
       pcall(api.nvim_buf_delete, bufnr, {})
       pcall(api.nvim_exec, "argd " .. vim.fn.fnameescape(l), false)
     end

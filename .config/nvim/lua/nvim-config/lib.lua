@@ -127,7 +127,7 @@ function M.get_visual_selection()
 
   local lines = api.nvim_buf_get_lines(0, line_start - 1, line_end, false)
   if #lines == 0 then
-    return ""
+    return { "" }
   end
 
   local selection = vim.o.selection
@@ -157,7 +157,15 @@ function M.workspace_files(opt)
     })
   elseif vim.env.GIT_DIR or pl:readable("./.git") then
     builtin.git_files({
-      git_command = { "git", "ls-files", "--exclude-standard", "--others", "--cached", "--", uv.cwd() },
+      git_command = {
+        "git",
+        "ls-files",
+        "--exclude-standard",
+        "--others",
+        "--cached",
+        "--",
+        uv.cwd()
+      },
     })
   else
     builtin.find_files({
@@ -391,7 +399,7 @@ end
 ---Perform a `:grep` command, populate and open the quickfix list, and set the
 ---`/` register to a vim pattern matching the given regex pattern.
 ---@param use_loclist boolean Use the location list for the current window.
----@param ... string[] Args passed to the 'grepprg'.
+---@param ... string Args passed to the 'grepprg'.
 function M.comfy_grep(use_loclist, ...)
   local args = {...}
   local cargs = vim.tbl_map(function(arg)
@@ -437,6 +445,40 @@ function M.regex_to_pattern(exp)
     exp = exp:gsub(sub[1], sub[2])
   end
   return  "\\v" .. exp
+end
+
+---When enabled: always keep the cursor centered in the current window while
+---scrolling.
+---@param flag? boolean Acts as a toggle when the flag value is omitted.
+function M.set_center_cursor(flag)
+  -- Just some arbitrarily high number
+  local scrolloff_center = 4096
+  local cur_scrolloff = vim.go.scrolloff
+
+  if type(flag) ~= "boolean" then
+    flag = cur_scrolloff ~= scrolloff_center
+  end
+
+  local last = Config.state.last_scrolloff or (
+      cur_scrolloff ~= scrolloff_center and cur_scrolloff or 0
+  )
+  local scrolloff_target = flag and scrolloff_center or last
+
+  if cur_scrolloff == scrolloff_target then
+    return
+  end
+
+  if flag then
+    Config.state.last_scrolloff = vim.go.scrolloff
+  end
+
+  vim.opt.scrolloff = scrolloff_target
+
+  if flag then
+    utils.info("Cursor centered.")
+  else
+    utils.info("Cursor unlocked.")
+  end
 end
 
 ---[EXPR] Search for the current word without jumping forward. Respects

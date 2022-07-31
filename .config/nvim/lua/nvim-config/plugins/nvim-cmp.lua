@@ -1,6 +1,6 @@
 return function()
-  local cmp = require('cmp')
-  local cmp_autopairs = require('nvim-autopairs.completion.cmp')
+  local cmp = require("cmp")
+  local cmp_autopairs = require("nvim-autopairs.completion.cmp")
   local api = vim.api
   local utils = Config.common.utils
 
@@ -42,28 +42,28 @@ return function()
       end,
     },
     mapping = cmp.mapping.preset.insert({
-      ['<C-b>'] = cmp.mapping.scroll_docs(-4),
-      ['<C-f>'] = cmp.mapping.scroll_docs(4),
-      ['<C-Space>'] = cmp.mapping.complete(),
-      ['<C-e>'] = cmp.mapping.close(),
-      ['<CR>'] = cmp.mapping.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace }),
+      ["<C-b>"] = cmp.mapping.scroll_docs(-4),
+      ["<C-f>"] = cmp.mapping.scroll_docs(4),
+      ["<C-Space>"] = cmp.mapping.complete(),
+      ["<C-e>"] = cmp.mapping.close(),
+      ["<CR>"] = cmp.mapping.confirm({ select = false, behavior = cmp.ConfirmBehavior.Replace }),
     }),
     formatting = {
       deprecated = true,
-      fields = { 'kind', 'abbr', 'menu' },
+      fields = { "kind", "abbr", "menu" },
       format = function(entry, vim_item)
         vim_item.kind = lsp_kinds[vim_item.kind]
         vim_item.menu = ({
-          nvim_lsp = '[LSP]',
-          nvim_lua = '[Lua]',
-          emoji = '[Emoji]',
-          path = '[Path]',
-          calc = '[Calc]',
-          neorg = '[Neorg]',
-          orgmode = '[Org]',
-          luasnip = '[Luasnip]',
-          buffer = '[Buffer]',
-          spell = '[Spell]',
+          nvim_lsp = "[LSP]",
+          emoji = "[Emoji]",
+          path = "[Path]",
+          calc = "[Calc]",
+          neorg = "[Neorg]",
+          orgmode = "[Org]",
+          luasnip = "[Luasnip]",
+          buffer = "[Buffer]",
+          spell = "[Spell]",
+          git = "[VCS]",
         })[entry.source.name]
         return vim_item
       end,
@@ -77,13 +77,14 @@ return function()
       },
     },
     sources = {
-      { name = 'nvim_lua' },
-      { name = 'nvim_lsp' },
-      { name = 'vsnip' },
-      { name = 'spell' },
-      { name = 'path' },
+      { name = "nvim_lua" },
+      { name = "nvim_lsp" },
+      { name = "vsnip" },
+      { name = "git" },
+      { name = "spell" },
+      { name = "path" },
       {
-        name = 'buffer',
+        name = "buffer",
         max_item_count = 20,
         option = {
           get_bufnrs = function()
@@ -108,16 +109,20 @@ return function()
     -- },
   })
 
-  cmp.event:on('confirm_done', cmp_autopairs.on_confirm_done())
+  cmp.event:on("confirm_done", cmp_autopairs.on_confirm_done())
 
-  -- cmp.setup.cmdline(':', {
+  -- cmp.setup.cmdline(":", {
   --   mapping = cmp.mapping.preset.cmdline({}),
   --   sources = cmp.config.sources(
   --     {
-  --       { name = 'path' },
+  --       { name = "path" },
   --     }, {
-  --       { name = 'cmdline' },
+  --       { name = "cmdline" },
   --     }
   --   ),
   -- })
+
+  require("cmp_git").setup({
+    filetypes = { "gitcommit", "NeogitCommitMessage", "markdown", "octo" },
+  })
 end

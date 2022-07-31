@@ -15,8 +15,15 @@ _G.Config = {
   common = require("nvim-config.common"),
   fn = {},
   plugin = {},
-  state = {},
+  state = {
+    git = {
+      rev_name_cache = {},
+    },
+  },
 }
+
+---Path library.
+_G.pl = Config.common.utils.pl
 
 Config.lib = require("nvim-config.lib")
 
@@ -38,7 +45,10 @@ Config.fn.toggle_term_split = lib.create_buf_toggler(
       vim.api.nvim_set_current_buf(bufid)
     else
       vim.cmd("term")
-      vim.bo.buflisted = false
+      utils.set_local(0, {
+        buflisted = false,
+        winfixheight = true,
+      })
       vim.api.nvim_buf_set_name(0, "term_split")
     end
     vim.cmd("startinsert")
@@ -85,12 +95,13 @@ Config.fn.toggle_outline = lib.create_buf_toggler(
   end
 )
 
+---@return string[]
 local function get_messages()
   local msgs = vim.api.nvim_exec("message", true)
   -- Filter out empty lines.
   return vim.tbl_filter(function(v)
     return v ~= ""
-  end, vim.split(msgs, "\n", {}))
+  end, vim.split(msgs, "\n", {})) --[[@as string[] ]]
 end
 
 local function open_messages_win()

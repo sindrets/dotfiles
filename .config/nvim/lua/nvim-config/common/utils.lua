@@ -11,7 +11,17 @@ local path_sep = package.config:sub(1, 1)
 ---Path lib
 ---@type PathLib
 M.pl = lazy.require("diffview.path", function(m)
-  return m.PathLib({ separator = "/" })
+  local pl = m.PathLib({ separator = "/" })
+
+  -- TODO: remove when pushed to upstream diffview.nvim
+  if not pl.is_dir then
+    ---@class PathLib
+    ---@field is_dir fun(self: PathLib, path: string): boolean
+
+    pl.is_dir = pl.is_directory
+  end
+
+  return pl
 end)
 
 -- Set up completion wrapper used by `vim.ui.input()`
@@ -86,7 +96,7 @@ end
 ---@param s string
 ---@return string
 function M.t(s)
-  return api.nvim_replace_termcodes(s, true, true, true)
+  return api.nvim_replace_termcodes(s, true, true, true) --[[@as string ]]
 end
 
 function M.exec_lua(code, ...)
@@ -159,7 +169,7 @@ function M.str_quote(s, opt)
     esc_fmt = [[\%s]],
     prefer_single = false,
     only_if_whitespace = false,
-  })
+  }) --[[@as utils.StrQuoteSpec ]]
 
   if opt.only_if_whitespace and not s:find("%s") then
     return s
@@ -222,9 +232,6 @@ function M.tbl_clear(t)
 end
 
 function M.tbl_clone(t)
-  if not t then
-    return
-  end
   local clone = {}
 
   for k, v in pairs(t) do
@@ -247,6 +254,43 @@ function M.tbl_deep_clone(t)
   end
 
   return clone
+end
+
+---Deep extend a table, and also perform a union on all sub-tables.
+---@param t table
+---@param ... table
+---@return table
+function M.tbl_union_extend(t, ...)
+  local res = M.tbl_clone(t)
+
+  local function recurse(ours, theirs)
+    -- Get the union of the two tables
+    local sub = M.vec_union(ours, theirs)
+
+    for k, v in pairs(ours) do
+      if type(k) ~= "number" then
+        sub[k] = v
+      end
+    end
+
+    for k, v in pairs(theirs) do
+      if type(k) ~= "number" then
+        if type(v) == "table" then
+          sub[k] = recurse(sub[k] or {}, v)
+        else
+          sub[k] = v
+        end
+      end
+    end
+
+    return sub
+  end
+
+  for _, theirs in ipairs({ ... }) do
+    res = recurse(res, theirs)
+  end
+
+  return res
 end
 
 ---Perform a map and also filter out index values that would become `nil`.
@@ -285,7 +329,7 @@ function M.vec_slice(t, first, last)
 end
 
 ---Join multiple vectors into one.
----@vararg vector
+---@param ... any
 ---@return vector
 function M.vec_join(...)
   local result = {}
@@ -310,7 +354,7 @@ function M.vec_join(...)
 end
 
 ---Get the result of the union of the given vectors.
----@vararg vector
+---@param ... vector
 ---@return vector
 function M.vec_union(...)
   local result = {}
@@ -337,7 +381,7 @@ function M.vec_union(...)
 end
 
 ---Get the result of the difference of the given vectors.
----@vararg vector
+---@param ... vector
 ---@return vector
 function M.vec_diff(...)
   local args = {...}
@@ -367,7 +411,7 @@ function M.vec_diff(...)
 end
 
 ---Get the result of the symmetric difference of the given vectors.
----@vararg vector
+---@param ... vector
 ---@return vector
 function M.vec_symdiff(...)
   local result = {}
@@ -427,6 +471,7 @@ end
 ---@field tabpage integer Filter out buffers that are not displayed in a given tabpage.
 
 ---@param opt? ListBufsSpec
+---@return integer[] #Buffer numbers of matched buffers.
 function M.list_bufs(opt)
   opt = opt or {}
   local bufs
@@ -455,7 +500,7 @@ function M.list_bufs(opt)
       return false
     end
     return true
-  end, bufs)
+  end, bufs) --[[@as integer[] ]]
 end
 
 ---@param pattern string Lua pattern mathed against the buffer name.
@@ -514,20 +559,27 @@ function M.wipe_all_buffers()
   end
 end
 
+---Get the filename with the least amount of path segments necessary to make it
+---unique among the currently listed buffers.
+---
+---Derived from feline.nvim.
+---@see [feline.nvim](https://github.com/feline-nvim/feline.nvim)
+---@param filename string
+---@return string
 function M.get_unique_file_bufname(filename)
   local basename = vim.fn.fnamemodify(filename, ":t")
+
   local collisions = vim.tbl_map(function(bufnr)
     return api.nvim_buf_get_name(bufnr)
   end, M.list_bufs({ listed = true }))
+
   collisions = vim.tbl_filter(function(name)
     return name ~= filename and vim.fn.fnamemodify(name, ":t") == basename
   end, collisions)
 
-  -- Derived from: feline.nvim
-
   -- Reverse filenames in order to compare their names
   filename = string.reverse(filename)
-  collisions = vim.tbl_map(string.reverse, collisions)
+  collisions = vim.tbl_map(string.reverse, collisions) --[[@as string[] ]]
 
   local idx = 1
 
@@ -546,7 +598,7 @@ function M.get_unique_file_bufname(filename)
         return 1
       end,
       collisions
-    )
+    ) --[[@as integer[] ]]
     idx = math.max(unpack(delta_indices))
   end
 
@@ -583,7 +635,7 @@ function M.input_char(prompt, opt)
     clear_prompt = true,
     allow_non_ascii = false,
     prompt_hl = nil,
-  })
+  }) --[[@as InputCharSpec ]]
 
   if prompt then
     vim.api.nvim_echo({ { prompt, opt.prompt_hl } }, false, {})
@@ -671,8 +723,7 @@ function M.set_local(winids, option_map, opt)
     winids = { winids }
   end
 
-  ---@cast opt -?
-  opt = vim.tbl_extend("keep", opt or {}, { method = "set" })
+  opt = vim.tbl_extend("keep", opt or {}, { method = "set" }) --[[@as table ]]
 
   for _, id in ipairs(winids) do
     api.nvim_win_call(id, function()
@@ -684,7 +735,7 @@ function M.set_local(winids, option_map, opt)
 
         if type(value) == "table" then
           if value.opt then
-            o = vim.tbl_extend("force", opt, value.opt)
+            o = vim.tbl_extend("force", opt, value.opt) --[[@as table ]]
           end
 
           if is_list_like then
@@ -764,40 +815,19 @@ function M.win_find_buf(bufid, tabpage)
   return result
 end
 
-function M.git_get_detached_head()
-  local git_branches_file = io.popen("git branch -a --no-abbrev --contains", "r")
-  if not git_branches_file then return end
-  local git_branches_data = git_branches_file:read("*l")
-  io.close(git_branches_file)
-  if not git_branches_data then return end
+---Set the (1,0)-indexed cursor position without having to worry about
+---out-of-bounds coordinates. The line number is clamped to the number of lines
+---in the target buffer.
+---@param winid integer
+---@param line? integer
+---@param column? integer
+function M.set_cursor(winid, line, column)
+  local bufnr = api.nvim_win_get_buf(winid)
 
-  local branch_name = git_branches_data:match('.*HEAD (detached %w+ [%w/-]+)')
-  if branch_name and string.len(branch_name) > 0 then
-    return branch_name
-  end
-end
-
-function M.lsp_organize_imports()
-  local context = { source = { organizeImports = true } }
-
-  local params = vim.lsp.util.make_range_params(0, nil)
-  params.context = context
-
-  local method = "textDocument/codeAction"
-  local timeout = 1000 -- ms
-
-  local resp = vim.lsp.buf_request_sync(0, method, params, timeout)
-  if not resp then return end
-
-  for _, client in ipairs(vim.lsp.get_active_clients()) do
-    if resp[client.id] then
-      local result = resp[client.id].result
-      if not result or not result[1] then return end
-
-      local edit = result[1].edit
-      vim.lsp.util.apply_workspace_edit(edit, "utf-8")
-    end
-  end
+  pcall(api.nvim_win_set_cursor, winid, {
+    M.clamp(line or 1, 1, api.nvim_buf_line_count(bufnr)),
+    math.max(0, column or 0)
+  })
 end
 
 return M
