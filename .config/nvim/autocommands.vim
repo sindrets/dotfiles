@@ -33,8 +33,10 @@ augroup NvimConfig
                 \ && (v:lua.vim.loop.hrtime() - b:term_start) / 1000000 > 2000
                 \   | bd | endif
 
-    au TermOpen * startinsert
-    au BufEnter * if &buftype ==# "terminal" | startinsert | endif
+    au TermOpen,BufEnter * lua
+                \ if vim.bo[Config.state.term.actual_curbuf or 0].buftype == "terminal" then
+                \       vim.cmd("startinsert")
+                \ end
 
     au BufWinEnter,FileType fugitiveblame setl nolist
 

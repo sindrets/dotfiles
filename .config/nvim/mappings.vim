@@ -204,8 +204,8 @@ nnoremap <C-M-o> <Cmd>lua Config.fn.toggle_outline()<CR>
 nnoremap <M-CR> <Cmd>lua Config.fn.update_messages_win()<CR>
 
 " Open a terminal split
-nnoremap <silent> <C-l> <Cmd>lua Config.fn.toggle_term_split()<CR>
-tnoremap <silent> <C-l> <Cmd>lua Config.fn.toggle_term_split()<CR>
+nnoremap <silent> <C-l> <Cmd>TermToggle<CR>
+tnoremap <silent> <C-l> <Cmd>TermToggle<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
 tnoremap <silent> <C-\> <Esc>
 

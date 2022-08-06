@@ -1,5 +1,20 @@
 local lazy = require("nvim-config.lazy")
 
+---@module "plenary.job"
+local Job = lazy.require("plenary.job", function(m)
+  -- Ensure plenary's `new` method will use the right metatable when this is
+  -- invoked as a method.
+  local new = m.new
+  function m.new(_, ...)
+    return new(m, ...)
+  end
+  return m
+end)
+---@module "plenary.async"
+local async = lazy.require("plenary.async")
+---@module "winshift.lib"
+local winshift_lib = lazy.require("winshift.lib")
+
 local api = vim.api
 
 local M = {}
@@ -113,6 +128,93 @@ function M.printi(...)
     return vim.inspect(v)
   end, M.tbl_pack(...))
   print(M.tbl_unpack(args))
+end
+
+---Ternary helper for when `if_true` might be a falsy value, and you can't
+---compose the expression as `condition and if_true or if_false`. The outcomes
+---may be given as lists where the first index is a callable object, and the
+---subsequent elements are args to be passed to the callable if the outcome is
+---to be evaluated.
+---
+---Example:
+---
+---```c
+--- // c
+--- condition ? "yes" : "no"
+--- condition ? foo(1, 2) : bar(3)
+---```
+---
+---```lua
+--- -- lua
+--- ternary(condition, "yes", "no")
+--- ternary(condition, { foo, 1, 2 }, { bar, 3 })
+---```
+---@param condition any
+---@param if_true any
+---@param if_false any
+---@param plain? boolean Never treat `if_true` and `if_false` as arg lists.
+---@return unknown
+function M.ternary(condition, if_true, if_false, plain)
+  if condition then
+    if not plain and type(if_true) == "table" and vim.is_callable(if_true[1]) then
+      return if_true[1](M.vec_select(if_true, 2))
+    end
+
+    return if_true
+  else
+    if not plain and type(if_false) == "table" and vim.is_callable(if_false[1]) then
+      return if_false[1](M.vec_select(if_false, 2))
+    end
+
+    return if_false
+  end
+end
+
+---Call the function `f`, ignoring most of the window and buffer related
+---events. The function is called in protected mode.
+---@param f function
+---@return boolean success
+---@return any result Return value
+function M.no_win_event_call(f)
+  local last = vim.o.eventignore
+  ---@diagnostic disable-next-line: undefined-field
+  vim.opt.eventignore:prepend(
+    "WinEnter,WinLeave,WinNew,WinClosed,BufWinEnter,BufWinLeave,BufEnter,BufLeave"
+  )
+  local ok, err = pcall(f)
+  vim.opt.eventignore = last
+
+  return ok, err
+end
+
+---Update a given window by briefly setting it as the current window.
+---@param winid integer
+function M.update_win(winid)
+  local cur_winid = api.nvim_get_current_win()
+  if cur_winid ~= winid then
+    local ok, err = M.no_win_event_call(function()
+      api.nvim_set_current_win(winid)
+      api.nvim_set_current_win(cur_winid)
+    end)
+    if not ok then
+      error(err)
+    end
+  end
+end
+
+---Pick the argument at the given index. A negative number is indexed from the
+---end (`-1` is the last argument).
+---@param index integer
+---@param ... unknown
+---@return unknown
+function M.pick(index, ...)
+  local args = { ... }
+
+  if index < 0 then
+    index = #args - index + 1
+  end
+
+  return args[index]
 end
 
 function M.clamp(value, min, max)
@@ -314,18 +416,59 @@ function M.tbl_fmap(t, func)
   return ret
 end
 
----Create a shallow copy of a portion of a vector.
+---Try property access.
+---@param t table
+---@param table_path string|string[] Either a `.` separated string of table keys, or a list.
+---@return any?
+function M.tbl_access(t, table_path)
+  local keys = type(table_path) == "table"
+      and table_path
+      or vim.split(table_path, ".", { plain = true })
+
+  local cur = t
+
+  for _, k in ipairs(keys) do
+    cur = cur[k]
+    if not cur then
+      return nil
+    end
+  end
+
+  return cur
+end
+
+---Create a shallow copy of a portion of a vector. Negative numbers indexes
+---from the end.
 ---@param t vector
 ---@param first? integer First index, inclusive
 ---@param last? integer Last index, inclusive
 ---@return vector
 function M.vec_slice(t, first, last)
   local slice = {}
+
+  if first and first < 0 then
+    first = #t - first + 1
+  end
+
+  if last and last < 0 then
+    last = #t - last + 1
+  end
+
   for i = first or 1, last or #t do
     table.insert(slice, t[i])
   end
 
   return slice
+end
+
+---Return all elements in `t` between `first` and `last`. Negative numbers
+---indexes from the end.
+---@param t vector
+---@param first integer First index, inclusive
+---@param last? integer Last index, inclusive
+---@return any ...
+function M.vec_select(t, first, last)
+  return unpack(M.vec_slice(t, first, last))
 end
 
 ---Join multiple vectors into one.
@@ -464,6 +607,70 @@ function M.vec_push(t, ...)
   return t
 end
 
+---@class utils.system_list.Opt
+---@field cwd string Working directory of the job.
+---@field fail_on_empty boolean Return code 1 if stdout is empty and code is 0.
+---@field retry_on_empty integer Number of times to retry job if stdout is empty and code is 0. Implies `fail_on_empty`.
+
+---Get the output of a system command.
+---@param cmd string[]
+---@param cwd_or_opt? string|utils.system_list.Opt
+---@return string[] stdout
+---@return integer code
+---@return string[] stderr
+---@overload fun(cmd: string[], cwd: string?)
+---@overload fun(cmd: string[], opt: utils.system_list.Opt?)
+function M.system_list(cmd, cwd_or_opt)
+  if vim.in_fast_event() then
+    async.util.scheduler()
+  end
+
+  ---@type utils.system_list.Opt
+  local opt
+
+  if type(cwd_or_opt) == "string" then
+    opt = { cwd = cwd_or_opt }
+  else
+    opt = cwd_or_opt or {}
+  end
+
+  opt.fail_on_empty = vim.F.if_nil(opt.fail_on_empty, (opt.retry_on_empty or 0) > 0)
+
+  local command = table.remove(cmd, 1)
+  local num_retries = 0
+  local max_retries = opt.retry_on_empty or 0
+  local job, stdout, stderr, code, empty
+  local job_spec = {
+    command = command,
+    args = cmd,
+    cwd = opt.cwd,
+    on_stderr = function(_, data)
+      table.insert(stderr, data)
+    end,
+  }
+
+  for i = 0, max_retries do
+    if i > 0 then
+      num_retries = num_retries + 1
+    end
+
+    stderr = {}
+    job = Job:new(job_spec)
+    stdout, code = job:sync()
+    empty = not (stdout[1] and stdout[1] ~= "")
+
+    if (code ~= 0 or not empty) then
+      break
+    end
+  end
+
+  if opt.fail_on_empty and code == 0 and empty then
+    code = 1
+  end
+
+  return stdout, code, stderr
+end
+
 ---@class ListBufsSpec
 ---@field loaded boolean Filter out buffers that aren't loaded.
 ---@field listed boolean Filter out buffers that aren't listed.
@@ -589,16 +796,14 @@ function M.get_unique_file_bufname(filename)
   -- maximum value of `i`
   if next(collisions) then
     local delta_indices = vim.tbl_map(function(filename_other)
-        for i = 1, #filename do
-          -- Compare i-th character of both names until they aren't equal
-          if filename:sub(i, i) ~= filename_other:sub(i, i) then
-            return i
-          end
+      for i = 1, #filename do
+        -- Compare i-th character of both names until they aren't equal
+        if filename:sub(i, i) ~= filename_other:sub(i, i) then
+          return i
         end
-        return 1
-      end,
-      collisions
-    ) --[[@as integer[] ]]
+      end
+      return 1
+    end, collisions) --[[@as integer[] ]]
     idx = math.max(unpack(delta_indices))
   end
 
@@ -614,6 +819,34 @@ function M.get_unique_file_bufname(filename)
   end
 
   return string.reverse(string.sub(filename, 1, idx))
+end
+
+function M.create_fill_buf(opts)
+  local bufnr = api.nvim_create_buf(false, true)
+
+  api.nvim_buf_call(bufnr, function()
+    opts = vim.tbl_extend("keep", opts or {}, {
+      list = false,
+      number = false,
+      relativenumber = false,
+      buflisted = false,
+      cursorline = false,
+      cursorcolumn = false,
+      foldcolumn = "0",
+      signcolumn = "no",
+      colorcolumn = "",
+      swapfile = false,
+      undolevels = -1,
+      bufhidden = "wipe",
+      winhl = "EndOfBuffer:Hidden",
+    })
+
+    for k, v in pairs(opts) do
+      vim.opt_local[k] = v
+    end
+  end)
+
+  return bufnr
 end
 
 function M.clear_prompt()
@@ -828,6 +1061,27 @@ function M.set_cursor(winid, line, column)
     M.clamp(line or 1, 1, api.nvim_buf_line_count(bufnr)),
     math.max(0, column or 0)
   })
+end
+
+---Detect the position of a given window located on one of the far edges of the
+---layout.
+---@param winid integer
+---@return "left"|"right"|"top"|"bottom"|"unknown"
+function M.detect_win_pos(winid)
+  local tree = winshift_lib.get_layout_tree()
+  local node = winshift_lib.find_leaf(tree, winid)
+
+  if node then
+    if tree.type ~= "leaf" then
+      if tree[1] == node then
+        return tree.type == "row" and "left" or "top"
+      elseif tree[#tree] == node then
+        return tree.type == "row" and "right" or "bottom"
+      end
+    end
+  end
+
+  return "unknown"
 end
 
 return M
