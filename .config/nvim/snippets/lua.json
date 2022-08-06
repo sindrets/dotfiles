@@ -15,7 +15,7 @@
     "prefix": "absm",
     "body": [
       "---@abstract",
-      "function ${1:class}:${2:method_name}(${3}) oop.abstract_stub() end"
+      "function ${1:class}:${2:method_name}($0) oop.abstract_stub() end"
     ],
     "description": "An abstract method."
   },
@@ -25,10 +25,15 @@
       "---@diagnostic disable: unused-local",
       "",
       "---@abstract",
-      "function ${1:class}:${2:method_name}(${3}) oop.abstract_stub() end",
+      "function ${1:class}:${2:method_name}($0) oop.abstract_stub() end",
       "",
       "---@diagnostic enable: unused-local"
     ],
     "description": "An abstract method region."
+  },
+  "function_stub": {
+    "prefix": "fstub",
+    "body": "function() --[[ stub ]] end",
+    "description": "A function stub"
   }
 }

@@ -53,8 +53,13 @@ return function ()
       mappings = {
         i = {
           ["<c-q>"] = actions.send_to_qflist + actions.open_qflist,
+          ["<c-b>"] = actions.preview_scrolling_up,
+          ["<c-f>"] = actions.preview_scrolling_down,
         },
-        n = {},
+        n = {
+          ["<c-b>"] = actions.preview_scrolling_up,
+          ["<c-f>"] = actions.preview_scrolling_down,
+        },
       },
     },
     pickers = {

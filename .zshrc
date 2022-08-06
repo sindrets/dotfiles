@@ -33,7 +33,7 @@ export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
 export GIT_DIRECTORY="$HOME/Documents/git"
 export MANWIDTH=80 # text width in man pages
-export MANPAGER="$(which nvim) -nc 'set nolist scl=yes:1' +Man! -"
+export MANPAGER="$(which nvim) -nc 'setl nolist scl=yes:1 | lua Config.lib.set_center_cursor(true)' +Man! -"
 
 eval `dircolors "$HOME/.dir_colors"`
 
@@ -109,7 +109,7 @@ alias nv="nvim"
 alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' -c 'args %' ~/.config/nvim/init.lua \
     ~/.config/nvim/lua/nvim-config/plugins/init.lua"
 alias nv-conf="nvim-conf"
-alias nvim-pager="nvim -Rnc 'set bt=nowrite noswapfile ul=-1 nolist nonu nornu scl=yes:1'"
+alias nvim-pager="nvim -Rnc 'set bt=nowrite noswapfile ul=-1 nolist nonu nornu scl=yes:1 | lua Config.lib.set_center_cursor(true)'"
 alias nv-pager="nvim-pager"
 alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"

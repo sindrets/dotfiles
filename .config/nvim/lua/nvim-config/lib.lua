@@ -28,12 +28,12 @@ end
 ---Create a function that toggles a window with an identifiable buffer of some
 ---kind. The toggle logic works as follows:
 ---
---- - Open if
+--- • Open if:
 ---   - The buffer is not found
 ---   - No window with the buffer is found
---- - Close if:
+--- • Close if:
 ---   - The buffer is active in the current window.
---- - Focus if (only if the `focus` option is enabled):
+--- • Focus if (only if the `focus` option is enabled):
 ---   - The buffer exists, the window exists, but the window is not active.
 ---@param buf_finder function A function that should return the buffer id of
 ---       the wanted buffer if it exists, otherwise nil.
@@ -72,7 +72,7 @@ function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
     end
   end
 
-  return function ()
+  return function()
     local target_bufid = buf_finder()
 
     if not target_bufid then
@@ -109,7 +109,8 @@ end
 function M.read_new(...)
   local args = vim.tbl_map(function(v)
     return ("'%s'"):format(vim.fn.expand(v):gsub("'", [['"'"']]))
-  end, { ... })
+  end, { ... }) --[[@as vector ]]
+
   vim.cmd("enew | set ft=log")
   vim.fn.execute("0r! " .. table.concat(args, " "))
   vim.cmd("norm! Gdd")
@@ -170,7 +171,7 @@ function M.workspace_files(opt)
   else
     builtin.find_files({
       hidden = true,
-      find_command = { "fd", "--type", "f", "--strip-cwd-prefix"},
+      find_command = { "fd", "--type", "f", "--strip-cwd-prefix" },
     })
   end
 end
@@ -199,7 +200,7 @@ function M.remove_buffer(force, bufnr)
   -- Get all windows that currently display the target
   local wins = vim.tbl_filter(function(v)
     return api.nvim_win_get_buf(v) == bufnr
-  end, api.nvim_list_wins())
+  end, api.nvim_list_wins()) --[[@as vector ]]
 
   if #wins == 0 then
     new_bufnr = api.nvim_get_current_buf()
@@ -338,7 +339,7 @@ end
 
 function M.name_syn_stack()
   local stack = vim.fn.synstack(vim.fn.line("."), vim.fn.col("."))
-  stack = vim.tbl_map(function (v)
+  stack = vim.tbl_map(function(v)
     return vim.fn.synIDattr(v, "name")
   end, stack)
   return stack
@@ -401,10 +402,10 @@ end
 ---@param use_loclist boolean Use the location list for the current window.
 ---@param ... string Args passed to the 'grepprg'.
 function M.comfy_grep(use_loclist, ...)
-  local args = {...}
+  local args = { ... }
   local cargs = vim.tbl_map(function(arg)
     return vim.fn.shellescape(arg):gsub("[|]", { ["'"] = "''", ["|"] = "\\|" })
-  end, args)
+  end, args) --[[@as table ]]
 
   local command = use_loclist and "lgrep! " or "grep! "
 
@@ -444,7 +445,7 @@ function M.regex_to_pattern(exp)
   for _, sub in ipairs(subs) do
     exp = exp:gsub(sub[1], sub[2])
   end
-  return  "\\v" .. exp
+  return "\\v" .. exp
 end
 
 ---When enabled: always keep the cursor centered in the current window while
@@ -649,7 +650,7 @@ function M.cmd_md_view(new, name)
 
       local wins = vim.tbl_filter(function(v)
         return api.nvim_win_get_config(v).relative == ""
-      end, api.nvim_tabpage_list_wins(tabid))
+      end, api.nvim_tabpage_list_wins(tabid)) --[[@as vector ]]
 
       if #wins == 1 and wins[1] == margin_winid then
         api.nvim_win_close(margin_winid, true)
@@ -657,6 +658,29 @@ function M.cmd_md_view(new, name)
       end
     end,
   })
+end
+
+---There's `:buffers`, there's `:tabs`. Now - finally - there's `:Windows`.
+---@param all boolean List windows from all tabpages.
+function M.ls_wins(all)
+  local tabs = all and api.nvim_list_tabpages() or { api.nvim_get_current_tabpage() }
+  local curwin = api.nvim_get_current_win()
+
+  local res = {}
+
+  for i, tabid in ipairs(tabs) do
+    res[#res + 1] = "Tab page " .. i
+    local wins = api.nvim_tabpage_list_wins(tabid)
+
+    utils.vec_push(res, unpack(vim.tbl_map(function(v)
+      local bufnr = api.nvim_win_get_buf(v)
+      local name = api.nvim_buf_get_name(bufnr)
+
+      return ("  %s %d  % 4d  %s"):format(v == curwin and ">" or " ", v, bufnr, utils.str_quote(name))
+    end, wins) --[[@as vector ]]))
+  end
+
+  print(table.concat(res, "\n"))
 end
 
 --#region TYPES

@@ -160,6 +160,109 @@ return function()
     })
   end
 
+  ---Stage the current file.
+  function actions.git_stage()
+    local ctx = lir.get_context()
+    local cur = ctx:current()
+    local toplevel = utils.tbl_access(ctx, "git.toplevel")
+
+    if not toplevel then
+      return
+    end
+
+    local _, code, err = utils.system_list({ "git", "add", cur.fullpath }, toplevel)
+
+    if code ~= 0 then
+      vim.notify(
+        "Failed to stage path: " .. err,
+        vim.log.levels.ERROR,
+        { title = "Git", icon = ""}
+      )
+    end
+
+    actions.reload()
+  end
+
+  ---Stage the current directory.
+  function actions.git_stage_all()
+    local ctx = lir.get_context()
+    local toplevel = utils.tbl_access(ctx, "git.toplevel")
+
+    if not toplevel then
+      return
+    end
+
+    local _, code, err = utils.system_list({ "git", "add", ctx.dir }, toplevel)
+
+    if code ~= 0 then
+      vim.notify(
+        "Failed to stage path: " .. err,
+        vim.log.levels.ERROR,
+        { title = "Git", icon = ""}
+      )
+    end
+
+    actions.reload()
+  end
+
+  ---Unstage the current file.
+  function actions.git_reset()
+    local ctx = lir.get_context()
+    local cur = ctx:current()
+    local toplevel = utils.tbl_access(ctx, "git.toplevel")
+
+    if not toplevel then
+      return
+    end
+
+    local _, code, err = utils.system_list({ "git", "reset", "--", cur.fullpath }, toplevel)
+
+    if code ~= 0 then
+      vim.notify(
+        "Failed to reset path: " .. err,
+        vim.log.levels.ERROR,
+        { title = "Git", icon = ""}
+      )
+    end
+
+    actions.reload()
+  end
+
+  ---Unstage the current directory.
+  function actions.git_reset_all()
+    local ctx = lir.get_context()
+    local toplevel = utils.tbl_access(ctx, "git.toplevel")
+
+    if not toplevel then
+      return
+    end
+
+    local _, code, err = utils.system_list({ "git", "reset", "--", ctx.dir }, toplevel)
+
+    if code ~= 0 then
+      vim.notify(
+        "Failed to reset path: " .. err,
+        vim.log.levels.ERROR,
+        { title = "Git", icon = ""}
+      )
+    end
+
+    actions.reload()
+  end
+
+  ---Stage / unstage the current file.
+  function actions.git_toggle_stage()
+    local ctx = lir.get_context()
+    local cur = ctx:current()
+    local status = utils.tbl_access(cur, "git.status")
+
+    if not status or status:sub(2, 2) ~= " " then
+      actions.git_stage()
+    elseif status and status:sub(1, 1) then
+      actions.git_reset()
+    end
+  end
+
   require('lir').setup({
     show_hidden_files = true,
     devicons_enable = true,
@@ -203,6 +306,11 @@ return function()
       ['y'] = clipboard_actions.copy,
       ['x'] = clipboard_actions.cut,
       ['p'] = clipboard_actions.paste,
+
+      ['s'] = actions.git_toggle_stage,
+      ['S'] = actions.git_stage_all,
+      ['u'] = actions.git_reset,
+      ['U'] = actions.git_reset_all,
     },
     float = {
       winblend = 0,
@@ -232,32 +340,37 @@ return function()
     show_ignored = true
   })
 
-  function M.explore(path)
+  ---@param path? string
+  local function derive_dir(path)
     local abs_path = pl:absolute(pl:vim_expand(path or "%"))
+
     if not (pl:readable(abs_path) or pl:readable(pl:parent(abs_path) or "")) then
+      -- Target cannot be derived to a readable directory: use cwd.
       abs_path = pl:absolute(uv.cwd())
     elseif not pl:is_dir(abs_path) then
+      -- Target is not a directory: use the parent.
       abs_path = pl:parent(abs_path)
     end
-    vim.cmd("e " .. vim.fn.fnameescape(abs_path))
+
+    return abs_path
+  end
+
+  function M.explore(path)
+    vim.cmd("e " .. vim.fn.fnameescape(derive_dir(path)))
   end
 
   function M.open_float(path)
     local abs_path
+
     if path then
       abs_path = pl:absolute(pl:vim_expand(path))
     end
+
     float.init(abs_path or nil)
   end
 
   function M.toggle_float(path)
-    local abs_path = pl:absolute(pl:vim_expand(path or "%"))
-    if not (pl:readable(abs_path) or pl:readable(pl:parent(abs_path) or "")) then
-      abs_path = pl:absolute(uv.cwd())
-    elseif not pl:is_dir(abs_path) then
-      abs_path = pl:parent(abs_path)
-    end
-    float.toggle(abs_path or nil)
+    float.toggle(derive_dir(path) or nil)
   end
 
   vim.api.nvim_create_user_command("LirExplore", function(state)
