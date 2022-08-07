@@ -113,7 +113,7 @@ return require('packer').startup({
     use { 'folke/lua-dev.nvim' }
     use { 'neovim/nvim-lspconfig' }
     use { 'jose-elias-alvarez/null-ls.nvim' }
-    use { 'jose-elias-alvarez/nvim-lsp-ts-utils' }
+    use { 'jose-elias-alvarez/typescript.nvim' }
     use {
       "ray-x/lsp_signature.nvim",
       config = function()
