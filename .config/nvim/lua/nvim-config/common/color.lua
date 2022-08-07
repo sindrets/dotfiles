@@ -1,6 +1,9 @@
 local utils = require("nvim-config.common.utils")
 local hl = require("nvim-config.common.hl")
+
 local M = {}
+
+assert(bit ~= nil, "Color requires the bitlib!")
 
 --#region TYPES
 
@@ -90,6 +93,7 @@ end
 ---@return Color
 function Color.from_hex(c)
   local n = c
+
   if type(c) == "string" then
     local s = c:lower():match("#?([a-f0-9]+)")
     n = tonumber(s, 16)
@@ -97,6 +101,8 @@ function Color.from_hex(c)
       n = bit.lshift(n, 8) + 0xff
     end
   end
+
+  ---@cast n integer
 
   return Color(
     bit.rshift(n, 24) / 0xff,
@@ -112,9 +118,7 @@ end
 ---@param attr string Attribute name.
 ---@return Color
 function Color.from_hl(groups, attr)
-  if not vim.o.termguicolors then
-    return
-  end
+  assert(vim.o.termguicolors)
 
   if type(groups) ~= "table" then groups = { groups } end
 
@@ -124,9 +128,9 @@ function Color.from_hl(groups, attr)
     if type(value) ~= "nil" then break end
   end
 
-  if type(value) ~= "nil" then
-    return Color.from_hex(value)
-  end
+  assert(value ~= nil, "The wanted attribute does not exist on the target highlight group!")
+
+  return Color.from_hex(value)
 end
 
 ---@return Color
@@ -263,6 +267,7 @@ function Color:to_hex(with_alpha)
     bit.bor((self.blue * 0xff), bit.lshift((self.green * 0xff), 8)),
     bit.lshift((self.red * 0xff), 16)
   )
+
   return with_alpha and bit.lshift(n, 8) + (self.alpha * 0xff) or n
 end
 
@@ -272,30 +277,35 @@ end
 function Color:to_css(with_alpha)
   local n = self:to_hex(with_alpha)
   local l = with_alpha and 8 or 6
+
   return string.format("#%0" .. l .. "x", n)
 end
 
 ---@param v number Float [0,1].
 function Color:set_red(v)
   self._red = utils.clamp(v or 1.0, 0, 1)
+
   return self
 end
 
 ---@param v number Float [0,1].
 function Color:set_green(v)
   self._green = utils.clamp(v or 1.0, 0, 1)
+
   return self
 end
 
 ---@param v number Float [0,1].
 function Color:set_blue(v)
   self._blue = utils.clamp(v or 1.0, 0, 1)
+
   return self
 end
 
 ---@param v number Float [0,1].
 function Color:set_alpha(v)
   self._alpha = utils.clamp(v or 1.0, 0, 1)
+
   return self
 end
 
@@ -307,6 +317,7 @@ function Color:set_hue(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+
   return self
 end
 
@@ -318,6 +329,7 @@ function Color:set_saturation(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+
   return self
 end
 
@@ -329,6 +341,7 @@ function Color:set_value(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+
   return self
 end
 
@@ -340,6 +353,7 @@ function Color:set_lightness(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+
   return self
 end
 
@@ -350,6 +364,7 @@ function Color:set_from_color(c)
   self._green = c.green
   self._blue = c.blue
   self._alpha = c.alpha
+
   return self
 end
 
@@ -377,6 +392,7 @@ function Color:set_from_rgba(x, g, b, a)
     if x.blue then self.blue = x.blue end
     if x.alpha then self.alpha = x.alpha end
   end
+
   return self
 end
 
@@ -389,7 +405,10 @@ end
 ---@overload fun(h: number, s: number, v: number)
 function Color:set_from_hsv(x, s, v, a)
   local c
+
   if type(x) == "number" then
+    ---@cast s number
+    ---@cast v number
     c = Color.from_hsv(x, s, v, a or self.alpha)
   elseif #x >= 3 then
     c = Color.from_hsv(x[1], x[2], x[3], x[4] or self.alpha)
@@ -402,6 +421,7 @@ function Color:set_from_hsv(x, s, v, a)
       self.alpha
     )
   end
+
   return self:set_from_color(c)
 end
 
@@ -414,7 +434,10 @@ end
 ---@overload fun(h: number, s: number, l: number)
 function Color:set_from_hsl(x, s, l, a)
   local c
+
   if type(x) == "number" then
+    ---@cast s number
+    ---@cast l number
     c = Color.from_hsl(x, s, l, a or self.alpha)
   elseif #x >= 3 then
     c = Color.from_hsl(x[1], x[2], x[3], x[4] or self.alpha)
@@ -427,30 +450,35 @@ function Color:set_from_hsl(x, s, l, a)
       self.alpha
     )
   end
+
   return self:set_from_color(c)
 end
 
 ---@param v number Float [-1,1].
 function Color:mod_red(v)
   self._red = utils.clamp(self._red + v, 0, 1)
+
   return self
 end
 
 ---@param v number Float [-1,1].
 function Color:mod_green(v)
   self._green = utils.clamp(self._green + v, 0, 1)
+
   return self
 end
 
 ---@param v number Float [-1,1].
 function Color:mod_blue(v)
   self._blue = utils.clamp(self._blue + v, 0, 1)
+
   return self
 end
 
 ---@param v number Float [-1,1].
 function Color:mod_alpha(v)
   self._alpha = utils.clamp(self._alpha + v, 0, 1)
+
   return self
 end
 
@@ -462,6 +490,7 @@ function Color:mod_hue(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+
   return self
 end
 
@@ -473,6 +502,7 @@ function Color:mod_saturation(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+
   return self
 end
 
@@ -484,6 +514,7 @@ function Color:mod_value(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+
   return self
 end
 
@@ -495,6 +526,7 @@ function Color:mod_lightness(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+
   return self
 end
 
@@ -504,6 +536,7 @@ function Color:mod_color(c)
   self.green = self._green + c._green
   self.blue = self._blue + c._blue
   self.alpha = self._alpha + c._alpha
+
   return self
 end
 
@@ -514,28 +547,33 @@ function Color:mod_rgba(rgba)
       self["mod_" .. key](rgba[key])
     end
   end
+
   return self
 end
 
 ---@param hsv HSV
 function Color:mod_hsv(hsv)
   local cur = self:to_hsv()
+
   for _, key in ipairs({ "hue", "saturation", "value" }) do
     if hsv[key] then
       cur[key] = cur[key] + hsv[key]
     end
   end
+
   return self:set_from_hsv(cur)
 end
 
 ---@param hsl HSV
 function Color:mod_hsl(hsl)
   local cur = self:to_hsl()
+
   for _, key in ipairs({ "hue", "saturation", "lightness" }) do
     if hsl[key] then
       cur[key] = cur[key] + hsl[key]
     end
   end
+
   return self:set_from_hsl(cur)
 end
 
@@ -548,6 +586,7 @@ function Color:highlight(v)
   self._red = c.red
   self._green = c.green
   self._blue = c.blue
+
   return self
 end
 

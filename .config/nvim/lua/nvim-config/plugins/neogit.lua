@@ -16,7 +16,7 @@ return function ()
     signs = {
       -- { CLOSED, OPENED }
       section = { "", "" },
-      item = { "", "" },
+      item = { "", "" },
       hunk = { "", "" },
     },
     integrations = {

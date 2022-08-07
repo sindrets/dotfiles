@@ -94,7 +94,8 @@ i3lock "${PARAM[@]}" \
   --time-str="%H:%M" \
   --time-size=$time_size \
   --date-size=$date_size \
-  --time-pos="w / 2 : h / 2 + $date_size / 2" \
+  --time-pos="x + w / 2 : y + h / 2 + $date_size / 2" \
   --greeter-text="Enter password to unlock" \
-  --greeter-pos="w / 2 : h / 2 + r + 60" \
+  --greeter-pos="x + w / 2 : y + h / 2 + r + 60" \
+  --screen=0 \
   -i "$tmpbg"

@@ -188,8 +188,12 @@ nnoremap <leader>gg <Cmd>Neogit<CR>
 nnoremap <leader>G <Cmd>Neogit<CR>
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
 nnoremap <leader>gl <Cmd>Git log -n256 --shortstat<CR>
-nnoremap <leader>ga <Cmd>silent !git add %<CR>
-nnoremap <leader>gA <Cmd>silent !git add .<CR>
+nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua vim.notify("Staged " 
+            \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")),
+            \ vim.log.levels.INFO, { title = "Git", icon = "" })<CR>
+nnoremap <leader>gA <Cmd>silent exe '!git add .' <bar> lua vim.notify("Staged " 
+            \ .. Config.common.utils.str_quote(pl:vim_fnamemodify(".", ":~")),
+            \ vim.log.levels.INFO, { title = "Git", icon = "" })<CR>
 nnoremap <leader>gcs <Cmd>Git commit<CR>
 nnoremap <leader>gcc <Cmd>Git commit -a<CR>
 nnoremap <leader>gca <Cmd>Git commit -a --amend<CR>
@@ -197,6 +201,7 @@ nnoremap <leader>gb <Cmd>Git blame <bar> wincmd p<CR>
 nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 nnoremap <leader>gh <Cmd>DiffviewFileHistory<CR>
 nnoremap <leader>gH <Cmd>DiffviewFileHistory %<CR>
+vnoremap <leader>gh <Cmd>'<,'>DiffviewFileHistory<CR>
 
 " LspTrouble and Symbols outline
 nnoremap <A-S-D> <Cmd>lua Config.fn.toggle_diagnostics()<CR>
@@ -204,8 +209,8 @@ nnoremap <C-M-o> <Cmd>lua Config.fn.toggle_outline()<CR>
 nnoremap <M-CR> <Cmd>lua Config.fn.update_messages_win()<CR>
 
 " Open a terminal split
-nnoremap <silent> <C-l> <Cmd>lua Config.fn.toggle_term_split()<CR>
-tnoremap <silent> <C-l> <Cmd>lua Config.fn.toggle_term_split()<CR>
+nnoremap <silent> <C-l> <Cmd>TermToggle<CR>
+tnoremap <silent> <C-l> <Cmd>TermToggle<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
 tnoremap <silent> <C-\> <Esc>
 
@@ -295,6 +300,12 @@ command! -nargs=+ Grep lua Config.lib.comfy_grep(false, <f-args>)
 " Same as `:Grep` except use the location list for the current window instead.
 command! -nargs=+ Lgrep lua Config.lib.comfy_grep(true, <f-args>)
 
+" Open a new terminal buffer in a split. Supports command modifiers.
+" :[mods] Terminal [args]
+" @param {...string} [args] - The args passed to the terminal. If omitted:
+"       starts an interactive terminal.
+command! -nargs=* Terminal exe '<mods> sp' | exe 'term <args>'
+
 " Open a new terminal in a new tabpage.
 command! -bar TermTab tab sp | exe 'term' | startinsert
 
@@ -362,23 +373,11 @@ command! -bar -nargs=? -complete=file MdViewEdit lua Config.lib.cmd_md_view(fals
 " Like `:MdViewEdit`, but always create a new, unamed buffer.
 command! -bar MdViewNew lua Config.lib.cmd_md_view(true)
 
-" ABBREVIATIONS
-cnoreabbrev brm BRemove
-cnoreabbrev brm! BRemove!
-cnoreabbrev sch Scratch
-cnoreabbrev hh HelpHere
-cnoreabbrev mh ManHere
-cnoreabbrev gh Git ++curwin
-cnoreabbrev T Telescope
-cnoreabbrev gs Telescope git_status
-cnoreabbrev gb Telescope git_branches
-cnoreabbrev gl Telescope git_commits
-cnoreabbrev Qa qa
-cnoreabbrev QA qa
-cnoreabbrev Qa! qa!
-cnoreabbrev QA! qa!
-cnoreabbrev we w <Bar> e
-cnoreabbrev ftd filetype detect
+" List all windows. By default this only lists the windows in the current
+" tabpage.
+" :Windows[bang]
+" @param [bang] - List windows in all tabpages.
+command! -bar -bang Windows lua Config.lib.ls_wins("<bang>" == "!")
 
 " OPERATOR FUNCTIONS
 

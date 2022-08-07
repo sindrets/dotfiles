@@ -1,7 +1,6 @@
 return function()
   local web_devicons = require("nvim-web-devicons")
   local utils = Config.common.utils
-  local pl = Config.common.utils.pl
 
   local USE_COLOR = false
   local MAX_NAME_SIZE = 50

@@ -2,8 +2,16 @@ local lazy = {}
 
 ---@class LazyModule : { [string] : any }
 ---@field __get fun(): any Load the module if needed, and return it.
+---@field __loaded boolean Indicates that the module has been loaded.
 
-local function wrap(t, handler)
+---Create a table the triggers a given handler every time it's accessed or
+---called, until the handler returns a table. Once the handler has returned a
+---table, any subsequent accessing of the wrapper will instead access the table
+---returned from the handler.
+---@param t any
+---@param handler fun(t: any): table?
+---@return LazyModule
+function lazy.wrap(t, handler)
   local use_handler = type(handler) == "function"
   local export = not use_handler and t or nil
 
@@ -56,10 +64,12 @@ end
 ---
 ---Example:
 ---
----```
+---```lua
+--- -- Without handler
 --- local foo = require("bar")
 --- local foo = lazy.require("bar")
 ---
+--- -- With handler
 --- local foo = require("bar").baz({ qux = true })
 --- local foo = lazy.require("bar", function(module)
 ---    return module.baz({ qux = true })
@@ -71,7 +81,7 @@ end
 function lazy.require(require_path, handler)
   local use_handler = type(handler) == "function"
 
-  return wrap(require_path, function(s)
+  return lazy.wrap(require_path, function(s)
     if use_handler then
       ---@cast handler function
       return handler(require(s))
@@ -85,12 +95,12 @@ end
 ---
 ---Example:
 ---
----```
---- -- table:
+---```lua 
+--- -- With table:
 --- local foo = bar.baz.qux.quux
 --- local foo = lazy.access(bar, "baz.qux.quux")
 ---
---- -- require:
+--- -- With require path:
 --- local foo = require("bar").baz.qux.quux
 --- local foo = lazy.access("bar", "baz.qux.quux")
 ---```
@@ -111,7 +121,7 @@ function lazy.access(x, access_path)
   if type(x) == "string" then
     return lazy.require(x, handler)
   else
-    return wrap(x, handler)
+    return lazy.wrap(x, handler)
   end
 end
 

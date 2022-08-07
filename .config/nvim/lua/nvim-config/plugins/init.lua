@@ -4,11 +4,7 @@ local function conf(config_name)
   return require(string.format("nvim-config.plugins.%s", config_name))
 end
 
----Use local development version if it exists.
----NOTE: Remember to run `:PackerClean :PackerInstall` to update symlinks.
----@param spec table|string
-local function use_local(spec)
-  local use = require("packer").use
+local function wrap_local(spec)
   local name
 
   if type(spec) ~= "table" then
@@ -32,7 +28,16 @@ local function use_local(spec)
   end
 
   spec[1] = path
-  use(spec)
+
+  return spec
+end
+
+---Use local development version if it exists.
+---NOTE: Remember to run `:PackerClean :PackerInstall` to update symlinks.
+---@param spec table|string
+local function use_local(spec)
+  local use = require("packer").use
+  use(wrap_local(spec))
 end
 
 return require('packer').startup({
@@ -143,9 +148,9 @@ return require('packer').startup({
       after = 'nvim-autopairs',
       config = conf("nvim-cmp"),
     }
-    use {
+    use_local {
       'tamago324/lir.nvim',
-      requires = { 'tamago324/lir-git-status.nvim' },
+      requires = { wrap_local('tamago324/lir-git-status.nvim') },
       config = conf("lir"),
       after = "nvim-web-devicons",
     }
