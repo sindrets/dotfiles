@@ -2,34 +2,18 @@ local M = {}
 
 M.setup = function(config)
   local lspconfig = require "lspconfig"
+  local typescript = require "typescript"
 
-  lspconfig.tsserver.setup {
-    init_options = require("nvim-lsp-ts-utils").init_options,
-    on_attach = function(client, bufnr)
-      -- disable tsserver formatting if you plan on formatting via null-ls
-      client.server_capabilities.documentFormattingProvider = false
-
-      local ts_utils = require "nvim-lsp-ts-utils"
-
-      ts_utils.setup {
-        -- debug = true,
-        enable_import_on_completion = true,
-        import_all_scan_buffers = 100,
-
-        update_imports_on_move = true,
-        -- filter out dumb module warning
-        filter_out_diagnostics_by_code = { 80001 },
-
-        -- inlay hints
-        auto_inlay_hints = true, -- getting many annoynig errors
-        inlay_hints_highlight = "Comment",
-      }
-
-      ts_utils.setup_client(client)
-      config.on_attach(client, bufnr)
-    end,
-    capabilities = config["capabilities"],
-  }
+  typescript.setup({
+    disable_commands = false, -- prevent the plugin from creating Vim commands
+    debug = false, -- enable debug logging for commands
+    server = { -- pass options to lspconfig's setup method
+      on_attach = function(client, bufnr)
+        client.server_capabilities.documentFormattingProvider = false -- 0.8 and later
+        config.on_attach(client, bufnr)
+      end
+    },
+  })
 
   lspconfig.eslint.setup(config)
   -- vim.api.nvim_exec([[
