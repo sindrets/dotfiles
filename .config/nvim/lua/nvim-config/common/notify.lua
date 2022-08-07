@@ -17,6 +17,12 @@ local this = {
   cur = {},
 }
 
+---@class Notify : { [string]: Notify }
+---@field trace Notify
+---@field debug Notify
+---@field info Notify
+---@field warn Notify
+---@field error Notify
 local notify = setmetatable(this, {
   __index = function(_, k)
     if configs[k] then

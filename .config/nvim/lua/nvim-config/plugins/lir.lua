@@ -11,6 +11,7 @@ return function()
 
   local pl = Config.common.utils.pl
   local utils = Config.common.utils
+  local notify = Config.common.notify
 
   local M = {}
 
@@ -173,11 +174,7 @@ return function()
     local _, code, err = utils.system_list({ "git", "add", cur.fullpath }, toplevel)
 
     if code ~= 0 then
-      vim.notify(
-        "Failed to stage path: " .. err,
-        vim.log.levels.ERROR,
-        { title = "Git", icon = ""}
-      )
+      notify.error.git("Failed to stage path: " .. err)
     end
 
     actions.reload()
@@ -195,11 +192,7 @@ return function()
     local _, code, err = utils.system_list({ "git", "add", ctx.dir }, toplevel)
 
     if code ~= 0 then
-      vim.notify(
-        "Failed to stage path: " .. err,
-        vim.log.levels.ERROR,
-        { title = "Git", icon = ""}
-      )
+      notify.error.git("Failed to stage path: " .. err)
     end
 
     actions.reload()
@@ -218,11 +211,7 @@ return function()
     local _, code, err = utils.system_list({ "git", "reset", "--", cur.fullpath }, toplevel)
 
     if code ~= 0 then
-      vim.notify(
-        "Failed to reset path: " .. err,
-        vim.log.levels.ERROR,
-        { title = "Git", icon = ""}
-      )
+      notify.error.git("Failed to reset path: " .. err)
     end
 
     actions.reload()
@@ -240,11 +229,7 @@ return function()
     local _, code, err = utils.system_list({ "git", "reset", "--", ctx.dir }, toplevel)
 
     if code ~= 0 then
-      vim.notify(
-        "Failed to reset path: " .. err,
-        vim.log.levels.ERROR,
-        { title = "Git", icon = ""}
-      )
+      notify.error.git("Failed to reset path: " .. err)
     end
 
     actions.reload()

@@ -188,12 +188,10 @@ nnoremap <leader>gg <Cmd>Neogit<CR>
 nnoremap <leader>G <Cmd>Neogit<CR>
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
 nnoremap <leader>gl <Cmd>Git log -n256 --shortstat<CR>
-nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua vim.notify("Staged " 
-            \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")),
-            \ vim.log.levels.INFO, { title = "Git", icon = "" })<CR>
-nnoremap <leader>gA <Cmd>silent exe '!git add .' <bar> lua vim.notify("Staged " 
-            \ .. Config.common.utils.str_quote(pl:vim_fnamemodify(".", ":~")),
-            \ vim.log.levels.INFO, { title = "Git", icon = "" })<CR>
+nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua Config.common.notify.git("Staged "
+            \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")))<CR>
+nnoremap <leader>gA <Cmd>silent exe '!git add .' <bar>lua Config.common.notify.git("Staged "
+            \ .. Config.common.utils.str_quote(pl:vim_fnamemodify(".", ":~")))<CR> 
 nnoremap <leader>gcs <Cmd>Git commit<CR>
 nnoremap <leader>gcc <Cmd>Git commit -a<CR>
 nnoremap <leader>gca <Cmd>Git commit -a --amend<CR>

@@ -369,22 +369,23 @@ M.components = {
           -- Problem: Gitsigns shows the current HEAD as a commit SHA if it's
           -- anything other than the HEAD of a branch.
           -- Solution: Use git-name-rev to get more meaningful names.
-          local name = vim.fn.systemlist({
+          local out, code = utils.system_list({
             "git",
-            "-C",
-            pl:readable(dir) and dir or pl:realpath("."),
             "name-rev",
             "--name-only",
             "--no-undefined",
             "--always",
             rev
-          })[1]
+          }, pl:readable(dir) and dir or pl:realpath("."))
 
-          if vim.v.shell_error ~= 0 then
+          local name
+
+          if code ~= 0 or not out[1] then
             name = ""
+          else
+            name = utils.str_match(out[1] or "", { "(.*)%^0", "(.*)" })
           end
 
-          name = utils.str_match(name, { "(.*)%^0", "(.*)" })
           cache[key] = name
 
           return name .. desc
