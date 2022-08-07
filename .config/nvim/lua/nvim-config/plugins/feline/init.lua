@@ -356,11 +356,15 @@ M.components = {
           return ""
         end
 
+        local rebasing
+        rev, rebasing = utils.str_match(rev, { "(.*)(%(rebasing%))", "(.*)" })
+
+        local desc = rebasing and " (rebasing)" or ""
         local cache = Config.state.git.rev_name_cache
         local key = path .. "#" .. rev
 
         if cache[key] then
-          return cache[key]
+          return cache[key] .. desc
         else
           -- Problem: Gitsigns shows the current HEAD as a commit SHA if it's
           -- anything other than the HEAD of a branch.
@@ -371,6 +375,7 @@ M.components = {
             pl:readable(dir) and dir or pl:realpath("."),
             "name-rev",
             "--name-only",
+            "--no-undefined",
             "--always",
             rev
           })[1]
@@ -382,7 +387,7 @@ M.components = {
           name = utils.str_match(name, { "(.*)%^0", "(.*)" })
           cache[key] = name
 
-          return name
+          return name .. desc
         end
       end,
       icon = icons.git.branch .. " ",
