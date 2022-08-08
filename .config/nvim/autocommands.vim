@@ -5,6 +5,9 @@ augroup NvimConfig
     au VimEnter * silent! au! FileExplorer *
     " au BufEnter * if isdirectory(expand('%')) | bd | endif
 
+    " Auto-cd to the first argv if it's a directory.
+    au VimEnter * if isdirectory(argv(0)) | exe 'cd ' . argv(0) | endif
+
     au VimEnter * lua require'user.au'.source_project_config();
                 \ require'user.au'.source_project_session()
 

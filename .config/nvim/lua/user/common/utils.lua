@@ -676,6 +676,9 @@ end
 ---@field listed boolean Filter out buffers that aren't listed.
 ---@field no_hidden boolean Filter out buffers that are hidden.
 ---@field tabpage integer Filter out buffers that are not displayed in a given tabpage.
+---@field pattern string Filter out buffers whose name does not match a given lua pattern.
+---@field options table<string, any> Filter out buffers that don't match a given map of options.
+---@field vars table<string, any> Filter out buffers that don't match a given map of variables.
 
 ---@param opt? ListBufsSpec
 ---@return integer[] #Buffer numbers of matched buffers.
@@ -703,49 +706,33 @@ function M.list_bufs(opt)
     if opt.loaded and not api.nvim_buf_is_loaded(v) then
       return false
     end
+
     if opt.listed and not vim.bo[v].buflisted then
       return false
     end
+
+    if opt.pattern and not vim.fn.bufname(v):match(opt.pattern) then
+      return false
+    end
+
+    if opt.options then
+      for name, value in pairs(opt.options) do
+        if vim.bo[v][name] ~= value then
+          return false
+        end
+      end
+    end
+
+    if opt.vars then
+      for name, value in pairs(opt.vars) do
+        if vim.b[v][name] ~= value then
+          return false
+        end
+      end
+    end
+
     return true
   end, bufs) --[[@as integer[] ]]
-end
-
----@param pattern string Lua pattern mathed against the buffer name.
----@param opt? ListBufsSpec
----@return integer?
-function M.find_buf_with_pattern(pattern, opt)
-  for _, id in ipairs(M.list_bufs(opt or {})) do
-    local m = vim.fn.bufname(id):match(pattern)
-    if m then return id end
-  end
-
-  return nil
-end
-
----@param var string Variable name.
----@param value any Predicate value.
----@param opt? ListBufsSpec
----@return integer?
-function M.find_buf_with_var(var, value, opt)
-  for _, id in ipairs(M.list_bufs(opt or {})) do
-    local ok, v = pcall(api.nvim_buf_get_var, id, var)
-    if ok and v == value then return id end
-  end
-
-  return nil
-end
-
----@param option string Option name.
----@param value any Predicate value.
----@param opt? ListBufsSpec
----@return integer?
-function M.find_buf_with_option(option, value, opt)
-  for _, id in ipairs(M.list_bufs(opt or {})) do
-    local ok, v = pcall(api.nvim_buf_get_option, id, option)
-    if ok and v == value then return id end
-  end
-
-  return nil
 end
 
 ---@param path string

@@ -57,7 +57,11 @@ alias("ftd", "filetype detect")
 
 Config.fn.toggle_quickfix = lib.create_buf_toggler(
   function()
-    return utils.find_buf_with_option("buftype", "quickfix", { no_hidden = true, tabpage = 0 })
+    return utils.list_bufs({
+      options = { buftype = "quickfix" },
+      no_hidden = true,
+      tabpage = 0,
+    })[1]
   end,
   function()
     if #vim.fn.getloclist(0) > 0 then
@@ -77,7 +81,7 @@ Config.fn.toggle_quickfix = lib.create_buf_toggler(
 )
 
 Config.fn.toggle_outline = lib.create_buf_toggler(
-  function() return utils.find_buf_with_pattern("OUTLINE") end,
+  function() return utils.list_bufs({ pattern = "OUTLINE" })[1] end,
   function() vim.cmd("SymbolsOutlineOpen") end,
   function()
     vim.cmd("SymbolsOutlineClose")
@@ -97,7 +101,7 @@ end
 local function open_messages_win()
   vim.cmd("belowright sp")
   vim.cmd("wincmd J")
-  local bufnr = utils.find_buf_with_var("bufid", "messages_window")
+  local bufnr = utils.list_bufs({ vars = { bufid = "messages_window" } })[1]
 
   if not bufnr then
     bufnr = api.nvim_create_buf(false, false)
@@ -124,10 +128,11 @@ local function open_messages_win()
 end
 
 function Config.fn.update_messages_win()
-  local bufnr = utils.find_buf_with_var("bufid", "messages_window", {
+  local bufnr = utils.list_bufs({
+    vars = { bufid = "messages_window" },
     no_hidden = true,
     tabpage = 0,
-  })
+  })[1]
 
   if bufnr then
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_messages())

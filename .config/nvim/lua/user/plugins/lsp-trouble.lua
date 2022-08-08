@@ -37,7 +37,11 @@ return function ()
 
   Config.fn.toggle_diagnostics = lib.create_buf_toggler(
     function ()
-      return utils.find_buf_with_option("filetype", "Trouble", { no_hidden = true, tabpage = 0 })
+      return utils.list_bufs({
+        options = { filetype = "Trouble" },
+        no_hidden = true,
+        tabpage = 0
+      })[1]
     end,
     function ()
       vim.cmd("Trouble")
