@@ -1,7 +1,7 @@
 vim.cmd("packadd packer.nvim")
 
 local function conf(config_name)
-  return require(string.format("nvim-config.plugins.%s", config_name))
+  return require(string.format("user.plugins.%s", config_name))
 end
 
 local function wrap_local(spec)

@@ -1,11 +1,11 @@
-local lazy = require("nvim-config.lazy")
+local lazy = require("user.lazy")
 
 ---@module "feline"
 local feline = lazy.require("feline")
 ---@module "feline.providers.lsp"
 local lsp = lazy.require("feline.providers.lsp")
----@module "nvim-config.plugins.feline.styles"
-local styles = lazy.require("nvim-config.plugins.feline.styles")
+---@module "user.plugins.feline.styles"
+local styles = lazy.require("user.plugins.feline.styles")
 
 local utils = Config.common.utils
 local pl = utils.pl

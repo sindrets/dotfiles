@@ -62,7 +62,7 @@ nnoremap  <silent>   <tab> :bn<CR>
 nnoremap  <silent> <s-tab> :bp<CR>
 nnoremap <leader><leader> <Cmd>buffer #<CR>
 nnoremap ~ <Cmd>buffer #<CR>
-nnoremap <silent> <leader>w <Cmd>lua require'nvim-config.lib'.remove_buffer()<CR>
+nnoremap <silent> <leader>w <Cmd>lua require'user.lib'.remove_buffer()<CR>
 nnoremap <leader>W <Cmd>bd<CR>
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 
@@ -172,8 +172,8 @@ nnoremap <silent> <leader>' <Cmd>call nerdcommenter#Comment(0, "toggle")<CR>
 vnoremap <silent> <leader>' :call nerdcommenter#Comment(0, "toggle")<CR>gv
 
 " Telescope
-nnoremap <C-P> <Cmd>lua require'nvim-config.lib'.workspace_files()<CR>
-nnoremap <leader>p <Cmd>lua require'nvim-config.lib'.workspace_files({ all = true })<CR>
+nnoremap <C-P> <Cmd>lua require'user.lib'.workspace_files()<CR>
+nnoremap <leader>p <Cmd>lua require'user.lib'.workspace_files({ all = true })<CR>
 nnoremap <C-M-P> <Cmd>Telescope git_status<CR>
 nnoremap <M-b> <Cmd>Telescope buffers<CR>
 nnoremap <M-f> <Cmd>Telescope live_grep<CR>
@@ -254,8 +254,8 @@ nnoremap <silent> <leader>ld <Cmd>lua vim.diagnostic.open_float({ scope = "line"
 
 " Misc: {{{
 
-xnoremap @ :<C-u>lua require'nvim-config.lib'.execute_macro_over_visual_range()<CR>
-inoremap <silent> <Tab> <Cmd>lua require'nvim-config.lib'.full_indent()<CR>
+xnoremap @ :<C-u>lua require'user.lib'.execute_macro_over_visual_range()<CR>
+inoremap <silent> <Tab> <Cmd>lua require'user.lib'.full_indent()<CR>
 inoremap <M-Space> <Esc>
 
 " Change mapping for digraphs
@@ -277,7 +277,7 @@ nmap , @@
 " }}}
 
 " Show highlight group under cursor
-nnoremap <F10> <Cmd>lua require'nvim-config.lib'.print_syn_group()<CR>
+nnoremap <F10> <Cmd>lua require'user.lib'.print_syn_group()<CR>
 
 " COMMANDS
 command! -bar Ssync syntax sync minlines=3000

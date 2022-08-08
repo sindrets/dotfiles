@@ -1,5 +1,5 @@
-local utils = require("nvim-config.common.utils")
-local hl = require("nvim-config.common.hl")
+local utils = require("user.common.utils")
+local hl = require("user.common.hl")
 
 local M = {}
 

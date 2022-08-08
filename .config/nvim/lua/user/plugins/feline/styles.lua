@@ -1,4 +1,4 @@
-local lazy = require("nvim-config.lazy")
+local lazy = require("user.lazy")
 
 ---@type FelineConfig|LazyModule
 local c = lazy.access(_G, "Config.plugin.feline")

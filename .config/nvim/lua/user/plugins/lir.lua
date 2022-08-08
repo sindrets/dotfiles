@@ -2,7 +2,7 @@ return function()
   local actions = require("lir.actions")
   local clipboard_actions = require("lir.clipboard.actions")
   local float = require("lir.float")
-  local lazy = require("nvim-config.lazy")
+  local lazy = require("user.lazy")
   local lir = require("lir")
   local mark_actions = require("lir.mark.actions")
 

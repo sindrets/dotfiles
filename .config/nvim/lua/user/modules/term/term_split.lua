@@ -1,10 +1,10 @@
-local lazy = require("nvim-config.lazy")
+local lazy = require("user.lazy")
 local utils = Config.common.utils
 
 ---@type Terminal
-local Terminal = lazy.require("nvim-config.plugins.term.terminal")
----@module "nvim-config.plugins.term"
-local term_lib = lazy.require("nvim-config.plugins.term")
+local Terminal = lazy.require("user.modules.term.terminal")
+---@module "user.modules.term"
+local term_lib = lazy.require("user.modules.term")
 
 local api = vim.api
 local state = Config.state.term

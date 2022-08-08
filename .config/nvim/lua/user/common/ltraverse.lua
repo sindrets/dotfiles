@@ -9,7 +9,7 @@
 -------------------------------------------------------------------------------
 
 module("gc", package.seeall)
-local utils = require("nvim-config.common.utils")
+local utils = require("user.common.utils")
 -- local M = {}
 
 local List = {}

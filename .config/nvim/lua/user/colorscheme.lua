@@ -207,7 +207,7 @@ function M.setup_colorscheme(colors_name)
       vim.g.tokyonight_colors = nil
     end
   elseif colors_name == "material" then
-    require("nvim-config.plugins.material")()
+    require("user.plugins.material")()
   end
 end
 

@@ -13,7 +13,7 @@ end
 _G.uv = vim.loop
 
 _G.Config = {
-  common = require("nvim-config.common"),
+  common = require("user.common"),
   fn = {},
   plugin = {},
   state = {
@@ -26,15 +26,15 @@ _G.Config = {
 ---Path library.
 _G.pl = Config.common.utils.pl
 
-Config.lib = require("nvim-config.lib")
-Config.term = require("nvim-config.plugins.term")
+Config.lib = require("user.lib")
+Config.term = require("user.modules.term")
 
-local alias = require("nvim-config.plugins.cmd_alias").alias
+local alias = require("user.modules.cmd_alias").alias
 local api = vim.api
 local lib = Config.lib
 local utils = Config.common.utils
 
-require("nvim-config")
+require("user")
 
 -- COMMAND ALIASES
 

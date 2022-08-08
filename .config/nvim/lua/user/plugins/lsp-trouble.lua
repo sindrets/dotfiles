@@ -1,5 +1,5 @@
 return function ()
-  local lib = require("nvim-config.lib")
+  local lib = require("user.lib")
   local utils = Config.common.utils
 
   require("trouble").setup {

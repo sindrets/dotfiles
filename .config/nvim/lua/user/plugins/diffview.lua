@@ -1,6 +1,6 @@
 return function ()
   local actions = require("diffview.actions")
-  local lazy = require("nvim-config.lazy")
+  local lazy = require("user.lazy")
 
   ---@module "diffview.lib"
   local lib = lazy.require("diffview.lib")

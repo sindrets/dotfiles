@@ -18,7 +18,7 @@ function M.start_jdtls()
     -- local opts = { noremap = true, silent = true; }
   end
 
-  local settings = require('nvim-config.lsp').create_local_config({
+  local settings = require('user.lsp').create_local_config({
     ["java.project.referencedLibraries"] = {
       "lib/**/*.jar",
       "lib/*.jar"

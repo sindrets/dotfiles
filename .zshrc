@@ -107,7 +107,7 @@ alias m="cd ~/Documents/misc"
 alias r="source ~/.zshrc"
 alias nv="nvim"
 alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' -c 'args %' ~/.config/nvim/init.lua \
-    ~/.config/nvim/lua/nvim-config/plugins/init.lua"
+    ~/.config/nvim/lua/user/plugins/init.lua"
 alias nv-conf="nvim-conf"
 alias nvim-pager="nvim -Rnc 'set bt=nowrite noswapfile ul=-1 nolist nonu nornu scl=yes:1 | lua Config.lib.set_center_cursor(true)'"
 alias nv-pager="nvim-pager"

@@ -5,8 +5,8 @@ augroup NvimConfig
     au VimEnter * silent! au! FileExplorer *
     " au BufEnter * if isdirectory(expand('%')) | bd | endif
 
-    au VimEnter * lua require'nvim-config.au'.source_project_config();
-                \ require'nvim-config.au'.source_project_session()
+    au VimEnter * lua require'user.au'.source_project_config();
+                \ require'user.au'.source_project_session()
 
     " Restore cursor pos
     au BufReadPost *
@@ -41,8 +41,8 @@ augroup NvimConfig
     au BufWinEnter,FileType fugitiveblame setl nolist
 
     " Run PackerCompile when changes are made to plugin configs.
-    au BufWritePost */lua/nvim-config/plugins/*.lua
-                \ exe "so " . stdpath("config") . "/lua/nvim-config/plugins/init.lua"
+    au BufWritePost */lua/user/plugins/*.lua
+                \ exe "so " . stdpath("config") . "/lua/user/plugins/init.lua"
                 \ | PackerCompile
 
     au User PackerCompileDone exe 'lua Config.common.utils.info("Packer compiled!")'
@@ -56,7 +56,7 @@ augroup NvimConfig
     au BufEnter,CursorHold * silent! checktime %
 
     " Open file location. Example: `foo/bar/baz:128:17`
-    au BufReadCmd *:[0-9]\+ lua require("nvim-config.au").open_file_location(vim.fn.expand("<afile>"))
+    au BufReadCmd *:[0-9]\+ lua require("user.au").open_file_location(vim.fn.expand("<afile>"))
 
     au BufWinLeave * if get(t:, "compare_mode", 0) | diffoff | endif
     au BufEnter * if get(t:, "compare_mode", 0)

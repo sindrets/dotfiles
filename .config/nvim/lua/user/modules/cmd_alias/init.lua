@@ -1,4 +1,4 @@
-local lazy = require("nvim-config.lazy")
+local lazy = require("user.lazy")
 
 ---@module "diffview.arg_parser"
 local arg_parser = lazy.require("diffview.arg_parser")
@@ -40,7 +40,7 @@ function M.alias(alias, substitute)
   store[alias] = substitute
 
   vim.cmd(
-    ("cnoreabbrev <expr> %s v:lua.require('nvim-config.plugins.cmd_alias').expand('%s')")
+    ("cnoreabbrev <expr> %s v:lua.require('user.modules.cmd_alias').expand('%s')")
     :format(alias, utils.pick(1, alias:gsub("'", "\\'")))
   )
 end

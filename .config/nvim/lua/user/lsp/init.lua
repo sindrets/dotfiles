@@ -73,7 +73,7 @@ function M.create_config(...)
 end
 
 -- Java
-require("nvim-config.lsp.java")
+require("user.lsp.java")
 
 -- Typescript
 lspconfig.tsserver.setup(M.create_config())
@@ -82,10 +82,10 @@ lspconfig.tsserver.setup(M.create_config())
 lspconfig.pyright.setup(M.create_config())
 
 -- Lua
-require("nvim-config.lsp.lua")
+require("user.lsp.lua")
 
 -- Teal
--- require("nvim-config.lsp.teal")
+-- require("user.lsp.teal")
 
 -- Bash
 lspconfig.bashls.setup(M.create_config())

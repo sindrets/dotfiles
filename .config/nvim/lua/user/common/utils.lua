@@ -1,4 +1,4 @@
-local lazy = require("nvim-config.lazy")
+local lazy = require("user.lazy")
 
 ---@module "plenary.job"
 local Job = lazy.require("plenary.job", function(m)

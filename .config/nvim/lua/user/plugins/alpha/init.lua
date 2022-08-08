@@ -1,6 +1,6 @@
 return function()
   local alpha = require("alpha")
-  local banners = require("nvim-config.plugins.alpha.banners")
+  local banners = require("user.plugins.alpha.banners")
 
   local api = vim.api
   local au = Config.common.au
