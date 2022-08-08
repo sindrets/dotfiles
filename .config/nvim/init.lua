@@ -51,6 +51,7 @@ alias("gl", "Telescope git_commits")
 alias("Qa", "qa")
 alias("QA", "qa")
 alias("we", "w | e")
+alias("ws", "w | so %")
 alias("ftd", "filetype detect")
 
 -- FUNCTIONS

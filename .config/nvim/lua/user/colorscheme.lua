@@ -119,13 +119,13 @@ function M.generate_diff_colors(opt)
       add = Color.from_hex("#97BE65"):mod_lightness(-0.2),
       del = Color.from_hex("#FF6C69"):mod_lightness(-0.1),
       mod = Color.from_hex("#51afef"):mod_lightness(-0.1):mod_value(-0.15),
-    })
+    }) --[[@as table ]]
   else
     base_colors = vim.tbl_extend("keep", base_colors, {
       add = Color.from_hex("#97BE65"),
       del = Color.from_hex("#FF6C69"),
       mod = Color.from_hex("#51afef"),
-    })
+    }) --[[@as table ]]
   end
 
   ---@type Color
@@ -208,6 +208,18 @@ function M.setup_colorscheme(colors_name)
     end
   elseif colors_name == "material" then
     require("user.plugins.material")()
+  elseif colors_name == "catppuccin" then
+    if vim.o.bg == "light" then
+      vim.g.catppuccin_flavour = "latte"
+
+      require("catppuccin").setup({
+        integrations = {
+          bufferline = false,
+        },
+      })
+    else
+      vim.g.catppuccin_flavour = "mocha"
+    end
   end
 end
 
@@ -414,26 +426,32 @@ function M.apply_tweaks()
     end
 
   elseif colors_name == "catppuccin" then
-    hi_link("ColorColumn", "CursorLine", { force = true })
-    hi("diffAdded", { fg = "#B3E1A3" })
-    hi("diffChanged", { fg = "#A4B9EF" })
-    hi("CursorLine", { gui = "NONE", bg = bg_normal:clone():mod_value(0.07):to_css() })
+    hi_link("ColorColumn", "CursorLine")
+    hi("CursorLine", { gui = "NONE", bg = bg_normal:clone():highlight(0.07):to_css() })
+    hi({ "TsNumber", "TsFloat" }, { gui = "NONE" })
     hi("Visual", {
       gui = "NONE",
       bg = Color.from_hl("Directory", "fg")
-        :mod_lightness(-0.1)
-        :blend(bg_normal, 0.85)
-        :to_css()
+      :mod_lightness(-0.1)
+      :blend(bg_normal, 0.85)
+      :to_css()
     })
-    hi({ "NormalFloat", "StatusLine" }, { bg = bg_normal:clone():mod_value(-0.025):to_css() })
-    hi("ModeMsg", { fg = "#98BBF5" })
-    hi({ "TsNumber", "TsFloat" }, { gui = "NONE" })
-    hi("IndentBlanklineContextChar", { fg = "#B5E8E0" })
     hi("TablineSel", { bg = "NONE" })
-    hi("TelescopeBorder", { fg = hl.get_fg("FloatBorder") })
-    hi("TelescopePromptPrefix", { fg = "#F08FA9" })
-    hi("BufferLineFill", { bg = bg_normal:clone():highlight(-0.07):to_css() })
     hi("BufferLineCloseButtonSelected", { fg = fg_normal:clone():blend(bg_normal, 0.3):to_css() })
+    hi("TelescopeBorder", { fg = hl.get_fg("FloatBorder") })
+
+    if bg == "dark" then
+      hi({ "NormalFloat", "StatusLine" }, { bg = bg_normal:clone():mod_value(-0.025):to_css() })
+      hi("diffAdded", { fg = "#B3E1A3" })
+      hi("diffChanged", { fg = "#A4B9EF" })
+      hi("ModeMsg", { fg = "#98BBF5" })
+      hi("IndentBlanklineContextChar", { fg = "#B5E8E0" })
+      hi("BufferLineFill", { bg = bg_normal:clone():highlight(-0.07):to_css() })
+      hi("TelescopePromptPrefix", { fg = "#F08FA9" })
+    else
+      hi({ "NormalFloat", "StatusLine" }, { bg = bg_normal:clone():mod_value(-0.05):to_css() })
+      hi("VertSplit", { fg = bg_normal:clone():mod_value(-0.25):to_css() })
+    end
     M.apply_log_defaults()
 
     -- Remove bg for diagnostics.

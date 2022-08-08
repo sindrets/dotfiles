@@ -78,6 +78,7 @@ return require('packer').startup({
     use { 'teal-language/vim-teal' }
     use { 'mboughaba/i3config.vim' }
     use { "chrisbra/csv.vim" }
+    use { 'fladson/vim-kitty' }
 
     -- BEHAVIOUR
     use {
@@ -332,7 +333,7 @@ return require('packer').startup({
   config = {
     snapshot_path = vim.fn.stdpath("config"),
     display = {
-      open_cmd = 'vnew \\[packer\\] | wincmd L | vert resize 65',
+      open_cmd = 'vnew \\[packer\\] | wincmd L | vert resize 70',
     },
   },
 })

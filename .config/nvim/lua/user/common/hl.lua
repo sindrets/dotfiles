@@ -130,7 +130,7 @@ function M.hi(groups, opt)
       cterm = "NONE",
       sp = "NONE",
       blend = "NONE",
-    })
+    }) --[[@as HiSpec ]]
   end
 
   for _, group in ipairs(groups) do
@@ -187,7 +187,7 @@ end
 
 ---Clear highlighting for a given syntax group, or all groups if no group is
 ---given.
----@param groups? string
+---@param groups? string|string[]
 ---@param unlink? boolean Additionally unlink the groups.
 function M.hi_clear(groups, unlink)
   if type(groups) ~= "table" then

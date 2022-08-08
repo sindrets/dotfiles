@@ -114,6 +114,7 @@ alias nv-pager="nvim-pager"
 alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"
 alias zsh-conf="$EDITOR ~/.zshrc"
+alias kitty-conf="$EDITOR ~/.config/kitty/kitty.conf"
 alias rmorphans='yay -Rs $(yay -Qqdt)'
 alias npmls="cat package.json | jq .scripts"
 alias pls="sudo "
