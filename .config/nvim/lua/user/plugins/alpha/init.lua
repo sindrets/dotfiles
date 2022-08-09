@@ -129,10 +129,10 @@ return function()
 
   alpha.setup({
     opts = {
-      margin = 5
+      margin = 5,
     },
     layout = {
-      { type = "padding", val = 2, },
+      { type = "padding", val = 1, },
       elements.header,
       { type = "padding", val = 2, },
       {

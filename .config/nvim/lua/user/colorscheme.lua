@@ -552,6 +552,11 @@ function M.apply_tweaks()
   hi_link("NeogitDiffAddHighlight", "DiffInlineAdd")
   hi_link("NeogitDiffDeleteHighlight", "DiffInlineDelete")
 
+  for _, kind in ipairs({ "Error", "Warn", "Info", "Debug", "Trace" }) do
+    local s = "Notify" .. kind:upper()
+    hi_link({ s .. "Border", s .. "Icon", s .. "Title" }, "DiagnosticSign" .. kind)
+  end
+
   hi_link("BqfSign", "DiagnosticSignInfo")
 
   hi("TroubleText", { bg = "NONE", fg = hl.get_fg("TroubleNormal") })

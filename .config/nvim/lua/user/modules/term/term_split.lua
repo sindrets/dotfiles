@@ -219,9 +219,17 @@ function TermSplit:set_buf(bufnr)
   self.bufnr = bufnr
 
   if self:is_open() then
-    save_actual()
+    local manage_state = not state.actual_curwin
+
+    if manage_state then
+      save_actual()
+    end
+
     self:load_buf()
-    clear_actual()
+
+    if manage_state then
+      clear_actual()
+    end
   end
 end
 

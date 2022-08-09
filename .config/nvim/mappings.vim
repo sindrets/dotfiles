@@ -172,8 +172,8 @@ nnoremap <silent> <leader>' <Cmd>call nerdcommenter#Comment(0, "toggle")<CR>
 vnoremap <silent> <leader>' :call nerdcommenter#Comment(0, "toggle")<CR>gv
 
 " Telescope
-nnoremap <C-P> <Cmd>lua require'user.lib'.workspace_files()<CR>
-nnoremap <leader>p <Cmd>lua require'user.lib'.workspace_files({ all = true })<CR>
+nnoremap <C-P> <Cmd>lua require('user.lib').workspace_files()<CR>
+nnoremap <leader>p <Cmd>lua require('user.lib').workspace_files({ all = true })<CR>
 nnoremap <C-M-P> <Cmd>Telescope git_status<CR>
 nnoremap <M-b> <Cmd>Telescope buffers<CR>
 nnoremap <M-f> <Cmd>Telescope live_grep<CR>
@@ -182,6 +182,7 @@ nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
 nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
 nnoremap z= <Cmd>Telescope spell_suggest theme=get_cursor<CR>
 nnoremap <leader>fl <Cmd>Telescope current_buffer_fuzzy_find theme=get_ivy<CR>
+nnoremap ;; <Cmd>Telescope resume<CR>
 
 " Git
 nnoremap <leader>gg <Cmd>Neogit<CR>
