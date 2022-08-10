@@ -2,8 +2,16 @@ local utils = Config.common.utils
 local pl = utils.pl
 
 local api = vim.api
-local M = { expr = {} }
+
+local M = {
+  ---Expression mapping functions.
+  expr = {},
+  ---Command callbacks.
+  cmd = {},
+}
+
 local expr = M.expr
+local cmd = M.cmd
 
 local scratch_counter = 1
 
@@ -375,7 +383,7 @@ function M.comfy_quit(opt)
   opt = opt or {}
   local cur_win = api.nvim_get_current_win()
   local prev_win = vim.fn.win_getid(vim.fn.winnr("#"))
-  local cmd = "silent q"
+  local command = "silent q"
   local ok, err
 
   if opt.keep_last then
@@ -384,11 +392,11 @@ function M.comfy_quit(opt)
     end, api.nvim_list_wins())
 
     if #wins == 1 then
-      cmd = "bd"
+      command = "bd"
     end
   end
 
-  ok, err = pcall(vim.cmd, cmd)
+  ok, err = pcall(vim.cmd, command)
 
   if not ok then
     utils.err(err)
@@ -523,7 +531,7 @@ function expr.next_reference(reverse)
 end
 
 ---Open a help page in the current window.
-function M.cmd_help_here(subject)
+function cmd.help_here(subject)
   local mods = ""
   if vim.bo.buftype ~= "help" then
     vim.cmd("e $VIMRUNTIME/doc/help.txt")
@@ -540,7 +548,7 @@ function M.cmd_help_here(subject)
 end
 
 ---Open a man page in the current window.
-function M.cmd_man_here(a, b)
+function cmd.man_here(a, b)
   local tag = a
   if b then
     tag = string.format("%s(%s)", b, a)
@@ -567,7 +575,7 @@ end
 ---filetype, defaults to vimscript). If no selection range is provided, the last
 ---selection is used instead.
 ---@param range? integer[]
-function M.cmd_exec_selection(range)
+function cmd.exec_selection(range)
   local ft = vim.bo.ft == "lua" and "lua" or "vim"
   local lines
   ---@cast range integer[]
@@ -596,7 +604,7 @@ end
 ---Open a new tabpage for editing markdown.
 ---@param new boolean
 ---@param name? string
-function M.cmd_md_view(new, name)
+function cmd.md_view(new, name)
   vim.cmd([[tab sp]])
   local tabid = api.nvim_get_current_tabpage()
   local winid = api.nvim_get_current_win()
@@ -662,7 +670,7 @@ end
 
 ---There's `:buffers`, there's `:tabs`. Now - finally - there's `:Windows`.
 ---@param all boolean List windows from all tabpages.
-function M.ls_wins(all)
+function cmd.windows(all)
   local tabs = all and api.nvim_list_tabpages() or { api.nvim_get_current_tabpage() }
   local curwin = api.nvim_get_current_win()
 

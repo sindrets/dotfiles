@@ -32,21 +32,16 @@ end
 ---@field config TermSplit.Config
 ---@field last_width integer
 ---@field last_height integer
-local TermSplit
-TermSplit = setmetatable({}, {
+local TermSplit = setmetatable({
   init = function() --[[ stub ]] end,
-  __call = function(_, ...)
-    local this = setmetatable({}, vim.tbl_extend("keep", TermSplit, {
-      __index = function(t, k)
-        return getmetatable(t)[k]
-      end,
-    }))
-
+}, {
+  __call = function(t, ...)
+    local this = setmetatable({}, { __index = t })
     this:init(...)
 
     return this
   end,
-}) --[[@as TermSplit ]]
+})
 
 TermSplit.winopts = {
   winfixwidth = true,

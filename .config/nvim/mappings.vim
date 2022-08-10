@@ -215,26 +215,29 @@ tnoremap <silent> <C-\> <Esc>
 
 " Quickfix, Location list, Jumps
 nnoremap <M-q> <Cmd>lua Config.fn.toggle_quickfix()<CR>
-nnoremap [q <Cmd>cp <bar> norm! zz<CR>
-nnoremap ]q <Cmd>cn <bar> norm! zz<CR>
-nnoremap [Q <Cmd>cfirst <bar> norm! zz<CR>
-nnoremap ]Q <Cmd>clast <bar> norm! zz<CR>
-nnoremap [l <Cmd>lprevious <bar> norm! zz<CR>
-nnoremap ]l <Cmd>lnext <bar> norm! zz<CR>
-nnoremap [L <Cmd>lfirst <bar> norm! zz<CR>
-nnoremap ]L <Cmd>llast <bar> norm! zz<CR>
+nnoremap [q <Cmd>cp<CR>zz
+nnoremap ]q <Cmd>cn<CR>zz
+nnoremap [Q <Cmd>cfirst<CR>zz
+nnoremap ]Q <Cmd>clast<CR>zz
+nnoremap [l <Cmd>lprevious<CR>zz
+nnoremap ]l <Cmd>lnext<CR>zz
+nnoremap [L <Cmd>lfirst<CR>zz
+nnoremap ]L <Cmd>llast<CR>zz
 
-nnoremap [d <Cmd>exe 'lua vim.diagnostic.goto_prev({ float = false })' <bar> norm! zz<CR>
-nnoremap ]d <Cmd>exe 'lua vim.diagnostic.goto_next({ float = false })' <bar> norm! zz<CR>
-nnoremap [D <Cmd>exe 'norm! gg0' <bar> exe 'lua vim.diagnostic.goto_next({ float = false })' <bar> norm! zz<CR>
-nnoremap ]D <Cmd>exe 'norm! G0' <bar> exe 'lua vim.diagnostic.goto_prev({ float = false })' <bar> norm! zz<CR>
+nnoremap [d <Cmd>exe 'lua vim.diagnostic.goto_prev({ float = false })'<CR>zz
+nnoremap ]d <Cmd>exe 'lua vim.diagnostic.goto_next({ float = false })'<CR>zz
+nnoremap [D <Cmd>exe 'norm! gg0' <bar> exe 'lua vim.diagnostic.goto_next({ float = false })'<CR>zz
+nnoremap ]D <Cmd>exe 'norm! G0' <bar> exe 'lua vim.diagnostic.goto_prev({ float = false })'<CR>zz
 
 nnoremap <expr> [r v:lua.Config.lib.expr.next_reference(v:true)
 nnoremap <expr> ]r v:lua.Config.lib.expr.next_reference()
 
+nnoremap n nzz
+nnoremap N Nzz
+
 " Center jumplist jumps and remap jump forward
-nnoremap <C-o> <C-o><Cmd>norm! zz<CR>
-nnoremap <C-s> <C-i><Cmd>norm! zz<CR>
+nnoremap <C-o> <C-o>zz
+nnoremap <C-s> <C-i>zz
 
 " LSP
 nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>
@@ -311,13 +314,13 @@ command! -bar TermTab tab sp | exe 'term' | startinsert
 " Open a help page in the current window.
 " :HelpHere {subject}
 " @param {string} subject - A help tag to jump to.
-command! -bar -nargs=1 -complete=help HelpHere lua Config.lib.cmd_help_here([[<args>]])
+command! -bar -nargs=1 -complete=help HelpHere lua Config.lib.cmd.help_here([[<args>]])
 
 " Open a manpage in the current window.
 " :ManHere [section] {name}
 " @param {integer} [section] - The manpage section.
 " @param {string} name - The manpage name.
-command! -bar -nargs=* -complete=customlist,man#complete ManHere lua Config.lib.cmd_man_here(<f-args>)
+command! -bar -nargs=* -complete=customlist,man#complete ManHere lua Config.lib.cmd.man_here(<f-args>)
 
 " Create a new scratch buffer.
 " :Scratch [filetype]
@@ -353,7 +356,7 @@ command! -bar HiShow redir @x | silent hi | redir END | exe "e " . tempname() . 
 " selection.
 " :[range]ExecuteSelection
 " @param [range] - The line range to execute. (default: '<,'>)
-command! -bar -range ExecuteSelection lua Config.lib.cmd_exec_selection({ <range>, <line1>, <line2> })
+command! -bar -range ExecuteSelection lua Config.lib.cmd.exec_selection({ <range>, <line1>, <line2> })
 
 " View with a 2-way diff split for comparing files from 2 given directories
 " :CompareDir {dir_1} {dir_2}
@@ -367,16 +370,16 @@ command! -bar -nargs=+ -complete=dir CompareDir
 " Focused view for markdown editing with a fixed width window.
 " :MdViewEdit [file]
 " @param {string} [file] - The file to edit. (default: {current file})
-command! -bar -nargs=? -complete=file MdViewEdit lua Config.lib.cmd_md_view(false, unpack({ <f-args> }))
+command! -bar -nargs=? -complete=file MdViewEdit lua Config.lib.cmd.md_view(false, unpack({ <f-args> }))
 
 " Like `:MdViewEdit`, but always create a new, unamed buffer.
-command! -bar MdViewNew lua Config.lib.cmd_md_view(true)
+command! -bar MdViewNew lua Config.lib.cmd.md_view(true)
 
 " List all windows. By default this only lists the windows in the current
 " tabpage.
 " :Windows[bang]
 " @param [bang] - List windows in all tabpages.
-command! -bar -bang Windows lua Config.lib.ls_wins("<bang>" == "!")
+command! -bar -bang Windows lua Config.lib.cmd.windows("<bang>" == "!")
 
 " OPERATOR FUNCTIONS
 

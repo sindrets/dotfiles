@@ -19,21 +19,16 @@ end
 ---@field name string
 ---@field cwd string
 ---@field keymaps table
-local Terminal
-Terminal = setmetatable({}, {
+local Terminal = setmetatable({
   init = function() --[[ stub ]] end,
-  __call = function(_, ...)
-    local this = setmetatable({}, vim.tbl_extend("keep", Terminal, {
-      __index = function(t, k)
-        return getmetatable(t)[k]
-      end,
-    }))
-
+}, {
+  __call = function(t, ...)
+    local this = setmetatable({}, { __index = t })
     this:init(...)
 
     return this
   end,
-}) --[[@as Terminal ]]
+})
 
 Terminal.bufopts = {
   undolevels = -1,
