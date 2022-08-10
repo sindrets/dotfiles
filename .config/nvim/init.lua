@@ -96,7 +96,7 @@ local function get_messages()
   -- Filter out empty lines.
   return vim.tbl_filter(function(v)
     return v ~= ""
-  end, vim.split(msgs, "\n", {})) --[[@as string[] ]]
+  end, vim.split(msgs, "\n"))
 end
 
 local function open_messages_win()

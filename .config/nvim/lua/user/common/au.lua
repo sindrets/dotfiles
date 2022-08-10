@@ -29,7 +29,7 @@ local M = {}
 function M.declare_group(name, opts, aucmds)
   local id = api.nvim_create_augroup(name, opts)
   for _, aucmd in ipairs(aucmds) do
-    local auopts = vim.tbl_extend("force", aucmd, { group = id })
+    local auopts = vim.tbl_extend("force", aucmd, { group = id }) --[[@as table ]]
     auopts[1] = nil
     api.nvim_create_autocmd(aucmd[1], auopts)
   end

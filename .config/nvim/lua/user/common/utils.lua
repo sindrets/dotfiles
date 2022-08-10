@@ -61,7 +61,7 @@ function M.echo_multiln(msg, hl, schedule)
 
   vim.cmd("echohl " .. (hl or "None"))
   if type(msg) ~= "table" then
-    msg = vim.split(msg, "\n", {})
+    msg = vim.split(msg, "\n")
   end
   for _, line in ipairs(msg) do
     line = line:gsub('"', [[\"]])
@@ -75,7 +75,7 @@ end
 ---@param schedule? boolean Schedule the echo call.
 function M.info(msg, schedule)
   if type(msg) ~= "table" then
-    msg = vim.split(msg, "\n", {})
+    msg = vim.split(msg, "\n")
   end
   if not msg[1] or msg[1] == "" then
     return
@@ -87,7 +87,7 @@ end
 ---@param schedule? boolean Schedule the echo call.
 function M.warn(msg, schedule)
   if type(msg) ~= "table" then
-    msg = vim.split(msg, "\n", {})
+    msg = vim.split(msg, "\n")
   end
   if not msg[1] or msg[1] == "" then
     return
@@ -99,7 +99,7 @@ end
 ---@param schedule? boolean Schedule the echo call.
 function M.err(msg, schedule)
   if type(msg) ~= "table" then
-    msg = vim.split(msg, "\n", {})
+    msg = vim.split(msg, "\n")
   end
   if not msg[1] or msg[1] == "" then
     return

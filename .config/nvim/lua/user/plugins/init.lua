@@ -116,7 +116,7 @@ return require('packer').startup({
         }
       end
     }
-    use { 'folke/lua-dev.nvim' }
+    use_local { 'sindrets/lua-dev.nvim' }
     use { 'neovim/nvim-lspconfig' }
     use {
       "ray-x/lsp_signature.nvim",
