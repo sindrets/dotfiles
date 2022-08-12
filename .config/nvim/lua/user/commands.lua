@@ -17,11 +17,11 @@ command("Messages", function()
 end, { bar = true })
 
 command("Grep", function(e)
-  Config.lib.comfy_grep(false, unpack(e.args))
+  Config.lib.comfy_grep(false, unpack(e.fargs))
 end, { nargs = "+" })
 
 command("Lgrep", function(e)
-  Config.lib.comfy_grep(true, unpack(e.args))
+  Config.lib.comfy_grep(true, unpack(e.fargs))
 end, { nargs = "+" })
 
 command("Terminal", "exe '<mods>' sp | exe 'term <args>'", { nargs = "*" })
