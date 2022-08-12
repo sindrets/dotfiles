@@ -325,6 +325,16 @@ M.components = {
       end,
       icon = icons.line_number .. " ",
     },
+    search = {
+      provider = function()
+        if vim.v.hlsearch ~= 1 then return "" end
+
+        local count = vim.fn.searchcount({ maxcount = -1 })
+        local total = count.incomplete == 2 and (">" .. count.maxcount) or count.total
+
+        return ("[%s/%s]"):format(count.current, total)
+      end,
+    },
     indent_info = {
       provider = function()
         if vim.bo.expandtab then
@@ -489,6 +499,7 @@ function M.update()
             comps.diagnostic.warn,
             comps.diagnostic.hint,
             comps.diagnostic.info,
+            comps.file.search,
             comps.file.line_info,
             comps.file.line_percent,
             comps.file.line_count,
