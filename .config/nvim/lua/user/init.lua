@@ -2,6 +2,7 @@ NvimConfigDir = vim.fn.stdpath("config")
 
 require("user.settings")
 vim.cmd("source " .. NvimConfigDir .. "/mappings.vim")
+require("user.commands")
 vim.cmd("source " .. NvimConfigDir .. "/autocommands.vim")
 require("user.plugins")
 

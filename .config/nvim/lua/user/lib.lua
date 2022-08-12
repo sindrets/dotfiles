@@ -3,15 +3,12 @@ local pl = utils.pl
 
 local api = vim.api
 
-local M = {
-  ---Expression mapping functions.
-  expr = {},
-  ---Command callbacks.
-  cmd = {},
-}
+local M = {}
 
-local expr = M.expr
-local cmd = M.cmd
+  ---Expression mapping functions.
+local expr = {}
+  ---Command callbacks.
+local cmd = {}
 
 local scratch_counter = 1
 
@@ -33,6 +30,11 @@ function BufToggleEntry.new(opts)
   return self
 end
 
+---@class lib.create_buf_toggler.Opt
+---@field focus boolean Focus the window if it exists and is unfocused.
+---@field height integer
+---@field remember_height boolean Remember the height of the window when it was closed, and restore it the next time its opened.
+
 ---Create a function that toggles a window with an identifiable buffer of some
 ---kind. The toggle logic works as follows:
 ---
@@ -47,7 +49,7 @@ end
 ---       the wanted buffer if it exists, otherwise nil.
 ---@param cb_open function Callback when the window should open.
 ---@param cb_close function Callback when the window should close.
----@param opts BufTogglerOpts|nil
+---@param opts? lib.create_buf_toggler.Opt
 ---@return function
 function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
   opts = opts or {}
@@ -114,14 +116,37 @@ function M.execute_macro_over_visual_range()
   vim.fn.execute(":'<,'>normal @" .. vim.fn.nr2char(vim.fn.getchar()))
 end
 
-function M.read_new(...)
+---@param range CommandRange
+---@param ... string
+function M.read_ex(range, ...)
+  local args = vim.tbl_map(function (v)
+    return vim.fn.expand(v)
+  end, { ... })
+
+  local ok, out = pcall(api.nvim_exec, table.concat(args, " "), true)
+
+  if not ok then
+    if out and out ~= "" then
+      utils.err(out)
+    end
+
+    return
+  end
+
+  local line = range[1] > 0 and range[2] or "."
+  vim.fn.setreg("x", out)
+  vim.cmd(line .. "put =@x")
+end
+
+---@param range CommandRange
+---@param ... string
+function M.read_shell(range, ...)
   local args = vim.tbl_map(function(v)
     return ("'%s'"):format(vim.fn.expand(v):gsub("'", [['"'"']]))
   end, { ... }) --[[@as vector ]]
 
-  vim.cmd("enew | set ft=log")
-  vim.fn.execute("0r! " .. table.concat(args, " "))
-  vim.cmd("norm! Gdd")
+  local line = range[1] > 0 and range[2] or "."
+  vim.fn.execute(line .. "r! " .. table.concat(args, " "))
 end
 
 ---@return string[]
@@ -490,6 +515,37 @@ function M.set_center_cursor(flag)
   end
 end
 
+---@alias CommandRange { [1]: integer, [2]: integer, [3]: integer }
+
+function cmd.read_new(...)
+  local args = { ... }
+
+  if #args == 0 then return end
+
+  local prefix = args[1]:sub(1, 1) or nil
+  local ex_mode, shell_mode = false, false
+
+  vim.cmd("enew")
+
+  if prefix == ":" then
+    ex_mode = true
+    args[1] = args[1]:sub(2)
+    M.read_ex({ 0 }, unpack(args))
+  elseif prefix == "!" then
+    shell_mode = true
+    args[1] = args[1]:sub(2)
+    M.read_shell({ 0 }, unpack(args))
+  else
+    vim.cmd("read " .. table.concat(args, " "))
+  end
+
+  if ex_mode or shell_mode then
+    vim.opt_local.filetype = "log"
+  end
+
+  vim.cmd('norm! gg"_ddG')
+end
+
 ---[EXPR] Search for the current word without jumping forward. Respects
 ---`v:count`.
 ---@param reverse boolean
@@ -691,15 +747,8 @@ function cmd.windows(all)
   print(table.concat(res, "\n"))
 end
 
---#region TYPES
-
----@class BufTogglerOpts
----@field focus boolean Focus the window if it exists and is unfocused.
----@field height integer
----@field remember_height boolean Remember the height of the window when it was
----       closed, and restore it the next time its opened.
-
---#endregion
-
 M.BufToggleEntry = BufToggleEntry
+M.expr = expr
+M.cmd = cmd
+
 return M
