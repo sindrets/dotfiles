@@ -2,6 +2,7 @@
 -- All commands documented in `:h sindrets-commands`.
 --]]
 
+local utils = Config.common.utils
 local api = vim.api
 local command = api.nvim_create_user_command
 
@@ -63,6 +64,7 @@ command("HiShow", function()
   local bufnr = api.nvim_get_current_buf()
   api.nvim_buf_set_name(bufnr, vim.fn.tempname() .. "/Highlights")
   vim.opt_local.bt = "nofile"
+  utils.set_cursor(0, 1, 0)
   vim.cmd("ColorizerAttachToBuffer")
 end, { bar = true })
 
