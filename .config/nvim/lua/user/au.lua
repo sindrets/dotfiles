@@ -2,25 +2,54 @@
 -- Auto command callbacks etc.
 --]
 local utils = Config.common.utils
+local notify = Config.common.notify
 local pl = utils.pl
 local api = vim.api
 
 local M = {}
 
+M.project_config_paths = {
+  ".vim/init.vim",
+  ".vim/init.lua",
+  ".vim/nvimrc.vim",
+  ".vim/nvimrc.lua",
+  ".nvimrc.vim",
+  ".nvimrc.lua",
+}
+
 local last_sourced_config = nil
 local last_sourced_session = nil
 
 function M.source_project_config()
-  for _, file in ipairs({ ".vim/init.vim", ".vim/init.lua" }) do
+  for _, file in ipairs(M.project_config_paths) do
     if utils.pl:readable(file) then
       local project_config_path = utils.pl:realpath(file)
+
       if last_sourced_config ~= project_config_path then
-        vim.cmd("source " .. file)
+        if file:match("%.lua$") then
+          local code_chunk = loadfile(file)
+
+          if code_chunk then
+            local ok, out = pcall(code_chunk)
+
+            if not ok then
+              notify.config.error(utils.vec_join(
+                ("Failed to load project config %s:"):format(utils.str_quote(file)),
+                vim.split(out, "\n")
+              ))
+              return
+            end
+
+            Config.state.project_config = out
+          end
+        else
+          vim.cmd("source " .. file)
+        end
+
         last_sourced_config = project_config_path
-        utils.info(
-          "Sourced project config: "
-            .. utils.str_quote(vim.fn.fnamemodify(project_config_path, ":.")),
-          true
+        notify.config(
+          "Using project config: "
+          .. utils.str_quote(vim.fn.fnamemodify(file, ":."))
         )
         break
       end

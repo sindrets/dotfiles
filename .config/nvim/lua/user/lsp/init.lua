@@ -2,6 +2,7 @@ local cmp_lsp = require("cmp_nvim_lsp")
 local lspconfig = require("lspconfig")
 
 local utils = Config.common.utils
+local notify = Config.common.notify
 local pl = utils.pl
 local config_store = {}
 
@@ -23,25 +24,32 @@ M.base_config = {
   capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()),
 }
 
-local local_config_paths = {
+M.local_config_paths = {
   ".vim/lsp_init.lua",
   ".vim/lsp_settings.lua",
-  ".vim/lsp-settings.lua",
+  ".vim/lsprc.lua",
+  ".lsprc.lua",
 }
 
 function M.create_local_config(config)
   local cwd = uv.cwd()
   local local_config = config_store[cwd]
+  local project_config = Config.state.project_config
   config = config or {}
 
   if not local_config then
-    for _, path in ipairs(local_config_paths) do
-      if pl:readable(path) then
-        utils.info("Using project-local LSP config: " .. utils.str_quote(path), true)
-        local code_chunk = loadfile(path)
-        if code_chunk then
-          local_config = code_chunk()
-          break
+    if type(project_config) == "table" and project_config.lsp_config then
+      local_config = project_config.lsp_config
+      notify.config("Using LSP config from project config.")
+    else
+      for _, path in ipairs(M.local_config_paths) do
+        if pl:readable(path) then
+          notify.config("Using project-local LSP config: " .. utils.str_quote(path))
+          local code_chunk = loadfile(path)
+          if code_chunk then
+            local_config = code_chunk()
+            break
+          end
         end
       end
     end

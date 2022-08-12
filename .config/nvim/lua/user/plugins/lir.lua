@@ -174,7 +174,7 @@ return function()
     local _, code, err = utils.system_list({ "git", "add", cur.fullpath }, toplevel)
 
     if code ~= 0 then
-      notify.error.git("Failed to stage path: " .. err)
+      notify.git.error("Failed to stage path: " .. err)
     end
 
     actions.reload()
@@ -192,7 +192,7 @@ return function()
     local _, code, err = utils.system_list({ "git", "add", ctx.dir }, toplevel)
 
     if code ~= 0 then
-      notify.error.git("Failed to stage path: " .. err)
+      notify.git.error("Failed to stage path: " .. err)
     end
 
     actions.reload()
@@ -211,7 +211,7 @@ return function()
     local _, code, err = utils.system_list({ "git", "reset", "--", cur.fullpath }, toplevel)
 
     if code ~= 0 then
-      notify.error.git("Failed to reset path: " .. err)
+      notify.git.error("Failed to reset path: " .. err)
     end
 
     actions.reload()
@@ -229,7 +229,7 @@ return function()
     local _, code, err = utils.system_list({ "git", "reset", "--", ctx.dir }, toplevel)
 
     if code ~= 0 then
-      notify.error.git("Failed to reset path: " .. err)
+      notify.git.error("Failed to reset path: " .. err)
     end
 
     actions.reload()
@@ -253,33 +253,32 @@ return function()
     devicons_enable = true,
     hide_cursor = true,
     mappings = {
-      ['R']     = actions.reload,
+      ['R']     = actions.reload,               -- [R]eload
       ['<CR>']  = actions.edit,
-      ['o']     = actions.edit,
+      ['o']     = actions.edit,                 -- [o]pen
       ['l']     = actions.edit,
-      ['<C-s>'] = actions.split,
-      ['<C-v>'] = actions.vsplit,
-      ['<C-t>'] = actions.tabedit,
+      ['<C-s>'] = actions.split,                -- Open in [s]plit
+      ['<C-v>'] = actions.vsplit,               -- Open in [v]ertical split
+      ['<C-t>'] = actions.tabedit,              -- Open in [t]ab
 
       ['-'] = actions.up,
       ['h'] = actions.up,
-      ['q'] = function()
+      ['q'] = function()                        -- [q]uit
         Config.lib.remove_buffer(true)
         if vim.w.lir_is_float then
           vim.cmd("wincmd q")
         end
       end,
 
-      ['m']     = actions.mkdir,
-      ['e']     = actions.newfile,
-      ['a']     = actions.create_paths,
-      ['r']     = actions.move,
+      ['e']     = actions.newfile,              -- [e]dit
+      ['a']     = actions.create_paths,         -- [a]dd
+      ['m']     = actions.move,                 -- [m]ove
       ['<C-]>'] = actions.cd,
-      ['gy']    = actions.yank_path,
-      ['<C-h>'] = actions.toggle_show_hidden,
-      ['d']     = actions.delete,
+      ['gy']    = actions.yank_path,            -- [y]ank path
+      ['<C-h>'] = actions.toggle_show_hidden,   -- toggle [h]idden
+      ['d']     = actions.delete,               -- [d]elete
 
-      ['t'] = mark_actions.toggle_mark,
+      ['t'] = mark_actions.toggle_mark,         -- [t]oggle mark
       ['J'] = function()
         mark_actions.toggle_mark()
         vim.cmd('norm! j')
@@ -288,14 +287,14 @@ return function()
         mark_actions.toggle_mark()
         vim.cmd('norm! k')
       end,
-      ['y'] = clipboard_actions.copy,
+      ['y'] = clipboard_actions.copy,             -- [y]ank file
       ['x'] = clipboard_actions.cut,
-      ['p'] = clipboard_actions.paste,
+      ['p'] = clipboard_actions.paste,            -- [p]aste file
 
-      ['s'] = actions.git_toggle_stage,
-      ['S'] = actions.git_stage_all,
-      ['u'] = actions.git_reset,
-      ['U'] = actions.git_reset_all,
+      ['s'] = actions.git_toggle_stage,           -- toggle [s]tage file
+      ['S'] = actions.git_stage_all,              -- [S]tage all
+      ['u'] = actions.git_reset,                  -- [u]nstage file
+      ['U'] = actions.git_reset_all,              -- [U]nstage all
     },
     float = {
       winblend = 0,

@@ -1,7 +1,11 @@
 local configs = {
   git = {
-    title = "git",
+    title = "Git",
     icon = "",
+  },
+  config = {
+    title = "Config",
+    icon = "",
   },
 }
 
