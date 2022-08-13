@@ -181,6 +181,12 @@ function TermSplit:close()
 
   self.last_width = api.nvim_win_get_width(self.winid)
   self.last_height = api.nvim_win_get_height(self.winid)
+
+  if api.nvim_get_current_win() == self.winid then
+    -- Go to the last accessed window before closing.
+    vim.cmd("wincmd p")
+  end
+
   api.nvim_win_close(self.winid, false)
 end
 

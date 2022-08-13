@@ -10,9 +10,6 @@ local function get_range(e)
   return { e.range, e.line1, e.line2 }
 end
 
-command("Spectre", require("spectre").open, { bar = true })
-command("SpectreFile", require("spectre").open_file_search, { bar = true })
-
 command("Messages", function()
   Config.fn.update_messages_win()
 end, { bar = true })

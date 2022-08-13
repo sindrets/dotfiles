@@ -607,6 +607,22 @@ function M.vec_push(t, ...)
   return t
 end
 
+---Remove an object from a vector.
+---@param t vector
+---@param v any
+---@return boolean success True if the object was removed.
+function M.vec_remove(t, v)
+  local idx = M.vec_indexof(t, v)
+
+  if idx > -1 then
+    table.remove(t, idx)
+
+    return true
+  end
+
+  return false
+end
+
 ---@class utils.system_list.Opt
 ---@field cwd string Working directory of the job.
 ---@field fail_on_empty boolean Return code 1 if stdout is empty and code is 0.

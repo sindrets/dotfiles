@@ -329,7 +329,12 @@ M.components = {
       provider = function()
         if vim.v.hlsearch ~= 1 then return "" end
 
-        local count = vim.fn.searchcount({ maxcount = -1 })
+        local ok, count = pcall(vim.fn.searchcount, { maxcount = -1 })
+
+        if not ok then
+          return ""
+        end
+
         local total = count.incomplete == 2 and (">" .. count.maxcount) or count.total
 
         return ("[%s/%s]"):format(count.current, total)
