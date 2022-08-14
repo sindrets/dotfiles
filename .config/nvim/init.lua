@@ -13,7 +13,7 @@ end
 _G.uv = vim.loop
 
 _G.Config = {
-  common = require("nvim-config.common"),
+  common = require("user.common"),
   fn = {},
   plugin = {},
   state = {
@@ -26,15 +26,15 @@ _G.Config = {
 ---Path library.
 _G.pl = Config.common.utils.pl
 
-Config.lib = require("nvim-config.lib")
-Config.term = require("nvim-config.plugins.term")
+Config.lib = require("user.lib")
+Config.term = require("user.modules.term")
 
-local alias = require("nvim-config.plugins.cmd_alias").alias
+local alias = require("user.modules.cmd_alias").alias
 local api = vim.api
 local lib = Config.lib
 local utils = Config.common.utils
 
-require("nvim-config")
+require("user")
 
 -- COMMAND ALIASES
 
@@ -51,13 +51,18 @@ alias("gl", "Telescope git_commits")
 alias("Qa", "qa")
 alias("QA", "qa")
 alias("we", "w | e")
+alias("ws", "w | so %")
 alias("ftd", "filetype detect")
 
 -- FUNCTIONS
 
 Config.fn.toggle_quickfix = lib.create_buf_toggler(
   function()
-    return utils.find_buf_with_option("buftype", "quickfix", { no_hidden = true, tabpage = 0 })
+    return utils.list_bufs({
+      options = { buftype = "quickfix" },
+      no_hidden = true,
+      tabpage = 0,
+    })[1]
   end,
   function()
     if #vim.fn.getloclist(0) > 0 then
@@ -77,7 +82,7 @@ Config.fn.toggle_quickfix = lib.create_buf_toggler(
 )
 
 Config.fn.toggle_outline = lib.create_buf_toggler(
-  function() return utils.find_buf_with_pattern("OUTLINE") end,
+  function() return utils.list_bufs({ pattern = "OUTLINE" })[1] end,
   function() vim.cmd("SymbolsOutlineOpen") end,
   function()
     vim.cmd("SymbolsOutlineClose")
@@ -91,13 +96,13 @@ local function get_messages()
   -- Filter out empty lines.
   return vim.tbl_filter(function(v)
     return v ~= ""
-  end, vim.split(msgs, "\n", {})) --[[@as string[] ]]
+  end, vim.split(msgs, "\n"))
 end
 
 local function open_messages_win()
   vim.cmd("belowright sp")
   vim.cmd("wincmd J")
-  local bufnr = utils.find_buf_with_var("bufid", "messages_window")
+  local bufnr = utils.list_bufs({ vars = { bufid = "messages_window" } })[1]
 
   if not bufnr then
     bufnr = api.nvim_create_buf(false, false)
@@ -124,10 +129,11 @@ local function open_messages_win()
 end
 
 function Config.fn.update_messages_win()
-  local bufnr = utils.find_buf_with_var("bufid", "messages_window", {
+  local bufnr = utils.list_bufs({
+    vars = { bufid = "messages_window" },
     no_hidden = true,
     tabpage = 0,
-  })
+  })[1]
 
   if bufnr then
     vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_messages())

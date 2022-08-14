@@ -62,7 +62,7 @@ nnoremap  <silent>   <tab> :bn<CR>
 nnoremap  <silent> <s-tab> :bp<CR>
 nnoremap <leader><leader> <Cmd>buffer #<CR>
 nnoremap ~ <Cmd>buffer #<CR>
-nnoremap <silent> <leader>w <Cmd>lua require'nvim-config.lib'.remove_buffer()<CR>
+nnoremap <silent> <leader>w <Cmd>lua require'user.lib'.remove_buffer()<CR>
 nnoremap <leader>W <Cmd>bd<CR>
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 
@@ -172,8 +172,8 @@ nnoremap <silent> <leader>' <Cmd>call nerdcommenter#Comment(0, "toggle")<CR>
 vnoremap <silent> <leader>' :call nerdcommenter#Comment(0, "toggle")<CR>gv
 
 " Telescope
-nnoremap <C-P> <Cmd>lua require'nvim-config.lib'.workspace_files()<CR>
-nnoremap <leader>p <Cmd>lua require'nvim-config.lib'.workspace_files({ all = true })<CR>
+nnoremap <C-P> <Cmd>lua require('user.lib').workspace_files()<CR>
+nnoremap <leader>p <Cmd>lua require('user.lib').workspace_files({ all = true })<CR>
 nnoremap <C-M-P> <Cmd>Telescope git_status<CR>
 nnoremap <M-b> <Cmd>Telescope buffers<CR>
 nnoremap <M-f> <Cmd>Telescope live_grep<CR>
@@ -182,18 +182,17 @@ nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
 nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
 nnoremap z= <Cmd>Telescope spell_suggest theme=get_cursor<CR>
 nnoremap <leader>fl <Cmd>Telescope current_buffer_fuzzy_find theme=get_ivy<CR>
+nnoremap ;; <Cmd>Telescope resume<CR>
 
 " Git
 nnoremap <leader>gg <Cmd>Neogit<CR>
 nnoremap <leader>G <Cmd>Neogit<CR>
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
 nnoremap <leader>gl <Cmd>Git log -n256 --shortstat<CR>
-nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua vim.notify("Staged " 
-            \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")),
-            \ vim.log.levels.INFO, { title = "Git", icon = "" })<CR>
-nnoremap <leader>gA <Cmd>silent exe '!git add .' <bar> lua vim.notify("Staged " 
-            \ .. Config.common.utils.str_quote(pl:vim_fnamemodify(".", ":~")),
-            \ vim.log.levels.INFO, { title = "Git", icon = "" })<CR>
+nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua Config.common.notify.git("Staged "
+            \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")))<CR>
+nnoremap <leader>gA <Cmd>silent exe '!git add .' <bar>lua Config.common.notify.git("Staged "
+            \ .. Config.common.utils.str_quote(pl:vim_fnamemodify(".", ":~")))<CR> 
 nnoremap <leader>gcs <Cmd>Git commit<CR>
 nnoremap <leader>gcc <Cmd>Git commit -a<CR>
 nnoremap <leader>gca <Cmd>Git commit -a --amend<CR>
@@ -216,26 +215,29 @@ tnoremap <silent> <C-\> <Esc>
 
 " Quickfix, Location list, Jumps
 nnoremap <M-q> <Cmd>lua Config.fn.toggle_quickfix()<CR>
-nnoremap [q <Cmd>cp <bar> norm! zz<CR>
-nnoremap ]q <Cmd>cn <bar> norm! zz<CR>
-nnoremap [Q <Cmd>cfirst <bar> norm! zz<CR>
-nnoremap ]Q <Cmd>clast <bar> norm! zz<CR>
-nnoremap [l <Cmd>lprevious <bar> norm! zz<CR>
-nnoremap ]l <Cmd>lnext <bar> norm! zz<CR>
-nnoremap [L <Cmd>lfirst <bar> norm! zz<CR>
-nnoremap ]L <Cmd>llast <bar> norm! zz<CR>
+nnoremap [q <Cmd>cp<CR>zz
+nnoremap ]q <Cmd>cn<CR>zz
+nnoremap [Q <Cmd>cfirst<CR>zz
+nnoremap ]Q <Cmd>clast<CR>zz
+nnoremap [l <Cmd>lprevious<CR>zz
+nnoremap ]l <Cmd>lnext<CR>zz
+nnoremap [L <Cmd>lfirst<CR>zz
+nnoremap ]L <Cmd>llast<CR>zz
 
-nnoremap [d <Cmd>exe 'lua vim.diagnostic.goto_prev({ float = false })' <bar> norm! zz<CR>
-nnoremap ]d <Cmd>exe 'lua vim.diagnostic.goto_next({ float = false })' <bar> norm! zz<CR>
-nnoremap [D <Cmd>exe 'norm! gg0' <bar> exe 'lua vim.diagnostic.goto_next({ float = false })' <bar> norm! zz<CR>
-nnoremap ]D <Cmd>exe 'norm! G0' <bar> exe 'lua vim.diagnostic.goto_prev({ float = false })' <bar> norm! zz<CR>
+nnoremap [d <Cmd>exe 'lua vim.diagnostic.goto_prev({ float = false })'<CR>zz
+nnoremap ]d <Cmd>exe 'lua vim.diagnostic.goto_next({ float = false })'<CR>zz
+nnoremap [D <Cmd>exe 'norm! gg0' <bar> exe 'lua vim.diagnostic.goto_next({ float = false })'<CR>zz
+nnoremap ]D <Cmd>exe 'norm! G0' <bar> exe 'lua vim.diagnostic.goto_prev({ float = false })'<CR>zz
 
 nnoremap <expr> [r v:lua.Config.lib.expr.next_reference(v:true)
 nnoremap <expr> ]r v:lua.Config.lib.expr.next_reference()
 
+nnoremap n nzz
+nnoremap N Nzz
+
 " Center jumplist jumps and remap jump forward
-nnoremap <C-o> <C-o><Cmd>norm! zz<CR>
-nnoremap <C-s> <C-i><Cmd>norm! zz<CR>
+nnoremap <C-o> <C-o>zz
+nnoremap <C-s> <C-i>zz
 
 " LSP
 nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>
@@ -256,8 +258,8 @@ nnoremap <silent> <leader>ld <Cmd>lua vim.diagnostic.open_float({ scope = "line"
 
 " Misc: {{{
 
-xnoremap @ :<C-u>lua require'nvim-config.lib'.execute_macro_over_visual_range()<CR>
-inoremap <silent> <Tab> <Cmd>lua require'nvim-config.lib'.full_indent()<CR>
+xnoremap @ :<C-u>lua require'user.lib'.execute_macro_over_visual_range()<CR>
+inoremap <silent> <Tab> <Cmd>lua require'user.lib'.full_indent()<CR>
 inoremap <M-Space> <Esc>
 
 " Change mapping for digraphs
@@ -279,105 +281,7 @@ nmap , @@
 " }}}
 
 " Show highlight group under cursor
-nnoremap <F10> <Cmd>lua require'nvim-config.lib'.print_syn_group()<CR>
-
-" COMMANDS
-command! -bar Ssync syntax sync minlines=3000
-command! -bar Spectre lua require'spectre'.open()
-command! -bar SpectreFile lua require'spectre'.open_file_search()
-
-" Open the `:messages` in a split at the bottom of the viewport.
-command! -bar Messages lua Config.fn.update_messages_win()
-
-" Perform a `:grep` command, populate and open the quickfix list, and set the
-" `/` register to a vim pattern matching the regex pattern given by the
-" {pattern}.
-" :Grep {pattern} [arguments]
-" @param {string} pattern - A regex pattern to grep.
-" @param {string[]} [arguments] - Additional arguments passed to the 'grepprg'.
-command! -nargs=+ Grep lua Config.lib.comfy_grep(false, <f-args>)
-
-" Same as `:Grep` except use the location list for the current window instead.
-command! -nargs=+ Lgrep lua Config.lib.comfy_grep(true, <f-args>)
-
-" Open a new terminal buffer in a split. Supports command modifiers.
-" :[mods] Terminal [args]
-" @param {...string} [args] - The args passed to the terminal. If omitted:
-"       starts an interactive terminal.
-command! -nargs=* Terminal exe '<mods> sp' | exe 'term <args>'
-
-" Open a new terminal in a new tabpage.
-command! -bar TermTab tab sp | exe 'term' | startinsert
-
-" Open a help page in the current window.
-" :HelpHere {subject}
-" @param {string} subject - A help tag to jump to.
-command! -bar -nargs=1 -complete=help HelpHere lua Config.lib.cmd_help_here([[<args>]])
-
-" Open a manpage in the current window.
-" :ManHere [section] {name}
-" @param {integer} [section] - The manpage section.
-" @param {string} name - The manpage name.
-command! -bar -nargs=* -complete=customlist,man#complete ManHere lua Config.lib.cmd_man_here(<f-args>)
-
-" Create a new scratch buffer.
-" :Scratch [filetype]
-" @param {string} [filetype] - The initial filetype of the new scratch buffer.
-command! -bar -nargs=? -complete=filetype Scratch lua Config.lib.new_scratch_buf(<f-args>)
-
-" Split the current line on a given pattern. If no pattern is given: splits on
-" the contents of the `/` register.
-" :[range]SplitOn[!] [pattern]
-" @param [range] - The line range to split.
-" @param [!] - Don't format the split lines.
-" @param {string} pattern - The pattern to split on.
-command! -bar -range -bang -nargs=? SplitOn lua Config.lib.split_on_pattern(
-            \ [[<args>]], { <range>, <line1>, <line2> }, <q-bang> == "!")
-
-" Delete the current buffer while also preserving the window layout.
-" :BRemove[!]
-" @param ! - Force delete the current buffer.
-command! -bar -bang BRemove lua Config.lib.remove_buffer("<bang>" == "!")
-
-" Read the output of a shell command into a new buffer.
-command! -nargs=+ -complete=shellcmd Rnew lua Config.lib.read_new(<f-args>)
-
-" Open a new tabpage diffing the state of the current buffer with its last
-" saved state.
-command! -bar DiffSaved lua Config.lib.diff_saved()
-
-" Create a new buffer with all defined highlight groups.
-command! -bar HiShow redir @x | silent hi | redir END | exe "e " . tempname() . "/Highlights"
-            \ | call setline(1, split(getreg("x"), "\n")) | setl bt=nofile | ColorizerAttachToBuffer
-
-" Execute the lua / vimscript code in the given range, or the last visual
-" selection.
-" :[range]ExecuteSelection
-" @param [range] - The line range to execute. (default: '<,'>)
-command! -bar -range ExecuteSelection lua Config.lib.cmd_exec_selection({ <range>, <line1>, <line2> })
-
-" View with a 2-way diff split for comparing files from 2 given directories
-" :CompareDir {dir_1} {dir_2}
-" @param {string} dir_1 - Path to a directory.
-" @param {string} dir_2 - Path to a directory.
-command! -bar -nargs=+ -complete=dir CompareDir
-            \ tabnew | let t:paths = [<f-args>] | let t:compare_mode = 1 | vsp
-            \ | silent exe '1windo lcd ' . t:paths[0] . ' | ' . ' 2windo lcd ' . t:paths[1]
-            \ | windo exe 'exe "edit " . getcwd()'
-
-" Focused view for markdown editing with a fixed width window.
-" :MdViewEdit [file]
-" @param {string} [file] - The file to edit. (default: {current file})
-command! -bar -nargs=? -complete=file MdViewEdit lua Config.lib.cmd_md_view(false, unpack({ <f-args> }))
-
-" Like `:MdViewEdit`, but always create a new, unamed buffer.
-command! -bar MdViewNew lua Config.lib.cmd_md_view(true)
-
-" List all windows. By default this only lists the windows in the current
-" tabpage.
-" :Windows[bang]
-" @param [bang] - List windows in all tabpages.
-command! -bar -bang Windows lua Config.lib.ls_wins("<bang>" == "!")
+nnoremap <F10> <Cmd>lua require'user.lib'.print_syn_group()<CR>
 
 " OPERATOR FUNCTIONS
 

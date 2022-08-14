@@ -1,0 +1,134 @@
+*sindrets-config.txt*
+
+Some documentation for parts of my Neovim configuration.
+
+Author: Sindre T. Strøm
+
+==============================================================================
+
+COMMANDS                                        *sindrets-commands*
+
+                                                *:Messages*
+:Messages
+                Open the `:messages` in a split at the bottom of the viewport.
+
+                                                *:Grep*
+:Grep {pattern} [args]
+                Perform a `:grep` command, populate and open the quickfix
+                list, and set the `/` register to a vim pattern matching the
+                regex pattern given by the {pattern}.
+
+    Parameters:~
+        {pattern}       A regex pattern.
+
+        [args]          Additional arguments passed to the 'grepprg'.
+
+                                                *:Lgrep*
+:Lgrep {pattern} [args]
+                Same as |:Grep|, but send the results to the location list for
+                the current window instead.
+
+                                                *:Terminal*
+:Terminal [args]
+                Open a new terminal buffer in a split. Respects
+                |:command-modifiers|.
+
+    Parameters:~
+        [args]      The args passed to the terminal. If omitted: starts an
+                    interactive terminal.
+
+                                                *:TermTab*
+:TermTab
+                Open a new terminal buffer in a new tabpage.
+
+                                                *:HelpHere*
+:HelpHere {subject}
+                Open the help page for {subject} in the current window.
+
+                                                *:ManHere*
+:ManHere [section] {name}
+:ManHere {name}({section})
+                Open the manpage for {name} and [section] in the current
+                window.
+
+                                                *:Scratch*
+:Scratch [filetype]
+                Create a new scratch buffer, optionally with a given
+                [filetype].
+
+                                                *:SplitOn*
+:[range]SplitOn[!] [pattern]
+                Split all lines in the given range on a given [pattern]. The
+                range defaults to the current line. If not [patter] is given:
+                splits using the contents of the `"/` register as [pattern].
+                When [!] is included: don't format the split lines.
+
+                                                *:BRemove*
+:BRemove[!] [N]
+                Delete buffer [N] (default: current buffer) while also
+                preserving the window layout. When [!] is included: ignore
+                unsaved changes.
+
+                                                *:ReadEx*
+:[line]ReadEx [command]
+                Insert the output of the Ex command [command] into the current
+                buffer. This is the equivalent of |:read!| for Ex commands.
+                When [line] is included: insert the output after the specified
+                line.
+
+                                                *:Rnew*
+:Rnew :{command}
+                Insert the output of the Ex command {command} into a new
+                buffer.
+
+:Rnew !{command}
+                Insert the output of the shell command {command} into a new
+                buffer.
+
+:Rnew {file-name}
+                Insert the contents of the file {file-name} into a new buffer.
+
+                                                *:DiffSaved*
+:DiffSaved
+                Open a new tabpage with a diff split comparing the state of
+                the current buffer with its last saved state.
+
+                                                *:HiShow*
+:HiShow
+                Create a new buffer listing all currently defined highlight
+                groups.
+
+                                                *:ExecuteSelection*
+:[range]ExecuteSelection
+                Execute the lua / vimscript code in the given [range]
+                (default: last visual selection).
+
+                                                *:CompareDir*
+:CompateDir {dir_1} {dir_2}
+                Open a new tabpage with a 2-way diff split for comparing files
+                from 2 given directories {dir_1} and {dir_2}. Opening any file
+                in these windows will automatically run |:diffthis|.
+
+                                                *:MdViewEdit*
+:MdViewEdit [file]
+                Open a new focused view for markdown editing in a fixed width
+                window.
+
+    Parameters:~
+        [file]      The markdown file to edit. If omitted: falls back to the
+                    current file if its filetype is markdown. Otherwise a new
+                    buffer is created.
+
+                                                *:MdViewNew*
+:MdViewNew
+                Like |:MdViewEdit|, but always create a new buffer.
+
+                                                *:Windows*
+:Windows[!]
+                List all windows and their currently open buffers. By default
+                this only lists the windows in the current tabpage. That is
+                unless [!] is included, in which case windows from all tab
+                pages are listed.
+
+
+ vim:tw=78:ts=8:ft=help:norl:
