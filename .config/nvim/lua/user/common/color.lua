@@ -116,19 +116,24 @@ end
 ---@param groups string|string[] Syntax group name or an ordered list of groups
 ---where the first found value will be used.
 ---@param attr string Attribute name.
----@return Color
+---@return Color?
 function Color.from_hl(groups, attr)
   assert(vim.o.termguicolors)
 
   if type(groups) ~= "table" then groups = { groups } end
 
   local value
+
   for _, group in ipairs(groups) do
     value = hl.get_hl_attr(group, attr)
-    if type(value) ~= "nil" then break end
+    if value ~= nil then break end
   end
 
-  assert(value ~= nil, "The wanted attribute does not exist on the target highlight group!")
+  if value == nil then
+    return
+  elseif type(value) == "number" then
+    value = bit.lshift(value, 8)
+  end
 
   return Color.from_hex(value)
 end

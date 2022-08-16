@@ -2,202 +2,285 @@ local api = vim.api
 
 local M = {}
 
---#region TYPES
+---@alias hl.HiValue<T> T|"NONE"
 
----@class HiSpec
----@field fg string
----@field bg string
----@field gui string
----@field ctermfg integer
----@field ctermbg integer
----@field cterm string
----@field sp string
----@field blend integer
----@field default boolean
----@field unlink boolean
----@field clear boolean
----@field explicit boolean
+---@class hl.HiSpec
+---@field fg         hl.HiValue<string>
+---@field bg         hl.HiValue<string>
+---@field sp         hl.HiValue<string>
+---@field style      hl.HiValue<string>
+---@field ctermfg    hl.HiValue<integer>
+---@field ctermbg    hl.HiValue<integer>
+---@field cterm      hl.HiValue<string>
+---@field blend      hl.HiValue<integer>
+---@field default    hl.HiValue<boolean> Only set values if the hl group is cleared.
+---@field unlink     boolean Remove links.
+---@field clear      boolean Clear the hl group first.
+---@field explicit   boolean All undefined fields will be cleared from the hl group.
 
----@class HiLinkSpec
+---@class hl.HiLinkSpec
 ---@field force boolean
 ---@field default boolean
 ---@field clear boolean
 
---#endregion
+---@class hl.HlData
+---@field link string|integer
+---@field foreground integer Foreground color integer
+---@field background integer Background color integer
+---@field special integer Special color integer
+---@field fg string Foreground color hex string
+---@field bg string Bakground color hex string
+---@field sp string Special color hex string
+---@field bold boolean
+---@field italic boolean
+---@field underline boolean
+---@field underlineline boolean
+---@field undercurl boolean
+---@field underdash boolean
+---@field underdot boolean
+---@field strikethrough boolean
+---@field standout boolean
+---@field reverse boolean
+---@field blend integer
+
+---@alias hl.HlAttrValue integer|boolean
+
+---@enum HlAttribute
+M.HlAttribute = {
+  foreground = 1,
+  background = 2,
+  special = 3,
+  fg = 4,
+  bg = 5,
+  sp = 6,
+  bold = 7,
+  italic = 8,
+  underline = 9,
+  underlineline = 10,
+  undercurl = 11,
+  underdash = 12,
+  underdot = 13,
+  strikethrough = 14,
+  standout = 15,
+  reverse = 16,
+  blend = 17,
+}
+
+vim.tbl_add_reverse_lookup(M.HlAttribute)
+local hlattr = M.HlAttribute
+
+local style_attrs = {
+  "bold",
+  "italic",
+  "underline",
+  "underlineline",
+  "undercurl",
+  "underdash",
+  "underdot",
+  "strikethrough",
+  "standout",
+  "reverse",
+}
+
+vim.tbl_add_reverse_lookup(style_attrs)
 
 ---@param name string Syntax group name.
----@param attr string Attribute name.
 ---@param no_trans? boolean Don't translate the syntax group (follow links).
+---@return hl.HlData?
+function M.get_hl(name, no_trans)
+  local hl
+
+  if no_trans then
+    hl = api.nvim__get_hl_defs(0)[name]
+  else
+    local id = api.nvim_get_hl_id_by_name(name)
+
+    if id then
+      hl = api.nvim_get_hl_by_id(id, true)
+    end
+  end
+
+  if hl then
+    if hl.foreground then hl.fg = string.format("#%06x", hl.foreground) end
+    if hl.background then hl.bg = string.format("#%06x", hl.background) end
+    if hl.special then hl.sp = string.format("#%06x", hl.special) end
+
+    return hl
+  end
+end
+
+---@param name string Syntax group name.
+---@param attr HlAttribute|string Attribute kind.
+---@param no_trans? boolean Don't translate the syntax group (follow links).
+---@return hl.HlAttrValue?
 function M.get_hl_attr(name, attr, no_trans)
-  local id = api.nvim_get_hl_id_by_name(name)
-  if id and not no_trans then
-    id = vim.fn.synIDtrans(id)
-  end
-  if not id then
-    return
-  end
+  local hl = M.get_hl(name, no_trans)
 
-  local value = vim.fn.synIDattr(id, attr)
-  if not value or value == "" then
-    return
-  end
+  if type(attr) == "string" then attr = hlattr[attr] end
 
-  return value
+  if not (hl and attr) then return end
+
+  return hl[hlattr[attr]]
 end
 
 ---@param groups string|string[] Syntax group name, or an ordered list of
 ---groups where the first found value will be returned.
 ---@param no_trans? boolean Don't translate the syntax group (follow links).
+---@return string?
 function M.get_fg(groups, no_trans)
   no_trans = not not no_trans
 
-  if type(groups) == "table" then
-    local v
-    for _, group in ipairs(groups) do
-      v = M.get_hl_attr(group, "fg", no_trans)
-      if v then return v end
-    end
-    return
-  end
+  if type(groups) ~= "table" then groups = { groups } end
 
-  return M.get_hl_attr(groups, "fg", no_trans)
+  for _, group in ipairs(groups) do
+    local v = M.get_hl_attr(group, hlattr.fg, no_trans) --[[@as string? ]]
+
+    if v then return v end
+  end
 end
 
 ---@param groups string|string[] Syntax group name, or an ordered list of
 ---groups where the first found value will be returned.
 ---@param no_trans? boolean Don't translate the syntax group (follow links).
+---@return string?
 function M.get_bg(groups, no_trans)
   no_trans = not not no_trans
 
-  if type(groups) == "table" then
-    local v
-    for _, group in ipairs(groups) do
-      v = M.get_hl_attr(group, "bg", no_trans)
-      if v then return v end
-    end
-    return
-  end
+  if type(groups) ~= "table" then groups = { groups } end
 
-  return M.get_hl_attr(groups, "bg", no_trans)
+  for _, group in ipairs(groups) do
+    local v = M.get_hl_attr(group, hlattr.bg, no_trans) --[[@as string? ]]
+
+    if v then return v end
+  end
 end
 
 ---@param groups string|string[] Syntax group name, or an ordered list of
 ---groups where the first found value will be returned.
 ---@param no_trans? boolean Don't translate the syntax group (follow links).
-function M.get_gui(groups, no_trans)
+---@return string?
+function M.get_style(groups, no_trans)
   no_trans = not not no_trans
   if type(groups) ~= "table" then groups = { groups } end
 
-  local hls
   for _, group in ipairs(groups) do
-    hls = {}
-    local attributes = {
-      "bold",
-      "italic",
-      "reverse",
-      "standout",
-      "underline",
-      "undercurl",
-      "strikethrough"
-    }
+    local hl = M.get_hl(group, no_trans)
 
-    for _, attr in ipairs(attributes) do
-      if M.get_hl_attr(group, attr, no_trans) == "1" then
-        table.insert(hls, attr)
+    if hl then
+      local res = {}
+
+      for _, attr in ipairs(style_attrs) do
+        if hl[attr] then table.insert(res, attr)
+        end
+
+        if #res > 0 then
+          return table.concat(res, ",")
+        end
       end
-    end
-
-    if #hls > 0 then
-      return table.concat(hls, ",")
     end
   end
 end
 
----@param groups string|string[] Syntax group name or a list of group names.
----@param opt HiSpec
-function M.hi(groups, opt)
-  if type(groups) ~= "table" then
-    groups = { groups }
+---@param spec hl.HiSpec
+---@return hl.HlData
+function M.hi_spec_to_data(spec)
+  ---@type hl.HlData
+  local res = {}
+  local fields = { "fg", "bg", "sp", "ctermfg", "ctermbg", "cterm", "default" }
+
+  for _, field in ipairs(fields) do
+    res[field] = spec[field]
   end
 
-  if opt.explicit then
-    opt = vim.tbl_extend("keep", opt, {
-      fg = "NONE",
-      bg = "NONE",
-      gui = "NONE",
-      ctermfg = "NONE",
-      ctermbg = "NONE",
-      cterm = "NONE",
-      sp = "NONE",
-      blend = "NONE",
-    }) --[[@as HiSpec ]]
+  if spec.style then
+    local spec_attrs = vim.tbl_add_reverse_lookup(vim.split(spec.style, ","))
+
+    for _, attr in ipairs(style_attrs) do
+      res[attr] = spec_attrs[attr] ~= nil
+    end
   end
+
+  return res
+end
+
+---@param groups string|string[] Syntax group name or a list of group names.
+---@param opt hl.HiSpec
+function M.hi(groups, opt)
+  if type(groups) ~= "table" then groups = { groups } end
 
   for _, group in ipairs(groups) do
-    if opt.unlink then
-      vim.cmd(("hi! link %s NONE"):format(group))
-    end
-    if opt.clear then
-      vim.cmd("hi clear " .. group)
+    local def_spec = M.hi_spec_to_data(opt)
+
+    if not opt.explicit then
+      def_spec = vim.tbl_extend("force", M.get_hl(group, true) or {}, def_spec) --[[@as hl.HlData ]]
+      def_spec[true] = nil
+      def_spec[false] = nil
+      def_spec.link = nil
+      def_spec.foreground = nil
+      def_spec.background = nil
+      def_spec.special = nil
     end
 
-    vim.cmd(string.format(
-      "hi %s %s %s %s %s %s %s",
-      opt.default and "default" or "",
-      group,
-      opt.fg and ("guifg=" .. opt.fg) or "",
-      opt.bg and ("guibg=" .. opt.bg) or "",
-      opt.gui and ("gui=" .. opt.gui) or "",
-      opt.ctermfg and ("ctermfg=" .. opt.ctermfg) or "",
-      opt.ctermbg and ("ctermbg=" .. opt.ctermbg) or "",
-      opt.cterm and ("cterm=" .. opt.cterm) or "",
-      opt.sp and ("guisp=" .. opt.sp) or "",
-      opt.blend and ("blend=" .. opt.blend) or ""
-    ))
+    if opt.unlink then
+      def_spec.link = -1
+    end
+
+    if opt.clear then
+      api.nvim_set_hl(0, group, {})
+    end
+
+    for k, v in pairs(def_spec) do
+      if v == "NONE" then
+        def_spec[k] = nil
+      end
+    end
+
+    api.nvim_set_hl(0, group, def_spec)
   end
 end
 
 ---@param from string|string[] Syntax group name or a list of group names.
 ---@param to? string Syntax group name. (default: `"NONE"`)
----@param opt? HiLinkSpec
+---@param opt? hl.HiLinkSpec
 function M.hi_link(from, to, opt)
+  if to and tostring(to):upper() == "NONE" then
+    ---@diagnostic disable-next-line: cast-local-type
+    to = -1
+  end
+
   opt = vim.tbl_extend("keep", opt or {}, {
     force = true,
-  })
-  ---@cast opt HiLinkSpec
+  }) --[[@as hl.HiLinkSpec ]]
 
-  if type(from) ~= "table" then
-    from = { from }
-  end
+  if type(from) ~= "table" then from = { from } end
 
   for _, f in ipairs(from) do
     if opt.clear then
-      vim.cmd("hi clear " .. f)
+      api.nvim_set_hl(0, f, {})
     end
 
-    vim.cmd(string.format(
-      "hi%s %s link %s %s",
-      (opt.force and not opt.default) and "!" or "",
-      opt.default and "default" or "",
-      f,
-      to or "NONE"
-    ))
+    api.nvim_set_hl(0, f, {
+      default = opt.default,
+      link = to,
+    })
   end
 end
 
 ---Clear highlighting for a given syntax group, or all groups if no group is
 ---given.
 ---@param groups? string|string[]
----@param unlink? boolean Additionally unlink the groups.
-function M.hi_clear(groups, unlink)
-  if type(groups) ~= "table" then
-    groups = { groups or "" }
+function M.hi_clear(groups)
+  if not groups then
+    vim.cmd("hi clear")
+    return
   end
+
+  if type(groups) ~= "table" then
+    groups = { groups }
+  end
+
   for _, g in ipairs(groups) do
-    vim.cmd(string.format("hi clear %s", g))
-    if unlink then
-      vim.cmd(string.format("hi link %s NONE", g))
-    end
+    api.nvim_set_hl(0, g, {})
   end
 end
 

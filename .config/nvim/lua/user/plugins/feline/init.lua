@@ -464,7 +464,7 @@ function M.update()
   local fg = hl.get_fg({ "StatusLine", "Normal" })
   local bg = hl.get_bg({ "StatusLine", "Normal" })
 
-  if hl.get_hl_attr("StatusLine", "reverse") == "1" then
+  if hl.get_hl_attr("StatusLine", hl.HlAttribute.reverse) then
     fg, bg = bg, fg
   end
 

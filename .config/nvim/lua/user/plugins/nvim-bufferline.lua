@@ -58,6 +58,6 @@ return function()
     },
   })
 
-  hi("BufferLineDiagnostic", { gui = "bold" })
-  hi("BufferLineDiagnosticVisible", { gui = "bold" })
+  hi("BufferLineDiagnostic", { style = "bold" })
+  hi("BufferLineDiagnosticVisible", { style = "bold" })
 end

@@ -43,15 +43,19 @@ function M.apply_sp_underline()
   for _, name in ipairs(spell_names) do
     local fg = hl.get_fg("Spell" .. name)
     if fg then
-      hi("Spell" .. name, { gui = "undercurl", sp = fg, fg = "NONE" })
+      hi("Spell" .. name, { style = "undercurl", sp = fg, fg = "NONE" })
     end
   end
 
   -- Normalize diagnostic underlines
   local diagnostic_names = { "Error", "Warn", "Info", "Hint" }
   for _, name in ipairs(diagnostic_names) do
-    hi_clear("DiagnosticUnderline" .. name, true)
-    hi("DiagnosticUnderline" .. name, { gui = "underline", sp = hl.get_fg("Diagnostic" .. name), fg = "NONE" })
+    hi_clear("DiagnosticUnderline" .. name)
+    hi("DiagnosticUnderline" .. name, {
+      style = "underline",
+      sp = hl.get_fg("Diagnostic" .. name),
+      fg = "NONE"
+    })
   end
 end
 
@@ -143,22 +147,32 @@ function M.generate_diff_colors(opt)
   local bg_mod_text = base_mod:blend(bg_normal, 0.7):mod_saturation(0.05)
 
   if not opt.no_override then
-    hi("DiffAdd", { bg = bg_add:to_css(), fg = "NONE", gui = "NONE" })
-    hi("DiffDelete", { bg = bg_del:to_css(), fg = "NONE", gui = "NONE" })
-    hi("DiffChange", { bg = bg_mod:to_css(), fg = "NONE", gui = "NONE" })
-    hi("DiffText", { bg = bg_mod_text:to_css(), fg = "NONE", gui = "NONE" })
+    hi("DiffAdd", { bg = bg_add:to_css(), fg = "NONE", style = "NONE" })
+    hi("DiffDelete", { bg = bg_del:to_css(), fg = "NONE", style = "NONE" })
+    hi("DiffChange", { bg = bg_mod:to_css(), fg = "NONE", style = "NONE" })
+    hi("DiffText", { bg = bg_mod_text:to_css(), fg = "NONE", style = "NONE" })
 
-    hi("diffAdded", { fg = base_add:to_css(), bg = "NONE", gui = "NONE" })
-    hi("diffRemoved", { fg = base_del:to_css(), bg = "NONE", gui = "NONE" })
-    hi("diffChanged", { fg = base_mod:to_css(), bg = "NONE", gui = "NONE" })
+    hi("diffAdded", { fg = base_add:to_css(), bg = "NONE", style = "NONE" })
+    hi("diffRemoved", { fg = base_del:to_css(), bg = "NONE", style = "NONE" })
+    hi("diffChanged", { fg = base_mod:to_css(), bg = "NONE", style = "NONE" })
   end
 
-  hi("DiffAddText", { bg = bg_add_text:to_css(), fg = "NONE", gui = "NONE" })
-  hi("DiffDeleteText", { bg = bg_del_text:to_css(), fg = "NONE", gui = "NONE" })
+  hi("DiffAddText", { bg = bg_add_text:to_css(), fg = "NONE", style = "NONE" })
+  hi("DiffDeleteText", { bg = bg_del_text:to_css(), fg = "NONE", style = "NONE" })
 
-  hi("DiffInlineAdd", { bg = bg_add:to_css(), fg = base_add:to_css(), gui = "NONE" })
-  hi("DiffInlineDelete", { bg = bg_del:to_css(), fg = base_del:to_css(), gui = "NONE" })
-  hi("DiffInlineChange", { bg = bg_mod:to_css(), fg = base_mod:to_css(), gui = "NONE" })
+  hi("DiffInlineAdd", { bg = bg_add:to_css(), fg = base_add:to_css(), style = "NONE" })
+  hi("DiffInlineDelete", { bg = bg_del:to_css(), fg = base_del:to_css(), style = "NONE" })
+  hi("DiffInlineChange", { bg = bg_mod:to_css(), fg = base_mod:to_css(), style = "NONE" })
+end
+
+---Give Telescope its default appearance.
+function M.unstyle_telescope()
+  hi_link("TelescopeNormal", "NormalFloat")
+  hi_link("TelescopeBorder", "FloatBorder")
+  hi_link("TelescopePromptNormal", "TelescopeNormal")
+  hi_link("TelescopePromptBorder", "TelescopeBorder")
+  hi_link({ "TelescopePromptTitle", "TelescopePreviewTitle", "TelescopeResultsTitle" }, "TelescopeNormal")
+  hi("TelescopePromptPrefix", { bg = "NONE" })
 end
 
 function M.apply_log_defaults()
@@ -231,17 +245,20 @@ function M.apply_tweaks()
     )
   end
 
-  local colors_name = vim.g.colors_name
+  if not vim.g.colors_name then
+    Config.common.utils.err("'g:colors_name' is not set for the current color scheme!")
+  end
+
+  local colors_name = vim.g.colors_name or ""
   local bg = vim.o.bg
-  ---@type Color
   local bg_normal = Color.from_hl("Normal", "bg")
     or Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
   ---@diagnostic disable-next-line: unused-local
-  local fg_normal = Color.from_hl("Normal", "fg")
+  local fg_normal = Color.from_hl("Normal", "fg") --[[@as Color ]]
 
-  hi_clear({ "Cursor", "TermCursor" }, true)
-  hi("TermCursor", { gui = "reverse" })
-  hi("NonText", { gui = "nocombine" })
+  hi_clear({ "Cursor", "TermCursor" })
+  hi("TermCursor", { style = "reverse" })
+  hi("NonText", { style = "nocombine" })
   hi("Hidden", { fg = "bg", bg = "bg" })
 
   -- Explicitly redefine Normal to circumvent bug in upstream 0.7.0.
@@ -260,18 +277,18 @@ function M.apply_tweaks()
     hi("NonText", { bg = "NONE", })
 
   elseif colors_name == "tender" then
-    hi("Visual", { gui = "NONE", bg = "#293b44", })
+    hi("Visual", { style = "NONE", bg = "#293b44", })
     hi("VertSplit", { fg = "#202020", bg = "NONE", })
-    hi("Search", { gui = "bold", fg = "#dddddd", bg = "#7a6a24", })
+    hi("Search", { style = "bold", fg = "#dddddd", bg = "#7a6a24", })
 
   elseif colors_name == "horizon" then
     hi("NonText", { fg = "#414559", bg = "NONE", })
-    hi("VertSplit", { gui = "bold", fg = "#0f1117", bg = "NONE", })
+    hi("VertSplit", { style = "bold", fg = "#0f1117", bg = "NONE", })
     hi("Pmenu", { bg = "#272c42", fg = "#eff0f4", })
     hi("PmenuSel", { bg = "#5b6389", })
     hi("PmenuSbar", { bg = "#3d425b", })
     hi("PmenuThumb", { bg = "#0f1117", })
-    hi("CursorLineNr", { gui = "bold", fg = "#09f7a0", bg = "NONE", })
+    hi("CursorLineNr", { style = "bold", fg = "#09f7a0", bg = "NONE", })
     hi("QuickFixLine", { bg = "#335172", fg = "NONE", })
     hi_link("vimVar")
     hi_link("vimFuncVar")
@@ -285,18 +302,18 @@ function M.apply_tweaks()
     hi("PmenuSel", { bg = "#403e41", })
     hi("PmenuSbar", { bg = "Grey", })
     hi("PmenuThumb", { bg = "White", })
-    hi("CursorLineNr", { gui = "bold", fg = "Yellow", bg = "#423f42", })
+    hi("CursorLineNr", { style = "bold", fg = "Yellow", bg = "#423f42", })
     hi("SignColumn", { bg = "#423f42", })
     hi("FoldColumn", { fg = "Cyan", bg = "#423f42", })
     hi("QuickFixLine", { bg = "#714754", fg = "NONE", })
-    hi("Search", { fg = "#ffd866", gui = "bold,underline", })
+    hi("Search", { fg = "#ffd866", style = "bold,underline", })
     hi_link("vimVar")
     hi_link("vimFuncVar")
     hi_link("vimUserFunc")
     hi_link("jsonQuote")
 
   elseif colors_name == "gruvbox-material" then
-    hi("CursorLineNr", { gui = "bold", fg = "#a9b665", })
+    hi("CursorLineNr", { style = "bold", fg = "#a9b665", })
 
   elseif colors_name == "predawn" then
     hi("NonText", { fg = "#3c3c3c", bg = "None", })
@@ -338,13 +355,13 @@ function M.apply_tweaks()
     hi("BlueSign", { bg = "NONE", })
     if bg == "light" then
       hi("Search", { bg = "#35a77c", })
-      hi("CursorLineNr", { gui = "bold", bg = "NONE", fg = "#8da101", })
+      hi("CursorLineNr", { style = "bold", bg = "NONE", fg = "#8da101", })
       hi("DiffAdd", { bg = "#EBF4BF", fg = "NONE", })
       hi("DiffDelete", { bg = "#FCDDCC", fg = "NONE", })
       hi("DiffChange", { bg = "#E3ECE4", fg = "NONE", })
       hi("DiffText", { bg = "#BEDFE6", fg = "NONE", })
     else
-      hi("CursorLineNr", { gui = "bold", bg = "NONE", fg = "#a7c080", })
+      hi("CursorLineNr", { style = "bold", bg = "NONE", fg = "#a7c080", })
       -- hi("DiffText", { bg = "#4a6778", fg = "NONE", })
     end
 
@@ -373,7 +390,7 @@ function M.apply_tweaks()
     hi("LspReferenceText", { bg = bg_normal:clone():mod_value(0.12):to_css() })
     hi("LspReferenceRead", { bg = bg_normal:clone():mod_value(0.12):to_css() })
     hi("LspReferenceWrite", { bg = bg_normal:clone():mod_value(0.12):to_css() })
-    hi("NvimTreeRootFolder", { fg = "#C3E88D", gui = "bold", })
+    hi("NvimTreeRootFolder", { fg = "#C3E88D", style = "bold", })
     hi("NvimTreeFolderIcon", { fg = "#F78C6C", })
     hi("NvimTreeNormal", { bg = "#222533", })
     hi("NvimTreeCursorLine", { bg = "#33374c", })
@@ -381,7 +398,7 @@ function M.apply_tweaks()
     do_diff_gen = false
 
   elseif colors_name == "onedarkpro" then
-    hi({ "Cursor", "TermCursor" }, { gui = "reverse", bg = "NONE", })
+    hi({ "Cursor", "TermCursor" }, { style = "reverse", bg = "NONE", })
     hi("NormalFloat", { bg = bg_normal:clone():mod_value(-0.025):to_css(), })
     hi_link("TelescopeSelection", "CursorLine")
     hi_link("TelescopeBorder", "Directory")
@@ -396,7 +413,7 @@ function M.apply_tweaks()
       hi("FoldColumn", { fg = "#61afef", })
       hi("StatusLine", { bg = bg_normal:clone():mod_value(-0.03):to_css(), })
       hi("LspReferenceText", { bg = bg_normal:clone():mod_value(0.1):to_css(), })
-      hi("NvimTreeOpenedFolderName", { fg = "#61afef", gui = "italic,bold", })
+      hi("NvimTreeOpenedFolderName", { fg = "#61afef", style = "italic,bold", })
       hi("NvimTreeRootFolder", { fg = "#98c379", })
       hi("NvimTreeGitDirty", { fg = "#e5c07b", })
       hi("NvimTreeGitStaged", { fg = "#98c379", })
@@ -409,13 +426,13 @@ function M.apply_tweaks()
       hi("diffChanged", { fg = "#51afef", })
       hi("SignColumn", { bg = "NONE", })
       hi("CursorLine", { bg = bg_normal:clone():highlight(0.05):to_css() })
-      hi("CursorLineNr", { bg = bg_normal:clone():highlight(0.05):to_css(), gui = "bold" })
+      hi("CursorLineNr", { bg = bg_normal:clone():highlight(0.05):to_css(), style = "bold" })
       hi("DiagnosticError", { fg = "#ff6c6b"} )
       hi("DiagnosticWarn", { fg = "#ECBE7B"} )
       hi("DiagnosticInfo", { fg = "#51afef"} )
       hi("DiagnosticHint", { fg = "LightBlue"} )
       hi("GitSignsChange", { fg = "#51afef", })
-      hi("NvimTreeRootFolder", { gui = "bold", })
+      hi("NvimTreeRootFolder", { style = "bold", })
       hi("SpellCap", { sp = "#51afef", })
       hi("SpellBad", { sp = "#FF6C69", })
       hi("SpellRare", { sp = "#a9a1e1", })
@@ -427,10 +444,10 @@ function M.apply_tweaks()
 
   elseif colors_name == "catppuccin" then
     hi_link("ColorColumn", "CursorLine")
-    hi("CursorLine", { gui = "NONE", bg = bg_normal:clone():highlight(0.07):to_css() })
-    hi({ "TsNumber", "TsFloat" }, { gui = "NONE" })
+    hi("CursorLine", { style = "NONE", bg = bg_normal:clone():highlight(0.07):to_css() })
+    hi({ "TsNumber", "TsFloat" }, { style = "NONE" })
     hi("Visual", {
-      gui = "NONE",
+      style = "NONE",
       bg = Color.from_hl("Directory", "fg")
       :mod_lightness(-0.1)
       :blend(bg_normal, 0.85)
@@ -497,7 +514,7 @@ function M.apply_tweaks()
     hi_link("DashboardHeader", "Identifier")
     hi_link("DashboardCenter", "Keyword")
     -- hi_link("DashboardShortCut", "String")
-    hl.hi("DashboardShortCut", { fg = hl.get_fg("String"), gui = "bold,reverse" })
+    hl.hi("DashboardShortCut", { fg = hl.get_fg("String"), style = "bold,reverse" })
     hi_link("DashboardFooter", "Comment")
     hi_link("DiffviewFolderName", "Special")
     diff_gen_opt = { no_derive = { mod = true } }
@@ -537,7 +554,7 @@ function M.apply_tweaks()
   hi("DiffAddAsDelete", {
     bg = hl.get_bg("DiffDelete", true) or "#FF6C69",
     fg = hl.get_fg("DiffDelete", true) or "NONE",
-    gui = hl.get_gui("DiffDelete", true) or "NONE",
+    style = hl.get_style("DiffDelete", true) or "NONE",
   })
   hi_link("DiffDelete", "Comment")
 
@@ -597,7 +614,7 @@ function M.apply_tweaks()
   hi("BufferLineTabSelected", {
     bg = bg_normal:clone():highlight(0.1):to_css(),
     fg = hl.get_fg({ "Accent", "Title", "Normal" }),
-    gui = "bold",
+    style = "bold",
   })
 
   hi({ "InclineNormal", "InclineNormalNC" }, {
@@ -635,4 +652,5 @@ if not vim.g.started_by_firenvim then
   end
   vim.cmd("colorscheme " .. M.name)
 end
+
 return M
