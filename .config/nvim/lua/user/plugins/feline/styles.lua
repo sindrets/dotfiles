@@ -3,6 +3,8 @@ local lazy = require("user.lazy")
 ---@type FelineConfig|LazyModule
 local c = lazy.access(_G, "Config.plugin.feline")
 
+local hl = Config.common.hl
+
 local api = vim.api
 
 local M = {}
@@ -37,7 +39,25 @@ M.color_palettes = {
 M.themes = {
   basic = {
     get = function()
-      c.current_palette = {}
+      c.current_palette = {
+        dim100 = hl.get_fg("StatusLineDim100"),
+        dim200 = hl.get_fg("StatusLineDim200"),
+        dim300 = hl.get_fg("StatusLineDim300"),
+        dim400 = hl.get_fg("StatusLineDim400"),
+        dim500 = hl.get_fg("StatusLineDim500"),
+        dim600 = hl.get_fg("StatusLineDim600"),
+        dim700 = hl.get_fg("StatusLineDim700"),
+        dim800 = hl.get_fg("StatusLineDim800"),
+        dim900 = hl.get_fg("StatusLineDim900"),
+        add = hl.get_fg("diffAdded"),
+        mod = hl.get_fg("diffChanged"),
+        del = hl.get_fg("diffRemoved"),
+        error = hl.get_fg("DiagnosticSignError"),
+        warn = hl.get_fg("DiagnosticSignWarn"),
+        info = hl.get_fg("DiagnosticSignInfo"),
+        hint = hl.get_fg("DiagnosticSignHint"),
+      }
+
       return {
         vi_mode = {
           style = "bold",
@@ -45,9 +65,42 @@ M.themes = {
         ["file.icon"] = {
           fg = "fg",
         },
+        ["file.info"] = {
+          fg = "dim300",
+        },
+        ["file.search"] = {
+          fg = "dim400",
+        },
+        ["file.line_info"] = {
+          fg = "dim400",
+        },
         ["file.line_percent"] = {
-          fg = "fg",
+          fg = "dim400",
           style = "bold",
+        },
+        ["file.line_count"] = {
+          fg = "dim400",
+        },
+        ["git.diff_add"] = {
+          fg = "add",
+        },
+        ["git.diff_mod"] = {
+          fg = "mod",
+        },
+        ["git.diff_del"] = {
+          fg = "del",
+        },
+        ["diagnostic.err"] = {
+          fg = "error",
+        },
+        ["diagnostic.warn"] = {
+          fg = "warn",
+        },
+        ["diagnostic.info"] = {
+          fg = "info",
+        },
+        ["diagnostic.hint"] = {
+          fg = "hint",
         },
       }
     end,

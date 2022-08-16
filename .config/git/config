@@ -39,7 +39,7 @@
 [delta]
 	features = line-numbers decorations
 	whitespace-error-style = 22 reverse
-	syntax-theme = base16-256
+	syntax-theme = base16
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f

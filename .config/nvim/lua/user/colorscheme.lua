@@ -5,7 +5,7 @@
 ---
 ---Override the default colorscheme by defining the environment variable
 ---`NVIM_COLORSCHEME` using the same format.
-local DEFAULT_COLORSCHEME = "kanagawa dark"
+local DEFAULT_COLORSCHEME = "oxocarbon-lua dark"
 
 local Color = Config.common.color.Color
 local utils = Config.common.utils
@@ -90,6 +90,40 @@ function M.apply_terminal_defaults()
   -- white
   vim.g.terminal_color_7  = "#a9b1d6"
   vim.g.terminal_color_15 = "#c0caf5"
+end
+
+function M.generate_base_colors()
+  local bg = vim.o.bg
+  local default_bg = Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
+  local default_fg = Color.from_hex(bg == "dark" and "#eeeeee" or "#111111")
+
+  ---@type { [string]: { fg: Color, bg: Color } }
+  local groups = {}
+  local targets = { "Normal", "StatusLine" }
+
+  for _, target in ipairs(targets) do
+    local data = hl.get_hl(target)
+
+    if data then
+      groups[target] = {
+        fg = data.fg and Color.from_hex(data.fg) or default_fg,
+        bg = data.bg and Color.from_hex(data.bg) or default_bg,
+      }
+    end
+  end
+
+  -- Generate dimmed color variants
+
+  local first, last = 1, 9
+
+  for i = first, last do
+    local f = (i - first + 1) / (last - first + 2)
+    local v = math.floor(f * 1000)
+
+    for group, values in pairs(groups) do
+      hi(group .. "Dim" .. v, { fg = values.fg:clone():blend(values.bg, f):to_css() })
+    end
+  end
 end
 
 ---@class GenerateDiffColorsSpec
@@ -234,6 +268,8 @@ function M.setup_colorscheme(colors_name)
     else
       vim.g.catppuccin_flavour = "mocha"
     end
+  elseif colors_name == "oxocarbon-lua" then
+    vim.g.oxocarbon_lua_keep_terminal = true
   end
 end
 
@@ -527,7 +563,22 @@ function M.apply_tweaks()
     hi("Whitespace", { fg = bg_normal:clone():highlight(0.18):to_css() })
     hi("BufferLineIndicatorSelected", { fg = "#7E9CD8" })
 
+  elseif colors_name == "oxocarbon-lua" then
+    if bg == "dark" then
+      hi("StatusLine", { bg = bg_normal:clone():highlight(0.05):to_css(), fg = fg_normal:clone():mod_value(-0.2):to_css() })
+      hi({ "FloatBorder", "WinSeparator" }, { fg = bg_normal:clone():highlight(0.3):to_css() })
+      hi("Visual", { bg = Color.from_hl("Type", "fg"):blend(bg_normal, 0.8):mod_hue(25):to_css() })
+      hi("Search", { bg = hl.get_fg("String"), style = "bold" })
+      hi("BufferLineIndicatorSelected", { fg = hl.get_fg("ErrorMsg") })
+    end
+
+    feline_theme = "basic"
+
+    M.unstyle_telescope()
+
   end
+
+  M.generate_base_colors()
 
   -- Generate diff hl
   if do_diff_gen then

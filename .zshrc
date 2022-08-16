@@ -22,11 +22,103 @@ autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
+function chpwd() {
+    emulate -L zsh
+    updateKittyTabTitle
+    eval ls
+}
+
+function updateKittyTabTitle() {
+    if [ "$cur_term" = "kitty" ]; then
+        kitty @ set-tab-title `basename "$(pwd)"`
+    fi
+}
+
+# Resolve and print path
+function rpath () {
+    local RELATIVE_PATH="${@: -1}"
+    printf "$(realpath -ms "$RELATIVE_PATH")"
+    [ "$1" != "-n" ] && printf "\n"
+}
+
+# Get current terminal emulator
+function getTerm () {
+    local sid=$(ps -o sid= -p "$$")
+    local sid_int=$((sid)) # strips blanks if any
+    local session_leader_parent=$(ps -o ppid= -p "$sid_int")
+    local session_leader_parent_int=$((session_leader_parent))
+    echo $(ps -o comm= -p "$session_leader_parent_int")
+}
+
+# Toggle VPN
+function vpn () {
+    if nordvpn status | grep -iq disconnected; then
+        nordvpn c no
+    else
+        nordvpn d
+    fi
+}
+
+function mdvless () {
+    /usr/bin/mdv $@ | less
+}
+
+# calculator
+function = () {
+    python3 -c "from math import *; print($*)"
+}
+
+# create dir and cd
+function mkcd (){
+    mkdir -p "$1" && cd "$1"
+}
+
+# Switch between git worktrees.
+function wt () {
+    if [[ "$1" =~ ^(list|version|update|help)$ ]]; then
+        eval "$(whence -p wt)" $@
+    else
+        local s="$("$(whence -p wt)" $@)"
+        local code=$?
+
+        if [ $code -eq 0 ]; then
+            eval "$s"
+        else
+            exit $code
+        fi
+    fi
+}
+
+function man-color () {
+    LESS_TERMCAP_mb=$'\e[1;32m' \
+    LESS_TERMCAP_md=$'\e[1;32m' \
+    LESS_TERMCAP_me=$'\e[0m' \
+    LESS_TERMCAP_se=$'\e[0m' \
+    LESS_TERMCAP_so=$'\e[1;30;46m' \
+    LESS_TERMCAP_ue=$'\e[0m' \
+    LESS_TERMCAP_us=$'\e[1;4;33m' \
+    /usr/bin/man $@
+}
+
+# Commit and push changes to dotfiles
+# @param $1 Optional commit message
+function dfcp () {
+    if ! eval dotfiles diff-index --quiet HEAD; then
+        local commit_msg="Update"
+        if [ ! -z "$1" ]; then
+            commit_msg="$1"
+        fi
+        eval dotfiles add -u && eval dotfiles status && \
+            eval dotfiles commit -m "$commit_msg" && eval dotfiles push
+    else
+        echo "No dotfiles have been modified."
+    fi
+}
+
+cur_term="$(getTerm)"
 
 export NEOFETCH_IMG="$HOME/Google Drive/sindrets@gmail.com/Bilder/neofetch/"
 export BROWSER=/usr/bin/firefox-beta
-export VISUAL=nvim
-export EDITOR=nvim
 export LC_ALL=en_US.UTF-8 # force all applications to use default language for output
 export LESS=-r # scroll pager with mouse wheel.
 export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
@@ -34,6 +126,11 @@ export NODE_PATH=/usr/lib/node_modules
 export GIT_DIRECTORY="$HOME/Documents/git"
 export MANWIDTH=80 # text width in man pages
 export MANPAGER="$(which nvim) -nc 'setl nolist scl=yes:1 | lua Config.lib.set_center_cursor(true)' +Man! -"
+
+if [ ! "$cur_term" = "nvim" ]; then
+    export VISUAL=nvim
+    export EDITOR=nvim
+fi
 
 eval `dircolors "$HOME/.dir_colors"`
 
@@ -131,99 +228,6 @@ alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/
 alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compiling for {}...\" \
     && tsc -p {}' \\;"
 
-function chpwd() {
-    emulate -L zsh
-    updateKittyTabTitle
-    eval ls
-}
-
-function updateKittyTabTitle() {
-    if [ "$term" = "kitty" ]; then
-        kitty @ set-tab-title `basename "$(pwd)"`
-    fi
-}
-
-# Resolve and print path
-function rpath () {
-    local RELATIVE_PATH="${@: -1}"
-    printf "$(realpath -ms "$RELATIVE_PATH")"
-    [ "$1" != "-n" ] && printf "\n"
-}
-
-# Get current terminal emulator
-function getTerm () {
-    local sid=$(ps -o sid= -p "$$")
-    local sid_int=$((sid)) # strips blanks if any
-    local session_leader_parent=$(ps -o ppid= -p "$sid_int")
-    local session_leader_parent_int=$((session_leader_parent))
-    echo $(ps -o comm= -p "$session_leader_parent_int")
-}
-
-# Toggle VPN
-function vpn () {
-    if nordvpn status | grep -iq disconnected; then
-        nordvpn c no
-    else
-        nordvpn d
-    fi
-}
-
-function mdvless () {
-    /usr/bin/mdv $@ | less
-}
-
-# calculator
-function = () {
-    python3 -c "from math import *; print($*)"
-}
-
-# create dir and cd
-function mkcd (){
-    mkdir -p "$1" && cd "$1"
-}
-
-# Switch between git worktrees.
-function wt () {
-    if [[ "$1" =~ ^(list|version|update|help)$ ]]; then
-        eval "$(whence -p wt)" $@
-    else
-        local s="$("$(whence -p wt)" $@)"
-        local code=$?
-
-        if [ $code -eq 0 ]; then
-            eval "$s"
-        else
-            exit $code
-        fi
-    fi
-}
-
-function man-color () {
-    LESS_TERMCAP_mb=$'\e[1;32m' \
-    LESS_TERMCAP_md=$'\e[1;32m' \
-    LESS_TERMCAP_me=$'\e[0m' \
-    LESS_TERMCAP_se=$'\e[0m' \
-    LESS_TERMCAP_so=$'\e[1;30;46m' \
-    LESS_TERMCAP_ue=$'\e[0m' \
-    LESS_TERMCAP_us=$'\e[1;4;33m' \
-    /usr/bin/man $@
-}
-
-# Commit and push changes to dotfiles
-# @param $1 Optional commit message
-function dfcp () {
-    if ! eval dotfiles diff-index --quiet HEAD; then
-        local commit_msg="Update"
-        if [ ! -z "$1" ]; then
-            commit_msg="$1"
-        fi
-        eval dotfiles add -u && eval dotfiles status && \
-            eval dotfiles commit -m "$commit_msg" && eval dotfiles push
-    else
-        echo "No dotfiles have been modified."
-    fi
-}
-
 # init fzf
 source /usr/share/fzf/key-bindings.zsh
 source /usr/share/fzf/completion.zsh
@@ -287,8 +291,7 @@ EOF
 
 alias neofetch='/usr/bin/neofetch --ascii "$(echo $aperture_logo)"'
 
-term="$(getTerm)"
-case $term in
+case $cur_term in
 
     "konsole") ;;
 
@@ -310,9 +313,9 @@ esac
 # post init
 updateKittyTabTitle
 if  [ ! $UID = 0 ] &&
-    [ ! $term = "init" ] &&  # WSL
-    [ ! $term = "code" ] &&   # vscode
-    [ ! $term = "nvim" ];
+    [ ! $cur_term = "init" ] &&  # WSL
+    [ ! $cur_term = "code" ] &&   # vscode
+    [ ! $cur_term = "nvim" ];
 then
     eval neofetch
 fi

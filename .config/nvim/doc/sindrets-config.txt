@@ -70,8 +70,8 @@ COMMANDS                                        *sindrets-commands*
                 unsaved changes.
 
                                                 *:ReadEx*
-:[line]ReadEx [command]
-                Insert the output of the Ex command [command] into the current
+:[line]ReadEx {command}
+                Insert the output of the Ex command {command} into the current
                 buffer. This is the equivalent of |:read!| for Ex commands.
                 When [line] is included: insert the output after the specified
                 line.

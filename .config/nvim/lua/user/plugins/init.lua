@@ -329,6 +329,7 @@ return require("packer").startup({
     use_local { "sindrets/dracula-vim", as = "dracula" }
     use { "projekt0n/github-nvim-theme" }
     use { "rebelot/kanagawa.nvim" }
+    use_local { "sindrets/oxocarbon-lua.nvim" }
   end,
 
   config = {

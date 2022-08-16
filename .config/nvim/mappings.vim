@@ -271,6 +271,13 @@ inoremap <M-Return> <Esc>O
 " Search for selected text
 vnoremap * "vy/\V<C-R>=escape(@",'/\')<CR><CR>
 
+" Change the current word (dot-repeatable for all matches of <cword>)
+nnoremap cn *``cgn
+
+" Change the current selection (dot-repeatable for all macthes of the
+" selection)
+vnoremap cn "vy/\V<C-R>=escape(@",'/\')<CR><CR>``cgn
+
 " Start search with very-magic mode
 nnoremap / /\v
 nnoremap ? ?\v
