@@ -43,6 +43,9 @@ require("lspconfig").sumneko_lua.setup(Config.lsp.create_config(
     filetypes = { "lua" },
     settings = {
       Lua = {
+        completion = {
+          callSnippet = "Disable",
+        },
         runtime = {
           version = "LuaJIT",
           path = lua_path,

@@ -569,6 +569,8 @@ function M.apply_tweaks()
       hi({ "FloatBorder", "WinSeparator" }, { fg = bg_normal:clone():highlight(0.3):to_css() })
       hi("Visual", { bg = Color.from_hl("Type", "fg"):blend(bg_normal, 0.8):mod_hue(25):to_css() })
       hi("Search", { bg = hl.get_fg("String"), style = "bold" })
+      hi("Title", { style = "bold" })
+      hi("Error", { fg = hl.get_fg("TSProperty"), explicit = true })
       hi("BufferLineIndicatorSelected", { fg = hl.get_fg("ErrorMsg") })
     end
 

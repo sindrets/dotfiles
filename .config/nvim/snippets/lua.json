@@ -3,6 +3,20 @@
     "prefix": "as",
     "body": "--[[@as ${1:type} ]]"
   },
+  "lazy_require": {
+    "prefix": "lazyrequire",
+    "body": [
+      "---@module \"${2:module_path}\"",
+      "local ${1:module} = lazy.require(\"${2}\")"
+    ]
+  },
+  "lazy_access": {
+    "prefix": "lazyaccess",
+    "body": [
+      "---@type ${1:module}|LazyModule",
+      "local ${1} = lazy.access(\"${2:module_path}\", \"${1}\")"
+    ]
+  },
   "diffview_class": {
     "prefix": "dclass",
     "body": [
