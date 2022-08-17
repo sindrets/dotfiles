@@ -2,12 +2,25 @@
 -- All commands documented in `:h sindrets-commands`.
 --]]
 
+local lazy = require("diffview.lazy")
+
+---@module "diffview.arg_parser"
+local arg_parser = lazy.require("diffview.arg_parser")
+
 local utils = Config.common.utils
 local api = vim.api
 local command = api.nvim_create_user_command
 
 local function get_range(e)
   return { e.range, e.line1, e.line2 }
+end
+
+local function expand_shell_arg(arg)
+    local exp = vim.fn.expand(arg) --[[@as string ]]
+
+    if exp ~= "" and exp ~= arg then
+      return utils.str_quote(exp, { only_if_whitespace = true, prefer_single = true })
+    end
 end
 
 command("Messages", function()
@@ -48,11 +61,37 @@ end, { bar = true, bang = true })
 
 command("ReadEx", function(e)
   Config.lib.read_ex(get_range(e), unpack(e.fargs))
-end, { nargs = "*", range = true })
+end, { nargs = "*", range = true, complete = "command" })
 
 command("Rnew", function(e)
   Config.lib.cmd.read_new(unpack(e.fargs))
-end, { nargs = "+", complete = "shellcmd" })
+end, {
+  nargs = "+",
+  complete = function(arg_lead, cmd_line, cur_pos)
+    local args, arg_idx = arg_parser.scan_ex_args(cmd_line, cur_pos)
+
+    if #args > 1 then
+      local prefix = args[2]:sub(1, 1)
+
+      if arg_idx == 2 then
+        arg_lead = args[2]:sub(2)
+      end
+
+      if prefix == ":" then
+        return vim.tbl_map(function(v)
+          return arg_idx == 2 and prefix .. v or v
+        end, vim.fn.getcompletion(arg_lead, "command"))
+      elseif prefix == "!" then
+        return utils.vec_join(
+          expand_shell_arg(arg_lead),
+          vim.tbl_map(function(v)
+            return arg_idx == 2 and prefix .. v or v
+          end, vim.fn.getcompletion(arg_lead, "shellcmd"))
+        )
+      end
+    end
+  end,
+})
 
 command("DiffSaved", Config.lib.diff_saved, { bar = true })
 
