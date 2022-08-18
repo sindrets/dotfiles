@@ -258,8 +258,8 @@ nnoremap <silent> <leader>ld <Cmd>lua vim.diagnostic.open_float({ scope = "line"
 
 " Misc: {{{
 
-xnoremap @ :<C-u>lua require'user.lib'.execute_macro_over_visual_range()<CR>
-inoremap <silent> <Tab> <Cmd>lua require'user.lib'.full_indent()<CR>
+xnoremap @ :<C-u>lua Config.lib.execute_macro_over_visual_range()<CR>
+inoremap <Tab> <Cmd>lua Config.lib.full_indent()<CR>
 inoremap <M-Space> <Esc>
 
 " Change mapping for digraphs

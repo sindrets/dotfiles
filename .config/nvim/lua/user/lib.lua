@@ -315,9 +315,20 @@ function M.split_on_pattern(pattern, range, noformat)
   end
 end
 
-function M.get_indent_level()
+function M.get_indent_size()
   local lnum = api.nvim_win_get_cursor(0)[1]
   if lnum == 0 then return 0 end
+
+  local ok, size
+  local indentexpr = vim.bo.indentexpr
+
+  if indentexpr and indentexpr ~= "" then
+    ok, size = pcall(vim.api.nvim_eval, indentexpr)
+
+    if ok then
+      return size
+    end
+  end
 
   local indent = vim.fn.cindent(lnum)
   return indent
@@ -328,7 +339,7 @@ function M.full_indent()
   local col = pos[2]
   local cline = api.nvim_get_current_line()
   local last_col = #cline
-  local first_nonspace = cline:match("^%s*()%S")
+  local first_nonspace = cline:match("^%s-()%S")
 
   local tab_char = "	"
   if first_nonspace or col < last_col then
@@ -336,15 +347,21 @@ function M.full_indent()
     return
   end
 
-  local indent = M.get_indent_level()
   local et = vim.bo.et
   local sw = vim.bo.sw
   local ts = vim.bo.ts
+
+  if not et and sw ~= ts then
+    vim.opt_local.sw = ts
+  end
+
+  local indent = M.get_indent_size()
 
   if et then
     if indent == 0 then
       indent = sw > 0 and sw or 4
     end
+
     if indent <= col then
       api.nvim_feedkeys(tab_char, "n", false)
       return
@@ -356,10 +373,12 @@ function M.full_indent()
     if indent == 0 then
       indent = ts > 0 and ts or 4
     end
-    if indent <= col then
+
+    if (indent / ts) <= col then
       api.nvim_feedkeys(tab_char, "n", false)
       return
     end
+
     local ntabs = math.floor(indent / ts)
     local nspaces = indent - ntabs * ts
     vim.cmd("normal! d0x")
@@ -739,8 +758,15 @@ function cmd.windows(all)
     utils.vec_push(res, unpack(vim.tbl_map(function(v)
       local bufnr = api.nvim_win_get_buf(v)
       local name = api.nvim_buf_get_name(bufnr)
+      local float = api.nvim_win_get_config(v).relative ~= ""
 
-      return ("  %s %d  % 4d  %s"):format(v == curwin and ">" or " ", v, bufnr, utils.str_quote(name))
+      return ("  %s %d  % 4d  %s%s"):format(
+        v == curwin and ">" or " ",
+        v,
+        bufnr,
+        float and "[float] " or "",
+        utils.str_quote(name)
+      )
     end, wins) --[[@as vector ]]))
   end
 
