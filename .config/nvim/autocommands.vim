@@ -69,4 +69,7 @@ augroup NvimConfig
                 \ |         setl nodiff nocursorbind noscrollbind
                 \ |     endif
                 \ | endif
+
+    " Execute command from cmdline window while keeping it open.
+    au CmdwinEnter * nnoremap <buffer> <C-x> <CR>q:
 augroup END

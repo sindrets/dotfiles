@@ -565,6 +565,8 @@ function M.apply_tweaks()
 
   elseif colors_name == "oxocarbon-lua" then
     if bg == "dark" then
+      hi("Primary", { fg = hl.get_fg("Boolean") })
+      hi("Accent", { fg = hl.get_fg("TSProperty") })
       hi("StatusLine", { bg = bg_normal:clone():highlight(0.05):to_css(), fg = fg_normal:clone():mod_value(-0.2):to_css() })
       hi({ "FloatBorder", "WinSeparator" }, { fg = bg_normal:clone():highlight(0.3):to_css() })
       hi("Visual", { bg = Color.from_hl("Type", "fg"):blend(bg_normal, 0.8):mod_hue(25):to_css() })

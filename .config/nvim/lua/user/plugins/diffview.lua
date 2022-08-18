@@ -1,9 +1,5 @@
 return function ()
   local actions = require("diffview.actions")
-  local lazy = require("user.lazy")
-
-  ---@module "diffview.lib"
-  local lib = lazy.require("diffview.lib")
 
   local utils = Config.common.utils
 
@@ -55,40 +51,35 @@ return function ()
       DiffviewFileHistory = {},
     },
     hooks = {
+      ---@param view StandardView
+      view_opened = function(view)
+        -- Highlight 'DiffChange' as 'DiffDelete' on the left, and 'DiffAdd' on
+        -- the right.
+        local function post_layout()
+          utils.tbl_ensure(view, "winopts.diff2.a")
+          utils.tbl_ensure(view, "winopts.diff2.b")
+          view.winopts.diff2.a = utils.tbl_union_extend(view.winopts.diff2.a, {
+            winhl = {
+              "DiffChange:DiffAddAsDelete",
+              "DiffText:DiffDeleteText",
+            },
+          })
+          view.winopts.diff2.b = utils.tbl_union_extend(view.winopts.diff2.b, {
+            winhl = {
+              "DiffChange:DiffAdd",
+              "DiffText:DiffAddText",
+            },
+          })
+        end
+
+        view.emitter:on("post_layout", post_layout)
+        post_layout()
+      end,
       diff_buf_read = function(bufnr)
-        -- vim.fn.cursor(1, 1)
+        utils.set_cursor(0, 1)
         -- Disable some performance heavy stuff in long files.
         if vim.api.nvim_buf_line_count(bufnr) >= 2500 then
           vim.cmd("IndentBlanklineDisable")
-        end
-      end,
-      diff_buf_win_enter = function(_)
-        local view = lib.get_current_view()
-        ---@cast view StandardView
-
-        -- Highlight 'DiffChange' as 'DiffDelete' on the left, and 'DiffAdd' on
-        -- the right.
-        if view then
-          local curwin = vim.api.nvim_get_current_win()
-          vim.schedule(function()
-            if curwin == view.left_winid then
-                utils.set_local(curwin, {
-                  winhl = {
-                    "DiffChange:DiffAddAsDelete",
-                    "DiffText:DiffDeleteText",
-                    opt = { method = "append" },
-                  }
-                })
-            elseif curwin == view.right_winid then
-              utils.set_local(curwin, {
-                winhl = {
-                  "DiffChange:DiffAdd",
-                  "DiffText:DiffAddText",
-                  opt = { method = "append" },
-                }
-              })
-            end
-          end)
         end
       end,
     },

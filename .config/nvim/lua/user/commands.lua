@@ -29,11 +29,11 @@ end, { bar = true })
 
 command("Grep", function(e)
   Config.lib.comfy_grep(false, unpack(e.fargs))
-end, { nargs = "+" })
+end, { nargs = "+", complete = "file" })
 
 command("Lgrep", function(e)
   Config.lib.comfy_grep(true, unpack(e.fargs))
-end, { nargs = "+" })
+end, { nargs = "+", complete = "file" })
 
 command("Terminal", "exe '<mods>' sp | exe 'term <args>'", { nargs = "*" })
 

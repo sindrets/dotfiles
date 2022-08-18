@@ -211,7 +211,7 @@ function M.pick(index, ...)
   local args = { ... }
 
   if index < 0 then
-    index = #args - index + 1
+    index = #args + index + 1
   end
 
   return args[index]
@@ -437,6 +437,44 @@ function M.tbl_access(t, table_path)
   return cur
 end
 
+---Set a value in a table, creating all missing intermediate tables in the
+---table path.
+---@param t table
+---@param table_path string|string[] Either a `.` separated string of table keys, or a list.
+---@param value any
+function M.tbl_set(t, table_path, value)
+  local keys = type(table_path) == "table"
+      and table_path
+      or vim.split(table_path, ".", { plain = true })
+
+  local cur = t
+
+  for i = 1, #keys - 1 do
+    local k = keys[i]
+
+    if not cur[k] then
+      cur[k] = {}
+    end
+
+    cur = cur[k]
+  end
+
+  cur[keys[#keys]] = value
+end
+
+---Ensure that the table path is a table in `t`.
+---@param t table
+---@param table_path string|string[] Either a `.` separated string of table keys, or a list.
+function M.tbl_ensure(t, table_path)
+  local keys = type(table_path) == "table"
+      and table_path
+      or vim.split(table_path, ".", { plain = true })
+
+  if not M.tbl_access(t, keys) then
+    M.tbl_set(t, keys, {})
+  end
+end
+
 ---Create a shallow copy of a portion of a vector. Negative numbers indexes
 ---from the end.
 ---@param t vector
@@ -447,11 +485,11 @@ function M.vec_slice(t, first, last)
   local slice = {}
 
   if first and first < 0 then
-    first = #t - first + 1
+    first = #t + first + 1
   end
 
   if last and last < 0 then
-    last = #t - last + 1
+    last = #t + last + 1
   end
 
   for i = first or 1, last or #t do
