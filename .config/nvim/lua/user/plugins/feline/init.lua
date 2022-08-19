@@ -331,13 +331,19 @@ M.components = {
 
         local ok, count = pcall(vim.fn.searchcount, { maxcount = -1 })
 
-        if not ok then
+        if not ok or vim.tbl_isempty(count) then
           return ""
         end
 
-        local total = count.incomplete == 2 and (">" .. count.maxcount) or count.total
+        local total = count.total
+        local current = count.current
 
-        return ("[%s/%s]"):format(count.current, total)
+        if count.incomplete == 2 then
+          total = ">" .. count.maxcount
+          if current > count.maxcount then current = total end
+        end
+
+        return ("[%s/%s]"):format(current, total)
       end,
     },
     indent_info = {
