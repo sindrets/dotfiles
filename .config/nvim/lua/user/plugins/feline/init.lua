@@ -329,7 +329,7 @@ M.components = {
       provider = function()
         if vim.v.hlsearch ~= 1 then return "" end
 
-        local ok, count = pcall(vim.fn.searchcount, { maxcount = -1 })
+        local ok, count = pcall(vim.fn.searchcount, { maxcount = 10000 })
 
         if not ok or vim.tbl_isempty(count) then
           return ""

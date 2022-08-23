@@ -207,28 +207,7 @@ return require("packer").startup({
     use { "godlygeek/tabular" }
     use { "tpope/vim-surround" }
     use { "tweekmonster/startuptime.vim", cmd = { "StartupTime" } }
-    use {
-      "RRethy/vim-illuminate",
-      setup = function()
-        vim.g.Illuminate_delay = 250
-        vim.g.Illuminate_highlightUnderCursor = 1
-        vim.g.Illuminate_ftblacklist = {
-          "qf",
-          "dashboard",
-          "alpha",
-          "packer",
-          "NeogitStatus",
-          "TelescopePrompt",
-          "NvimTree",
-          "Trouble",
-          "DiffviewFiles",
-          "DiffviewFileHistory",
-          "Outline",
-          "lir",
-          "fugitive",
-        }
-      end
-    }
+    use { "RRethy/vim-illuminate", config = conf("vim-illuminate") }
     use { "troydm/zoomwintab.vim" }
     use {
       "rcarriga/nvim-notify",
@@ -272,14 +251,17 @@ return require("packer").startup({
     use {
       "akinsho/git-conflict.nvim",
       config = function()
-        require("git-conflict").setup({
-          default_mappings = true, -- disable buffer local mapping created by this plugin
-          disable_diagnostics = true, -- This will disable the diagnostics in a buffer whilst it is conflicted
-          highlights = { -- They must have background color, otherwise the default color will be used
+        local ok, git_conflict = pcall(require, "git-conflict")
+        if ok then
+          git_conflict.setup({
+            default_mappings = true, -- disable buffer local mapping created by this plugin
+            disable_diagnostics = true, -- This will disable the diagnostics in a buffer whilst it is conflicted
+            highlights = { -- They must have background color, otherwise the default color will be used
             incoming = "DiffChange",
             current = "DiffAdd",
           },
         })
+        end
       end
     }
     use { "goolord/alpha-nvim", config = conf("alpha") }

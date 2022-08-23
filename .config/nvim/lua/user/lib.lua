@@ -597,8 +597,8 @@ function expr.next_reference(reverse)
   end
   if #vim.lsp.buf_get_clients(0) > 0 then
     return utils.t(string.format(
-      '<Cmd>lua require("illuminate").next_reference({ reverse = %s, wrap = true })<CR>',
-      tostring(reverse)
+      '<Cmd>lua require("illuminate").goto_%s_reference()<CR>',
+      reverse and "prev" or "next"
     ))
   else
     return expr.comfy_star(reverse, 1)

@@ -5,7 +5,8 @@ set -e
 
 # Switch between git worktrees with speed.
 
-args=("$@")
+eval_mode=0
+
 VERSION="0.1.0"
 TMP_PATH=$(mktemp)
 BINARY_PATH=$(which wt)
@@ -13,9 +14,18 @@ JQ_URL="https://stedolan.github.io/jq/download"
 RELEASE_URL="https://github.com/yankeexe/git-worktree-switcher/releases/latest"
 RELEASE_API_URL="https://api.github.com/repos/yankeexe/git-worktree-switcher/releases/latest"
 
+out() { printf "$1 $2\n" "${@:3}"; }
+error() { out "==> ERROR:" "$@"; } >&2
+die() { error "$@"; exit 1; }
 
-# Escape forward slash
-arg=$(echo "${args[0]}" | sed 's/\//\\\//g')
+resolve() {
+	if [ $eval_mode -eq 1 ]; then
+		echo "$@"
+	else
+		eval "${@}"
+		exec $SHELL
+	fi
+}
 
 # show worktree list
 worktree_list() {
@@ -38,9 +48,9 @@ goto_main_worktree() {
 	if [ -z "$main_worktree" ]; then
 		:
 	else
-		echo Changing to main worktree at: "$main_worktree"
-		cd "$main_worktree"
-		exec $SHELL
+		local ret="$(printf "echo %q && " "Changing to worktree at: $main_worktree")"
+		ret="${ret} $(printf "cd %q" "$main_worktree")"
+		resolve "${ret}"
 	fi
 }
 
@@ -79,10 +89,26 @@ update() {
 	fi
 }
 
-if [ -z "${args[0]}" ]; then
+if [ -z "${1}" ]; then
 	help_message
 	exit 0
 fi
+
+while getopts 'e' flag; do
+	case $flag in
+		e)
+			eval_mode=1
+			;;
+		?)
+			die '%s: invalid option -- '\''%s'\' "${0##*/}" "$OPTARG"
+			;;
+	esac
+done
+shift $(( OPTIND - 1 ))
+
+args=("$@")
+# Escape forward slash
+arg=$(echo "${args[0]}" | sed 's/\//\\\//g')
 
 case "${args[0]}" in
 list)
@@ -107,8 +133,10 @@ esac
 
 # Change worktree based on user argument.
 change_worktree() {
-	printf "echo %q && " "Changing to worktree at: $directory"
-	printf "cd %q\n" "$directory"
+	local ret="$(printf "echo %q && " "Changing to worktree at: $directory")"
+	ret="${ret} $(printf "cd %q\n" "$directory")"
+
+	resolve "${ret}"
 }
 
 # If directory variable is not empty then change worktree

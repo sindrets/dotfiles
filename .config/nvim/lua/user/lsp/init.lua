@@ -9,8 +9,9 @@ local config_store = {}
 local M = {}
 _G.Config.lsp = M
 
+---@diagnostic disable-next-line: unused-local
 function M.common_on_attach(client, bufnr)
-  require("illuminate").on_attach(client)
+  -- require("illuminate").on_attach(client)
   require("lsp_signature").on_attach({
     bind = true, -- This is mandatory, otherwise border config won't get registered.
     handler_opts = {
@@ -222,12 +223,6 @@ M.define_diagnostic_signs({
 -- LSP auto commands
 Config.common.au.declare_group("lsp_init", {}, {
   { "CursorHold", callback = M.show_position_diagnostics, },
-
-  -- { "ModeChanged", pattern = "*:[vVsSi]*", command = "IlluminationDisable!" },
-  -- { "ModeChanged", pattern = "*:[n]*", command = "IlluminationEnable!" },
-
-  -- { "CursorHold",  callback = M.highlight_cursor_symbol() },
-  -- { "CursorMoved", callback = M.highlight_cursor_clear(), },
 })
 
 return M

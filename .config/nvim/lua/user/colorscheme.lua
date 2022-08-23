@@ -567,13 +567,19 @@ function M.apply_tweaks()
     if bg == "dark" then
       hi("Primary", { fg = hl.get_fg("Boolean") })
       hi("Accent", { fg = hl.get_fg("TSProperty") })
-      hi("StatusLine", { bg = bg_normal:clone():highlight(0.05):to_css(), fg = fg_normal:clone():mod_value(-0.2):to_css() })
+      hi("StatusLine", {
+        bg = bg_normal:clone():highlight(0.05):to_css(),
+        fg = fg_normal:clone():mod_value(-0.2):to_css()
+      })
       hi({ "FloatBorder", "WinSeparator" }, { fg = bg_normal:clone():highlight(0.3):to_css() })
       hi("Visual", { bg = Color.from_hl("Type", "fg"):blend(bg_normal, 0.8):mod_hue(25):to_css() })
       hi("Search", { bg = hl.get_fg("String"), style = "bold" })
       hi("Title", { style = "bold" })
       hi("Error", { fg = hl.get_fg("TSProperty"), explicit = true })
+      hi("DiagnosticInfo", { fg = hl.get_fg("Boolean") })
+      hi("DiagnosticHint", { fg = hl.get_fg("String") })
       hi("BufferLineIndicatorSelected", { fg = hl.get_fg("ErrorMsg") })
+      hi("markdown_inlineTSLiteral", { fg = hl.get_fg("WinSeparator") })
     end
 
     feline_theme = "basic"
@@ -685,7 +691,7 @@ end
 hi_link("LspReferenceText", "Visual", { default = true })
 hi_link({ "LspReferenceRead", "LspReferenceWrite" }, "LspReferenceText", { default = true })
 hi_link(
-  { "illuminateWord", "illuminatedWord", "illuminateCurWord" },
+  { "IlluminatedWordText", "IlluminatedWordRead", "IlluminatedWordWrite" },
   "LspReferenceText",
   { default = true }
 )

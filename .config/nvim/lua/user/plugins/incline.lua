@@ -109,7 +109,7 @@ return function()
           Search = "None",
         }
       },
-      zindex = 50,
+      zindex = 10,
     },
   }
 end

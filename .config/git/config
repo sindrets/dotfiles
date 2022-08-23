@@ -12,7 +12,7 @@
 	recurse = false
 
 [pull]
-	rebase = false
+	rebase = true
 
 [branch]
 	sort = authordate
@@ -28,7 +28,7 @@
 
 [merge]
 	tool = nvimmerge
-	conflictstyle = diff3
+	conflictstyle = zdiff3
 
 [mergetool]
 	hideResolved = true

@@ -78,7 +78,7 @@ function wt () {
     if [[ "$1" =~ ^(list|version|update|help)$ ]]; then
         eval "$(whence -p wt)" $@
     else
-        local s="$("$(whence -p wt)" $@)"
+        local s="$("$(whence -p wt)" -e $@)"
         local code=$?
 
         if [ $code -eq 0 ]; then
