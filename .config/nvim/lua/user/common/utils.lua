@@ -26,17 +26,7 @@ local path_sep = package.config:sub(1, 1)
 ---Path lib
 ---@type PathLib
 M.pl = lazy.require("diffview.path", function(m)
-  local pl = m.PathLib({ separator = "/" })
-
-  -- TODO: remove when pushed to upstream diffview.nvim
-  if not pl.is_dir then
-    ---@class PathLib
-    ---@field is_dir fun(self: PathLib, path: string): boolean
-
-    pl.is_dir = pl.is_directory
-  end
-
-  return pl
+  return m.PathLib({ separator = "/" })
 end)
 
 -- Set up completion wrapper used by `vim.ui.input()`
@@ -60,14 +50,17 @@ function M.echo_multiln(msg, hl, schedule)
   end
 
   vim.cmd("echohl " .. (hl or "None"))
+
   if type(msg) ~= "table" then
     msg = vim.split(msg, "\n")
   end
+
   for _, line in ipairs(msg) do
     line = line:gsub('"', [[\"]])
     line = line:gsub('\t', "    ")
     vim.cmd(string.format('echom "%s"', line))
   end
+
   vim.cmd("echohl None")
 end
 
@@ -77,10 +70,12 @@ function M.info(msg, schedule)
   if type(msg) ~= "table" then
     msg = vim.split(msg, "\n")
   end
+
   if not msg[1] or msg[1] == "" then
     return
   end
-  M.echo_multiln(msg, "Directory", schedule)
+
+  M.echo_multiln(msg, "DiagnosticSignInfo", schedule)
 end
 
 ---@param msg string|string[]
@@ -89,10 +84,12 @@ function M.warn(msg, schedule)
   if type(msg) ~= "table" then
     msg = vim.split(msg, "\n")
   end
+
   if not msg[1] or msg[1] == "" then
     return
   end
-  M.echo_multiln(msg, "WarningMsg", schedule)
+
+  M.echo_multiln(msg, "DiagnosticSignWarn", schedule)
 end
 
 ---@param msg string|string[]
@@ -101,10 +98,12 @@ function M.err(msg, schedule)
   if type(msg) ~= "table" then
     msg = vim.split(msg, "\n")
   end
+
   if not msg[1] or msg[1] == "" then
     return
   end
-  M.echo_multiln(msg, "ErrorMsg", schedule)
+
+  M.echo_multiln(msg, "DiagnosticSignError", schedule)
 end
 
 ---Replace termcodes.
