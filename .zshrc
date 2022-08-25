@@ -227,6 +227,7 @@ alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/
     | fzf --height 10` && [ ! -z "$code_dir" ] && code --folder-uri $code_dir'
 alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compiling for {}...\" \
     && tsc -p {}' \\;"
+alias cal="/usr/bin/cal -mw"
 
 # init fzf
 source /usr/share/fzf/key-bindings.zsh
