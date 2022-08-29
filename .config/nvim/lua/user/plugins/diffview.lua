@@ -18,6 +18,12 @@ return function ()
       fold_closed = "",
       fold_open = "",
     },
+    view = {
+      merge_tool = {
+        layout = "diff_3_mixed",
+        disable_diagnostics = true,
+      },
+    },
     file_panel = {
       listing_style = "tree",
       tree_options = {

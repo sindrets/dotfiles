@@ -758,13 +758,15 @@ function cmd.windows(all)
     utils.vec_push(res, unpack(vim.tbl_map(function(v)
       local bufnr = api.nvim_win_get_buf(v)
       local name = api.nvim_buf_get_name(bufnr)
-      local float = api.nvim_win_get_config(v).relative ~= ""
 
       return ("  %s %d  % 4d  %s%s"):format(
         v == curwin and ">" or " ",
         v,
         bufnr,
-        float and "[float] " or "",
+        ("%s%s"):format(
+          (api.nvim_win_get_config(v).relative ~= "") and "[float] " or "",
+          (vim.bo[bufnr].buftype == "quickfix") and "[quickfix] " or ""
+        ),
         utils.str_quote(name)
       )
     end, wins) --[[@as vector ]]))
