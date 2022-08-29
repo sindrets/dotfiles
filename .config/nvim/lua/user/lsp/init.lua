@@ -117,6 +117,9 @@ lspconfig.vimls.setup(M.create_config())
 -- Go
 lspconfig.gopls.setup(M.create_config())
 
+-- Scheme, Racket
+lspconfig.racket_langserver.setup(M.create_config())
+
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
     virtual_text = false,

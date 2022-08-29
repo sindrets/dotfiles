@@ -535,17 +535,24 @@ function M.apply_tweaks()
       hi("CursorLine", { bg = bg_normal:clone():highlight(0.05):to_css() })
       hi("ColorColumn", { bg = bg_normal:clone():highlight(0.1):to_css() })
       hi("Comment", { fg = bg_normal:clone():highlight(0.4):to_css() })
-      hi("Visual", { bg = Color.from_hl("Statement", "fg"):blend(bg_normal, 0.9):mod_hue(25):to_css() })
+      hi("Visual", {
+        bg = Color.from_hl("Statement", "fg"):blend(bg_normal, 0.9):mod_hue(25):to_css(),
+      })
       hi("StatusLine", { fg = hl.get_fg("String") })
       hi_link("NormalFloat", "Normal")
     end
+
     feline_theme = "basic"
+    M.apply_terminal_defaults()
 
   elseif colors_name:match("^github_") then
     hi_link("NonText", "Whitespace")
     hi_link({ "FoldColumn", "markdownCode", "markdownCodeBlock" }, "String")
     hi("Substitute", { fg = "#dddddd" })
-    hi("StatusLine", { bg = bg_normal:clone():highlight(0.12):to_css(), fg = hl.get_fg("String") })
+    hi("StatusLine", {
+      bg = bg_normal:clone():highlight(0.12):to_css(),
+      fg = hl.get_fg("String"),
+    })
     hi("NeogitDiffContextHighlight", { bg = bg_normal:clone():highlight(0.075):to_css() })
     hi_link("DashboardHeader", "Identifier")
     hi_link("DashboardCenter", "Keyword")
