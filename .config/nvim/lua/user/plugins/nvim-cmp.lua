@@ -80,6 +80,7 @@ return function()
       { name = "nvim_lua" },
       { name = "nvim_lsp" },
       { name = "vsnip" },
+      { name = "neorg" },
       { name = "git" },
       { name = "spell" },
       { name = "path" },

@@ -53,6 +53,8 @@ alias("QA", "qa")
 alias("we", "w | e")
 alias("ws", "w | so %")
 alias("ftd", "filetype detect")
+alias("N", "Neorg")
+alias("nim", "Neorg inject-metadata")
 
 -- FUNCTIONS
 
