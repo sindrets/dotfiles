@@ -1,9 +1,17 @@
 return function()
   require("neorg").setup({
     load = {
-      ["core.defaults"] = {},
+      ["core.defaults"] = {
+        config = {
+          disable = {
+            "core.norg.esupports.indent",
+          },
+        },
+      },
+      ["core.norg.qol.toc"] = {},
       ['core.integrations.telescope'] = {},
       ['core.norg.concealer'] = {},
+      ["core.export"] = {},
       ["core.norg.dirman"] = {
         config = {
           workspaces = {
@@ -16,10 +24,10 @@ return function()
           engine = "nvim-cmp",
         },
       },
-    },
-    ['core.gtd.base'] = {
-      config = {
-        workspace = 'uni',
+      ['core.gtd.base'] = {
+        config = {
+          workspace = 'uni',
+        },
       },
     },
   })

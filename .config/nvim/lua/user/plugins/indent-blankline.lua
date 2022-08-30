@@ -34,6 +34,7 @@ return function ()
     "Outline",
     "lspinfo",
     "fugitive",
+    "norg",
   }
   vim.g.indent_blankline_context_patterns = {
     "class", "return", "function", "method", "^if", "^while", "jsx_element",
