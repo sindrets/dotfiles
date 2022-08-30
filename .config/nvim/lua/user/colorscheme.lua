@@ -540,10 +540,26 @@ function M.apply_tweaks()
       })
       hi("StatusLine", { fg = hl.get_fg("String") })
       hi_link("NormalFloat", "Normal")
+
+      vim.g.terminal_color_0 = "#E2E2E2"
+      vim.g.terminal_color_8 = "#BFBABB"
+      vim.g.terminal_color_1 = "#DC5284"
+      vim.g.terminal_color_9 = "#BE3C6D"
+      vim.g.terminal_color_2  = "#628562"
+      vim.g.terminal_color1_0 = "#487249"
+      vim.g.terminal_color_3  = "#C48562"
+      vim.g.terminal_color1_1 = "#A76B48"
+      vim.g.terminal_color_4  = "#0084A3"
+      vim.g.terminal_color1_2 = "#006F89"
+      vim.g.terminal_color_5  = "#896788"
+      vim.g.terminal_color1_3 = "#7F4C7E"
+      vim.g.terminal_color_6  = "#008586"
+      vim.g.terminal_color1_4 = "#006F70"
+      vim.g.terminal_color_7  = "#555555"
+      vim.g.terminal_color1_5 = "#777777"
     end
 
     feline_theme = "basic"
-    M.apply_terminal_defaults()
 
   elseif colors_name:match("^github_") then
     hi_link("NonText", "Whitespace")
