@@ -100,7 +100,10 @@ opt.writebackup = true
 opt.undofile = true
 opt.isfname:append(":")
 opt.laststatus = 3
-opt.lazyredraw = true
+-- TODO: Lazyredraw is causing cursor flickering at the moment. Hopefully
+-- re-enable soon when this is fixed.
+-- @see [Neovim issue](https://github.com/neovim/neovim/issues/17765)
+opt.lazyredraw = false
 
 local data_backup = vim.fn.stdpath("data") .. "/backup"
 local data_undo = vim.fn.stdpath("data") .. "/undo"

@@ -32,9 +32,10 @@ augroup NvimConfig
     " Automatically close interactive term buffers if exit status is 0. Don't
     " close the terminal if its lifetime was less than 2 seconds. Define
     " `b:term_keep` to keep the term regardless.
-    au TermClose * if v:event.status == 0 && exists("b:term_start") && !get(b:, "term_keep")
+    au TermClose * ++nested
+                \ if v:event.status == 0 && exists("b:term_start") && !get(b:, "term_keep")
                 \ && (v:lua.vim.loop.hrtime() - b:term_start) / 1000000 > 2000
-                \   | bd | endif
+                \ | bd | endif
 
     au TermOpen,BufEnter * lua
                 \ if vim.bo[Config.state.term.actual_curbuf or 0].buftype == "terminal" then

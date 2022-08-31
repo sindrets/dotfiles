@@ -16,11 +16,11 @@ local function get_range(e)
 end
 
 local function expand_shell_arg(arg)
-    local exp = vim.fn.expand(arg) --[[@as string ]]
+  local exp = vim.fn.expand(arg) --[[@as string ]]
 
-    if exp ~= "" and exp ~= arg then
-      return utils.str_quote(exp, { only_if_whitespace = true, prefer_single = true })
-    end
+  if exp ~= "" and exp ~= arg then
+    return utils.str_quote(exp, { only_if_whitespace = true, prefer_single = true })
+  end
 end
 
 command("Messages", function()
@@ -35,7 +35,7 @@ command("Lgrep", function(e)
   Config.lib.comfy_grep(true, unpack(e.fargs))
 end, { nargs = "+", complete = "file" })
 
-command("Terminal", "exe '<mods>' sp | exe 'term <args>'", { nargs = "*" })
+command("Terminal", "exe '<mods> sp' | exe 'term <args>'", { nargs = "*" })
 
 command("TermTab", "tab sp | exe 'term' | startinsert", { bar = true })
 

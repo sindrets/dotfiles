@@ -603,6 +603,7 @@ function M.apply_tweaks()
       hi("DiagnosticHint", { fg = hl.get_fg("String") })
       hi("BufferLineIndicatorSelected", { fg = hl.get_fg("ErrorMsg") })
       hi("markdown_inlineTSLiteral", { fg = hl.get_fg("WinSeparator") })
+      hi_link("DiffviewFilePanelConflicts", "String")
     end
 
     feline_theme = "basic"
@@ -619,7 +620,9 @@ function M.apply_tweaks()
   end
 
   -- Update feline theme
-  Config.plugin.feline.current_theme = feline_theme
+  if Config.plugin.feline then
+    Config.plugin.feline.current_theme = feline_theme
+  end
 
   -- FloatBorder
   hi("FloatBorder", {

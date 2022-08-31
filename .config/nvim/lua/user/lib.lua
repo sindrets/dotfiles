@@ -315,7 +315,17 @@ function M.split_on_pattern(pattern, range, noformat)
   end
 end
 
-function M.get_indent_size()
+function M.indent_size()
+  if vim.o.expandtab then
+    return vim.o.spaces
+  else
+    return vim.o.tabstop
+  end
+end
+
+---Get the expected indent size of the current line.
+---@return integer
+function M.get_cline_indent_size()
   local lnum = api.nvim_win_get_cursor(0)[1]
   if lnum == 0 then return 0 end
 
@@ -355,7 +365,7 @@ function M.full_indent()
     vim.opt_local.sw = ts
   end
 
-  local indent = M.get_indent_size()
+  local indent = M.get_cline_indent_size()
 
   if et then
     if indent == 0 then

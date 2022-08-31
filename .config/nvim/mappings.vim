@@ -121,8 +121,8 @@ nnoremap <A-K> <Cmd>m-2<CR>==
 nnoremap <A-J> <Cmd>m+<CR>==
 nnoremap <A-H> <<
 nnoremap <A-L> >>
-inoremap <A-K> <Cmd>m-2 \| normal! ==<CR>
-inoremap <A-J> <Cmd>m+ \| normal! ==<CR>
+inoremap <A-K> <Cmd>m-2 <bar> normal! ==<CR>
+inoremap <A-J> <Cmd>m+ <bar> normal! ==<CR>
 inoremap <A-H> <Cmd>norm! <<<CR>
 inoremap <A-L> <CMD>norm! >><CR>
 vnoremap <A-K> :m '<-2<CR>gv=gv
@@ -188,7 +188,7 @@ nnoremap ;; <Cmd>Telescope resume<CR>
 nnoremap <leader>gg <Cmd>Neogit<CR>
 nnoremap <leader>G <Cmd>Neogit<CR>
 nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
-nnoremap <leader>gl <Cmd>Git log -n256 --shortstat<CR>
+nnoremap <leader>gl <Cmd>Terminal git log -n256 --shortstat<CR>
 nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua Config.common.notify.git("Staged "
             \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")))<CR>
 nnoremap <leader>gA <Cmd>silent exe '!git add .' <bar>lua Config.common.notify.git("Staged "

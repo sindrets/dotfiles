@@ -248,22 +248,22 @@ return require("packer").startup({
       "tpope/vim-fugitive",
       requires = { "tpope/vim-rhubarb", },
     }
-    use {
-      "akinsho/git-conflict.nvim",
-      config = function()
-        local ok, git_conflict = pcall(require, "git-conflict")
-        if ok then
-          git_conflict.setup({
-            default_mappings = true, -- disable buffer local mapping created by this plugin
-            disable_diagnostics = true, -- This will disable the diagnostics in a buffer whilst it is conflicted
-            highlights = { -- They must have background color, otherwise the default color will be used
-            incoming = "DiffChange",
-            current = "DiffAdd",
-          },
-        })
-        end
-      end
-    }
+    -- use {
+    --   "akinsho/git-conflict.nvim",
+    --   config = function()
+    --     local ok, git_conflict = pcall(require, "git-conflict")
+    --     if ok then
+    --       git_conflict.setup({
+    --         default_mappings = true, -- disable buffer local mapping created by this plugin
+    --         disable_diagnostics = true, -- This will disable the diagnostics in a buffer whilst it is conflicted
+    --         highlights = { -- They must have background color, otherwise the default color will be used
+    --         incoming = "DiffChange",
+    --         current = "DiffAdd",
+    --       },
+    --     })
+    --     end
+    --   end
+    -- }
     use { "goolord/alpha-nvim", config = conf("alpha") }
     use { "ryanoasis/vim-devicons" }
     use {
