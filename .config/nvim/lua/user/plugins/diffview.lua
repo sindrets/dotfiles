@@ -20,7 +20,7 @@ return function ()
     },
     view = {
       merge_tool = {
-        layout = "diff_3_mixed",
+        layout = "diff3_mixed",
         disable_diagnostics = true,
       },
     },

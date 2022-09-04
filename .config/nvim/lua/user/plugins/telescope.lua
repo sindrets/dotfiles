@@ -55,6 +55,7 @@ return function ()
           ["<c-q>"] = actions.send_to_qflist + actions.open_qflist,
           ["<c-b>"] = actions.preview_scrolling_up,
           ["<c-f>"] = actions.preview_scrolling_down,
+          ["<c-j>"] = false,
         },
         n = {
           ["<c-b>"] = actions.preview_scrolling_up,

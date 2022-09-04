@@ -645,9 +645,10 @@ function M.apply_tweaks()
   })
   hi_link("DiffDelete", "Comment")
 
-  hi_link("GitSignsAddLn", "DiffInlineAdd")
-  hi_link("GitSignsDeleteLn", "DiffInlineDelete")
+  hi_link({ "GitSignsAddLn", "GitSignsAddPreview" }, "DiffInlineAdd")
+  hi_link({ "GitSignsDeleteLn", "GitSignsDeletePreview" }, "DiffInlineDelete")
   hi_link("GitSignsChangeLn", "DiffInlineChange")
+  hi_link("GitSignsDeleteVirtLn", "DiffInlineDelete")
   hi_link("GitSignsAdd", "diffAdded")
   hi_link("GitSignsDelete", "diffRemoved")
   hi_link("GitSignsChange", "diffChanged")
@@ -703,6 +704,7 @@ function M.apply_tweaks()
     fg = hl.get_fg({ "Accent", "Title", "Normal" }),
     style = "bold",
   })
+  hi_link("BufferLineTabSeparatorSelected", "BufferLineTabSelected")
 
   hi({ "InclineNormal", "InclineNormalNC" }, {
     bg = bg_normal:clone():mod_value(-0.05):to_css(),

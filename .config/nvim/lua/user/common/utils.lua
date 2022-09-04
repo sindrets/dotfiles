@@ -818,7 +818,7 @@ function M.get_unique_file_bufname(filename)
 
   local collisions = vim.tbl_map(function(bufnr)
     return api.nvim_buf_get_name(bufnr)
-  end, M.list_bufs({ listed = true }))
+  end, M.vec_union(M.list_bufs({ listed = true }), M.list_bufs({ no_hidden = true })))
 
   collisions = vim.tbl_filter(function(name)
     return name ~= filename and vim.fn.fnamemodify(name, ":t") == basename
