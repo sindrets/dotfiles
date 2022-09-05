@@ -138,3 +138,31 @@ end, { bar = true })
 command("Windows", function(e)
   Config.lib.cmd.windows(e.bang)
 end, { bar = true, bang = true })
+
+command("NeorgExport", function(e)
+  if vim.fn.executable("neorg-pandoc-linux86") ~= 1 then
+    utils.err("neorg-pandoc-linux86 is not installed!")
+    return
+  elseif vim.fn.executable("pandoc") ~= 1 then
+    utils.err("pandoc is not installed!")
+    return
+  end
+
+  local in_name, out_name
+
+  if #e.fargs > 1 then
+    in_name = vim.fn.expand(e.fargs[1])
+    out_name = vim.fn.expand(e.fargs[2])
+  elseif #e.fargs == 1 then
+    in_name = vim.fn.expand("%:p")
+    out_name = vim.fn.expand(e.fargs[1])
+  else
+    in_name = vim.fn.expand("%:p")
+    out_name = in_name:sub(1, -#pl:extension(in_name) - 2) .. ".pdf"
+  end
+
+  vim.fn.system(([[neorg-pandoc-linux86 %s | pandoc -f json -o %s]]):format(
+    vim.fn.shellescape(in_name),
+    vim.fn.shellescape(out_name)
+  ))
+end, { nargs = "*", complete = "file" })

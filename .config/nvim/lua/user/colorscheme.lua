@@ -593,6 +593,7 @@ function M.apply_tweaks()
     if bg == "dark" then
       hi("Primary", { fg = hl.get_fg("Boolean") })
       hi("Accent", { fg = hl.get_fg("TSProperty") })
+      hi_link("NormalNC", "Normal")
       hi("StatusLine", {
         bg = bg_normal:clone():highlight(0.05):to_css(),
         fg = fg_normal:clone():mod_value(-0.2):to_css()
@@ -605,7 +606,7 @@ function M.apply_tweaks()
       hi("DiagnosticInfo", { fg = hl.get_fg("Boolean") })
       hi("DiagnosticHint", { fg = hl.get_fg("String") })
       hi("BufferLineIndicatorSelected", { fg = hl.get_fg("ErrorMsg") })
-      hi("markdown_inlineTSLiteral", { fg = hl.get_fg("WinSeparator") })
+      hi({ "markdown_inlineTSLiteral", "TSLiteral" }, { fg = hl.get_fg("WinSeparator") })
       hi_link("DiffviewFilePanelConflicts", "String")
     end
 
@@ -616,6 +617,10 @@ function M.apply_tweaks()
   end
 
   M.generate_base_colors()
+
+  -- Treesitter
+  hi("TSEmphasis", { style = "italic" })
+  hi_link("@neorg.markup.verbatim", "@text.literal")
 
   -- Generate diff hl
   if do_diff_gen then
