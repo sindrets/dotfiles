@@ -293,13 +293,13 @@ return require("packer").startup({
       setup = conf("firenvim"),
     }
     use { "honza/vim-snippets" }
-    -- use {
-    --   "nvim-neorg/neorg",
-    --   config = conf("neorg"),
-    --   after = { "nvim-treesitter", "telescope.nvim" },
-    --   requires = { "nvim-lua/plenary.nvim", "nvim-neorg/neorg-telescope" },
-    --   cond = vim.fn.has("nvim-0.8"),
-    -- }
+    use {
+      "nvim-neorg/neorg",
+      config = conf("neorg"),
+      after = { "nvim-treesitter", "telescope.nvim" },
+      requires = { "nvim-lua/plenary.nvim", "nvim-neorg/neorg-telescope" },
+      cond = vim.fn.has("nvim-0.8"),
+    }
 
     -- THEMES
     use { "rktjmp/lush.nvim" }

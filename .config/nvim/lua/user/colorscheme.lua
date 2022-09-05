@@ -540,6 +540,9 @@ function M.apply_tweaks()
       })
       hi("StatusLine", { fg = hl.get_fg("String") })
       hi_link("NormalFloat", "Normal")
+      hi("@neorg.tags.ranged_verbatim.code_block", {
+        bg = bg_normal:clone():highlight(0.05):to_css(),
+      })
 
       vim.g.terminal_color_0 = "#E2E2E2"
       vim.g.terminal_color_8 = "#BFBABB"

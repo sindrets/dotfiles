@@ -645,7 +645,7 @@ function cmd.man_here(a, b)
     vim.bo.buftype = "nofile"
     vim.bo.buflisted = false
     vim.bo.filetype = "man"
-    vim.bo.tagfunc = "man#goto_tag"
+    vim.bo.tagfunc = "v:lua.require'man'.goto_tag"
     mods = "keepjumps keepalt"
   end
 

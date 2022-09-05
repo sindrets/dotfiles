@@ -6,35 +6,45 @@ return function ()
     -- your personnal icons can go here (to override)
     -- DevIcon will be appended to `name`
     override = {
-      ["xml"] = {
+      xml = {
         icon = "",
         color = "#e37933",
         name = "Xml",
       },
-      ["cs"] = {
+      cs = {
         icon = "",
         color = "#0d5786",
         name = "Cs",
       },
-      ["m"] = {
+      m = {
         icon = "",
         color = "#599eff",
-        name = "CModule"
+        name = "CModule",
       },
-      ["tl"] = {
+      tl = {
         icon = "",
         color = "#51a0cf",
         name = "Teal",
       },
-      ["el"] = {
+      el = {
         icon = "ﬦ",
         color = "#5D439C",
-        name = "Elisp"
+        name = "Elisp",
       },
-      ["lisp"] = {
+      lisp = {
         icon = "ﬦ",
         color = "#264B8B",
-        name = "Lisp"
+        name = "Lisp",
+      },
+      scm = {
+        icon = "ﬦ",
+        color = "#264B8B",
+        name = "Scheme",
+      },
+      rkt = {
+        icon = "ﬦ",
+        color = "#264B8B",
+        name = "Racket",
       },
       Makefile = {
         icon = "",
@@ -51,7 +61,7 @@ return function ()
         color = "#7ebae4",
         name = "LirFolderNode",
       },
-      ["patch"] = {
+      patch = {
         icon = "",
         color = "#41535b",
         name = "Patch",

@@ -45,7 +45,7 @@ end, { bar = true, nargs = 1, complete = "help" })
 
 command("ManHere", function(e)
   Config.lib.cmd.man_here(unpack(e.fargs))
-end, { bar = true, nargs = 1, complete = "customlist,man#complete" })
+end, { bar = true, nargs = 1, complete = require("man").man_complete })
 
 command("Scratch", function(e)
   Config.lib.new_scratch_buf(e.fargs[1])
