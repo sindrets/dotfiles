@@ -146,6 +146,12 @@ return require("packer").startup({
       after = "nvim-autopairs",
       config = conf("nvim-cmp"),
     }
+    use {
+      "jose-elias-alvarez/typescript.nvim"
+    }
+    use {
+      "jose-elias-alvarez/null-ls.nvim"
+    }
     use_local {
       "tamago324/lir.nvim",
       requires = { wrap_local("tamago324/lir-git-status.nvim") },
@@ -234,6 +240,7 @@ return require("packer").startup({
       config = conf("neogit"),
       requires = { "nvim-lua/plenary.nvim", "sindrets/diffview.nvim" },
     }
+    use { 'ThePrimeagen/git-worktree.nvim', config = conf("git-worktree"), disable = true }
     use {
       "simrat39/symbols-outline.nvim",
       setup = conf("symbols-outline"),
@@ -326,5 +333,6 @@ return require("packer").startup({
     display = {
       open_cmd = "vnew \\[packer\\] | wincmd L | vert resize 70",
     },
+    max_jobs = 50
   },
 })

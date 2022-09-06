@@ -85,7 +85,16 @@ end
 require("user.lsp.java")
 
 -- Typescript
-lspconfig.tsserver.setup(M.create_config())
+require("typescript").setup({
+    disable_commands = false, -- prevent the plugin from creating Vim commands
+    debug = false, -- enable debug logging for commands
+    server = { -- pass options to lspconfig's setup method
+        on_attach = M.base_config.on_attach,
+    },
+})
+
+-- null-ls
+require("user.lsp.null-ls")
 
 -- Python
 lspconfig.pyright.setup(M.create_config())
@@ -108,6 +117,9 @@ lspconfig.omnisharp.setup(M.create_config({
   -- root_dir = vim.fn.getcwd
 }))
 
+-- ESLint
+require'lspconfig'.eslint.setup(M.create_config())
+
 -- C, C++
 lspconfig.clangd.setup(M.create_config())
 
@@ -119,6 +131,9 @@ lspconfig.gopls.setup(M.create_config())
 
 -- Scheme, Racket
 lspconfig.racket_langserver.setup(M.create_config())
+
+-- PHP
+lspconfig.intelephense.setup(M.create_config())
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
