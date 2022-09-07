@@ -1,19 +1,7 @@
 local lazy = require("user.lazy")
 
----@module "plenary.job"
-local Job = lazy.require("plenary.job", function(m)
-  -- Ensure plenary's `new` method will use the right metatable when this is
-  -- invoked as a method.
-  local new = m.new
-  function m.new(_, ...)
-    return new(m, ...)
-  end
-  return m
-end)
----@module "plenary.async"
-local async = lazy.require("plenary.async")
----@module "winshift.lib"
-local winshift_lib = lazy.require("winshift.lib")
+local async = lazy.require("plenary.async") ---@module "plenary.async"
+local winshift_lib = lazy.require("winshift.lib") ---@module "winshift.lib"
 
 local api = vim.api
 
@@ -28,6 +16,18 @@ local path_sep = package.config:sub(1, 1)
 M.pl = lazy.require("diffview.path", function(m)
   return m.PathLib({ separator = "/" })
 end)
+
+---@module "plenary.job"
+M.Job = lazy.require("plenary.job", function(m)
+  -- Ensure plenary's `new` method will use the right metatable when this is
+  -- invoked as a method.
+  local new = m.new
+  function m.new(_, ...)
+    return new(m, ...)
+  end
+  return m
+end)
+local Job = M.Job
 
 -- Set up completion wrapper used by `vim.ui.input()`
 vim.cmd([[

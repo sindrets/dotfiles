@@ -8,6 +8,7 @@ local lazy = require("diffview.lazy")
 local arg_parser = lazy.require("diffview.arg_parser")
 
 local utils = Config.common.utils
+local notify = Config.common.notify
 local api = vim.api
 local command = api.nvim_create_user_command
 
@@ -140,12 +141,13 @@ command("Windows", function(e)
 end, { bar = true, bang = true })
 
 command("NeorgExport", function(e)
-  if vim.fn.executable("neorg-pandoc-linux86") ~= 1 then
-    utils.err("neorg-pandoc-linux86 is not installed!")
-    return
-  elseif vim.fn.executable("pandoc") ~= 1 then
-    utils.err("pandoc is not installed!")
-    return
+  local deps = { "neorg-pandoc-linux86", "pandoc", "neorg-export" }
+
+  for _, dep in ipairs(deps) do
+    if vim.fn.executable(dep) ~= 1 then
+      notify.error(("'s' is not executable!"):format(dep))
+      return
+    end
   end
 
   local in_name, out_name
@@ -161,8 +163,19 @@ command("NeorgExport", function(e)
     out_name = in_name:sub(1, -#pl:extension(in_name) - 2) .. ".pdf"
   end
 
-  vim.fn.system(([[neorg-pandoc-linux86 %s | pandoc -f json -o %s]]):format(
-    vim.fn.shellescape(in_name),
-    vim.fn.shellescape(out_name)
-  ))
+  utils.Job:new({
+    command = "neorg-export",
+    args = { in_name, out_name },
+    on_exit = function(j)
+      if j.code ~= 0 then
+        notify.error(j:stderr_result()[1] and j:stderr_result() or { "" }, {
+          title = "Document export failed with exit code " .. j.code
+        })
+      else
+        notify.info(("Document exported to %s"):format(
+          utils.str_quote(pl:relative(out_name, "."))
+        ))
+      end
+    end,
+  }):start()
 end, { nargs = "*", complete = "file" })

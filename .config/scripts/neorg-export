@@ -1,0 +1,33 @@
+#!/usr/bin/bash
+
+usage() {
+  cat <<EOF
+usage: ${0##*/} INPUT_FILE [OUTPUT_FILE]
+
+Export the norg document INPUT_FILE to [OUTPUT_FILE] using pandoc. If no
+[OUTPUT_FILE] is specified, it defaults to the name of the INPUT_FILE with a
+pdf extension.
+
+  Options:
+    -h, --help          Print this help message
+EOF
+}
+
+if [[ $1 = @(-h|--help) ]]; then
+  usage
+  exit $(( $# ? 0 : 1 ))
+fi
+
+IN_NAME="$1"
+
+if [ "$2" ]; then
+  OUT_NAME="$2"
+else
+  s="$(perl -pe 's#((.*\/)?.+?)(\..+)?$#\1#' <<< "$IN_NAME")"
+  OUT_NAME="$s.pdf"
+fi
+
+# Ensure single whitespace on all line endings
+sed 's/\(.*\S\)$/\1 /' "$IN_NAME" > /tmp/neorg_export
+
+neorg-pandoc-linux86 /tmp/neorg_export | pandoc -f json -o "$OUT_NAME"

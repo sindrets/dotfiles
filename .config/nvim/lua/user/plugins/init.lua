@@ -79,6 +79,7 @@ return require("packer").startup({
     use { "mboughaba/i3config.vim" }
     use { "chrisbra/csv.vim" }
     use { "fladson/vim-kitty" }
+    use { "joelbeedle/pseudo-syntax" }
 
     -- BEHAVIOUR
     use {
