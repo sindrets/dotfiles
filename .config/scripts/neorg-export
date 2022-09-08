@@ -1,24 +1,49 @@
 #!/usr/bin/bash
 
+set -eo pipefail
+
+out() { printf "$1 $2\n" "${@:3}"; }
+error() { out "==> ERROR:" "$@"; } >&2
+die() { error "$@"; exit 1; }
+
 usage() {
   cat <<EOF
-usage: ${0##*/} INPUT_FILE [OUTPUT_FILE]
+usage: ${0##*/} [OPTIONS] INPUT_FILE [OUTPUT_FILE]
 
 Export the norg document INPUT_FILE to [OUTPUT_FILE] using pandoc. If no
 [OUTPUT_FILE] is specified, it defaults to the name of the INPUT_FILE with a
 pdf extension.
 
   Options:
-    -h, --help          Print this help message
+    -h, --help      Print this help message
+    -o OPTIONS      Pandoc options
 EOF
 }
 
-if [[ $1 = @(-h|--help) ]]; then
+if [[ ! $1 || $1 = @(-h|--help) ]]; then
   usage
   exit $(( $# ? 0 : 1 ))
 fi
 
+PANDOC_OPT=""
+
+while getopts 'o:' flag; do
+  case $flag in
+    o)
+      PANDOC_OPT="$OPTARG"
+      ;;
+    ?)
+      die '%s: invalid option -- '\''%s'\' "${0##*/}" "$OPTARG"
+      ;;
+  esac
+done
+shift $(( OPTIND - 1 ))
+
 IN_NAME="$1"
+
+if [ ! "$IN_NAME" ]; then
+  die "INPUT_FILE is required!"
+fi
 
 if [ "$2" ]; then
   OUT_NAME="$2"
@@ -27,7 +52,17 @@ else
   OUT_NAME="$s.pdf"
 fi
 
-# Ensure single whitespace on all line endings
-sed 's/\(.*\S\)$/\1 /' "$IN_NAME" > /tmp/neorg_export
+TMP_PATH="$(mktemp tmp.neorg-export.XXXXXXXXXX)"
 
-neorg-pandoc-linux86 /tmp/neorg_export | pandoc -f json -o "$OUT_NAME"
+set +e
+(
+  # Ensure single whitespace on all line endings
+  sed 's/\(.*\S\)$/\1 /' "$IN_NAME" > "$TMP_PATH" &&
+
+  neorg-pandoc-linux86 "$TMP_PATH" | pandoc -f json $PANDOC_OPT -o "$OUT_NAME"
+)
+STATUS=$?
+set -e
+
+rm -f "$TMP_PATH"
+exit $STATUS

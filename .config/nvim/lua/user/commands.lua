@@ -141,9 +141,7 @@ command("Windows", function(e)
 end, { bar = true, bang = true })
 
 command("NeorgExport", function(e)
-  local deps = { "neorg-pandoc-linux86", "pandoc", "neorg-export" }
-
-  for _, dep in ipairs(deps) do
+  for _, dep in ipairs({ "neorg-pandoc-linux86", "pandoc", "neorg-export" }) do
     if vim.fn.executable(dep) ~= 1 then
       notify.error(("'s' is not executable!"):format(dep))
       return
@@ -160,7 +158,7 @@ command("NeorgExport", function(e)
     out_name = vim.fn.expand(e.fargs[1])
   else
     in_name = vim.fn.expand("%:p")
-    out_name = in_name:sub(1, -#pl:extension(in_name) - 2) .. ".pdf"
+    out_name = in_name:sub(1, -math.min(#pl:extension(in_name), 1) - 2) .. ".pdf"
   end
 
   utils.Job:new({

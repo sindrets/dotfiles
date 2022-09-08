@@ -82,7 +82,6 @@ return function ()
         post_layout()
       end,
       diff_buf_read = function(bufnr)
-        utils.set_cursor(0, 1)
         -- Disable some performance heavy stuff in long files.
         if vim.api.nvim_buf_line_count(bufnr) >= 2500 then
           vim.cmd("IndentBlanklineDisable")

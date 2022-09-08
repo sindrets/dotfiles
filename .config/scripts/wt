@@ -8,7 +8,6 @@ set -e
 eval_mode=0
 
 VERSION="0.1.0"
-TMP_PATH=$(mktemp)
 BINARY_PATH=$(which wt)
 JQ_URL="https://stedolan.github.io/jq/download"
 RELEASE_URL="https://github.com/yankeexe/git-worktree-switcher/releases/latest"
@@ -58,12 +57,13 @@ download_latest_update() {
 	download_url=$(curl -sL $RELEASE_API_URL | jq -r '.assets[0].browser_download_url')
 
 	echo "Downloading latest version $fetched_tag_name"
-	curl -sL -o "$TMP_PATH" "$download_url"
+	local tmp_path=$(mktemp)
+	curl -sL -o "$tmp_path" "$download_url"
 
 	echo "Updating to latest version..."
-	chmod +x "$TMP_PATH"
-	sudo mv "$TMP_PATH" "$BINARY_PATH"
-	rm -f "$TMP_PATH"
+	chmod +x "$tmp_path"
+	sudo mv "$tmp_path" "$BINARY_PATH"
+	rm -f "$tmp_path"
 
 	echo "You are using the latest version of worktree switcher: $fetched_tag_name"
 }
