@@ -158,7 +158,7 @@ command("NeorgExport", function(e)
     out_name = vim.fn.expand(e.fargs[1])
   else
     in_name = vim.fn.expand("%:p")
-    out_name = in_name:sub(1, -math.min(#pl:extension(in_name), 1) - 2) .. ".pdf"
+    out_name = in_name:sub(1, -math.max(#pl:extension(in_name), 1) - 2) .. ".pdf"
   end
 
   utils.Job:new({
