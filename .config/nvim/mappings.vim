@@ -187,7 +187,7 @@ nnoremap ;; <Cmd>Telescope resume<CR>
 " Git
 nnoremap <leader>gg <Cmd>Neogit<CR>
 nnoremap <leader>G <Cmd>Neogit<CR>
-nnoremap <leader>gs <Cmd>Neogit kind=split<CR>
+nnoremap <leader>gs <Cmd>exe 'Neogit kind=split' <bar> wincmd J<CR>
 nnoremap <leader>gl <Cmd>Terminal git log -n256 --shortstat<CR>
 nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua Config.common.notify.git("Staged "
             \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")))<CR>

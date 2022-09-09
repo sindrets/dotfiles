@@ -56,9 +56,11 @@ TMP_PATH="$(mktemp tmp.neorg-export.XXXXXXXXXX)"
 
 set +e
 (
-  # Ensure single whitespace on all line endings
-  sed 's/\(.*\S\)$/\1 /' "$IN_NAME" > "$TMP_PATH" &&
-
+  # - Ensure single whitespace on all line endings (issue #5)
+  # - Handle empty lines inside code blocks (issue #7)
+  sed -e 's/\(.*\S\)$/\1 /' \
+    -e "$( printf '%s%s%s' 's/^\s*$/' "$(printf %150s)" '/' )" \
+    "$IN_NAME" > "$TMP_PATH" && \
   neorg-pandoc-linux86 "$TMP_PATH" | pandoc -f json $PANDOC_OPT -o "$OUT_NAME"
 )
 STATUS=$?
