@@ -211,7 +211,7 @@ nnoremap <M-CR> <Cmd>lua Config.fn.update_messages_win()<CR>
 nnoremap <silent> <C-l> <Cmd>TermToggle<CR>
 tnoremap <silent> <C-l> <Cmd>TermToggle<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
-tnoremap <silent> <C-\> <Esc>
+tnoremap <silent> <M-Space> <Esc>
 
 " Quickfix, Location list, Jumps
 nnoremap <M-q> <Cmd>lua Config.fn.toggle_quickfix()<CR>

@@ -11,19 +11,19 @@ end
 
 local lua_lib = {}
 
-local function lua_add_lib(lib)
-  for _, p in pairs(vim.fn.expand(lib, false, true)) do
-    p = vim.loop.fs_realpath(p)
-    lua_lib[p] = true
-  end
-end
+-- local function lua_add_lib(lib)
+--   for _, p in pairs(vim.fn.expand(lib, false, true)) do
+--     p = vim.loop.fs_realpath(p)
+--     lua_lib[p] = true
+--   end
+-- end
 
 local function get_lib()
   return vim.tbl_keys(lua_lib)
 end
 
 -- lua_add_lib("$VIMRUNTIME")
-lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
+-- lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
 
 require("lspconfig").sumneko_lua.setup(Config.lsp.create_config(
   require("lua-dev").setup({

@@ -986,8 +986,6 @@ local list_like_options = {
 ---@class utils.set_local.ListSpec : string[]
 ---@field opt utils.set_local.Opt
 
----@alias WindowOptions table<string, boolean|integer|string|utils.set_local.ListSpec>
-
 ---@param winids number[]|number Either a list of winids, or a single winid (0 for current window).
 ---@param option_map WindowOptions
 ---@param opt? utils.set_local.Opt

@@ -288,14 +288,14 @@ function M.apply_tweaks()
   local colors_name = vim.g.colors_name or ""
   local bg = vim.o.bg
   local bg_normal = Color.from_hl("Normal", "bg")
-    or Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
-  ---@diagnostic disable-next-line: unused-local
+      or Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
   local fg_normal = Color.from_hl("Normal", "fg") --[[@as Color ]]
 
   hi_clear({ "Cursor", "TermCursor" })
   hi("TermCursor", { style = "reverse" })
   hi("NonText", { style = "nocombine" })
   hi("Hidden", { fg = "bg", bg = "bg" })
+  hi("CursorLine", { sp = fg_normal:to_css() })
 
   -- Explicitly redefine Normal to circumvent bug in upstream 0.7.0.
   -- TODO: Remove once 0.8.0 becomes stable.
