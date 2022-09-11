@@ -213,7 +213,9 @@ return require("packer").startup({
     use {
       "rcarriga/nvim-notify",
       config = function()
-        require("notify").setup({})
+        require("notify").setup({
+          top_down = false,
+        })
         vim.notify = require("notify")
       end,
     }

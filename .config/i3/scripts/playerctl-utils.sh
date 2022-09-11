@@ -25,7 +25,7 @@ templates=(
 
 # A list of regex patterns for players you want to ignore.
 ignore_players=(
-    "chromium.*"
+    # "chromium.*"
 )
 # --------------------------
 

@@ -156,9 +156,35 @@ imap <S-Down> <Esc>v<Down>
 imap <S-Left> <Esc>v
 imap <S-Right> <Esc><Right>v
 
-" Ctrl+backspace to delete prev word, ctrl+del to delete next word
-" inoremap <C-H> <C-\><C-o>db
-inoremap <C-Del> <C-\><C-o>dw
+" Readline mappings
+" @see [GNU readline command docs](https://www.gnu.org/software/bash/manual/html_node/Readline-Interaction.html#Readline-Interaction)
+
+" backward-kill-word
+inoremap <M-BS> <C-\><C-o>db
+" kill-word
+inoremap <M-d> <C-\><C-o>dw
+" beginning-of-line
+cnoremap <C-a> <Home>
+" end-of-line
+cnoremap <C-e> <End>
+" backward-word
+cnoremap <M-b> <C-Left>
+" forward-word
+cnoremap <M-f> <C-Right>
+" backward-char
+cnoremap <C-b> <Left>
+" forward-char
+cnoremap <C-f> <Right>
+" backward-kill-word
+cnoremap <M-BS> <C-w>
+" kill-word
+cnoremap <expr> <M-d> repeat("<Del>", len(matchstr(getcmdline()[getcmdpos() - 1:-1], '\v^\W*\w*(>\|$)')))
+" kill-line
+cnoremap <expr> <C-k> repeat("<Del>", len(getcmdline()[getcmdpos() - 1:-1]))
+" backward-kill-line
+cnoremap <expr> <C-u> repeat("<Bs>", len(getcmdline()[0:getcmdpos()]))
+" kill-whole-line
+cnoremap <expr> <M-k> "<Home>" . repeat("<Del>", len(getcmdline()))
 
 " Turn off search highlight until next search
 nnoremap <Esc> <Cmd>noh<CR>
