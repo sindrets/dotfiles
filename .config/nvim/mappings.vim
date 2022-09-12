@@ -159,10 +159,22 @@ imap <S-Right> <Esc><Right>v
 " Readline mappings
 " @see [GNU readline command docs](https://www.gnu.org/software/bash/manual/html_node/Readline-Interaction.html#Readline-Interaction)
 
+" beginning-of-line
+inoremap <C-a> <C-o>^
+" end-of-line
+inoremap <C-e> <C-o>$
+" backward-word
+inoremap <M-b> <C-o>b
+" forward-word
+inoremap <M-f> <C-o>w
 " backward-kill-word
-inoremap <M-BS> <C-\><C-o>db
+inoremap <M-BS> <C-w>
 " kill-word
 inoremap <M-d> <C-\><C-o>dw
+" kill-line
+" inoremap <C-k> <Cmd>norm! D<CR><Right>
+" backward-kill-line
+inoremap <C-u> <Cmd>norm! d0<CR>
 " beginning-of-line
 cnoremap <C-a> <Home>
 " end-of-line
