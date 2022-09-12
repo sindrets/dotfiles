@@ -143,7 +143,7 @@ end, { bar = true, bang = true })
 command("NeorgExport", function(e)
   for _, dep in ipairs({ "neorg-pandoc-linux86", "pandoc", "neorg-export" }) do
     if vim.fn.executable(dep) ~= 1 then
-      notify.error(("'s' is not executable!"):format(dep))
+      notify.error(("'%s' is not executable!"):format(dep))
       return
     end
   end

@@ -24,11 +24,11 @@ compinit
 
 function chpwd() {
     emulate -L zsh
-    updateKittyTabTitle
+    update_kitty_tab_title
     eval ls
 }
 
-function updateKittyTabTitle() {
+function update_kitty_tab_title() {
     if [ "$cur_term" = "kitty" ]; then
         kitty @ set-tab-title `basename "$(pwd)"`
     fi
@@ -42,7 +42,7 @@ function rpath () {
 }
 
 # Get current terminal emulator
-function getTerm () {
+function get_term () {
     local sid=$(ps -o sid= -p "$$")
     local sid_int=$((sid)) # strips blanks if any
     local session_leader_parent=$(ps -o ppid= -p "$sid_int")
@@ -89,7 +89,7 @@ function wt () {
     fi
 }
 
-function man-color () {
+function man_color () {
     LESS_TERMCAP_mb=$'\e[1;32m' \
     LESS_TERMCAP_md=$'\e[1;32m' \
     LESS_TERMCAP_me=$'\e[0m' \
@@ -115,7 +115,29 @@ function dfcp () {
     fi
 }
 
-cur_term="$(getTerm)"
+function dark_theme() { echo "default_dark" > /tmp/terminal_theme; update_theme }
+function light_theme() { echo "default_light" > /tmp/terminal_theme; update_theme }
+
+function update_theme() {
+    if [ -e /tmp/terminal_theme ]; then
+        local name="$(head -n1 < /tmp/terminal_theme)"
+        if [ "$name" = "default_dark" ]; then
+            export NVIM_COLORSCHEME="default_dark"
+            if [ "$cur_term" = "kitty" ]; then
+                kitty @ set-colors ~/.config/kitty/colors/catppuccin-mocha.conf
+            fi
+        elif [ "$name" = "default_light" ]; then
+            export NVIM_COLORSCHEME="default_light"
+            if [ "$cur_term" = "kitty" ]; then
+                kitty @ set-colors ~/.config/kitty/colors/seoulbones_light.conf
+            fi
+        fi
+    fi
+}
+
+cur_term="$(get_term)"
+update_theme
+
 
 export NEOFETCH_IMG="$HOME/Google Drive/sindrets@gmail.com/Bilder/neofetch/"
 export BROWSER=/usr/bin/firefox-beta
@@ -312,7 +334,7 @@ case $cur_term in
 esac
 
 # post init
-updateKittyTabTitle
+update_kitty_tab_title
 if  [ ! $UID = 0 ] &&
     [ ! $cur_term = "init" ] &&  # WSL
     [ ! $cur_term = "code" ] &&   # vscode

@@ -1,7 +1,10 @@
 ---Define the default colorscheme.
 ---
 ---Format is `"{name} [bg]"`, where `{name}` is the name of the colorscheme,
----and `[bg]` is the optionally defined value for 'background'.
+---and `[bg]` is the optionally defined value for 'background'. `{name}` may
+---also be replaced with one of the special values "default_dark" or
+---"default_light" which will apply a predefined default dark or light color
+---scheme.
 ---
 ---Override the default colorscheme by defining the environment variable
 ---`NVIM_COLORSCHEME` using the same format.
@@ -13,6 +16,9 @@ local hl = Config.common.hl
 local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
+
+M.DEFAULT_DARK = "oxocarbon-lua"
+M.DEFAULT_LIGHT = "seoulbones"
 
 do
   local name, bg
@@ -29,6 +35,14 @@ do
   ---Configured value for 'background'.
   ---@type string?
   M.bg = bg
+
+  if name == "default_dark" then
+    M.name = M.DEFAULT_DARK
+    M.bg = "dark"
+  elseif name == "default_light" then
+    M.name = M.DEFAULT_LIGHT
+    M.bg = "light"
+  end
 end
 
 function M.supports_sp_underline()
