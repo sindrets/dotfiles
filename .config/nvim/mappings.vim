@@ -238,6 +238,7 @@ nnoremap <silent> <C-l> <Cmd>TermToggle<CR>
 tnoremap <silent> <C-l> <Cmd>TermToggle<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
 tnoremap <silent> <M-Space> <Esc>
+xnoremap <C-s> :TermSend<CR>
 
 " Quickfix, Location list, Jumps
 nnoremap <M-q> <Cmd>lua Config.fn.toggle_quickfix()<CR>

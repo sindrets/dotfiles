@@ -554,6 +554,7 @@ function M.apply_tweaks()
       })
       hi("StatusLine", { fg = hl.get_fg("String") })
       hi_link("NormalFloat", "Normal")
+      hi_link("TSMath", "Function")
 
       vim.g.terminal_color_0 = "#E2E2E2"
       vim.g.terminal_color_8 = "#BFBABB"
@@ -622,6 +623,7 @@ function M.apply_tweaks()
       })
       hi({ "markdown_inlineTSLiteral", "TSLiteral" }, { fg = hl.get_fg("WinSeparator") })
       hi_link("DiffviewFilePanelConflicts", "String")
+      hi_link("TSMath", "Function")
     end
 
     feline_theme = "basic"
@@ -638,7 +640,7 @@ function M.apply_tweaks()
 
   hi("@neorg.tags.ranged_verbatim.code_block", {
     bg = bg_normal:clone()
-      :mod_value(bg_normal.lightness >= 0.5 and -0.05 or -0.03)
+      :mod_value(-0.03)
       :to_css(),
   })
 

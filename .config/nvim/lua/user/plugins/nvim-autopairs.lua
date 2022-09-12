@@ -35,4 +35,6 @@ return function ()
         :with_move(cond.none())
         :with_cr(cond.none()),
   })
+
+  npairs.get_rule("'")[1].not_filetypes = { "scheme", "lisp" }
 end
