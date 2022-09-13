@@ -636,6 +636,7 @@ function M.apply_tweaks()
 
   -- Treesitter
   hi("TSEmphasis", { style = "italic" })
+  hi("TreesitterContext", { bg = bg_normal:clone():highlight(0.08):to_css() })
   hi_link("@neorg.markup.verbatim", "@text.literal")
 
   hi("@neorg.tags.ranged_verbatim.code_block", {

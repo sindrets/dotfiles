@@ -109,6 +109,16 @@ return require("packer").startup({
     }
     use { "nvim-treesitter/playground", requires = "nvim-treesitter/nvim-treesitter" }
     use {
+      "nvim-treesitter/nvim-treesitter-context",
+      config = function()
+        require("treesitter-context").setup({
+          max_lines = 2,
+          zindex = 1,
+          trim_scope = "inner",
+        })
+      end,
+    }
+    use {
       "lewis6991/spellsitter.nvim", config = function()
         require("spellsitter").setup {
           -- Whether enabled, can be a list of filetypes, e.g. {"python", "lua"}
