@@ -288,7 +288,7 @@ nmap <silent> gr <Cmd>Telescope lsp_references<CR>
 nmap <silent> <leader>rn <Cmd>lua vim.lsp.buf.rename()<CR>
 nmap <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
 nnoremap <silent> <leader>ff <Cmd>lua vim.lsp.buf.format({ async = true })<CR>
-vnoremap <silent> <leader>ff <Cmd>lua vim.lsp.buf.range_formatting()<CR>
+xnoremap <silent> <leader>ff <Esc><Cmd>lua vim.lsp.buf.range_formatting()<CR>
 nnoremap <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>. <Cmd>lua vim.lsp.buf.code_action()<CR>
 vnoremap <leader>. <Cmd>lua vim.lsp.buf.range_code_action()<CR>
