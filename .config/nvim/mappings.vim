@@ -238,7 +238,7 @@ nnoremap <leader>gb <Cmd>Git blame <bar> wincmd p<CR>
 nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 nnoremap <leader>gh <Cmd>DiffviewFileHistory<CR>
 nnoremap <leader>gH <Cmd>DiffviewFileHistory %<CR>
-vnoremap <leader>gh <Cmd>'<,'>DiffviewFileHistory<CR>
+xnoremap <leader>gh <Esc><Cmd>'<,'>DiffviewFileHistory<CR>
 
 " LspTrouble and Symbols outline
 nnoremap <A-S-D> <Cmd>lua Config.fn.toggle_diagnostics()<CR>

@@ -81,12 +81,6 @@ return function ()
         view.emitter:on("post_layout", post_layout)
         post_layout()
       end,
-      diff_buf_read = function(bufnr)
-        -- Disable some performance heavy stuff in long files.
-        if vim.api.nvim_buf_line_count(bufnr) >= 2500 then
-          vim.cmd("IndentBlanklineDisable")
-        end
-      end,
     },
     keymaps = {
       view = {
