@@ -259,7 +259,8 @@ return require("packer").startup({
     }
     use {
       "tpope/vim-fugitive",
-      requires = { "tpope/vim-rhubarb", },
+      requires = { "tpope/vim-rhubarb" },
+      config = conf("fugitive"),
     }
     -- use {
     --   "akinsho/git-conflict.nvim",
