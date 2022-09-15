@@ -231,9 +231,9 @@ nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua Config.common.notify.
             \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")))<CR>
 nnoremap <leader>gA <Cmd>silent exe '!git add .' <bar>lua Config.common.notify.git("Staged "
             \ .. Config.common.utils.str_quote(pl:vim_fnamemodify(".", ":~")))<CR> 
-nnoremap <leader>gcs <Cmd>Git commit<CR>
-nnoremap <leader>gcc <Cmd>Git commit -a<CR>
-nnoremap <leader>gca <Cmd>Git commit -a --amend<CR>
+nnoremap <leader>gcc <Cmd>Git commit <bar> wincmd J<CR>
+nnoremap <leader>gC <Cmd>Git commit -a <bar> wincmd J<CR>
+nnoremap <leader>gca <Cmd>Git commit -a --amend <bar> wincmd J<CR>
 nnoremap <leader>gb <Cmd>Git blame <bar> wincmd p<CR>
 nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 nnoremap <leader>gh <Cmd>DiffviewFileHistory<CR>
