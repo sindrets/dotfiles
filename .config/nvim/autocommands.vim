@@ -13,7 +13,7 @@ augroup NvimConfig
 
     " Restore cursor pos
     au BufReadPost *
-                \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit'
+                \ if line("'\"") >= 1 && line("'\"") <= line("$") && &ft !~# 'commit' && &ft !~# 'git'
                 \ |     exe "normal! g`\"zz"
                 \ | endif
 

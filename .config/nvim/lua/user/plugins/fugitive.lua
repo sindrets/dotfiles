@@ -22,7 +22,7 @@ return function()
   ---Call a fugitive function.
   ---@param file_or_sid string|integer Either the name of the fugitive script file to call from, or the sid of its script. (Use 0 to default to "autoload/fugitive.vim")
   ---@param func string Function name.
-  ---@param ... any
+  ---@param ... any Arguments.
   ---@return unknown
   function M.call(file_or_sid, func, ...)
     local sid
@@ -55,7 +55,7 @@ return function()
     local line = api.nvim_buf_get_lines(0, cursor[1] - 1, cursor[1], false)[1]
 
     return {
-      file = state.blame_file,
+      file = pl:join(state.cwd, state.blame_file),
       commit = line:match("^([a-f0-9]+)"),
     }
   end
@@ -65,7 +65,9 @@ return function()
       "FileType",
       pattern = "fugitive",
       callback = function(ctx)
-        vim.keymap.set("n", "D", function()
+        -- Fugitive status buffer mappings
+
+        vim.keymap.set("n", "DD", function()
           local info = M.get_status_cursor_info()
 
           if info then
@@ -79,13 +81,33 @@ return function()
           buffer = ctx.buf,
           desc = "Open Diffview for the item under the cursor",
         })
+
+        vim.keymap.set("n", "DH", function()
+          local info = M.get_status_cursor_info()
+
+          if info then
+            if #info.paths > 0 then
+              vim.cmd(("DiffviewFileHistory %s"):format(vim.fn.fnameescape(info.file)))
+            elseif info.commit ~= "" then
+              vim.cmd(("DiffviewFileHistory --range=%s"):format(info.commit))
+            end
+          end
+        end, {
+          buffer = ctx.buf,
+          desc = "Open file history for the item under the cursor",
+        })
       end,
     },
     {
       "FileType",
       pattern = "fugitiveblame",
       callback = function(ctx)
-        vim.keymap.set("n", "<M-d>", function()
+        -- Fugitive blame buffer mappings
+
+        -- Move the default `D` mapping, because it has `nowait` set.
+        Config.lib.mv_keymap("n", "D", "n", "T", ctx.buf)
+
+        vim.keymap.set("n", "DD", function()
           local info = M.get_blame_cursor_info()
 
           if info then
@@ -98,7 +120,8 @@ return function()
           buffer = ctx.buf,
           desc = "Open Diffview for the blame commit under the cursor",
         })
-        vim.keymap.set("n", "<M-h>", function()
+
+        vim.keymap.set("n", "DH", function()
           local info = M.get_blame_cursor_info()
 
           if info then
@@ -109,7 +132,45 @@ return function()
           end
         end, {
           buffer = ctx.buf,
-          desc = "Open file history for the blame commit under the cursor",
+          desc = "Open file history from the blame commit under the cursor",
+        })
+      end,
+    },
+    {
+      "FileType",
+      pattern = "git",
+      callback = function(ctx)
+        -- Git buffer mappings
+
+        vim.keymap.set("n", "DD", function()
+          local commit = unpack(M.call(0, "cfile"))
+
+          if commit then
+            if commit:find(":") then
+              local path
+              commit, path = commit:match("^(.-):(.*)")
+              vim.cmd(("DiffviewOpen %s^! --selected-file=%s"):format(
+                commit,
+                vim.fn.fnameescape(path)
+              ))
+            else
+              vim.cmd(("DiffviewOpen %s^!"):format(commit))
+            end
+          end
+        end, {
+          buffer = ctx.buf,
+          desc = "Open Diffview for the commit under the cursor",
+        })
+
+        vim.keymap.set("n", "DH", function()
+          local commit = unpack(M.call(0, "cfile"))
+
+          if commit then
+            vim.cmd(("DiffviewFileHistory --range=%s"):format(commit))
+          end
+        end, {
+          buffer = ctx.buf,
+          desc = "Open file history from the commit under the cursor",
         })
       end,
     },

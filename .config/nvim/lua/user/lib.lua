@@ -544,6 +544,37 @@ function M.set_center_cursor(flag)
   end
 end
 
+---Move a keymap.
+---@param mode string Current mode.
+---@param lhs string Current lhs.
+---@param new_mode string
+---@param new_lhs string
+---@param buffer? integer
+function M.mv_keymap(mode, lhs, new_mode, new_lhs, buffer)
+  local mapinfo
+
+  if buffer then
+    mapinfo = api.nvim_buf_get_keymap(buffer, mode)
+  else
+    mapinfo = api.nvim_get_keymap(mode)
+  end
+
+  for _, map in ipairs(mapinfo) do
+    if map.mode == mode and map.lhs == lhs then
+      local opts = {
+        buffer = buffer,
+        expr = map.expr == 1,
+        remap = map.noremap == 0,
+        nowait = map.nowait == 1,
+        silent = map.silent == 1,
+      }
+
+      vim.keymap.set(new_mode, new_lhs, map.rhs or map.callback, opts)
+      vim.keymap.del(mode, lhs, { buffer = buffer })
+    end
+  end
+end
+
 ---@alias CommandRange { [1]: integer, [2]: integer, [3]: integer }
 
 function cmd.read_new(...)

@@ -1,1 +1,2 @@
-setl nolist
+setl nolist cc=
+setl foldmethod=syntax
