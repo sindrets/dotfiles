@@ -139,7 +139,7 @@ cur_term="$(get_term)"
 update_theme
 
 
-export NEOFETCH_IMG="$HOME/Google Drive/sindrets@gmail.com/Bilder/neofetch/"
+export NEOFETCH_IMG="$HOME/GoogleDrive/sindrets@gmail.com/Bilder/neofetch/"
 export BROWSER=/usr/bin/firefox-beta
 export LC_ALL=en_US.UTF-8 # force all applications to use default language for output
 export LESS=-r # scroll pager with mouse wheel.

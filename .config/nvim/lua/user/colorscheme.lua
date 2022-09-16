@@ -493,6 +493,8 @@ function M.apply_tweaks()
     end
 
   elseif colors_name == "catppuccin" then
+    hi("Primary", { fg = hl.get_fg("Function") })
+    hi("Accent", { fg = hl.get_fg("Constant") })
     hi_link("ColorColumn", "CursorLine")
     hi("CursorLine", { style = "NONE", bg = bg_normal:clone():highlight(0.07):to_css() })
     hi({ "TsNumber", "TsFloat" }, { style = "NONE" })
@@ -505,6 +507,7 @@ function M.apply_tweaks()
     })
     hi("TablineSel", { bg = "NONE" })
     hi("BufferLineCloseButtonSelected", { fg = fg_normal:clone():blend(bg_normal, 0.3):to_css() })
+    hi("BufferLineIndicatorSelected", { fg = hl.get_fg("Accent") })
     hi("TelescopeBorder", { fg = hl.get_fg("FloatBorder") })
 
     if bg == "dark" then
@@ -624,6 +627,7 @@ function M.apply_tweaks()
       hi({ "markdown_inlineTSLiteral", "TSLiteral" }, { fg = hl.get_fg("WinSeparator") })
       hi_link("DiffviewFilePanelConflicts", "String")
       hi_link("TSMath", "Function")
+      hi("TelescopeMatching", { fg = hl.get_fg("String"), style = "bold" })
     end
 
     feline_theme = "basic"
@@ -704,7 +708,7 @@ function M.apply_tweaks()
   })
   hi_link({ "LspReferenceRead", "LspReferenceWrite" }, "LspReferenceText", { clear = true })
   hi_link(
-    { "illuminateWord", "illuminatedWord", "illuminatedCurWord" },
+    { "IlluminatedWordText", "IlluminatedWordRead", "IlluminatedWordWrite" },
     "LspReferenceText",
     { clear = true }
   )

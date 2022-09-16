@@ -10,6 +10,7 @@ return function ()
         "help",
         -- "markdown", -- NOTE: Parser seems immature. Revisit later.
         "c", -- NOTE: Performance is abysmal in files of any notable length.
+        "cpp",
       },
     },
     -- incremental_selection = {

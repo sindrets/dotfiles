@@ -129,6 +129,10 @@ return require("packer").startup({
     use_local { "sindrets/lua-dev.nvim" }
     use { "neovim/nvim-lspconfig" }
     use {
+      "jose-elias-alvarez/null-ls.nvim",
+      config = conf("null-ls"),
+    }
+    use {
       "ray-x/lsp_signature.nvim",
       config = function()
         require("lsp_signature").setup({
