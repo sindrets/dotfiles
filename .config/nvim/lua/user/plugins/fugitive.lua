@@ -87,7 +87,7 @@ return function()
 
           if info then
             if #info.paths > 0 then
-              vim.cmd(("DiffviewFileHistory %s"):format(vim.fn.fnameescape(info.file)))
+              vim.cmd(("DiffviewFileHistory %s"):format(vim.fn.fnameescape(info.paths[1])))
             elseif info.commit ~= "" then
               vim.cmd(("DiffviewFileHistory --range=%s"):format(info.commit))
             end
@@ -113,7 +113,7 @@ return function()
           if info then
             vim.cmd(("DiffviewOpen %s^! --selected-file=%s"):format(
               info.commit,
-              vim.fn.fnameescape(info.file)
+              vim.fn.fnameescape(pl:join(vim.call("FugitiveWorkTree"), info.file))
             ))
           end
         end, {
@@ -127,7 +127,7 @@ return function()
           if info then
             vim.cmd(("DiffviewFileHistory --range=%s %s"):format(
               info.commit,
-              vim.fn.fnameescape(info.file)
+              vim.fn.fnameescape(pl:join(vim.call("FugitiveWorkTree"), info.file))
             ))
           end
         end, {
@@ -148,10 +148,10 @@ return function()
           if commit then
             if commit:find(":") then
               local path
-              commit, path = commit:match("^(.-):(.*)")
+              commit, path = commit:match("^(.-)^?:(.*)")
               vim.cmd(("DiffviewOpen %s^! --selected-file=%s"):format(
                 commit,
-                vim.fn.fnameescape(path)
+                vim.fn.fnameescape(pl:join(vim.call("FugitiveWorkTree"), path))
               ))
             else
               vim.cmd(("DiffviewOpen %s^!"):format(commit))
@@ -166,7 +166,17 @@ return function()
           local commit = unpack(M.call(0, "cfile"))
 
           if commit then
-            vim.cmd(("DiffviewFileHistory --range=%s"):format(commit))
+            if commit:find(":") then
+              local path
+              commit, path = commit:match("^(.-)^?:(.*)")
+              vim.cmd(("DiffviewFileHistory --range=%s %s"):format(
+                commit,
+                vim.fn.fnameescape(pl:join(vim.call("FugitiveWorkTree"), path))
+              ))
+            else
+              vim.cmd(("DiffviewFileHistory --range=%s"):format(commit))
+            end
+
           end
         end, {
           buffer = ctx.buf,
