@@ -69,24 +69,24 @@ command("Rnew", function(e)
 end, {
   nargs = "+",
   complete = function(arg_lead, cmd_line, cur_pos)
-    local args, arg_idx = arg_parser.scan_ex_args(cmd_line, cur_pos)
+    local c = arg_parser.scan_ex_args(cmd_line, cur_pos)
 
-    if #args > 1 then
-      local prefix = args[2]:sub(1, 1)
+    if #c.args > 1 then
+      local prefix = c.args[2]:sub(1, 1)
 
-      if arg_idx == 2 then
-        arg_lead = args[2]:sub(2)
+      if c.argidx == 2 then
+        arg_lead = c.args[2]:sub(2)
       end
 
       if prefix == ":" then
         return vim.tbl_map(function(v)
-          return arg_idx == 2 and prefix .. v or v
+          return c.argidx == 2 and prefix .. v or v
         end, vim.fn.getcompletion(arg_lead, "command"))
       elseif prefix == "!" then
         return utils.vec_join(
           expand_shell_arg(arg_lead),
           vim.tbl_map(function(v)
-            return arg_idx == 2 and prefix .. v or v
+            return c.argidx == 2 and prefix .. v or v
           end, vim.fn.getcompletion(arg_lead, "shellcmd"))
         )
       end

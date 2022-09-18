@@ -22,9 +22,9 @@ function M.expand(alias)
 
   if cmd_line:match("%s*%S+") then
     local cur_pos = vim.fn.getcmdpos()
-    local _, argidx = arg_parser.scan_ex_args(cmd_line, cur_pos)
+    local ctx = arg_parser.scan_ex_args(cmd_line, cur_pos)
 
-    if argidx == 1 then
+    if ctx.argidx == 1 then
       return expanded
     end
   end

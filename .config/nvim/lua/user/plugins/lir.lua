@@ -102,14 +102,17 @@ return function()
 
     utils.input("Create paths: ", {
       completion = function(_, cmd_line, cur_pos)
-        local args, argidx = arg_parser.scan_sh_args(cmd_line, cur_pos)
-        argidx = math.max(1, argidx)
-        local leading_args = utils.vec_slice(args, 1, argidx)
+        local ok, c = pcall(arg_parser.scan_sh_args, cmd_line, cur_pos)
+        if not ok then return end
 
         return vim.tbl_map(function(v)
-          leading_args[argidx] = utils.str_quote(v, { only_if_whitespace = true })
-          return table.concat(leading_args, " ")
-        end, vim.fn.getcompletion(args[argidx] or "", "file"))
+          return table.concat(utils.vec_join(
+            vim.tbl_map(function(w)
+              return utils.str_quote(w, { only_if_whitespace = true })
+            end, utils.vec_slice(c.args, 1, c.argidx - 1)),
+            utils.str_quote(v, { only_if_whitespace = true })
+          ), " ")
+        end, vim.fn.getcompletion(c.arg_lead, "file"))
       end,
 
       callback = function(new_paths)
@@ -120,10 +123,11 @@ return function()
           return
         end
 
-        local args = arg_parser.scan_sh_args(new_paths, #new_paths)
+        local ok, c = pcall(arg_parser.scan_sh_args, new_paths, #new_paths)
+        if not ok then utils.err(c); return end
         local new_abs, new_dir
 
-        for _, arg in ipairs(args) do
+        for _, arg in ipairs(c.args) do
           new_abs = pl:absolute(arg, ctx.dir)
 
           if vim.endswith(arg, "/") then
@@ -134,6 +138,7 @@ return function()
 
           if not pl:readable(new_abs) then
             if new_dir and not pl:is_dir(new_dir) then
+              ---@diagnostic disable-next-line: redefined-local
               local ok, ret = pcall(vim.fn.mkdir, new_dir, "p")
 
               if not ok or ret ~= 1 then
