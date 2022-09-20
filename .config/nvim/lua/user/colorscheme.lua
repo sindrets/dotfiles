@@ -304,12 +304,16 @@ function M.apply_tweaks()
   local bg_normal = Color.from_hl("Normal", "bg")
       or Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
   local fg_normal = Color.from_hl("Normal", "fg") --[[@as Color ]]
+  local primary = Color.from_hl({ "Function", "Title", "Normal" }, "fg") --[[@as Color ]]
+  local accent = Color.from_hl({ "Constant", "Statement", "Normal" }, "fg") --[[@as Color ]]
 
   hi_clear({ "Cursor", "TermCursor" })
   hi("TermCursor", { style = "reverse" })
   hi("NonText", { style = "nocombine" })
   hi("Hidden", { fg = "bg", bg = "bg" })
   hi("CursorLine", { sp = fg_normal:to_css() })
+  hi("Primary", { fg = primary:to_css() })
+  hi("Accent", { fg = accent:to_css() })
 
   -- Explicitly redefine Normal to circumvent bug in upstream 0.7.0.
   -- TODO: Remove once 0.8.0 becomes stable.
@@ -321,7 +325,7 @@ function M.apply_tweaks()
   ---@type GenerateDiffColorsSpec
   local diff_gen_opt
   ---@type FelineThemeName
-  local feline_theme = "doom"
+  local feline_theme = "duo"
 
   if colors_name == "codedark" then
     hi("NonText", { bg = "NONE", })
@@ -577,7 +581,7 @@ function M.apply_tweaks()
       vim.g.terminal_color1_5 = "#777777"
     end
 
-    feline_theme = "basic"
+    feline_theme = "simple"
 
   elseif colors_name:match("^github_") then
     hi_link("NonText", "Whitespace")
@@ -595,7 +599,7 @@ function M.apply_tweaks()
     hi_link("DashboardFooter", "Comment")
     hi_link("DiffviewFolderName", "Special")
     diff_gen_opt = { no_derive = { mod = true } }
-    feline_theme = "basic"
+    feline_theme = "simple"
     M.apply_terminal_defaults()
 
   elseif colors_name == "kanagawa" then
@@ -629,8 +633,6 @@ function M.apply_tweaks()
       hi_link("TSMath", "Function")
       hi("TelescopeMatching", { fg = hl.get_fg("String"), style = "bold" })
     end
-
-    feline_theme = "basic"
 
     M.unstyle_telescope()
 

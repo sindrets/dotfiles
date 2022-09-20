@@ -98,7 +98,7 @@ function M.apply_theme(theme, opt)
     theme = styles.themes[theme]
     if not theme then
       utils.err(("[feline config] Theme '%s' does not exist!"):format(theme))
-      M.current_theme = "basic"
+      M.current_theme = "simple"
       return
     end
   end

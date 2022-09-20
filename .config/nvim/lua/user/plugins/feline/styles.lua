@@ -34,10 +34,11 @@ M.color_palettes = {
   },
 }
 
----@alias FelineThemeName '"basic"'|'"doom"'
+---@alias FelineThemeName "simple"|"duo"|"doom"
 
 M.themes = {
-  basic = {
+  -- Mostly monotone theme
+  simple = {
     get = function()
       c.current_palette = {
         dim100 = hl.get_fg("StatusLineDim100"),
@@ -105,13 +106,121 @@ M.themes = {
       }
     end,
   },
+
+  -- 2-color theme
+  duo = {
+    get = function()
+      c.current_palette = {
+        primary = hl.get_fg("Primary"),
+        accent = hl.get_fg("Accent"),
+        dim100 = hl.get_fg("StatusLineDim100"),
+        dim200 = hl.get_fg("StatusLineDim200"),
+        dim300 = hl.get_fg("StatusLineDim300"),
+        dim400 = hl.get_fg("StatusLineDim400"),
+        dim500 = hl.get_fg("StatusLineDim500"),
+        dim600 = hl.get_fg("StatusLineDim600"),
+        dim700 = hl.get_fg("StatusLineDim700"),
+        dim800 = hl.get_fg("StatusLineDim800"),
+        dim900 = hl.get_fg("StatusLineDim900"),
+        add = hl.get_fg("diffAdded"),
+        mod = hl.get_fg("diffChanged"),
+        del = hl.get_fg("diffRemoved"),
+        error = hl.get_fg("DiagnosticSignError"),
+        warn = hl.get_fg("DiagnosticSignWarn"),
+        info = hl.get_fg("DiagnosticSignInfo"),
+        hint = hl.get_fg("DiagnosticSignHint"),
+      }
+
+      return {
+        block = {
+          fg = "primary",
+        },
+        vi_mode = function()
+          local mode = api.nvim_get_mode().mode
+          return {
+            fg = mode == "n" and "primary" or "accent",
+            style = "bold",
+          }
+        end,
+        paste_mode = {
+          fg = "accent",
+          style = "bold",
+        },
+        lsp_server = {
+          fg = "primary",
+          style = "bold",
+        },
+        ["file.info"] = {
+          fg = "dim300",
+        },
+        ["file.search"] = {
+          fg = "dim400",
+        },
+        ["file.line_info"] = {
+          fg = "dim400",
+        },
+        ["file.line_percent"] = {
+          fg = "dim400",
+          style = "bold",
+        },
+        ["file.line_count"] = {
+          fg = "dim400",
+        },
+        ["git.diff_add"] = {
+          fg = "add",
+        },
+        ["git.diff_mod"] = {
+          fg = "mod",
+        },
+        ["git.diff_del"] = {
+          fg = "del",
+        },
+        ["diagnostic.err"] = {
+          fg = "error",
+        },
+        ["diagnostic.warn"] = {
+          fg = "warn",
+        },
+        ["diagnostic.info"] = {
+          fg = "info",
+        },
+        ["diagnostic.hint"] = {
+          fg = "hint",
+        },
+        ["file.format"] = {
+          fg = "primary",
+          style = "bold",
+        },
+        ["file.indent_info"] = {
+          fg = "primary",
+          style = "bold",
+        },
+        ["git.branch"] = {
+          fg = "primary",
+          style = "bold",
+        },
+      }
+    end,
+  },
+
+  -- Doom emacs colors
   doom = {
     get = function()
-      c.current_palette = vim.deepcopy(
-        vim.o.background == "light"
+      local base_palette = vim.o.background == "light"
           and M.color_palettes.doom_light
           or M.color_palettes.doom_dark
-      )
+
+      c.current_palette = vim.tbl_deep_extend("force", base_palette, {
+        dim100 = hl.get_fg("StatusLineDim100"),
+        dim200 = hl.get_fg("StatusLineDim200"),
+        dim300 = hl.get_fg("StatusLineDim300"),
+        dim400 = hl.get_fg("StatusLineDim400"),
+        dim500 = hl.get_fg("StatusLineDim500"),
+        dim600 = hl.get_fg("StatusLineDim600"),
+        dim700 = hl.get_fg("StatusLineDim700"),
+        dim800 = hl.get_fg("StatusLineDim800"),
+        dim900 = hl.get_fg("StatusLineDim900"),
+      })
 
       local mode_colors = {
         ["NORMAL"] = "blue",
@@ -171,15 +280,18 @@ M.themes = {
           fg = "green",
           style = "bold",
         },
+        ["file.search"] = {
+          fg = "dim400",
+        },
         ["file.line_info"] = {
-          fg = "fg",
+          fg = "dim400",
         },
         ["file.line_percent"] = {
-          fg = "fg",
+          fg = "dim400",
           style = "bold",
         },
         ["file.line_count"] = {
-          fg = "fg",
+          fg = "dim400",
         },
         ["file.indent_info"] = {
           fg = "cyan",
