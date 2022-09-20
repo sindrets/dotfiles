@@ -223,9 +223,8 @@ nnoremap <leader>fl <Cmd>Telescope current_buffer_fuzzy_find theme=get_ivy<CR>
 nnoremap ;; <Cmd>Telescope resume<CR>
 
 " Git
-nnoremap <leader>gg <Cmd>Neogit<CR>
-nnoremap <leader>G <Cmd>Neogit<CR>
-nnoremap <leader>gs <Cmd>exe 'Neogit kind=split' <bar> wincmd J<CR>
+nnoremap <leader>G <Cmd>lua Config.plugin.fugitive.status_open("tab", { use_last = true })<CR>
+nnoremap <leader>gs <Cmd>lua Config.plugin.fugitive.status_open("split")<CR>
 nnoremap <leader>gl <Cmd>Terminal git log -n256 --shortstat<CR>
 nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua Config.common.notify.git("Staged "
             \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")))<CR>
@@ -233,7 +232,7 @@ nnoremap <leader>gA <Cmd>silent exe '!git add .' <bar>lua Config.common.notify.g
             \ .. Config.common.utils.str_quote(pl:vim_fnamemodify(".", ":~")))<CR> 
 nnoremap <leader>gcc <Cmd>Git commit <bar> wincmd J<CR>
 nnoremap <leader>gC <Cmd>Git commit -a <bar> wincmd J<CR>
-nnoremap <leader>gca <Cmd>Git commit -a --amend <bar> wincmd J<CR>
+nnoremap <leader>gca <Cmd>Git commit --amend <bar> wincmd J<CR>
 nnoremap <leader>gb <Cmd>Git blame <bar> wincmd p<CR>
 nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 nnoremap <leader>gh <Cmd>DiffviewFileHistory<CR>

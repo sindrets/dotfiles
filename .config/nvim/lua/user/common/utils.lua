@@ -1086,6 +1086,17 @@ function M.win_find_buf(bufid, tabpage)
   return result
 end
 
+---Get the id of a tab page from its tab number.
+---@param tabnr integer
+---@return integer?
+function M.tabnr_to_id(tabnr)
+  for _, id in ipairs(api.nvim_list_tabpages()) do
+    if api.nvim_tabpage_get_number(id) == tabnr then
+      return id
+    end
+  end
+end
+
 ---Set the (1,0)-indexed cursor position without having to worry about
 ---out-of-bounds coordinates. The line number is clamped to the number of lines
 ---in the target buffer.

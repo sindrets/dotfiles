@@ -1,5 +1,6 @@
 return function()
   local au = Config.common.au
+  local utils = Config.common.utils
   local api = vim.api
   local km = vim.keymap
 
@@ -61,6 +62,58 @@ return function()
     }
   end
 
+  function M.status_open(form, opt)
+    opt = opt or {}
+
+    if form == "tab" then
+      if opt.use_last then
+        for _, id in ipairs(api.nvim_list_tabpages()) do
+          if vim.t[id].fugitive_form == "tab" then
+            api.nvim_set_current_tabpage(id)
+            return
+          end
+        end
+      end
+
+      vim.cmd("tab sp | Git ++curwin")
+      vim.t.fugitive_form = "tab"
+    elseif form == "split" then
+      vim.cmd("Git")
+      vim.w.fugitive_form = "split"
+    elseif form == "float" then
+      error("Not implemented!")
+    end
+  end
+
+  local function find_usable_tabs()
+    local all = api.nvim_list_tabpages()
+    local fugitive_tabs = vim.tbl_filter(function(v)
+      return vim.t[v].fugitive_form == "tab"
+    end, all)
+    local other_tabs = utils.vec_diff(all, fugitive_tabs)
+    local prev_tab = utils.tabnr_to_id(vim.fn.tabpagenr("#")) or -1
+
+    if api.nvim_tabpage_is_valid(prev_tab) and not utils.vec_indexof(fugitive_tabs, prev_tab) then
+      return utils.vec_join(prev_tab, other_tabs)
+    else
+      return other_tabs
+    end
+  end
+
+  ---@param tabid integer?
+  ---@return vector<integer>
+  local function find_usable_wins(tabid)
+    -- Make sure the tab's current window is first in the list.
+    local wins = utils.vec_join(
+      api.nvim_tabpage_get_win(tabid or 0),
+      api.nvim_tabpage_list_wins(tabid or 0)
+    )
+
+    return vim.tbl_filter(function(v)
+      return vim.bo[api.nvim_win_get_buf(v)].buftype == ""
+    end, wins)
+  end
+
   au.declare_group("fugitive_config", {}, {
     {
       "FileType",
@@ -69,9 +122,9 @@ return function()
         -- Fugitive status buffer mappings
 
         km.set("n", "<Tab>", "=", { remap = true, buffer = ctx.buf })
-        km.set("n", "R", "edit", { buffer = ctx.buf })
-        km.set("n", "P", "Git push", { buffer = ctx.buf })
-        km.set("n", "p", "Git pull", { buffer = ctx.buf })
+        km.set("n", "R", "<Cmd>edit<CR>", { buffer = ctx.buf })
+        km.set("n", "P", "<Cmd>Git push<CR>", { buffer = ctx.buf })
+        km.set("n", "p", "<Cmd>Git pull<CR>", { buffer = ctx.buf })
 
         km.set("n", "q", function()
           Config.lib.comfy_quit({ keep_last = true })
@@ -79,26 +132,50 @@ return function()
 
         km.set("n", "<CR>", function()
           local info = M.get_status_cursor_info()
+          if not info then return end
 
-          if info then
-            if #info.paths > 0 then
+          if #info.paths > 0 then
+            if vim.t.fugitive_form ~= "tab" then
               vim.cmd(M.call(0, "GF", "edit"))
-            elseif info.commit then
-              local wins = vim.tbl_filter(function(v)
-                if vim.fn.win_gettype(v) ~= "" then return false end
-                return vim.w[v].fugitive_type == "commit_view"
-              end, api.nvim_tabpage_list_wins(0))
+            else
+              local edit_kind = "edit"
+              local tabs = find_usable_tabs()
 
-              if #wins > 0 then
-                api.nvim_set_current_win(wins[1])
-                vim.cmd("Gedit " .. info.commit)
+              if #tabs == 0 then
+                edit_kind = "tabedit"
               else
-                local win_width = api.nvim_win_get_width(0)
-                local win_height = api.nvim_win_get_height(0)
-                vim.cmd(M.call(0, "GF", win_width / 4 > win_height and "vsplit" or "split"))
-                vim.w.fugitive_type = "commit_view"
+                api.nvim_set_current_tabpage(tabs[1])
+                local wins = find_usable_wins(tabs[1])
+
+                if #wins == 0 then
+                  edit_kind = "split"
+                else
+                  api.nvim_set_current_win(wins[1])
+                end
               end
+
+              vim.cmd(("G%s %s %s | norm! zv"):format(
+                edit_kind,
+                info.offset and ("+" .. info.offset) or "",
+                vim.fn.fnameescape(info.paths[1])
+              ))
             end
+          elseif info.commit then
+            local wins = vim.tbl_filter(function(v)
+              if vim.fn.win_gettype(v) ~= "" then return false end
+              return vim.w[v].fugitive_type == "commit_view"
+            end, api.nvim_tabpage_list_wins(0))
+
+            if #wins > 0 then
+              api.nvim_set_current_win(wins[1])
+            else
+              local win_width = api.nvim_win_get_width(0)
+              local win_height = api.nvim_win_get_height(0)
+              vim.cmd(win_width / 4 > win_height and "vsplit" or "split")
+              vim.w.fugitive_type = "commit_view"
+            end
+
+            vim.cmd(("Git ++curwin show --stat --patch %s --"):format(info.commit))
           end
         end, { buffer = ctx.buf })
 
