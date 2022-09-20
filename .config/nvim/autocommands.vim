@@ -49,7 +49,7 @@ augroup NvimConfig
                 \ exe "so " . stdpath("config") . "/lua/user/plugins/init.lua"
                 \ | PackerCompile
 
-    au User PackerCompileDone exe 'lua Config.common.utils.info("Packer compiled!")'
+    au User PackerCompileDone exe 'lua Config.common.notify.config("Packer compiled!")'
                 \ | do <nomodeline> ColorScheme
 
     " Enable 'onemore' in visual mode.

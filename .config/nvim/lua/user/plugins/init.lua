@@ -340,6 +340,8 @@ return require("packer").startup({
   end,
 
   config = {
+    max_jobs = 32,
+    auto_reload_compiled = false,
     snapshot_path = vim.fn.stdpath("config"),
     display = {
       open_cmd = "vnew \\[packer\\] | wincmd L | vert resize 70",

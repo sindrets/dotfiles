@@ -1,0 +1,1 @@
+setl winhl=diffAdded:DiffInlineAdd,diffRemoved:DiffInlineDelete
