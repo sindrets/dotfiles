@@ -90,6 +90,12 @@ return function ()
           }
         }
       },
+      current_buffer_fuzzy_find = {
+        tiebreak = function(a, b)
+          -- Sort tiebreaks by line number
+          return a.lnum < b.lnum
+        end,
+      },
     },
     extensions = {
       fzf = {

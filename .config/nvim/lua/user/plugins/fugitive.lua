@@ -1,6 +1,7 @@
 return function()
   local au = Config.common.au
   local api = vim.api
+  local km = vim.keymap
 
   local M = {
     sid_cache = {}
@@ -37,7 +38,7 @@ return function()
       sid = M.get_sid(file_or_sid --[[@as string ]])
     end
 
-    return vim.call(("<SNR>%d_%s"):format(sid, func, ...))
+    return vim.call(("<SNR>%d_%s"):format(sid, func), ...)
   end
 
   ---Get the fugitive context for the item under the cursor.
@@ -66,6 +67,42 @@ return function()
       pattern = "fugitive",
       callback = function(ctx)
         -- Fugitive status buffer mappings
+
+        km.set("n", "<Tab>", "=", { remap = true, buffer = ctx.buf })
+        km.set("n", "R", "edit", { buffer = ctx.buf })
+        km.set("n", "P", "Git push", { buffer = ctx.buf })
+        km.set("n", "p", "Git pull", { buffer = ctx.buf })
+
+        km.set("n", "q", function()
+          Config.lib.comfy_quit({ keep_last = true })
+        end, { buffer = ctx.buf })
+
+        km.set("n", "<CR>", function()
+          local info = M.get_status_cursor_info()
+
+          if info then
+            if #info.paths > 0 then
+              vim.cmd(M.call(0, "GF", "edit"))
+            elseif info.commit then
+              local wins = vim.tbl_filter(function(v)
+                if vim.fn.win_gettype(v) ~= "" then return false end
+                return vim.w[v].fugitive_type == "commit_view"
+              end, api.nvim_tabpage_list_wins(0))
+
+              if #wins > 0 then
+                api.nvim_set_current_win(wins[1])
+                vim.cmd("Gedit " .. info.commit)
+              else
+                local win_width = api.nvim_win_get_width(0)
+                local win_height = api.nvim_win_get_height(0)
+                vim.cmd(M.call(0, "GF", win_width / 4 > win_height and "vsplit" or "split"))
+                vim.w.fugitive_type = "commit_view"
+              end
+            end
+          end
+        end, { buffer = ctx.buf })
+
+        Config.lib.mv_keymap("n", "-", "n", "s", ctx.buf)
 
         vim.keymap.set("n", "DD", function()
           local info = M.get_status_cursor_info()

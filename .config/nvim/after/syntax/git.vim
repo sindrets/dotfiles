@@ -1,5 +1,4 @@
-highlight default link gitPath Directory
-highlight default link gitNameStatus gitPath
+highlight default link gitNameStatus diffFile
 
 highlight default link gitStatusModified diffChanged
 highlight default link gitStatusAdded diffAdded
@@ -17,7 +16,7 @@ syntax match gitStatusRenamed /\v^R\d{3}(\t)@=/ contained
 
 " log --numstat
 
-highlight default link gitNumstat gitPath
+highlight default link gitNumstat diffFile
 
 syntax region gitNumstat start=/\v^\d+\t\d+\t.+/ end=/$/ oneline keepend contains=gitDiffAdded,gitDiffRemoved
 
@@ -26,7 +25,7 @@ syntax match gitDiffAdded /\v^\d+\ze\t/ contained
 
 " log --stat
 
-highlight default link gitStat gitPath
+highlight default link gitStat diffFile
 highlight default link gitNonText NonText
 
 syntax region gitStat start=/\v^ \S.* \| +\d+/ end=/$/ oneline keepend contains=gitDiffAdded,gitDiffRemoved,Number,gitNonText
