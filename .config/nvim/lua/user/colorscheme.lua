@@ -305,7 +305,7 @@ function M.apply_tweaks()
       or Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
   local fg_normal = Color.from_hl("Normal", "fg") --[[@as Color ]]
   local primary = Color.from_hl({ "Function", "Title", "Normal" }, "fg") --[[@as Color ]]
-  local accent = Color.from_hl({ "Constant", "Statement", "Normal" }, "fg") --[[@as Color ]]
+  local accent = Color.from_hl({ "TSFuncBuiltin", "Statement", "Normal" }, "fg") --[[@as Color ]]
 
   hi_clear({ "Cursor", "TermCursor" })
   hi("TermCursor", { style = "reverse" })
@@ -581,7 +581,7 @@ function M.apply_tweaks()
       vim.g.terminal_color1_5 = "#777777"
     end
 
-    feline_theme = "simple"
+    -- feline_theme = "simple"
 
   elseif colors_name:match("^github_") then
     hi_link("NonText", "Whitespace")
