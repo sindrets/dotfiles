@@ -553,6 +553,8 @@ function M.apply_tweaks()
 
   elseif colors_name == "seoulbones" then
     if bg == "light" then
+      hi("Primary", { fg = hl.get_fg("Statement") })
+      hi("Accent", { fg = hl.get_fg("Keyword") })
       hi("CursorLine", { bg = bg_normal:clone():highlight(0.05):to_css() })
       hi("ColorColumn", { bg = bg_normal:clone():highlight(0.1):to_css() })
       hi("Comment", { fg = bg_normal:clone():highlight(0.4):to_css() })
@@ -580,8 +582,6 @@ function M.apply_tweaks()
       vim.g.terminal_color_7  = "#555555"
       vim.g.terminal_color1_5 = "#777777"
     end
-
-    -- feline_theme = "simple"
 
   elseif colors_name:match("^github_") then
     hi_link("NonText", "Whitespace")
@@ -741,6 +741,7 @@ function M.apply_tweaks()
     fg = hl.get_fg({ "Accent", "Title", "Normal" }),
     style = "bold",
   })
+  hi("BufferLineIndicatorSelected", { fg = hl.get_fg({ "Accent", "Title", "Normal" }) })
   hi_link("BufferLineTabSeparatorSelected", "BufferLineTabSelected")
 
   hi({ "InclineNormal", "InclineNormalNC" }, {

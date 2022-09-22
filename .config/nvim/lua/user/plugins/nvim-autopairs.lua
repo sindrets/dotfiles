@@ -36,5 +36,5 @@ return function ()
         :with_cr(cond.none()),
   })
 
-  npairs.get_rule("'")[1].not_filetypes = { "scheme", "lisp" }
+  npairs.get_rule("'")[1].not_filetypes = { "scheme", "lisp", "racket" }
 end
