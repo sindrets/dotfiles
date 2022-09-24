@@ -261,8 +261,8 @@ return require("packer").startup({
       requires = { "nvim-treesitter/nvim-treesitter" },
       config = conf("nvim-ts-rainbow")
     }
-    use {
-      "tpope/vim-fugitive",
+    use_local {
+      "sindrets/vim-fugitive",
       requires = { "tpope/vim-rhubarb" },
       config = conf("fugitive"),
     }

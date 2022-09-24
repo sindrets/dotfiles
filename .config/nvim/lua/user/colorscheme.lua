@@ -624,6 +624,7 @@ function M.apply_tweaks()
       hi("Error", { fg = hl.get_fg("TSProperty"), explicit = true })
       hi("DiagnosticInfo", { fg = hl.get_fg("Boolean") })
       hi("DiagnosticHint", { fg = hl.get_fg("String") })
+      hi("FoldColumn", { fg = Color.from_hl("Number", "fg"):blend(bg_normal, 0.2):to_css() })
       hi("BufferLineIndicatorSelected", { fg = hl.get_fg("ErrorMsg") })
       hi({ "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" }, {
         fg = hl.get_fg("Boolean"),
@@ -632,6 +633,7 @@ function M.apply_tweaks()
       hi_link("DiffviewFilePanelConflicts", "String")
       hi_link("TSMath", "Function")
       hi("TelescopeMatching", { fg = hl.get_fg("String"), style = "bold" })
+      hi_link({ "fugitiveHash", "gitHash" }, "String")
     end
 
     M.unstyle_telescope()

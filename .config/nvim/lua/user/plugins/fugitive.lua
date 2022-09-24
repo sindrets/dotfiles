@@ -15,7 +15,7 @@ return function()
     file = file or "autoload/fugitive.vim"
     if M.sid_cache[file] then return M.sid_cache[file] end
 
-    local script_entry = api.nvim_exec("filter #vim-fugitive/" .. file .. "# scriptnames", true)
+    local script_entry = api.nvim_exec("filter #vim-fugitive.*/" .. file .. "# scriptnames", true)
     M.sid_cache[file] = tonumber(script_entry:match("^(%d+)")) --[[@as integer ]]
 
     return M.sid_cache[file]
@@ -114,7 +114,21 @@ return function()
     end, wins)
   end
 
+  ---@param tabid integer
+  ---@return vector<integer>
+  local function find_commit_views(tabid)
+    return vim.tbl_filter(function(v)
+      if vim.fn.win_gettype(v) ~= "" then return false end
+      return vim.w[v].fugitive_type == "commit_view"
+    end, api.nvim_tabpage_list_wins(tabid))
+  end
+
   au.declare_group("fugitive_config", {}, {
+    {
+      "BufEnter",
+      pattern = "^fugitive://*",
+      callback = "setl bufhidden=delete",
+    },
     {
       "FileType",
       pattern = "fugitive",
@@ -161,10 +175,7 @@ return function()
               ))
             end
           elseif info.commit then
-            local wins = vim.tbl_filter(function(v)
-              if vim.fn.win_gettype(v) ~= "" then return false end
-              return vim.w[v].fugitive_type == "commit_view"
-            end, api.nvim_tabpage_list_wins(0))
+            local wins = find_commit_views(0)
 
             if #wins > 0 then
               api.nvim_set_current_win(wins[1])
@@ -175,7 +186,7 @@ return function()
               vim.w.fugitive_type = "commit_view"
             end
 
-            vim.cmd(("Git ++curwin show --stat --patch %s --"):format(info.commit))
+            vim.cmd(("Git ++curwin show --stat --patch --diff-merges=first-parent %s --"):format(info.commit))
           end
         end, { buffer = ctx.buf })
 
@@ -255,6 +266,26 @@ return function()
       pattern = "git",
       callback = function(ctx)
         -- Git buffer mappings
+
+        km.set("n", "<CR>", function()
+          local commit, offset, postcmd = unpack(M.call(0, "cfile"))
+
+          if commit then
+            local wins = find_commit_views(0)
+
+            if #wins > 0 then
+              api.nvim_set_current_win(wins[1])
+              vim.cmd(("Gedit %s %s %s"):format(
+                offset and ("+" .. offset) or "",
+                commit,
+                postcmd and ("|" .. postcmd) or ""
+              ))
+              return
+            end
+          end
+
+          vim.cmd(M.call(0, "GF", "edit"))
+        end, { buffer = ctx.buf })
 
         vim.keymap.set("n", "DD", function()
           local commit = unpack(M.call(0, "cfile"))

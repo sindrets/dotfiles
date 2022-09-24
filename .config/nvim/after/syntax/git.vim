@@ -42,3 +42,6 @@ highlight default gitShortstat gui=bold
 syntax region gitShortstat start=/\v^ \d+ files? changed/ end=/$/ oneline keepend contains=Number
 
 syntax match Number /\v \zs\d+/ contained
+
+
+exe 'setl winhl=' . &winhl . (&winhl == "" ? "" : ",") . "Folded:GitFolded"
