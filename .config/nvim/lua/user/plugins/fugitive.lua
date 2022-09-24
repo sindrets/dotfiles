@@ -277,6 +277,14 @@ return function()
       callback = function(ctx)
         -- Git buffer mappings
 
+        km.set("n", "q", function()
+          if not vim.bo.modifiable then
+            return "<Cmd>wincmd q<CR>"
+          else
+            return "q"
+          end
+        end, { buffer = ctx.buf, expr = true })
+
         km.set("n", "<CR>", function()
           local commit, offset, postcmd = unpack(M.call(0, "cfile"))
 
