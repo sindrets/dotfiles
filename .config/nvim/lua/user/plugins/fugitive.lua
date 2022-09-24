@@ -137,8 +137,18 @@ return function()
 
         km.set("n", "<Tab>", "=", { remap = true, buffer = ctx.buf })
         km.set("n", "R", "<Cmd>edit<CR>", { buffer = ctx.buf })
-        km.set("n", "P", "<Cmd>Git push<CR>", { buffer = ctx.buf })
+        km.set("n", "S", "<Cmd>silent !git add -u<CR>", { buffer = ctx.buf })
+        km.set("n", "<C-s>", "<Cmd>silent !git add -A<CR>", { buffer = ctx.buf })
         km.set("n", "p", "<Cmd>Git pull<CR>", { buffer = ctx.buf })
+
+        km.set("n", "P", function()
+          utils.confirm("Confirm git push?", {
+            default = true,
+            callback = function(choice)
+              if choice then vim.cmd("Git push") end
+            end,
+          })
+        end, { buffer = ctx.buf })
 
         km.set("n", "q", function()
           Config.lib.comfy_quit({ keep_last = true })

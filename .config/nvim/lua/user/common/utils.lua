@@ -957,6 +957,35 @@ function M.input(prompt, opt)
   M.clear_prompt()
 end
 
+---@class utils.confirm.Opt
+---@field default boolean
+---@field callback fun(choice: boolean)
+
+---@param prompt string
+---@param opt utils.confirm.Opt
+function M.confirm(prompt, opt)
+  local ok = pcall(vim.ui.input, {
+    prompt = ("%s %s: "):format(
+      prompt,
+      opt.default and "[Y]/n" or "y/[N]"
+    ),
+    cancelreturn = "__CANCELLED__",
+  }, function(choice)
+    M.clear_prompt()
+    if choice == "__CANCELLED__" then opt.callback(false); return end
+    local value = ({
+      y = true,
+      n = false,
+    })[vim.trim(choice or ""):lower()]
+    if value == nil then value = opt.default end
+    opt.callback(value)
+  end)
+
+  if not ok then
+    opt.callback(false)
+  end
+end
+
 function M.raw_key(vim_key)
   return api.nvim_eval(string.format([["\%s"]], vim_key))
 end
