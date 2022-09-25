@@ -1,0 +1,11 @@
+{
+  "details": {
+    "prefix": "details",
+    "body": [
+      "<details>",
+      "  <summary><b>${1:Expand for details}</b></summary>",
+      "  ${2}",
+      "</details>"
+    ]
+  }
+}

@@ -668,6 +668,7 @@ function M.apply_tweaks()
     bg = hl.get_bg("NormalFloat") or "NONE",
     fg = hl.get_fg({ "FloatBorder", "Normal" }),
   })
+  hi_link("LspInfoBorder", "FloatBorder")
 
   hi("MsgSeparator", { fg = hl.get_fg("FloatBorder"), bg = hl.get_bg("MsgArea") })
 

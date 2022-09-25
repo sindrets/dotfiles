@@ -34,15 +34,19 @@ end
 
 ---Create a command-line abbreviation that only expands when the alias is the
 ---first arg in the command line.
----@param alias string
+---@param alias string|string[]
 ---@param substitute string
 function M.alias(alias, substitute)
-  store[alias] = substitute
+  if type(alias) ~= "table" then alias = { alias } end
 
-  vim.cmd(
-    ("cnoreabbrev <expr> %s v:lua.require('user.modules.cmd_alias').expand('%s')")
-    :format(alias, utils.pick(1, alias:gsub("'", "\\'")))
-  )
+  for _, name in ipairs(alias) do
+    store[name] = substitute
+
+    vim.cmd(
+      ("cnoreabbrev <expr> %s v:lua.require('user.modules.cmd_alias').expand('%s')")
+      :format(name, utils.pick(1, name:gsub("'", "\\'")))
+    )
+  end
 end
 
 ---Remove an alias.

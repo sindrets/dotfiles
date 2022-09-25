@@ -9,6 +9,8 @@ local config_store = {}
 local M = {}
 _G.Config.lsp = M
 
+require("lspconfig.ui.windows").default_options.border = "single"
+
 ---@diagnostic disable-next-line: unused-local
 function M.common_on_attach(client, bufnr)
   -- require("illuminate").on_attach(client)
