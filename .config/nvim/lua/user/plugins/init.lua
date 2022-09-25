@@ -118,14 +118,6 @@ return require("packer").startup({
         })
       end,
     }
-    use {
-      "lewis6991/spellsitter.nvim", config = function()
-        require("spellsitter").setup {
-          -- Whether enabled, can be a list of filetypes, e.g. {"python", "lua"}
-          enabled = true
-        }
-      end
-    }
     use_local { "sindrets/lua-dev.nvim" }
     use { "neovim/nvim-lspconfig" }
     use {
