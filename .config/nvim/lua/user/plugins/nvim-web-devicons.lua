@@ -67,6 +67,6 @@ return function ()
         name = "Patch",
       },
     },
-    default = true
+    default = false
   })
 end
