@@ -896,7 +896,9 @@ end
 
 ---@class InputCharSpec
 ---@field clear_prompt boolean (default: true)
----@field allow_non_ascii boolean (default: true)
+---@field allow_non_ascii boolean (default: false)
+---@field filter string A lua pattern that the input must match in order to be valid. (default: nil)
+---@field loop boolean Loop the input prompt until a valid char is given. (default: false)
 ---@field prompt_hl string (default: nil)
 
 ---@param prompt string
@@ -907,28 +909,48 @@ function M.input_char(prompt, opt)
   opt = vim.tbl_extend("keep", opt or {}, {
     clear_prompt = true,
     allow_non_ascii = false,
+    loop = false,
     prompt_hl = nil,
   }) --[[@as InputCharSpec ]]
 
-  if prompt then
-    vim.api.nvim_echo({ { prompt, opt.prompt_hl } }, false, {})
-  end
+  local valid, s, raw
 
-  local c
-  if not opt.allow_non_ascii then
-    while type(c) ~= "number" do
+  while true do
+    valid = true
+
+    if prompt then
+      vim.api.nvim_echo({ { prompt, opt.prompt_hl } }, false, {})
+    end
+
+    local c
+    if not opt.allow_non_ascii then
+      while type(c) ~= "number" do
+        c = vim.fn.getchar()
+      end
+    else
       c = vim.fn.getchar()
     end
-  else
-    c = vim.fn.getchar()
+
+    if opt.clear_prompt then
+      M.clear_prompt()
+    end
+
+    s = type(c) == "number" and vim.fn.nr2char(c) or nil
+    raw = type(c) == "number" and s or c
+
+    if opt.filter then
+      if s == nil or not s:match(opt.filter) then
+        valid = false
+      end
+    end
+
+    if valid or not opt.loop then break end
   end
 
-  if opt.clear_prompt then
-    M.clear_prompt()
+  if not valid then
+    return nil, -1
   end
 
-  local s = type(c) == "number" and vim.fn.nr2char(c) or nil
-  local raw = type(c) == "number" and s or c
   return s, raw
 end
 
@@ -964,25 +986,27 @@ end
 ---@param prompt string
 ---@param opt utils.confirm.Opt
 function M.confirm(prompt, opt)
-  local ok = pcall(vim.ui.input, {
-    prompt = ("%s %s: "):format(
+  local ok, s = pcall(
+    M.input_char,
+    ("%s %s: "):format(
       prompt,
-      opt.default and "[Y]/n" or "y/[N]"
+      opt.default and "[Y/n]" or "[y/N]"
     ),
-    cancelreturn = "__CANCELLED__",
-  }, function(choice)
-    M.clear_prompt()
-    if choice == "__CANCELLED__" then opt.callback(false); return end
-    local value = ({
-      y = true,
-      n = false,
-    })[vim.trim(choice or ""):lower()]
-    if value == nil then value = opt.default end
-    opt.callback(value)
-  end)
+    { filter = "[yYnN\27\r]", loop = true }
+  )
+
+  M.clear_prompt()
 
   if not ok then
     opt.callback(false)
+  else
+    if s == "\27" then opt.callback(false); return end
+    local value = ({
+      y = true,
+      n = false,
+    })[(s or ""):lower()]
+    if value == nil then value = opt.default end
+    opt.callback(value)
   end
 end
 
