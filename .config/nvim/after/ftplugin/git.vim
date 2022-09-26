@@ -1,5 +1,7 @@
 setl nolist cc=
-setl foldmethod=syntax
 setl nonu nornu
-setl scl=yes:1
+setl foldmethod=syntax
+setl foldtext=fugitive#Foldtext()
+setl fillchars+=foldsep:\ 
 setl foldcolumn=1
+setl scl=yes:1

@@ -647,7 +647,7 @@ function M.apply_tweaks()
   hi("TreesitterContext", { bg = bg_normal:clone():highlight(0.08):to_css() })
   hi_link("@neorg.markup.verbatim", "@text.literal")
 
-  hi("@neorg.tags.ranged_verbatim.code_block", {
+  hi({ "@neorg.tags.ranged_verbatim.code_block", "Folded" }, {
     bg = bg_normal:clone()
       :mod_value(-0.03)
       :to_css(),

@@ -38,8 +38,8 @@ opt.updatetime = 4096 -- change cursorhold time with 'vim.g.cursorhold_updatetim
 opt.termguicolors = true
 opt.backspace = list { "indent", "eol", "start" }
 opt.inccommand = "split"
--- opt.foldmethod = "expr"
--- opt.foldexpr = "nvim_treesitter#foldexpr()"
+opt.foldmethod = "expr"
+opt.foldexpr = "nvim_treesitter#foldexpr()"
 -- opt.foldlevelstart = 99
 opt.foldlevel = 99 -- 'foldlevelstart' isn't working correctly?
 opt.scrolloff = 3
@@ -93,6 +93,7 @@ opt.fillchars = list {
   "diff:╱",
   "foldclose:",
   "foldopen:",
+  "fold: ",
   "msgsep:─",
 }
 opt.showbreak = "⤷ "

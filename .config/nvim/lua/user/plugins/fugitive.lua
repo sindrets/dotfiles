@@ -64,6 +64,7 @@ return function()
 
   function M.status_open(form, opt)
     opt = opt or {}
+    local ok, err, cleanup
 
     if form == "tab" then
       if opt.use_last then
@@ -75,13 +76,19 @@ return function()
         end
       end
 
-      vim.cmd("tab sp | Git ++curwin")
+      ok, err = pcall(vim.cmd, "tab sp | Git ++curwin")
+      cleanup = "tabc"
       vim.t.fugitive_form = "tab"
     elseif form == "split" then
-      vim.cmd("Git")
+      ok, err = pcall(vim.cmd, "Git")
       vim.w.fugitive_form = "split"
     elseif form == "float" then
       error("Not implemented!")
+    end
+
+    if not ok then
+      if cleanup then vim.cmd(cleanup) end
+      utils.err(err)
     end
   end
 

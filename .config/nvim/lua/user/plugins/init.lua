@@ -138,6 +138,10 @@ return require("packer").startup({
           })
       end
     }
+    use {
+      "anuvyklack/pretty-fold.nvim",
+      config = conf("pretty-fold"),
+    }
     use { "mfussenegger/nvim-jdtls" }
     use {
       "hrsh7th/nvim-cmp",

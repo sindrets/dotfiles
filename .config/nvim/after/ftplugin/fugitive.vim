@@ -1,3 +1,5 @@
-setl nolist colorcolumn= nonu nornu scl=yes:1 foldcolumn=1
+setl nolist colorcolumn= nonu nornu
+setl scl=no foldcolumn=3
 setl foldmethod=syntax
+setl fillchars+=foldsep:\ 
 setl nobuflisted
