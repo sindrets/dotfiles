@@ -255,7 +255,7 @@ return function()
           if info then
             vim.cmd(("DiffviewOpen %s^! --selected-file=%s"):format(
               info.commit,
-              vim.fn.fnameescape(pl:join(vim.call("FugitiveWorkTree"), info.file))
+              vim.fn.fnameescape(info.file)
             ))
           end
         end, {
@@ -269,7 +269,7 @@ return function()
           if info then
             vim.cmd(("DiffviewFileHistory --range=%s %s"):format(
               info.commit,
-              vim.fn.fnameescape(pl:join(vim.call("FugitiveWorkTree"), info.file))
+              vim.fn.fnameescape(info.file)
             ))
           end
         end, {

@@ -315,11 +315,6 @@ function M.apply_tweaks()
   hi("Primary", { fg = primary:to_css() })
   hi("Accent", { fg = accent:to_css() })
 
-  -- Explicitly redefine Normal to circumvent bug in upstream 0.7.0.
-  -- TODO: Remove once 0.8.0 becomes stable.
-  -- @see [Neovim issue](https://github.com/neovim/neovim/issues/18024)
-  hi("Normal", { fg = fg_normal:to_css(), bg = bg_normal:to_css() })
-
   ---Controls whether or not diff hl is generated.
   local do_diff_gen = true
   ---@type GenerateDiffColorsSpec
