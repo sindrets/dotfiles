@@ -24,7 +24,10 @@ end
 
 M.base_config = {
   on_attach = M.common_on_attach,
-  capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities()),
+  capabilities = utils.tbl_union_extend(
+    vim.lsp.protocol.make_client_capabilities(),
+    cmp_lsp.default_capabilities()
+  ),
 }
 
 M.local_config_paths = {

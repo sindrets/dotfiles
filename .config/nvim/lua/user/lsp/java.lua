@@ -1,12 +1,16 @@
 local jdtls = require("jdtls")
 local cmp_lsp = require("cmp_nvim_lsp")
 
+local utils = Config.common.utils
+
 local M = {}
 
-local capabilities = vim.lsp.protocol.make_client_capabilities()
+local capabilities = utils.tbl_union_extend(
+  vim.lsp.protocol.make_client_capabilities(),
+  cmp_lsp.default_capabilities()
+)
 capabilities.textDocument.completion.completionItem.snippetSupport = true;
 capabilities.workspace.configuration = true
-capabilities = cmp_lsp.update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 function M.start_jdtls()
   local extendedClientCapabilities = jdtls.extendedClientCapabilities
