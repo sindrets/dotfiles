@@ -166,6 +166,12 @@ return function()
     })
   end
 
+  function actions.system_open()
+    local ctx = lir.get_context()
+    local cur = ctx:current()
+    vim.fn.jobstart({ "xdg-open", cur.fullpath }, { detach = true })
+  end
+
   ---Stage the current file.
   function actions.git_stage()
     local ctx = lir.get_context()
@@ -280,6 +286,7 @@ return function()
       ['m']     = actions.move,                 -- [m]ove
       ['<C-]>'] = actions.cd,
       ['gy']    = actions.yank_path,            -- [y]ank path
+      ['gx']    = actions.system_open,
       ['<C-h>'] = actions.toggle_show_hidden,   -- toggle [h]idden
       ['d']     = actions.delete,               -- [d]elete
 

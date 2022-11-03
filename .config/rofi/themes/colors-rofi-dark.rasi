@@ -20,11 +20,13 @@
     selected-urgent-background: #265B66;
     selected-urgent-foreground: @foreground;
 
-    background-color: @background;
     background: #0a0d12;
     foreground: #b1bab9;
     border-color: @background;
     spacing: 2;
+
+    background-color: @background;
+    text-color: @foreground;
 }
 
 #window {

@@ -26,7 +26,7 @@ bindsym Mod1+3 exec 1password
 bindsym $mod+e exec thunar
 bindsym $mod+s exec fsearch
 bindsym $mod+g exec --no-startup-id ~/.config/i3/scripts/goto-workspace.sh
-bindsym $mod+period exec ~/.config/scripts/rofi-emoji.sh
+bindsym $mod+period exec rofimoji
 
 # Config shortcuts
 bindsym $mod+F1 exec $terminal $EDITOR ~/.config/i3/config

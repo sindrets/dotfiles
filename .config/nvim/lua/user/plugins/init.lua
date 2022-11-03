@@ -80,6 +80,7 @@ return require("packer").startup({
     use { "chrisbra/csv.vim" }
     use { "fladson/vim-kitty" }
     use { "joelbeedle/pseudo-syntax" }
+    use { "alisdair/vim-armasm" }
 
     -- BEHAVIOUR
     use {
