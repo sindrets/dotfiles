@@ -305,7 +305,7 @@ function M.apply_tweaks()
       or Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
   local fg_normal = Color.from_hl("Normal", "fg") --[[@as Color ]]
   local primary = Color.from_hl({ "Function", "Title", "Normal" }, "fg") --[[@as Color ]]
-  local accent = Color.from_hl({ "TSFuncBuiltin", "Statement", "Normal" }, "fg") --[[@as Color ]]
+  local accent = Color.from_hl({ "@function.builtin", "Statement", "Normal" }, "fg") --[[@as Color ]]
 
   hi_clear({ "Cursor", "TermCursor" })
   hi("TermCursor", { style = "reverse" })
@@ -427,7 +427,7 @@ function M.apply_tweaks()
     hi("EndOfBuffer", { fg = "#292D3E", })
     hi("PmenuThumb", { bg = "#6A3EB5" })
     hi_link("QuickFixLine", "DiffText")
-    hi_link("TSComment", "Comment")
+    hi_link("@comment", "Comment")
     hi_link("NvimTreeIndentMarker", "LineNr")
     hi_link("TelescopeBorder", "Directory")
     hi("DiffAdd", { bg = "#344a4d", fg = "NONE", })
@@ -558,7 +558,7 @@ function M.apply_tweaks()
       })
       hi("StatusLine", { fg = hl.get_fg("String") })
       hi_link("NormalFloat", "Normal")
-      hi_link("TSMath", "Function")
+      hi_link("@text.math", "Function")
 
       vim.g.terminal_color_0 = "#E2E2E2"
       vim.g.terminal_color_8 = "#BFBABB"
@@ -606,7 +606,7 @@ function M.apply_tweaks()
   elseif colors_name == "oxocarbon-lua" then
     if bg == "dark" then
       hi("Primary", { fg = hl.get_fg("Boolean") })
-      hi("Accent", { fg = hl.get_fg("TSProperty") })
+      hi("Accent", { fg = hl.get_fg("@property") })
       hi_link("NormalNC", "Normal")
       hi("StatusLine", {
         bg = bg_normal:clone():highlight(0.05):to_css(),
@@ -616,7 +616,7 @@ function M.apply_tweaks()
       hi("Visual", { bg = Color.from_hl("Type", "fg"):blend(bg_normal, 0.8):mod_hue(25):to_css() })
       hi("Search", { bg = hl.get_fg("String"), style = "bold" })
       hi("Title", { style = "bold" })
-      hi("Error", { fg = hl.get_fg("TSProperty"), explicit = true })
+      hi("Error", { fg = hl.get_fg("@property"), explicit = true })
       hi("DiagnosticInfo", { fg = hl.get_fg("Boolean") })
       hi("DiagnosticHint", { fg = hl.get_fg("String") })
       hi("FoldColumn", { fg = Color.from_hl("Number", "fg"):blend(bg_normal, 0.2):to_css() })
@@ -624,9 +624,9 @@ function M.apply_tweaks()
       hi({ "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" }, {
         fg = hl.get_fg("Boolean"),
       })
-      hi({ "markdown_inlineTSLiteral", "TSLiteral" }, { fg = hl.get_fg("WinSeparator") })
+      hi({ "markdown_inlineTSLiteral", "@text.literal" }, { fg = hl.get_fg("WinSeparator") })
       hi_link("DiffviewFilePanelConflicts", "String")
-      hi_link("TSMath", "Function")
+      hi_link("@text.math", "Function")
       hi("TelescopeMatching", { fg = hl.get_fg("String"), style = "bold" })
       hi_link({ "fugitiveHash", "gitHash" }, "String")
     end
@@ -638,7 +638,7 @@ function M.apply_tweaks()
   M.generate_base_colors()
 
   -- Treesitter
-  hi("TSEmphasis", { style = "italic" })
+  hi("@text.emphasis", { style = "italic" })
   hi("TreesitterContext", { bg = bg_normal:clone():highlight(0.08):to_css() })
   hi_link("@neorg.markup.verbatim", "@text.literal")
 
@@ -666,6 +666,8 @@ function M.apply_tweaks()
   hi_link("LspInfoBorder", "FloatBorder")
 
   hi("MsgSeparator", { fg = hl.get_fg("FloatBorder"), bg = hl.get_bg("MsgArea") })
+
+  hi("MatchParen", { style = "underline", sp = fg_normal:to_css() })
 
   -- Use special underlines if supported
   if M.supports_sp_underline() then

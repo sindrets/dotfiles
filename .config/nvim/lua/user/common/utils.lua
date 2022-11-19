@@ -810,7 +810,7 @@ end
 ---unique among the currently listed buffers.
 ---
 ---Derived from feline.nvim.
----@see [feline.nvim](https://github.com/feline-nvim/feline.nvim)
+---Ref. https://github.com/feline-nvim/feline.nvim
 ---@param filename string
 ---@return string
 function M.get_unique_file_bufname(filename)
