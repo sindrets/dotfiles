@@ -80,10 +80,10 @@ opt.shada = list {
 opt.list = true
 opt.listchars = list {
   "tab: ──",
-  "space:·",
-  "nbsp:␣",
+  "lead:·",
   "trail:•",
-  "eol:↵",
+  "nbsp:␣",
+  -- "eol:↵",
   "precedes:«",
   "extends:»"
 }
@@ -97,6 +97,7 @@ opt.fillchars = list {
   "msgsep:─",
 }
 opt.showbreak = "⤷ "
+opt.concealcursor = "nc"
 opt.writebackup = true
 opt.undofile = true
 opt.isfname:append(":")
