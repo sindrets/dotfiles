@@ -437,7 +437,7 @@ function M.comfy_quit(opt)
   opt = opt or {}
   local cur_win = api.nvim_get_current_win()
   local prev_win = vim.fn.win_getid(vim.fn.winnr("#"))
-  local command = "silent q"
+  local command = "q"
   local ok, err
 
   if opt.keep_last then

@@ -7,7 +7,7 @@ return function ()
       -- list of language that will be disabled
       disable = {
         "vim",
-        "help",
+        -- "help",
         -- "markdown", -- NOTE: Parser seems immature. Revisit later.
         "c", -- NOTE: Performance is abysmal in files of any notable length.
         "cpp",

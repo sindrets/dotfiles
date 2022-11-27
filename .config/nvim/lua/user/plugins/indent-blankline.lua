@@ -8,7 +8,7 @@ return function ()
   vim.g.indent_blankline_max_indent_increase = 2
   vim.g.indent_blankline_buftype_exclude = {
     "terminal",
-    -- "nofile",
+    "nofile",
   }
   vim.g.indent_blankline_filetype_exclude = {
     "help",
