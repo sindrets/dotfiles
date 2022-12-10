@@ -386,7 +386,7 @@ M.components = {
 
         if cache[key] then
           return cache[key] .. desc
-        else
+        elseif rev:match("^%x+$") then
           -- Problem: Gitsigns shows the current HEAD as a commit SHA if it's
           -- anything other than the HEAD of a branch.
           -- Solution: Use git-name-rev to get more meaningful names.
@@ -410,6 +410,8 @@ M.components = {
           cache[key] = name
 
           return name .. desc
+        else
+          return rev .. desc
         end
       end,
       icon = icons.git.branch .. " ",

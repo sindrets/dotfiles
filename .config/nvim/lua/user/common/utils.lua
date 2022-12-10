@@ -169,6 +169,16 @@ function M.ternary(condition, if_true, if_false, plain)
   end
 end
 
+---Call the function `f` with autocommands disabled.
+---@param f function
+---@param ... any # Arguments
+function M.noautocmd(f, ...)
+  local last_eventignore = vim.o.eventignore
+  vim.o.eventignore = "all"
+  f(...)
+  vim.o.eventignore = last_eventignore
+end
+
 ---Call the function `f`, ignoring most of the window and buffer related
 ---events. The function is called in protected mode.
 ---@param f function

@@ -57,6 +57,9 @@ alias("N", "Neorg")
 alias("nim", "Neorg inject-metadata")
 -- Toggle conceallevel:
 alias("tcl", "exe 'setl conceallevel=' . (&conceallevel == 0 ? 2 : 0)")
+alias("do", "diffget")
+alias("dp", "diffput")
+alias("DO", "DiffviewOpen")
 
 -- FUNCTIONS
 

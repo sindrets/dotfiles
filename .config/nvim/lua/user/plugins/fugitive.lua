@@ -64,7 +64,16 @@ return function()
 
   function M.status_open(form, opt)
     opt = opt or {}
-    local ok, err, cleanup
+    local curwin = api.nvim_get_current_win()
+    local curbufnr = api.nvim_win_get_buf(curwin)
+    local ok, err, setup, open, cleanup
+
+    local function run_cleanup(cmd)
+      if cmd then vim.cmd(cmd) end
+      if api.nvim_win_is_valid(curwin) and api.nvim_buf_is_valid(curbufnr) then
+        utils.noautocmd(api.nvim_win_set_buf, curwin, curbufnr)
+      end
+    end
 
     if form == "tab" then
       if opt.use_last then
@@ -76,20 +85,35 @@ return function()
         end
       end
 
-      ok, err = pcall(vim.cmd, "tab sp | Git ++curwin")
+      setup = "tab sp | let t:fugitive_form = 'tab'"
+      open = "Git ++curwin"
       cleanup = "tabc"
-      vim.t.fugitive_form = "tab"
     elseif form == "split" then
-      ok, err = pcall(vim.cmd, "Git")
-      vim.w.fugitive_form = "split"
+      open = "Git | let w:fugitive_form = 'split'"
     elseif form == "float" then
       error("Not implemented!")
     end
 
+    if setup then vim.cmd(setup) end
+    ok, err = pcall(vim.cmd, open)
+
     if not ok then
-      if cleanup then vim.cmd(cleanup) end
-      utils.err(err)
+      if type(err) == "string" and err:match("file does not belong to a Git repository") then
+        -- Try to open status from an empty buffer in case the repository can
+        -- be derived from the pwd instead.
+        run_cleanup(cleanup)
+        if setup then vim.cmd(setup) end
+        vim.cmd("keepalt noautocmd enew | setl bufhidden=wipe bt=nofile")
+        ok, err = pcall(vim.cmd, open)
+      end
+
+      if not ok then
+        run_cleanup(cleanup)
+        utils.err(err)
+      end
     end
+
+    run_cleanup()
   end
 
   local function find_usable_tabs()

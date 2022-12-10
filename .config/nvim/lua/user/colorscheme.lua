@@ -557,6 +557,7 @@ function M.apply_tweaks()
         bg = Color.from_hl("Statement", "fg"):blend(bg_normal, 0.9):mod_hue(25):to_css(),
       })
       hi("StatusLine", { fg = hl.get_fg("String") })
+      hi("MatchParen", { bg = "NONE" })
       hi_link("NormalFloat", "Normal")
       hi_link("@text.math", "Function")
 
@@ -689,6 +690,18 @@ function M.apply_tweaks()
   hi_link("GitSignsAdd", "diffAdded")
   hi_link("GitSignsDelete", "diffRemoved")
   hi_link("GitSignsChange", "diffChanged")
+  hi("GitSignsAddInline", {
+    fg = hl.get_bg("DiffInlineAdd"),
+    bg = hl.get_fg("DiffInlineAdd")
+  })
+  hi("GitSignsDeleteInline", {
+    fg = hl.get_bg("DiffInlineDelete"),
+    bg = hl.get_fg("DiffInlineDelete")
+  })
+  hi("GitSignsChangeInline", {
+    fg = hl.get_bg("DiffInlineChange"),
+    bg = hl.get_fg("DiffInlineChange")
+  })
 
   hi_link("NeogitCommitViewHeader", "Title")
   hi_link("NeogitDiffAddHighlight", "DiffInlineAdd")
