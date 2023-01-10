@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+set -e
+
+out() { printf "$1 $2\n" "${@:3}"; }
+error() { out "==> ERROR:" "$@"; } >&2
+die() { error "$@"; exit 1; }
+
+usage() {
+  cat <<EOF
+usage: ${0##*/} [OPTIONS]
+
+Initialize a new bare git repository with an initial branch.
+
+  Options:
+    -h, --help      Print this help message
+    -b <branch-name>, --initial-branch=<branch-name>
+                    Set the initial branch name
+EOF
+}
+
+git_init_opts=""
+
+args=$(getopt -l "initial-branch:,help" -o "b:h" -- "$@")
+eval set -- "$args"
+
+while true; do
+  case $1 in
+    -b|--initial-branch)
+      shift
+      git_init_opts="$git_init_opts -b $1"
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    --)
+      shift
+      break
+      ;;
+  esac
+  shift
+done
+
+temp_repo="$(mktemp -d)"
+
+pushd . > /dev/null
+cd "$temp_repo"
+eval "git init $git_init_opts"
+git commit --allow-empty -m "Initial sync"
+popd > /dev/null
+
+git clone --no-hardlinks --bare "$temp_repo" "$(realpath .)"
+cur_branch="$(git branch --show-current)"
+git worktree add "trees/$cur_branch"
+
+rm -rf "$temp_repo"

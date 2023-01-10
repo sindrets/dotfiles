@@ -69,7 +69,12 @@ function TermSplit:load_buf()
   end
 
   if not (self.bufnr and api.nvim_buf_is_valid(self.bufnr)) then
-    local term = term_lib.new({ focus = false }) --[[@as Terminal ]]
+    local term = term_lib.prev(false)
+
+    if not term then
+      term = term_lib.new({ focus = false }) --[[@as Terminal ]]
+    end
+
     self.bufnr = term.bufnr
   end
 

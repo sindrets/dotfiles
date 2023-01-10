@@ -93,9 +93,6 @@ nnoremap <A-j> <C-w>j
 nnoremap <A-k> <C-w>k
 nnoremap <A-l> <C-w>l
 nnoremap <C-x> <C-w>p
-nnoremap <C-w><C-m> <Cmd>WinShift<CR>
-nnoremap <C-w>m <Cmd>WinShift<CR>
-nnoremap <C-w>X <Cmd>WinShift swap<CR>
 
 " Window splits
 nnoremap <leader>v <Cmd>vsp<CR>
@@ -110,6 +107,23 @@ tnoremap <C-M-h> <Cmd>vertical res -2<CR>
 tnoremap <C-M-l> <Cmd>vertical res +2<CR>
 tnoremap <C-M-j> <Cmd>res +1<CR>
 tnoremap <C-M-k> <Cmd>res -1<CR>
+
+" Move windows
+nnoremap <C-w><C-m> <Cmd>WinShift<CR>
+nnoremap <C-w>m <Cmd>WinShift<CR>
+nnoremap <C-w>X <Cmd>WinShift swap<CR>
+nnoremap <S-Left> <Cmd>exe win_gettype(0) ==# "popup" ? "FloatMove -2" : "WinShift left"<CR>
+nnoremap <S-Right> <Cmd>exe win_gettype(0) ==# "popup" ? "FloatMove +2" : "WinShift right"<CR>
+nnoremap <S-Down> <Cmd>exe win_gettype(0) ==# "popup" ? "FloatMove +0 +1" : "WinShift down"<CR>
+nnoremap <S-Up> <Cmd>exe win_gettype(0) ==# "popup" ? "FloatMove +0 -1" : "WinShift up"<CR>
+nnoremap <M-S-Space> <Cmd>Float --toggle<CR>
+tnoremap <M-S-Space> <Cmd>Float --toggle<CR>
+
+" Scratchpad
+nnoremap <M-S--> <Cmd>Scratchpad move<CR>
+nnoremap <M--> <Cmd>Scratchpad show<CR>
+tnoremap <M-S--> <Cmd>Scratchpad move<CR>
+tnoremap <M--> <Cmd>Scratchpad show<CR>
 
 nnoremap <Leader>q <Cmd>lua Config.lib.comfy_quit()<CR>
 nnoremap <C-q> <Cmd>lua Config.lib.comfy_quit()<CR>

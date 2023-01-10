@@ -1,3 +1,4 @@
+---@diagnostic disable: duplicate-doc-alias
 local api = vim.api
 
 local M = {}

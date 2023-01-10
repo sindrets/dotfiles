@@ -104,12 +104,13 @@ end
 
 ---Go to the previous terminal.
 ---@param focus boolean
+---@return Terminal?
 function M.prev(focus)
   if not M.ensure_term() then return end
 
-  if not state.cur_term then
+  if not state.cur_term or not state.cur_term:is_alive() then
     M.set_term(state.terminals[1], focus)
-    return
+    return state.cur_term
   end
 
   local idx = utils.vec_indexof(state.terminals, state.cur_term)
@@ -117,17 +118,19 @@ function M.prev(focus)
   if idx > -1 then
     local term = state.terminals[(idx - 2) % #state.terminals + 1]
     M.set_term(term, focus)
+    return state.cur_term
   end
 end
 
 ---Go to the next terminal.
 ---@param focus boolean
+---@return Terminal?
 function M.next(focus)
   if not M.ensure_term() then return end
 
-  if not state.cur_term then
+  if not state.cur_term or not state.cur_term:is_alive() then
     M.set_term(state.terminals[1], focus)
-    return
+    return state.cur_term
   end
 
   local idx = utils.vec_indexof(state.terminals, state.cur_term)
@@ -135,6 +138,7 @@ function M.next(focus)
   if idx > -1 then
     local term = state.terminals[(idx) % #state.terminals + 1]
     M.set_term(term, focus)
+    return state.cur_term
   end
 end
 

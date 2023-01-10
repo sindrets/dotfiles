@@ -24,11 +24,12 @@ return function()
           engine = "nvim-cmp",
         },
       },
-      ['core.gtd.base'] = {
-        config = {
-          workspace = 'uni',
-        },
-      },
+      -- GTD has been removed
+      -- ['core.gtd.base'] = {
+      --   config = {
+      --     workspace = 'uni',
+      --   },
+      -- },
     },
   })
 end

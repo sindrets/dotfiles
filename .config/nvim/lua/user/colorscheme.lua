@@ -580,12 +580,14 @@ function M.apply_tweaks()
     end
 
   elseif colors_name:match("^github_") then
+    hi("Primary", { fg = hl.get_fg("Directory") })
     hi_link("NonText", "Whitespace")
+    hi_link("ColorColumn", "CursorLine")
     hi_link({ "FoldColumn", "markdownCode", "markdownCodeBlock" }, "String")
     hi("Substitute", { fg = "#dddddd" })
     hi("StatusLine", {
       bg = bg_normal:clone():highlight(0.12):to_css(),
-      fg = hl.get_fg("String"),
+      fg = fg_normal:clone():highlight(-0.2):to_css(),
     })
     hi("NeogitDiffContextHighlight", { bg = bg_normal:clone():highlight(0.075):to_css() })
     hi_link("DashboardHeader", "Identifier")
@@ -594,8 +596,10 @@ function M.apply_tweaks()
     hl.hi("DashboardShortCut", { fg = hl.get_fg("String"), style = "bold,reverse" })
     hi_link("DashboardFooter", "Comment")
     hi_link("DiffviewFolderName", "Special")
+    hi({ "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" }, {
+      fg = hl.get_fg("Directory"),
+    })
     diff_gen_opt = { no_derive = { mod = true } }
-    feline_theme = "simple"
     M.apply_terminal_defaults()
 
   elseif colors_name == "kanagawa" then
@@ -730,6 +734,13 @@ function M.apply_tweaks()
 
   hi_link("IndentBlanklineChar", "Whitespace")
   hi_link("IndentBlanklineSpaceChar", "Whitespace")
+
+  -- Make breaking changes stand out more
+  hi("packerBreakingChange", {
+    fg = hl.get_fg("DiagnosticError"),
+    sp = hl.get_fg("DiagnosticWarn"),
+    style = "underline,bold",
+  })
 
   -- Adjust ts-rainbow colors for light color schemes
   if bg_normal.lightness >= 0.5 then

@@ -203,11 +203,6 @@ return require("packer").startup({
     use { "nvim-telescope/telescope-ui-select.nvim" }
     use { "akinsho/bufferline.nvim", config = conf("bufferline"), after = "nvim-web-devicons" }
     use {
-      "karb94/neoscroll.nvim",
-      config = conf("neoscroll"),
-      cond = vim.g.neovide or vim.g.nvui
-    }
-    use {
       "mattn/emmet-vim",
       setup = function ()
         vim.g.user_emmet_leader_key = "<C-Z>"
@@ -227,6 +222,7 @@ return require("packer").startup({
     use {
       "rcarriga/nvim-notify",
       config = function()
+        ---@diagnostic disable-next-line: different-requires
         vim.notify = require("notify")
         vim.notify.setup({
           top_down = false,
@@ -246,6 +242,8 @@ return require("packer").startup({
     use_local { "sindrets/diffview.nvim", config = conf("diffview") }
     -- use { "~/Documents/misc/diffview-api-test" }
     use_local { "sindrets/winshift.nvim", config = conf("winshift") }
+    use_local { "sindrets/view-tween.nvim", config = conf("view-tween") }
+    use_local { "sindrets/scratchpad.nvim" }
     use_local {
       "TimUntersberger/neogit",
       config = conf("neogit"),
@@ -253,7 +251,7 @@ return require("packer").startup({
     }
     use {
       "simrat39/symbols-outline.nvim",
-      setup = conf("symbols-outline"),
+      config = conf("symbols-outline"),
       cmd = { "SymbolsOutline", "SymbolsOutlineClose", "SymbolsOutlineOpen" },
     }
     use {
@@ -318,6 +316,7 @@ return require("packer").startup({
       requires = { "nvim-lua/plenary.nvim", "nvim-neorg/neorg-telescope" },
       cond = vim.fn.has("nvim-0.8"),
     }
+    use { "xorid/asciitree.nvim", cmd = { "AsciiTree", "AsciiTreeUndo" } }
 
     -- THEMES
     use { "rktjmp/lush.nvim" }

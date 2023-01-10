@@ -1126,6 +1126,12 @@ function M.unset_local(winids, option)
   end
 end
 
+---@param winid integer
+---@return boolean
+function M.win_is_float(winid)
+  return api.nvim_win_get_config(winid).relative ~= ""
+end
+
 ---Get a list of all windows that contain the given buffer.
 ---@param bufid integer
 ---@param tabpage? integer Only search windows in the given tabpage.

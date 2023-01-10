@@ -20,9 +20,14 @@ function M.expand(alias)
 
   local cmd_line = vim.fn.getcmdline()
 
-  if cmd_line:match("%s*%S+") then
+  if cmd_line:match("^%s*%S+") then
     local cur_pos = vim.fn.getcmdpos()
-    local ctx = arg_parser.scan_ex_args(cmd_line, cur_pos)
+    local ctx
+    if arg_parser.scan then
+      ctx = arg_parser.scan(cmd_line, { allow_quoted = false, cur_pos = cur_pos })
+    elseif arg_parser.scan_ex_args then
+      ctx = arg_parser.scan_ex_args(cmd_line, cur_pos)
+    end
 
     if ctx.argidx == 1 then
       return expanded

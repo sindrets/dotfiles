@@ -102,17 +102,27 @@ return function()
 
     utils.input("Create paths: ", {
       completion = function(_, cmd_line, cur_pos)
-        local ok, c = pcall(arg_parser.scan_sh_args, cmd_line, cur_pos)
-        if not ok then return end
+        local ok, c
 
-        return vim.tbl_map(function(v)
-          return table.concat(utils.vec_join(
-            vim.tbl_map(function(w)
-              return utils.str_quote(w, { only_if_whitespace = true })
-            end, utils.vec_slice(c.args, 1, c.argidx - 1)),
-            utils.str_quote(v, { only_if_whitespace = true })
-          ), " ")
-        end, vim.fn.getcompletion(c.arg_lead, "file"))
+        if arg_parser.scan_sh_args then
+          ok, c = pcall(arg_parser.scan_sh_args, cmd_line, cur_pos)
+          if not ok then return end
+        else
+          c = arg_parser.scan(cmd_line, { cur_pos = cur_pos })
+        end
+
+        if not arg_parser.process_candidates then
+          return vim.tbl_map(function(v)
+            return table.concat(utils.vec_join(
+              vim.tbl_map(function(w)
+                return utils.str_quote(w, { only_if_whitespace = true })
+              end, utils.vec_slice(c.args, 1, c.argidx - 1)),
+              utils.str_quote(v, { only_if_whitespace = true })
+            ), " ")
+          end, vim.fn.getcompletion(c.arg_lead, "file"))
+        end
+
+        return arg_parser.process_candidates(vim.fn.getcompletion(c.arg_lead, "file"), c, true)
       end,
 
       callback = function(new_paths)
@@ -123,8 +133,15 @@ return function()
           return
         end
 
-        local ok, c = pcall(arg_parser.scan_sh_args, new_paths, #new_paths)
-        if not ok then utils.err(c); return end
+        local ok, c
+
+        if arg_parser.scan_sh_args then
+          ok, c = pcall(arg_parser.scan_sh_args, new_paths, #new_paths)
+          if not ok then utils.err(c); return end
+        else
+          c = arg_parser.scan(new_paths)
+        end
+
         local new_abs, new_dir
 
         for _, arg in ipairs(c.args) do

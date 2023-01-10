@@ -36,7 +36,7 @@ command("Lgrep", function(e)
   Config.lib.comfy_grep(true, unpack(e.fargs))
 end, { nargs = "+", complete = "file" })
 
-command("Terminal", "exe '<mods> sp' | exe 'term <args>'", { nargs = "*" })
+command("Terminal", "exe '<mods> sp' | exe 'term <args>'", { nargs = "*", complete = "shellcmd" })
 
 command("TermTab", "tab sp | exe 'term' | startinsert", { bar = true })
 
