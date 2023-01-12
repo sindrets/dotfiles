@@ -3,5 +3,6 @@
     "Lua.diagnostics.disable": [
         "cast-local-type",
         "assign-type-mismatch"
-    ]
+    ],
+    "workspace.checkThirdParty": false
 }

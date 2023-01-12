@@ -52,7 +52,7 @@ return function ()
       buffer_previewer_maker = require'telescope.previewers'.buffer_previewer_maker,
       mappings = {
         i = {
-          ["<c-q>"] = actions.send_to_qflist + actions.open_qflist,
+          ["<c-q>"] = actions.smart_send_to_qflist + actions.open_qflist,
           ["<c-b>"] = actions.preview_scrolling_up,
           ["<c-f>"] = actions.preview_scrolling_down,
           ["<c-j>"] = false,
@@ -78,13 +78,12 @@ return function ()
           i = {
             ["<C-M-d>"] = function()
               -- Open in diffview
-              local selected_entry = action_state.get_selected_entry()
-              local value = selected_entry.value
+              local entry = action_state.get_selected_entry()
               -- close Telescope window properly prior to switching windows
               vim.api.nvim_win_close(0, true)
               vim.cmd("stopinsert")
               vim.schedule(function()
-                vim.cmd(("DiffviewOpen %s^!"):format(value))
+                vim.cmd(("DiffviewOpen %s^!"):format(entry.value))
               end)
             end,
           }
