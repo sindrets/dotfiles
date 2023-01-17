@@ -209,10 +209,12 @@ return require("packer").startup({
       end,
     }
     use { "tpope/vim-abolish" }
-    use { "alvan/vim-closetag", setup = function ()
-      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md"
-      vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown"
-    end }
+    use {
+      "alvan/vim-closetag", setup = function ()
+        vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md"
+        vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown"
+      end
+    }
     use { "Rasukarusan/nvim-block-paste" }
     use { "godlygeek/tabular" }
     use { "tpope/vim-surround" }
@@ -336,6 +338,23 @@ return require("packer").startup({
     use { "projekt0n/github-nvim-theme" }
     use { "rebelot/kanagawa.nvim" }
     use_local { "sindrets/oxocarbon-lua.nvim" }
+
+    vim.api.nvim_create_user_command("PackerSnapshot", function(ctx)
+      local utils = Config.common.utils
+      local path = ctx.fargs[1] or (vim.fn.stdpath("config") .. "/packer.lock")
+      require("packer").snapshot(path)
+
+      -- Format and sort packer lock-file
+      if vim.fn.executable("jq") == 1 and vim.fn.executable("sponge") == 1 then
+        -- Would prefer not to use `defer_fn()` here, but there's no straight
+        -- forward way to tell when `snapshot()` has completed.
+        vim.defer_fn(function()
+          vim.fn.system(utils.str_template("jq --sort-keys . ${path} | sponge ${path}", {
+            path = vim.fn.shellescape(path),
+          }))
+        end, 2000)
+      end
+    end, { nargs = "?", complete = "file" })
   end,
 
   config = {
