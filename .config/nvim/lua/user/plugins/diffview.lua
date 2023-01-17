@@ -20,9 +20,16 @@ return function ()
       fold_open = "",
     },
     view = {
+      default = {
+        winbar_info = false,
+      },
       merge_tool = {
         layout = "diff3_mixed",
         disable_diagnostics = true,
+        winbar_info = true,
+      },
+      file_history = {
+        winbar_info = false,
       },
     },
     file_panel = {
@@ -95,6 +102,10 @@ return function ()
         ["<cr>"] = actions.focus_entry,
         ["s"] = actions.toggle_stage_entry,
         ["gf"] = actions.goto_file_edit,
+        ["cc"] = "<Cmd>Git commit <bar> wincmd J<CR>",
+        ["ca"] = "<Cmd>Git commit --amend <bar> wincmd J<CR>",
+        ["cs"] = "<Cmd>Git commit --squash <bar> wincmd J<CR>",
+        ["c<Space>"] = ":Git commit ",
       },
       file_history_panel = {
         ["<cr>"] = actions.focus_entry,
