@@ -8,7 +8,7 @@
 ---
 ---Override the default colorscheme by defining the environment variable
 ---`NVIM_COLORSCHEME` using the same format.
-local DEFAULT_COLORSCHEME = "catppuccin dark"
+local DEFAULT_COLORSCHEME = "nordic dark"
 
 local Color = Config.common.color.Color
 local utils = Config.common.utils
@@ -215,11 +215,23 @@ end
 
 ---Give Telescope its default appearance.
 function M.unstyle_telescope()
-  hi_link("TelescopeNormal", "NormalFloat")
-  hi_link("TelescopeBorder", "FloatBorder")
-  hi_link("TelescopePromptNormal", "TelescopeNormal")
-  hi_link("TelescopePromptBorder", "TelescopeBorder")
-  hi_link({ "TelescopePromptTitle", "TelescopePreviewTitle", "TelescopeResultsTitle" }, "TelescopeNormal")
+  hi_link("TelescopeNormal", "NormalFloat", { clear = true })
+  hi_link("TelescopeBorder", "FloatBorder", { clear = true })
+  hi_link(
+    { "TelescopePromptNormal", "TelescopeResultsNormal", "TelescopePreviewNormal" },
+    "TelescopeNormal",
+    { clear = true }
+  )
+  hi_link(
+    { "TelescopePromptBorder", "TelescopeResultsBorder", "TelescopePreviewBorder" },
+    "TelescopeBorder",
+    { clear = true }
+  )
+  hi_link(
+    { "TelescopePromptTitle", "TelescopePreviewTitle", "TelescopeResultsTitle" },
+    "TelescopeNormal",
+    { clear = true }
+  )
   hi("TelescopePromptPrefix", { bg = "NONE" })
 end
 
@@ -228,6 +240,24 @@ function M.apply_log_defaults()
   hi_link({ "logLevelInfo", "logLevelNotice" }, "DiagnosticInfo")
   hi_link({ "logLevelWarning", "logLevelDebug", "logLevelAlert" }, "DiagnosticWarn")
   hi_link({ "logLevelError", "logLevelCritical", "logLevelEmergency" }, "DiagnosticError")
+end
+
+function M.find_base_colors()
+  local primary = Color.from_hl({ "Function", "Title", "Normal" }, "fg") --[[@as Color ]]
+  local accent
+
+  for _, name in ipairs({ "@function.builtin", "Statement", "Constant", "Statement", "Title" }) do
+    local color = Color.from_hl(name, "fg")
+    if color and color:to_hex() ~= primary:to_hex() then
+      accent = color
+      break
+    end
+  end
+
+  return {
+    primary = primary,
+    accent = accent,
+  }
 end
 
 ---Configure the colorscheme before it's loaded.
@@ -304,16 +334,15 @@ function M.apply_tweaks()
   local bg_normal = Color.from_hl("Normal", "bg")
       or Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
   local fg_normal = Color.from_hl("Normal", "fg") --[[@as Color ]]
-  local primary = Color.from_hl({ "Function", "Title", "Normal" }, "fg") --[[@as Color ]]
-  local accent = Color.from_hl({ "@function.builtin", "Statement", "Normal" }, "fg") --[[@as Color ]]
+  local base_colors = M.find_base_colors()
 
   hi_clear({ "Cursor", "TermCursor" })
   hi("TermCursor", { style = "reverse" })
   hi("NonText", { style = "nocombine" })
   hi("Hidden", { fg = "bg", bg = "bg" })
   hi("CursorLine", { sp = fg_normal:to_css() })
-  hi("Primary", { fg = primary:to_css() })
-  hi("Accent", { fg = accent:to_css() })
+  hi("Primary", { fg = base_colors.primary:to_css() })
+  hi("Accent", { fg = base_colors.accent:to_css() })
 
   ---Controls whether or not diff hl is generated.
   local do_diff_gen = true
@@ -638,6 +667,32 @@ function M.apply_tweaks()
 
     M.unstyle_telescope()
 
+  elseif colors_name == "nordic" then
+    hi("NormalFloat", { bg = bg_normal:clone():mod_value(-0.025):to_css() })
+    hi("FloatBorder", {
+      fg = bg_normal:clone():mod_value(0.1):to_css(),
+      bg = hl.get_bg("NormalFloat"),
+    })
+    hi("Pmenu", { bg = bg_normal:clone():mod_value(-0.025):to_css() })
+    hi("PmenuSbar", { bg = Color.from_hl("Pmenu", "bg"):mod_value(0.05):to_css() })
+    hi("Search", { bg = bg_normal:clone():mod_value(0.1):to_css() })
+    hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:clone():mod_value(-0.05):to_css() })
+    hi("diffAdded", { fg = "#B1D196" })
+    hi("diffRemoved", { fg = "#D06F79" })
+    hi("diffChanged", { fg = "#8CAFD2" })
+    hi("Visual", {
+      bg = Color.from_hl("diffChanged", "fg"):blend(bg_normal, 0.85):to_css(),
+      style = "NONE",
+    })
+    hi({ "SignColumn", "FoldColumn" }, { bg = "NONE" })
+    hi_link("@parameter", "@constant")
+    hi_link("CmpItemMenuDefault", "Comment", { clear = true })
+    hi_link("fugitiveHash", "@function")
+    hi("DiffviewCursorLine", {
+      bg = Color.from_hl("DiffviewNormal", "bg"):mod_value(-0.05):to_css()
+    })
+
+    M.unstyle_telescope()
   end
 
   M.generate_base_colors()
@@ -687,13 +742,13 @@ function M.apply_tweaks()
   })
   hi_link("DiffDelete", "Comment")
 
-  hi_link({ "GitSignsAddLn", "GitSignsAddPreview" }, "DiffInlineAdd")
-  hi_link({ "GitSignsDeleteLn", "GitSignsDeletePreview" }, "DiffInlineDelete")
-  hi_link("GitSignsChangeLn", "DiffInlineChange")
-  hi_link("GitSignsDeleteVirtLn", "DiffInlineDelete")
-  hi_link("GitSignsAdd", "diffAdded")
-  hi_link("GitSignsDelete", "diffRemoved")
-  hi_link("GitSignsChange", "diffChanged")
+  hi_link({ "GitSignsAddLn", "GitSignsAddPreview" }, "DiffInlineAdd", { clear = true })
+  hi_link({ "GitSignsDeleteLn", "GitSignsDeletePreview" }, "DiffInlineDelete", { clear = true })
+  hi_link("GitSignsChangeLn", "DiffInlineChange", { clear = true })
+  hi_link("GitSignsDeleteVirtLn", "DiffInlineDelete", { clear = true })
+  hi_link("GitSignsAdd", "diffAdded", { clear = true })
+  hi_link("GitSignsDelete", "diffRemoved", { clear = true })
+  hi_link("GitSignsChange", "diffChanged", { clear = true })
   hi("GitSignsAddInline", {
     fg = hl.get_bg("DiffInlineAdd"),
     bg = hl.get_fg("DiffInlineAdd")

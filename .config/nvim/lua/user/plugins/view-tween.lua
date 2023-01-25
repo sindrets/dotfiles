@@ -6,10 +6,10 @@ return function()
   local duration = 250
 
   km.set("n", "<C-u>", function()
-    vt.scroll(0, -math.max(vim.wo.scroll, 16), duration)
+    vt.scroll(0, -math.max(vim.wo.scroll --[[@as integer ]], 16), duration)
   end)
   km.set("n", "<C-d>", function()
-    vt.scroll(0, math.max(vim.wo.scroll, 16), duration)
+    vt.scroll(0, math.max(vim.wo.scroll --[[@as integer ]], 16), duration)
   end)
   km.set("n", "<C-b>", function()
     vt.scroll(0, -api.nvim_win_get_height(0), duration * 2)

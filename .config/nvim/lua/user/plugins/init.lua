@@ -1,5 +1,7 @@
 vim.cmd("packadd packer.nvim")
 
+local packer = require("packer")
+
 local function conf(config_name)
   return require(string.format("user.plugins.%s", config_name))
 end
@@ -40,7 +42,7 @@ local function use_local(spec)
   use(wrap_local(spec))
 end
 
-return require("packer").startup({
+return packer.startup({
   ---@diagnostic disable-next-line: unused-local
   function (use, use_rocks)
 
@@ -338,22 +340,32 @@ return require("packer").startup({
     use { "projekt0n/github-nvim-theme" }
     use { "rebelot/kanagawa.nvim" }
     use_local { "sindrets/oxocarbon-lua.nvim" }
+    use { "AlexvZyl/nordic.nvim" }
 
+    -- Override PackerSnapshot such that the created snapshot file is formatted
     vim.api.nvim_create_user_command("PackerSnapshot", function(ctx)
-      local utils = Config.common.utils
-      local path = ctx.fargs[1] or (vim.fn.stdpath("config") .. "/packer.lock")
-      require("packer").snapshot(path)
+      local async = require("plenary.async")
+      ---@diagnostic disable-next-line: missing-parameter
+      async.run(function()
+        local utils = Config.common.utils
+        local path = ctx.fargs[1] or pl:join(vim.fn.stdpath("config"), "packer.lock")
 
-      -- Format and sort packer lock-file
-      if vim.fn.executable("jq") == 1 and vim.fn.executable("sponge") == 1 then
-        -- Would prefer not to use `defer_fn()` here, but there's no straight
-        -- forward way to tell when `snapshot()` has completed.
-        vim.defer_fn(function()
-          vim.fn.system(utils.str_template("jq --sort-keys . ${path} | sponge ${path}", {
-            path = vim.fn.shellescape(path),
-          }))
-        end, 2000)
-      end
+        pl:unlink(path) -- Delete the current lockfile to avoid the prompt popup
+        async.util.scheduler()
+        packer.snapshot(path)
+
+        -- Format and sort packer lock-file
+        if vim.fn.executable("jq") == 1 and vim.fn.executable("sponge") == 1 then
+          -- Would prefer not to use `defer_fn()` here, but `snapshot()`
+          -- commits the unforgivable sin of being an async function that can't
+          -- be awaited and has no callback.
+          vim.defer_fn(function()
+            vim.fn.system(utils.str_template("jq --sort-keys . ${path} | sponge ${path}", {
+              path = vim.fn.shellescape(path),
+            }))
+          end, 2000)
+        end
+      end)
     end, { nargs = "?", complete = "file" })
   end,
 

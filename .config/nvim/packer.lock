@@ -101,6 +101,9 @@
   "nerdcommenter": {
     "commit": "98cc4a2"
   },
+  "nordic.nvim": {
+    "commit": "e8c57fe"
+  },
   "null-ls.nvim": {
     "commit": "7bd74a8"
   },

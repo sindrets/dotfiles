@@ -52,6 +52,9 @@ augroup NvimConfig
     au User PackerCompileDone exe 'lua Config.common.notify.config("Packer compiled!")'
                 \ | do <nomodeline> ColorScheme
 
+    " Automatically update lockfile
+    au User PackerComplete PackerSnapshot
+
     " Enable 'onemore' in visual mode.
     au ModeChanged *:[v]* setl virtualedit+=onemore
     au ModeChanged [v]*:* setl virtualedit<
