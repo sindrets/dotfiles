@@ -1,13 +1,11 @@
 return function ()
   local actions = require("diffview.actions")
 
-  local utils = Config.common.utils
-
   local M = {}
 
   require('diffview').setup({
     diff_binaries = false,
-    enhanced_diff_hl = true,
+    enhanced_diff_hl = false, -- Set up hihglights in the hooks instead
     git_cmd = { "git" },
     use_icons = true,
     show_help_hints = false,
@@ -60,37 +58,31 @@ return function ()
         height = 16,
       },
     },
-    commit_log_panel = {
-      win_config = {},
-    },
     default_args = {
       DiffviewOpen = {},
       DiffviewFileHistory = {},
     },
     hooks = {
-      ---@param view StandardView
-      view_opened = function(view)
+      ---@diagnostic disable-next-line: unused-local
+      diff_buf_win_enter = function(bufnr, winid, ctx)
         -- Highlight 'DiffChange' as 'DiffDelete' on the left, and 'DiffAdd' on
         -- the right.
-        local function post_layout()
-          utils.tbl_ensure(view, "winopts.diff2.a")
-          utils.tbl_ensure(view, "winopts.diff2.b")
-          view.winopts.diff2.a = utils.tbl_union_extend(view.winopts.diff2.a, {
-            winhl = {
+        if ctx.layout_name:match("^diff2") then
+          if ctx.symbol == "a" then
+            vim.opt_local.winhl = table.concat({
+              "DiffAdd:DiffviewDiffAddAsDelete",
+              "DiffDelete:DiffviewDiffDelete",
               "DiffChange:DiffAddAsDelete",
               "DiffText:DiffDeleteText",
-            },
-          })
-          view.winopts.diff2.b = utils.tbl_union_extend(view.winopts.diff2.b, {
-            winhl = {
+            }, ",")
+          elseif ctx.symbol == "b" then
+            vim.opt_local.winhl = table.concat({
+              "DiffDelete:DiffviewDiffDelete",
               "DiffChange:DiffAdd",
               "DiffText:DiffAddText",
-            },
-          })
+            }, ",")
+          end
         end
-
-        view.emitter:on("post_layout", post_layout)
-        post_layout()
       end,
     },
     keymaps = {
@@ -104,7 +96,6 @@ return function ()
         ["gf"] = actions.goto_file_edit,
         ["cc"] = "<Cmd>Git commit <bar> wincmd J<CR>",
         ["ca"] = "<Cmd>Git commit --amend <bar> wincmd J<CR>",
-        ["cs"] = "<Cmd>Git commit --squash <bar> wincmd J<CR>",
         ["c<Space>"] = ":Git commit ",
       },
       file_history_panel = {

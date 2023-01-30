@@ -69,7 +69,7 @@ command("Rnew", function(e)
 end, {
   nargs = "+",
   complete = function(arg_lead, cmd_line, cur_pos)
-    local c = arg_parser.scan_ex_args(cmd_line, cur_pos)
+    local c = arg_parser.scan(cmd_line, { allow_quoted = false, cur_pos = cur_pos })
 
     if #c.args > 1 then
       local prefix = c.args[2]:sub(1, 1)
