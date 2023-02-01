@@ -40,6 +40,61 @@ command("Terminal", "exe '<mods> sp' | exe 'term <args>'", { nargs = "*", comple
 
 command("TermTab", "tab sp | exe 'term' | startinsert", { bar = true })
 
+command("Job", function(e)
+  local stdout, stderr, code
+  local raw_cmd = e.args
+  local cmd = raw_cmd:gsub("'", "''")
+  local silent = (e.smods.silent and 1 or 0) + (e.smods.emsg_silent and 1 or 0)
+
+  ---@diagnostic disable-next-line: unused-local
+  local function cb(job_id, data, event_name)
+    if event_name == "stdout" then stdout = data
+    elseif event_name == "stderr" then stderr = data
+    elseif event_name == "exit" then
+      code = data
+      local notify_fn, msg, notify_opt
+
+      if code ~= 0 then
+        if silent < 2 then
+          notify_fn = notify.shell.error
+          notify_opt = { title = "Job exited with a non-zero status!" }
+          msg = table.concat({
+            "cmd: ${cmd}",
+            "code: ${code}",
+            "stderr: ${stderr}",
+          }, "\n")
+        end
+      else
+        if silent < 1 then
+          notify_fn = notify.shell.info
+          notify_opt = { title = "Job exited normally" }
+          msg = table.concat({
+            "cmd: ${cmd}",
+            "stdout: ${stdout}",
+          }, "\n")
+        end
+      end
+
+      if notify_fn and msg then
+        notify_fn(utils.str_template(msg, {
+          cmd = raw_cmd,
+          code = code,
+          stderr = vim.trim(table.concat(stderr, "\n")),
+          stdout = vim.trim(table.concat(stdout, "\n"))
+        }), notify_opt)
+      end
+    end
+  end
+
+  vim.fn.jobstart(cmd, {
+    on_exit = cb,
+    on_stdout = cb,
+    on_stderr = cb,
+    stdout_buffered = true,
+    stderr_buffered = true,
+  })
+end, { nargs = "*", complete = "shellcmd" })
+
 command("HelpHere", function(e)
   Config.lib.cmd.help_here(e.args)
 end, { bar = true, nargs = 1, complete = "help" })

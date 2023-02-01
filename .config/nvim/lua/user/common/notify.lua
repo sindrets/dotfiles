@@ -7,6 +7,10 @@ local configs = {
     title = "Config",
     icon = "",
   },
+  shell = {
+    title = "Shell",
+    icon = "",
+  }
 }
 
 local levels = {
