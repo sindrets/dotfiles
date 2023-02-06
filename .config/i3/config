@@ -186,6 +186,7 @@ for_window [class="1Password"] floating enable border pixel 1
 for_window [class="SpeedCrunch"] floating enable border pixel 1
 for_window [class="Steam"] border pixel 1
 for_window [class="Steam" title="Friends List"] floating enable
+for_window [class="Steam" title="Steam - News"] floating enable
 for_window [class="Colorgrab"] floating enable border normal
 
 # switch to workspace with urgent window automatically

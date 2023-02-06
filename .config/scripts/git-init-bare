@@ -50,6 +50,7 @@ git commit --allow-empty -m "Initial sync"
 popd > /dev/null
 
 git clone --no-hardlinks --bare "$temp_repo" "$(realpath .)"
+git config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
 cur_branch="$(git branch --show-current)"
 git worktree add "trees/$cur_branch"
 
