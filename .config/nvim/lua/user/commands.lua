@@ -178,7 +178,7 @@ command("CompareDir", function(e)
 
   for _, winid in ipairs({ vim.t.compare_a, vim.t.compare_b }) do
     api.nvim_win_call(winid, function()
-      vim.cmd("edit" .. uv.getcwd())
+      vim.cmd("edit " .. uv.getcwd())
     end)
   end
 end, { bar = true, nargs = "+", complete = "dir" })
