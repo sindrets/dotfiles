@@ -83,6 +83,10 @@ return packer.startup({
     use { "fladson/vim-kitty" }
     use { "joelbeedle/pseudo-syntax" }
     use { "alisdair/vim-armasm" }
+    use {
+      "https://codeberg.org/ldesousa/vim-turtle-syntax.git",
+      run = "mkdir -p syntax && cp turtle.vim syntax",
+    }
 
     -- BEHAVIOUR
     use {

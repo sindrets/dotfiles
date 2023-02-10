@@ -236,6 +236,9 @@
   "vim-teal": {
     "commit": "d2aa107"
   },
+  "vim-turtle-syntax.git": {
+    "commit": "e2c1597"
+  },
   "vim-vsnip": {
     "commit": "8dde8c0"
   },

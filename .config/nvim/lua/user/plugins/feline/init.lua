@@ -216,7 +216,8 @@ M.components = {
           uname = "«" .. uname:sub(math.max(#uname - size, 3))
         end
 
-        return uname .. status
+        -- Escape % signs
+        return (uname:gsub("%%", "%%%%")) .. status
       end,
       enabled = function()
         return vim.fn.bufname() ~= ""
