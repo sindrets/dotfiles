@@ -317,7 +317,12 @@ M.components = {
         end,
       },
       enabled = function()
-        if not vim.tbl_contains({ "", "nowrite" }, vim.bo.bt) then return false end
+        if not vim.tbl_contains({ "", "nowrite" }, vim.bo.bt)
+          and not vim.fn.bufname():match("^Scratch %d+$")
+        then
+          return false
+        end
+
         return vim.bo.ft ~= ""
       end,
       icon = function()
