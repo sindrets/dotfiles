@@ -187,6 +187,9 @@ M.themes = {
         ["diagnostic.hint"] = {
           fg = "hint",
         },
+        ["file.filetype"] = {
+          style = "bold",
+        },
         ["file.format"] = {
           fg = "primary",
           style = "bold",

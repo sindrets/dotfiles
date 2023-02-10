@@ -1,11 +1,10 @@
 local lazy = require("user.lazy")
 
----@module "feline"
-local feline = lazy.require("feline")
----@module "feline.providers.lsp"
-local lsp = lazy.require("feline.providers.lsp")
----@module "user.plugins.feline.styles"
-local styles = lazy.require("user.plugins.feline.styles")
+local StatusComponent = lazy.require("user.plugins.feline.status_component") ---@type StatusComponent|LazyModule
+local feline = lazy.require("feline") ---@module "feline"
+local lsp = lazy.require("feline.providers.lsp") ---@module "feline.providers.lsp"
+local styles = lazy.require("user.plugins.feline.styles") ---@module "user.plugins.feline.styles"
+local devicons = lazy.require("nvim-web-devicons") ---@module "nvim-web-devicons"
 
 local utils = Config.common.utils
 local pl = utils.pl
@@ -121,7 +120,8 @@ function M.apply_theme(theme, opt)
   for _, kind in ipairs({ statusline.active, statusline.inactive }) do
     for _, section in ipairs(kind) do
       for _, component in ipairs(section) do
-        component.hl = t[component.name] or component.hl
+        local field = component.name and component.name:match("user%.(.*)") or ""
+        component.hl = t[field] or component.hl
         if not component.hl then
           component.hl = vim.deepcopy(default_hl)
         end
@@ -130,17 +130,47 @@ function M.apply_theme(theme, opt)
   end
 end
 
-function M.process_components(components)
+function M.process_comp_configs(configs)
   local function recurse(table_path, item)
     if item.provider then
-      item.name = table_path
+      item:set_name(table_path)
       return
     end
     for name, entry in pairs(item) do
       recurse(("%s%s%s"):format(table_path, table_path ~= "" and "." or "", name), entry)
     end
   end
-  recurse("", components)
+  recurse("user", configs)
+end
+
+function M.list_comp_configs(configs)
+  local ret = {}
+
+  local function recurse(item)
+    if item.provider then
+      table.insert(ret, item)
+      return
+    end
+
+    for _, entry in pairs(item) do
+      recurse(entry)
+    end
+  end
+
+  recurse(configs)
+
+  return ret
+end
+
+function M.get_custom_providers()
+  local configs = M.list_comp_configs(M.components)
+  local ret = {}
+
+  for _, config in ipairs(configs) do
+    ret[config.name] = config.provider.get
+  end
+
+  return ret
 end
 
 ---@diagnostic disable-next-line: unused-local, unused-function
@@ -169,27 +199,36 @@ local function width_condition(min_width)
   end
 end
 
----@class FelineComponents
+---@class feline.CompConfigs
 M.components = {
-  block = {
+  block = StatusComponent({
     provider = function() return "▊" end,
-  },
-  vi_mode = {
-    provider = function()
-      return M.mode_name_map[api.nvim_get_mode().mode] or ""
-    end,
-  },
-  paste_mode = {
+  }),
+  vi_mode = StatusComponent({
+    provider = {
+      update = { "ModeChanged" },
+      get = function()
+        return M.mode_name_map[api.nvim_get_mode().mode] or ""
+      end,
+    }
+  }),
+  paste_mode = StatusComponent({
     provider = function()
       return vim.o.paste and "[PASTE]" or ""
     end,
-  },
-  lsp_server = {
-    provider = function()
-      if #vim.tbl_keys(vim.lsp.buf_get_clients(0)) > 0 then
-        return vim.bo.filetype
-      end
-    end,
+  }),
+  lsp_server = StatusComponent({
+    provider = {
+      update = { "LspAttach", "LspDetach" },
+      get = function()
+        local clients = vim.lsp.buf_get_clients(0)
+        if #vim.tbl_keys(clients) > 0 then
+          return table.concat(vim.tbl_map(function(v)
+            return v.name
+          end, clients), ",")
+        end
+      end,
+    },
     enabled = function()
       local exclude = { [''] = true }
       if exclude[vim.bo.filetype] then
@@ -199,45 +238,50 @@ M.components = {
     end,
     icon = icons.lsp_server .. " ",
     truncate_hide = true,
-  },
+  }),
   file = {
-    info = {
-      provider = function()
-        local uname = utils.get_unique_file_bufname(api.nvim_buf_get_name(0))
-        local status = vim.bo.modified and (" " .. icons.modified .. " ") or ""
+    info = StatusComponent({
+      provider = {
+        update = { "BufEnter", "BufFilePost" },
+        get = function()
+          local uname = utils.get_unique_file_bufname(api.nvim_buf_get_name(0))
+          local status = vim.bo.modified and (" " .. icons.modified .. " ") or ""
 
-        local max_size = 51
-        local margin = 42
-        local width = vim.o.laststatus == 3 and vim.o.columns or api.nvim_win_get_width(0)
-        local size = utils.clamp(width - margin, 1, max_size)
+          local max_size = 51
+          local margin = 42
+          local width = vim.o.laststatus == 3 and vim.o.columns or api.nvim_win_get_width(0)
+          local size = utils.clamp(width - margin, 1, max_size)
 
-        -- Truncate name if it's too long
-        if #uname > size then
-          uname = "«" .. uname:sub(math.max(#uname - size, 3))
-        end
+          -- Truncate name if it's too long
+          if #uname > size then
+            uname = "«" .. uname:sub(math.max(#uname - size, 3))
+          end
 
-        -- Escape % signs
-        return (uname:gsub("%%", "%%%%")) .. status
-      end,
+          -- Escape % signs
+          return (uname:gsub("%%", "%%%%")) .. status
+        end,
+      },
       enabled = function()
         return vim.fn.bufname() ~= ""
       end,
-    },
-    icon = {
-      provider = function()
-        local basename, ext
-        if vim.bo.buftype == "terminal" then
-          basename = "sh"
-        else
-          local path = api.nvim_buf_get_name(0)
-          basename = pl:basename(path)
-          ext = pl:extension(path)
-        end
+    }),
+    icon = StatusComponent({
+      provider = {
+        update = { "BufEnter", "BufFilePost" },
+        get = function()
+          local basename, ext
+          if vim.bo.buftype == "terminal" then
+            basename = "sh"
+          else
+            local path = api.nvim_buf_get_name(0)
+            basename = pl:basename(path)
+            ext = pl:extension(path)
+          end
 
-        local devicons = require("nvim-web-devicons")
-        local icon, _ = devicons.get_icon(basename, ext, { default = false })
-        return (icon or "")
-      end,
+          local icon, _ = devicons.get_icon(basename, ext, { default = false })
+          return (icon or "")
+        end
+      },
       enabled = function()
         return vim.fn.bufname() ~= ""
       end,
@@ -253,7 +297,6 @@ M.components = {
           ext = pl:extension(path)
         end
 
-        local devicons = require("nvim-web-devicons")
         local _, color = devicons.get_icon_color(basename, ext)
         if color then
           fg = color
@@ -265,13 +308,31 @@ M.components = {
           fg = fg,
         }
       end,
-    },
-    filetype = {
-      provider = function()
-        return string.upper(vim.bo.ft)
+    }),
+    filetype = StatusComponent({
+      provider = {
+        update = { "BufEnter", "FileType" },
+        get = function()
+          return vim.bo.ft
+        end,
+      },
+      enabled = function()
+        if not vim.tbl_contains({ "", "nowrite" }, vim.bo.bt) then return false end
+        return vim.bo.ft ~= ""
       end,
-    },
-    format = {
+      icon = function()
+        local ft = vim.bo.ft
+        local icon, icon_hl = devicons.get_icon_by_filetype(ft)
+
+        return {
+          str = (icon or "") .. " ",
+          hl =  {
+            fg = icon_hl and hl.get_fg(icon_hl) or "fg",
+          }
+        }
+      end,
+    }),
+    format = StatusComponent({
       provider = function ()
         local format = vim.bo.fileformat
         local enc = vim.bo.fileencoding
@@ -290,8 +351,8 @@ M.components = {
         return format:upper()
       end,
       truncate_hide = true,
-    },
-    line_info = {
+    }),
+    line_info = StatusComponent({
       provider = function ()
         local cursor = api.nvim_win_get_cursor(0)
         local line = tostring(cursor[1])
@@ -311,22 +372,22 @@ M.components = {
 
         return result
       end,
-    },
-    line_percent = {
+    }),
+    line_percent = StatusComponent({
       provider = function ()
         local current_line = api.nvim_win_get_cursor(0)[1]
         local total_line = api.nvim_buf_line_count(0)
         local result, _ = math.modf((current_line / total_line) * 100)
         return result .. "%%"
       end,
-    },
-    line_count = {
+    }),
+    line_count = StatusComponent({
       provider = function ()
         return tostring(api.nvim_buf_line_count(0))
       end,
       icon = icons.line_number .. " ",
-    },
-    search = {
+    }),
+    search = StatusComponent({
       provider = function()
         if vim.v.hlsearch ~= 1 then return "" end
 
@@ -346,128 +407,133 @@ M.components = {
 
         return ("[%s/%s]"):format(current, total)
       end,
-    },
-    indent_info = {
+    }),
+    indent_info = StatusComponent({
       provider = function()
         if vim.bo.expandtab then
-          return "SPACES " .. vim.bo.shiftwidth
+          return "spaces:" .. vim.bo.shiftwidth
         else
-          return "TABS " .. vim.bo.tabstop
+          return "tabs:" .. vim.bo.tabstop
         end
       end,
       icon = icons.indent .. " ",
       truncate_hide = true,
-    },
+    }),
   },
   git = {
-    branch = {
-      provider = function()
-        local rev, path, dir
+    branch = StatusComponent({
+      provider = {
+        update = { "BufEnter" },
+        get = function()
+          local rev, path, dir
 
-        if vim.b[0].gitsigns_head then
-          rev = vim.b[0].gitsigns_head
-          path = api.nvim_buf_get_name(0)
-          dir = pl:parent(path) or "."
-        else
-          rev = vim.g.gitsigns_head or ""
-          path = uv.cwd()
-          dir = path
-        end
-
-        if rev == "" then
-          return ""
-        end
-
-        local rebasing
-        rev, rebasing = utils.str_match(rev, { "(.*)(%(rebasing%))", "(.*)" })
-
-        local desc = rebasing and " (rebasing)" or ""
-        local cache = Config.state.git.rev_name_cache
-        local key = path .. "#" .. rev
-
-        if cache[key] then
-          return cache[key] .. desc
-        elseif rev:match("^%x+$") then
-          -- Problem: Gitsigns shows the current HEAD as a commit SHA if it's
-          -- anything other than the HEAD of a branch.
-          -- Solution: Use git-name-rev to get more meaningful names.
-          local out, code = utils.system_list({
-            "git",
-            "name-rev",
-            "--name-only",
-            "--no-undefined",
-            "--always",
-            rev
-          }, pl:readable(dir) and dir or pl:realpath("."))
-
-          local name
-
-          if code ~= 0 or not out[1] then
-            name = ""
+          if vim.b[0].gitsigns_head then
+            rev = vim.b[0].gitsigns_head
+            path = api.nvim_buf_get_name(0)
+            dir = pl:parent(path) or "."
           else
-            name = utils.str_match(out[1] or "", { "(.*)%^0", "(.*)" })
+            rev = vim.g.gitsigns_head or ""
+            path = uv.cwd()
+            dir = path
           end
 
-          cache[key] = name
+          if rev == "" then
+            return ""
+          end
 
-          return name .. desc
-        else
-          return rev .. desc
-        end
-      end,
+          local rebasing
+          rev, rebasing = utils.str_match(rev, { "(.*)(%(rebasing%))", "(.*)" })
+
+          local desc = rebasing and " (rebasing)" or ""
+          local cache = Config.state.git.rev_name_cache
+          local key = path .. "#" .. rev
+
+          if cache[key] then
+            return cache[key] .. desc
+          elseif rev:match("^%x+$") then
+            -- Problem: Gitsigns shows the current HEAD as a commit SHA if it's
+            -- anything other than the HEAD of a branch.
+            -- Solution: Use git-name-rev to get more meaningful names.
+            local out, code = utils.system_list({
+              "git",
+              "name-rev",
+              "--name-only",
+              "--no-undefined",
+              "--always",
+              rev
+            }, pl:readable(dir) and dir or pl:realpath("."))
+
+            local name
+
+            if code ~= 0 or not out[1] then
+              name = ""
+            else
+              name = utils.str_match(out[1] or "", { "(.*)%^0", "(.*)" })
+            end
+
+            cache[key] = name
+
+            return name .. desc
+          else
+            return rev .. desc
+          end
+        end,
+      },
       icon = icons.git.branch .. " ",
-    },
-    diff_add = {
+    }),
+    diff_add = StatusComponent({
       provider = "git_diff_added",
       icon = icons.git.diff_add .. " ",
       truncate_hide = true,
-    },
-    diff_mod = {
+    }),
+    diff_mod = StatusComponent({
       provider = "git_diff_changed",
       icon = icons.git.diff_mod .. " ",
       truncate_hide = true,
-    },
-    diff_del = {
+    }),
+    diff_del = StatusComponent({
       provider = "git_diff_removed",
       icon = icons.git.diff_del .. " ",
       truncate_hide = true,
-    },
+    }),
   },
   diagnostic = {
-    err = {
+    err = StatusComponent({
       provider = "diagnostic_errors",
       icon = icons.diagnostic.err .. " ",
       enabled = function()
         return lsp.diagnostics_exist(vim.diagnostic.severity.ERROR)
       end,
       truncate_hide = true,
-    },
-    warn = {
+    }),
+    warn = StatusComponent({
       provider = "diagnostic_warnings",
       icon = icons.diagnostic.warn .. " ",
       enabled = function()
         return lsp.diagnostics_exist(vim.diagnostic.severity.WARNING)
       end,
       truncate_hide = true,
-    },
-    info = {
+    }),
+    info = StatusComponent({
       provider = "diagnostic_info",
       icon = icons.diagnostic.info .. " ",
       enabled = function()
         return lsp.diagnostics_exist(vim.diagnostic.severity.INFO)
       end,
       truncate_hide = true,
-    },
-    hint = {
+    }),
+    hint = StatusComponent({
       provider = "diagnostic_hints",
       icon = icons.diagnostic.hint .. " ",
       enabled = function()
         return lsp.diagnostics_exist(vim.diagnostic.severity.HINT)
       end,
       truncate_hide = true,
-    },
+    }),
   },
 }
+
+M.process_comp_configs(M.components)
 
 function M.update()
   local fg = hl.get_fg({ "StatusLine", "Normal" })
@@ -482,45 +548,44 @@ function M.update()
 
   styles.color_palettes.default = vim.deepcopy({ fg = fg, bg = bg })
 
-  ---@type FelineComponents
-  local comps = vim.deepcopy(M.components)
+  local comps = M.components
 
-  M.process_components(comps)
+  M.process_comp_configs(comps)
 
   local statusline = {
     active = {
-      -- LEFT
-      [1] = extend_comps(
+      -- LEFT :
+      extend_comps(
         {
-          comps.block,
-          comps.vi_mode,
-          comps.paste_mode,
-          comps.file.icon,
-          comps.file.info,
-          comps.git.diff_add,
-          comps.git.diff_mod,
-          comps.git.diff_del,
+          comps.block(),
+          comps.vi_mode(),
+          comps.paste_mode(),
+          comps.file.info(),
+          comps.git.diff_add(),
+          comps.git.diff_mod(),
+          comps.git.diff_del(),
         },
         { right_sep = " " }
       ),
-      -- MIDDLE
-      [2] = {},
-      -- RIGHT
-      [3] = utils.vec_join(
+      -- MIDDLE :
+      {},
+      -- RIGHT :
+      utils.vec_join(
         extend_comps(
           {
-            comps.diagnostic.err,
-            comps.diagnostic.warn,
-            comps.diagnostic.hint,
-            comps.diagnostic.info,
-            comps.file.search,
-            comps.file.line_info,
-            comps.file.line_percent,
-            comps.file.line_count,
-            comps.lsp_server,
-            comps.file.indent_info,
-            comps.file.format,
-            comps.git.branch,
+            comps.diagnostic.err(),
+            comps.diagnostic.warn(),
+            comps.diagnostic.hint(),
+            comps.diagnostic.info(),
+            comps.file.search(),
+            comps.file.line_info(),
+            comps.file.line_percent(),
+            comps.file.line_count(),
+            comps.file.filetype(),
+            comps.lsp_server(),
+            comps.file.indent_info(),
+            comps.file.format(),
+            comps.git.branch(),
           },
           { left_sep = " " }
         ),
@@ -528,19 +593,19 @@ function M.update()
       ),
     },
     inactive = {
-      -- LEFT
-      [1] = extend_comps(
+      -- LEFT :
+      extend_comps(
         {
-          comps.block,
-          comps.file.filetype,
-          comps.file.info,
+          comps.block(),
+          comps.file.filetype(),
+          comps.file.info(),
         },
         { right_sep = " " }
       ),
-      -- MIDDLE
-      [2] = {},
-      -- RIGHT
-      [3] = {},
+      -- MIDDLE :
+      {},
+      -- RIGHT :
+      {},
     },
   }
 
@@ -554,6 +619,7 @@ end
 
 function M.setup()
   feline.setup({
+    custom_providers = M.get_custom_providers(),
     components = M.statusline,
     theme = M.current_palette,
     force_inactive = {
