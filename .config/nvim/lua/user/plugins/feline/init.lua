@@ -202,7 +202,10 @@ end
 ---@class feline.CompConfigs
 M.components = {
   block = StatusComponent({
-    provider = function() return "▊" end,
+    provider = {
+      update = { "VimEnter" },
+      get = function() return "▊" end,
+    },
   }),
   vi_mode = StatusComponent({
     provider = {
@@ -219,10 +222,15 @@ M.components = {
   }),
   lsp_server = StatusComponent({
     provider = {
-      update = { "LspAttach", "LspDetach" },
+      update = { "LspAttach", "LspDetach", "BufEnter" },
       get = function()
-        local clients = vim.lsp.buf_get_clients(0)
-        if #vim.tbl_keys(clients) > 0 then
+        local clients = {}
+
+        for k, v in pairs(vim.lsp.buf_get_clients(0)) do
+          if type(k) == "number" then table.insert(clients, v) end
+        end
+
+        if next(clients) then
           return table.concat(vim.tbl_map(function(v)
             return v.name
           end, clients), ",")
@@ -242,7 +250,7 @@ M.components = {
   file = {
     info = StatusComponent({
       provider = {
-        update = { "BufEnter", "BufFilePost" },
+        update = { "BufEnter", "BufFilePost", "BufModifiedSet", "BufWritePost" },
         get = function()
           local uname = utils.get_unique_file_bufname(api.nvim_buf_get_name(0))
           local status = vim.bo.modified and (" " .. icons.modified .. " ") or ""
@@ -428,7 +436,7 @@ M.components = {
   git = {
     branch = StatusComponent({
       provider = {
-        update = { "BufEnter" },
+        update = { "BufEnter", "CmdlineLeave" },
         get = function()
           local rev, path, dir
 
