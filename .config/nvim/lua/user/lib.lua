@@ -218,16 +218,11 @@ function M.remove_buffer(force, bufnr)
   local cur_bufnr = api.nvim_get_current_buf()
   bufnr = bufnr or cur_bufnr
 
-  if not api.nvim_buf_is_valid(bufnr) then
-    return
-  end
+  if not api.nvim_buf_is_valid(bufnr) then return end
 
-  if not force then
-    local modified = vim.bo[bufnr].modified
-    if modified then
-      utils.err("No write since last change!")
-      return
-    end
+  if not force and vim.bo[bufnr].modified then
+    utils.err("No write since last change!")
+    return
   end
 
   -- Get all windows that currently display the target

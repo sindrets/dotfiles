@@ -271,7 +271,17 @@ return packer.startup({
     }
     use_local {
       "sindrets/vim-fugitive",
-      requires = { "tpope/vim-rhubarb" },
+      requires = {
+        "tpope/vim-rhubarb",
+        {
+          "rbong/vim-flog",
+          setup = function()
+            vim.g.flog_default_opts = { max_count = 512, all = true }
+            vim.g.flog_override_default_mappings = {}
+            vim.g.flog_jumplist_default_mappings = {}
+          end,
+        },
+      },
       config = conf("fugitive"),
     }
     -- use {

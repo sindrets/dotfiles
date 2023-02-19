@@ -145,6 +145,8 @@ function install_dotfiles() {
     }
     git clone --bare "git@github.com:sindrets/dotfiles.git" "$HOME/.dotfiles"
     dotfiles config --local status.showUntrackedFiles no
+    dotfiles config core.bare false
+    dotfiles config core.worktree "$HOME"
     dotfiles config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
     dotfiles remote update
     dotfiles branch -u origin/master

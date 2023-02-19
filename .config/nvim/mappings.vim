@@ -225,7 +225,7 @@ nnoremap ;; <Cmd>Telescope resume<CR>
 " Git
 nnoremap <leader>G <Cmd>lua Config.plugin.fugitive.status_open("tab", { use_last = true })<CR>
 nnoremap <leader>gs <Cmd>lua Config.plugin.fugitive.status_open("split")<CR>
-nnoremap <leader>gl <Cmd>Terminal git log -n256 --shortstat<CR>
+nnoremap <leader>gl <Cmd>Flogsplit -max-count=256<CR>
 nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua Config.common.notify.git("Staged "
             \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")))<CR>
 nnoremap <leader>gA <Cmd>silent exe '!git add .' <bar>lua Config.common.notify.git("Staged "

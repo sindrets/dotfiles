@@ -2,19 +2,21 @@
 
 ### Method 1: `git clone --bare`
 
-* Clone the dotfiles into a bare git repository in your home directory:
+- Clone the dotfiles into a bare git repository in your home directory:
 
 ```sh
 git clone --bare "git@github.com:sindrets/dotfiles.git" "$HOME/.dotfiles"
 ```
 
-* Define an alias to more easily interact with the dotfiles repo, and disable
+- Define an alias to more easily interact with the dotfiles repo, and disable
   git status for untracked files:
 
 ```sh
 # the alias is defined in .bashrc and .zshrc, so it will always be available once you've synced those
 alias dotfiles="/usr/bin/git --git-dir='$HOME/.dotfiles/' --work-tree='$HOME'"
 dotfiles config --local status.showUntrackedFiles no
+dotfiles config core.bare false
+dotfiles config core.worktree "$HOME"
 dotfiles config remote.origin.fetch '+refs/heads/*:refs/remotes/origin/*'
 dotfiles remote update
 dotfiles branch -u origin/master
@@ -22,7 +24,7 @@ dotfiles branch -u origin/master
 > NOTE: the following will overwrite any conflicting dotfiles on your local
 > machine. Back up your files now if you care about them!
 
-* Hard reset your repository to the master branch
+- Hard reset your repository to the master branch
 
 ```sh
 dotfiles reset --hard

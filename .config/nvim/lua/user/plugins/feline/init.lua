@@ -457,7 +457,7 @@ M.components = {
           local rebasing
           rev, rebasing = utils.str_match(rev, { "(.*)(%(rebasing%))", "(.*)" })
 
-          local desc = rebasing and " (rebasing)" or ""
+          local desc = rebasing and ":(rebasing)" or ""
           local cache = Config.state.git.rev_name_cache
           local key = path .. "#" .. rev
 

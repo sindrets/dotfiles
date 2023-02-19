@@ -212,6 +212,9 @@
   "vim-devicons": {
     "commit": "71f239a"
   },
+  "vim-flog": {
+    "commit": "2ba8af2"
+  },
   "vim-illuminate": {
     "commit": "d6ca7f7"
   },

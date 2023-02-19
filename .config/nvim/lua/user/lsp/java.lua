@@ -18,18 +18,18 @@ function M.start_jdtls()
 
   local function jdtls_on_attch(client, bufnr)
     Config.lsp.common_on_attach(client, bufnr)
-    require'jdtls.setup'.add_commands()
+    require("jdtls.setup").add_commands()
     -- local opts = { noremap = true, silent = true; }
   end
 
-  local settings = require('user.lsp').create_local_config({
+  local settings = require("user.lsp").create_local_config({
     ["java.project.referencedLibraries"] = {
       "lib/**/*.jar",
       "lib/*.jar"
     },
     java = {
       signatureHelp = { enabled = true };
-      contentProvider = { preferred = 'fernflower' };
+      contentProvider = { preferred = "fernflower" };
       completion = {
         favoriteStaticMembers = {
           "org.hamcrest.MatcherAssert.assertThat",
@@ -50,11 +50,22 @@ function M.start_jdtls()
       extendedClientCapabilities = extendedClientCapabilities
     },
     cmd = {
-      "jdtls", "-data", vim.env.HOME .. "/.cache/jdtls"
+      "jdtls",
+      "-Declipse.application=org.eclipse.jdt.ls.core.id1",
+      "-Dosgi.bundles.defaultStartLevel=4",
+      "-Declipse.product=org.eclipse.jdt.ls.core.product",
+      "-Dlog.protocol=true",
+      "-Dlog.level=ALL",
+      "-Xms1g",
+      "--add-modules=ALL-SYSTEM",
+      "--add-opens", "java.base/java.util=ALL-UNNAMED",
+      "--add-opens", "java.base/java.lang=ALL-UNNAMED",
+      "-data",
+      vim.env.HOME .. "/.cache/jdtls",
     },
     filetypes = { "java" }, -- Not used by jdtls, but used by lspsaga
     on_attach = jdtls_on_attch,
-    root_dir = require("jdtls.setup").find_root({ ".git", "gradlew", "build.xml" }),
+    root_dir = require("jdtls.setup").find_root({ ".git", "gradlew", "build.xml", "mvnw" }),
     -- root_dir = vim.fn.getcwd(),
     flags = {
       allow_incremental_sync = true,
@@ -62,26 +73,24 @@ function M.start_jdtls()
     },
     settings = settings
   })
-
-  -- if not lspsaga_codeaction.action_handlers["jdt.ls"] then
-  --   lspsaga_codeaction.add_code_action_handler("jdt.ls", function(action)
-  --     jdtls.do_code_action(action)
-  --   end)
-  -- end
 end
 
 function M.attach_mappings()
   local map = function (mode, lhs, rhs, opts)
-    opts = vim.tbl_extend("force", { noremap = true },  opts or {}) --[[@as table ]]
-    vim.api.nvim_buf_set_keymap(0, mode, lhs, rhs, opts)
+    opts = vim.tbl_extend("force", { buffer = 0 },  opts or {}) --[[@as table ]]
+    vim.keymap.set(mode, lhs, rhs, opts)
   end
 
-  map("n", "<M-O>", "<Cmd>lua require'jdtls'.organize_imports()<CR>")
+  map("n", "<M-O>", jdtls.organize_imports)
 end
 
 Config.common.au.declare_group("jdtls_config", {}, {
-  { "FileType", pattern = "java", callback = M.start_jdtls },
-  { "FileType", pattern = "java", callback = M.attach_mappings },
+  {
+    "FileType", pattern = "java", callback = function()
+      M.start_jdtls()
+      M.attach_mappings()
+    end,
+  },
 })
 
 return M
