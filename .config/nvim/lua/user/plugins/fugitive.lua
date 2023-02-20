@@ -233,7 +233,7 @@ return function()
 
         Config.lib.mv_keymap("n", "-", "n", "s", ctx.buf)
 
-        vim.keymap.set("n", "DD", function()
+        km.set("n", "DD", function()
           local info = M.get_status_cursor_info()
 
           if info then
@@ -248,7 +248,7 @@ return function()
           desc = "Open Diffview for the item under the cursor",
         })
 
-        vim.keymap.set("n", "DH", function()
+        km.set("n", "DH", function()
           local info = M.get_status_cursor_info()
 
           if info then
@@ -273,7 +273,7 @@ return function()
         -- Move the default `D` mapping, because it has `nowait` set.
         Config.lib.mv_keymap("n", "D", "n", "T", ctx.buf)
 
-        vim.keymap.set("n", "DD", function()
+        km.set("n", "DD", function()
           local info = M.get_blame_cursor_info()
 
           if info then
@@ -287,7 +287,7 @@ return function()
           desc = "Open Diffview for the blame commit under the cursor",
         })
 
-        vim.keymap.set("n", "DH", function()
+        km.set("n", "DH", function()
           local info = M.get_blame_cursor_info()
 
           if info then
@@ -309,7 +309,7 @@ return function()
         -- Git buffer mappings
 
         km.set("n", "q", function()
-          if not vim.bo.modifiable then
+          if not vim.bo.modifiable or vim.bo.readonly then
             return "<Cmd>wincmd q<CR>"
           else
             return "q"
@@ -336,7 +336,7 @@ return function()
           vim.cmd(M.call(0, "GF", "edit"))
         end, { buffer = ctx.buf })
 
-        vim.keymap.set("n", "DD", function()
+        km.set("n", "DD", function()
           local commit = unpack(M.call(0, "cfile"))
 
           if commit then
@@ -356,7 +356,7 @@ return function()
           desc = "Open Diffview for the commit under the cursor",
         })
 
-        vim.keymap.set("n", "DH", function()
+        km.set("n", "DH", function()
           local commit = unpack(M.call(0, "cfile"))
 
           if commit then

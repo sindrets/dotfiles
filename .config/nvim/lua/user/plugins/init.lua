@@ -276,7 +276,7 @@ return packer.startup({
         {
           "rbong/vim-flog",
           setup = function()
-            vim.g.flog_default_opts = { max_count = 512, all = true }
+            vim.g.flog_default_opts = { max_count = 512 }
             vim.g.flog_override_default_mappings = {}
             vim.g.flog_jumplist_default_mappings = {}
           end,
