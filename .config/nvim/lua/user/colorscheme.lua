@@ -808,12 +808,13 @@ function M.apply_tweaks()
     hi("rainbowcol7", { fg = "#9a77cf" })
   end
 
-  hl.hi("LirFloatCursorLine", {
+  hi("LirFloatCursorLine", {
     bg = Color.from_hl("NormalFloat", "bg"):highlight(0.06):to_css()
   })
-  hl.hi_link("LirFloatNormal", "NormalFloat", { force = true })
-  hl.hi_link("LirFolderIcon", "Directory", { default = true })
-  hl.hi_link("DevIconLirFolderNode", "LirFolderIcon")
+  hi_link("LirFloatNormal", "NormalFloat", { force = true })
+  hi_link("LirFolderIcon", "Directory", { default = true })
+  hi_link("LirDir", "Directory")
+  hi_link("DevIconLirFolderNode", "LirFolderIcon")
 
   hi("BufferLineTabSelected", {
     bg = bg_normal:clone():highlight(0.1):to_css(),

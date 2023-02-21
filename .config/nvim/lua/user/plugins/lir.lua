@@ -252,7 +252,10 @@ return function()
 
   require('lir').setup({
     show_hidden_files = true,
-    devicons_enable = true,
+    devicons = {
+      enable = true,
+      highlight_dirname = true,
+    },
     hide_cursor = true,
     mappings = {
       ['R']     = actions.reload,               -- [R]eload
