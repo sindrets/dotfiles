@@ -68,8 +68,8 @@
   "impatient.nvim": {
     "commit": "c90e273"
   },
-  "incline.nvim": {
-    "commit": "a39eb25"
+  "indent-blankline.nvim": {
+    "commit": "018bd04"
   },
   "indent-o-matic": {
     "commit": "bf37c6e"

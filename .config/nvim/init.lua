@@ -36,6 +36,8 @@ local utils = Config.common.utils
 
 require("user")
 
+vim.opt.winbar = "%{%v:lua.require'user.modules.winbar'.generate()%}"
+
 -- COMMAND ALIASES
 
 alias("brm", "BRemove")

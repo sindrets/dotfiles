@@ -242,7 +242,6 @@ return packer.startup({
 
     -- MISC
     use { "feline-nvim/feline.nvim", config = conf("feline") }
-    use { "b0o/incline.nvim", config = conf("incline"), after = "nvim-web-devicons" }
     use_local { "lewis6991/gitsigns.nvim", config = conf("gitsigns") }
     use_local { "lukas-reineke/indent-blankline.nvim", setup = conf("indent-blankline") }
     use {
