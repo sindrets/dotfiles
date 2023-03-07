@@ -7,6 +7,7 @@ return function ()
     diff_binaries = false,
     enhanced_diff_hl = false, -- Set up hihglights in the hooks instead
     git_cmd = { "git" },
+    hg_cmd = { "chg" },
     use_icons = true,
     show_help_hints = false,
     icons = {
@@ -19,6 +20,7 @@ return function ()
     },
     view = {
       default = {
+        -- layout = "diff1_inline",
         winbar_info = false,
       },
       merge_tool = {
@@ -27,6 +29,7 @@ return function ()
         winbar_info = true,
       },
       file_history = {
+        -- layout = "diff1_inline",
         winbar_info = false,
       },
     },
@@ -87,20 +90,17 @@ return function ()
     },
     keymaps = {
       view = {
-        ["gf"] = actions.goto_file_edit,
         ["-"] = actions.toggle_stage_entry,
       },
       file_panel = {
         ["<cr>"] = actions.focus_entry,
         ["s"] = actions.toggle_stage_entry,
-        ["gf"] = actions.goto_file_edit,
         ["cc"] = "<Cmd>Git commit <bar> wincmd J<CR>",
         ["ca"] = "<Cmd>Git commit --amend <bar> wincmd J<CR>",
         ["c<Space>"] = ":Git commit ",
       },
       file_history_panel = {
         ["<cr>"] = actions.focus_entry,
-        ["gf"] = actions.goto_file_edit,
       },
     }
   })

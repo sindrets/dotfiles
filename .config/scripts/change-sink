@@ -4,10 +4,10 @@
 import subprocess
 import re
 
-result = subprocess.run(["pacmd", "list-sinks"], stdout=subprocess.PIPE)
+result = subprocess.run(["pactl", "list", "sinks"], stdout=subprocess.PIPE)
 sink_list_string = result.stdout.decode("utf-8")
 
-matches = re.finditer(r"index:[^\n]*(\n(?![ \t*]+index:)[^\n]*)*", sink_list_string)
+matches = re.finditer(r"Sink #[^\n]*(?:\n(?![ \t]*Sink #)[^\n]*)*", sink_list_string)
 
 sink_info = []
 for match in matches:
@@ -16,8 +16,16 @@ for match in matches:
 sink_list = []
 for s in sink_info:
 	sink = {}
-	sink["index"] = re.search(r"(?<=index: )\d+", s).group()
-	sink["description"] = re.search(r"(?<=device.description = \")[^\"]*", s).group();
+
+	m = re.search(r"Sink #(\d+)", s)
+	if m: sink["index"] = m.group(1)
+
+	m = re.search(r"device.description = \"([^\"]*)", s)
+	if m: sink["description"] = m.group(1)
+
+	m = re.search(r"node.name = \"([^\"]*)", s)
+	if m: sink["node_name"] = m.group(1)
+
 	sink_list.append(sink)
 
 print(sink_list)
@@ -25,7 +33,7 @@ print(sink_list)
 dmenu_string = ""
 i = 0;
 for sink in sink_list:
-	dmenu_string += str(i) + ": " + sink["description"] + "\n"
+	dmenu_string += str(i) + ": " + (sink.get("description") or sink.get("node_name")) + "\n"
 	i += 1
 
 dmenu_string = dmenu_string[:-1]
@@ -38,15 +46,15 @@ print(result.stdout.decode("utf-8"))
 
 target_sink = sink_list[int(result.stdout.decode("utf-8").split(":")[0])]
 print(target_sink)
-subprocess.run(["pacmd", "set-default-sink", target_sink["index"]])
+subprocess.run(["pactl", "set-default-sink", target_sink["index"]])
 
-result = subprocess.run(["pacmd", "list-sink-inputs"], stdout=subprocess.PIPE)
-result = subprocess.run(["grep", "index"], input=result.stdout, stdout=subprocess.PIPE)
+result = subprocess.run(["pactl", "list", "sink-inputs"], stdout=subprocess.PIPE)
+result = subprocess.run(["grep", "Sink Inputs #"], input=result.stdout, stdout=subprocess.PIPE)
 sink_inputs_string = result.stdout.decode("utf-8")
 
-matches = re.finditer(r"(?<=index: )\d+", sink_inputs_string)
+matches = re.finditer(r"Sink Inputs #(\d+)", sink_inputs_string)
 for match in matches:
-	input_index = match.group()
+	input_index = match.group(1)
 	print("sink input: " + input_index)
-	subprocess.run(["pacmd", "move-sink-input", input_index, target_sink["index"]])
+	subprocess.run(["pactl", "move-sink-input", input_index, target_sink["index"]])
 

@@ -3,10 +3,8 @@
 notif_id=1559176921
 
 # get the most relevant sink
-sink=`pactl list short sinks | grep RUNNING | cut -f1`
-if [ -z "$sink" ]; then
-	sink=`pacmd info | grep "Default sink" | awk '{print $4}'`
-fi
+default_sink_name="$(pactl info | grep "Default Sink:" | awk '{print $3}')"
+sink=$(pactl list short sinks | grep "$default_sink_name" | cut -f1)
 
 mod=5
 [ -n "$2" ] && mod="$2"
@@ -20,14 +18,14 @@ roundToClosestN () {
 case "$1" in
 	--inc)
 		volume=`pamixer --sink $sink --get-volume-human`
-		rounded=$[ "`roundToClosestN "$volume" "$mod"`" + "$mod" ]
+		rounded=$[ "$(roundToClosestN "$volume" "$mod")" + "$mod" ]
 		echo "volume: $volume, mod: $mod, rounded: $rounded"
 		pamixer --sink "$sink" --allow-boost --set-volume "$rounded"
 		dunstify -r $notif_id "Volume $(pamixer --sink $sink --get-volume-human)" -t 1000 -i audio-volume-high
 		;;
 	--dec)
 		volume=`pamixer --sink $sink --get-volume-human`
-		rounded=$[ "`roundToClosestN "$volume" "$mod"`" - "$mod" ]
+		rounded=$[ "$(roundToClosestN "$volume" "$mod")" - "$mod" ]
 		pamixer --sink "$sink" --allow-boost --set-volume "$rounded"
 		dunstify -r $notif_id "Volume $(pamixer --sink $sink --get-volume-human)" -t 1000 -i audio-volume-low
 		;;

@@ -2,6 +2,7 @@ return function ()
   local hi_link = Config.common.hl.hi_link
 
   require("gitsigns").setup {
+    debug_mode = true,
     signs = {
       add = {
         hl = "GitSignsAdd"   , text = "▍", numhl="GitSignsAddNr"   , linehl="GitSignsAddLn"

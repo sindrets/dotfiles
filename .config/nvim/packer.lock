@@ -155,6 +155,9 @@
   "palenight.vim": {
     "commit": "acca43d"
   },
+  "pgsql.vim": {
+    "commit": "736c989"
+  },
   "playground": {
     "commit": "c19bcfd"
   },

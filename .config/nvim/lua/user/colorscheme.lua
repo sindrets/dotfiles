@@ -609,9 +609,12 @@ function M.apply_tweaks()
     end
 
   elseif colors_name:match("^github_") then
-    hi("Primary", { fg = hl.get_fg("Directory") })
+    hi("Primary", { fg = hl.get_fg("Title") })
+    hi("Accent", { fg = hl.get_fg("Statement") })
+    hi("Directory", { fg = hl.get_fg("Title") })
     hi_link("NonText", "Whitespace")
     hi_link("ColorColumn", "CursorLine")
+    hi_link("FloatBorder", "WinSeparator")
     hi_link({ "FoldColumn", "markdownCode", "markdownCodeBlock" }, "String")
     hi("Substitute", { fg = "#dddddd" })
     hi("StatusLine", {
@@ -625,11 +628,13 @@ function M.apply_tweaks()
     hl.hi("DashboardShortCut", { fg = hl.get_fg("String"), style = "bold,reverse" })
     hi_link("DashboardFooter", "Comment")
     hi_link("DiffviewFolderName", "Special")
+    hi_clear("BufferLineBackground")
     hi({ "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" }, {
       fg = hl.get_fg("Directory"),
     })
     diff_gen_opt = { no_derive = { mod = true } }
     M.apply_terminal_defaults()
+    M.unstyle_telescope()
 
   elseif colors_name == "kanagawa" then
     hi("VertSplit", { bg = "NONE", fg = "#0f0f0f" })

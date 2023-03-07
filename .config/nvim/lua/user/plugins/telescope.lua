@@ -33,7 +33,7 @@ return function ()
         },
       },
       path_display = {
-        "absolute"
+        "truncate"
       },
       file_sorter =  require'telescope.sorters'.get_fuzzy_file,
       file_ignore_patterns = {},
@@ -80,14 +80,38 @@ return function ()
               -- Open in diffview
               local entry = action_state.get_selected_entry()
               -- close Telescope window properly prior to switching windows
-              vim.api.nvim_win_close(0, true)
-              vim.cmd("stopinsert")
-              vim.schedule(function()
-                vim.cmd(("DiffviewOpen %s^!"):format(entry.value))
-              end)
+              actions.close(vim.api.nvim_get_current_buf())
+              vim.cmd(("DiffviewOpen %s^!"):format(entry.value))
             end,
           }
         }
+      },
+      buffers = {
+        sort_mru = true,
+      },
+      quickfix = {
+        trim_text = true,
+        fname_width = 60,
+        path_display = {
+          "truncate",
+        },
+        layout_strategy = "vertical",
+        layout_config = {
+          preview_cutoff = 25,
+          mirror = true,
+        },
+      },
+      loclist = {
+        trim_text = true,
+        fname_width = 60,
+        path_display = {
+          "truncate",
+        },
+        layout_strategy = "vertical",
+        layout_config = {
+          preview_cutoff = 25,
+          mirror = true,
+        },
       },
       current_buffer_fuzzy_find = {
         tiebreak = function(a, b)

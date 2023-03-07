@@ -87,6 +87,7 @@ return packer.startup({
       "https://codeberg.org/ldesousa/vim-turtle-syntax.git",
       run = "mkdir -p syntax && cp turtle.vim syntax",
     }
+    use { "lifepillar/pgsql.vim" }
 
     -- BEHAVIOUR
     use {
@@ -243,7 +244,7 @@ return packer.startup({
     -- MISC
     use { "feline-nvim/feline.nvim", config = conf("feline") }
     use_local { "lewis6991/gitsigns.nvim", config = conf("gitsigns") }
-    use_local { "lukas-reineke/indent-blankline.nvim", setup = conf("indent-blankline") }
+    use { "lukas-reineke/indent-blankline.nvim", config = conf("indent-blankline") }
     use {
       "folke/lsp-trouble.nvim",
       config = conf("lsp-trouble"), after = "nvim-web-devicons",
@@ -278,6 +279,7 @@ return packer.startup({
             vim.g.flog_default_opts = { max_count = 512 }
             vim.g.flog_override_default_mappings = {}
             vim.g.flog_jumplist_default_mappings = {}
+            vim.g.flog_use_internal_lua = true
           end,
         },
       },

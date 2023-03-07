@@ -220,6 +220,15 @@ click-left = exec pavucontrol-qt &
 scroll-up = ~/.config/polybar/scripts/pulseaudio-tail.sh --up
 scroll-down = ~/.config/polybar/scripts/pulseaudio-tail.sh --down
 
+[module/pipewire-simple]
+type = custom/script
+exec = ~/.config/polybar/scripts/pipewire-simple.sh
+interval = 3
+click-left = exec pavucontrol-qt &
+click-right = ~/.config/scripts/change-sink &
+scroll-up = ~/.config/polybar/scripts/pipewire-simple.sh --up &
+scroll-down = ~/.config/polybar/scripts/pipewire-simple.sh --down &
+
 [module/insync]
 type = custom/script
 click-left = exec insync show
