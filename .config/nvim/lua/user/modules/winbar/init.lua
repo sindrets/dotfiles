@@ -5,6 +5,7 @@ local utils = Config.common.utils
 local pl = Config.common.utils.pl
 local au = Config.common.au
 local api = vim.api
+local fmt = string.format
 
 local HOME_DIR = uv.os_homedir()
 
@@ -16,8 +17,25 @@ M.config = {
     folder = "",
     repo = "",
     ellipsis = "…",
+    readonly = "",
   },
+  ---@param ctx WindowContext
   ignore = function(ctx)
+    if ctx.buftype == "" and ctx.bufname == "" then
+      return true
+    end
+
+    if ctx.float then
+      if ctx.filetype == "lir" then return false end
+      return true
+    end
+
+    if vim.tbl_contains({
+      "quickfix",
+    }, ctx.buftype) then
+      return true
+    end
+
     if vim.tbl_contains({
       "DiffviewFiles",
       "DiffviewFileHistory",
@@ -27,9 +45,15 @@ M.config = {
   end,
 }
 
-M.cache = Cache()
-M.SEP_ITEM = StatusItem(" " .. M.config.symbols.path_separator .. " ", "Comment")
-M.ELLIPSIS_ITEM = StatusItem(M.config.symbols.ellipsis, "Comment")
+M.state = {
+  attached = {},
+  cache = Cache(),
+}
+
+local symbols = M.config.symbols
+
+M.SEP_ITEM = StatusItem(fmt(" %s ", symbols.path_separator), "Comment")
+M.ELLIPSIS_ITEM = StatusItem(symbols.ellipsis, "Comment")
 
 ---@return string?
 local function no_empty(s)
@@ -99,29 +123,55 @@ local function truncate_path_segments(segments, max_width, show_repo)
   return utils.vec_join(ret, utils.vec_slice(segments, slice_start))
 end
 
----@class StatusLineItem
----@field [1] string # Content
----@field [2] string? # Highlight group name
+---@class WindowContext
+---@field winid integer
+---@field bufnr integer
+---@field tabid integer
+---@field bufname string
+---@field filetype string
+---@field buftype string
+---@field cwd string
+---@field win_config table
+---@field float boolean
+---@field width integer
+---@field height integer
+
+---@param winid integer
+---@return WindowContext
+function M.win_context(winid)
+  if winid == 0 then winid = api.nvim_get_current_win() end
+  local bufnr = api.nvim_win_get_buf(winid)
+  local tabid = api.nvim_win_get_tabpage(winid)
+  local tabnr = api.nvim_tabpage_get_number(tabid)
+  local win_config = api.nvim_win_get_config(winid)
+
+  return {
+    winid = winid,
+    bufnr = bufnr,
+    tabid = tabid,
+    bufname = vim.fn.bufname(bufnr),
+    filetype = vim.bo[bufnr].filetype,
+    buftype = vim.bo[bufnr].buftype,
+    cwd = vim.fn.getcwd(winid, tabnr),
+    win_config = win_config,
+    float = win_config.relative ~= "",
+    width = api.nvim_win_get_width(winid),
+    height = api.nvim_win_get_height(winid),
+  }
+end
 
 function M.generate()
   local winid = api.nvim_get_current_win()
-  local bufnr = api.nvim_win_get_buf(winid)
-  local bufname = vim.fn.bufname(bufnr)
+  local win_ctx = M.win_context(winid)
 
-  local cached = M.cache:get(winid)
+  local cached = M.state.cache:get(winid)
 
   if cached then
     -- Cache hit: no need to regenerate
     return cached
   end
 
-  if M.config.ignore({
-    winid = winid,
-    bufnr = bufnr,
-    filetype = vim.bo[bufnr].filetype,
-    buftype = vim.bo[bufnr].buftype,
-    bufname = bufname,
-  }) then
+  if M.config.ignore(win_ctx) then
     return ""
   end
 
@@ -141,9 +191,7 @@ function M.generate()
     end
   end
 
-  local win_width = api.nvim_win_get_width(winid)
-  local cwd = vim.fn.getcwd(winid)
-  local abs_path = pl:absolute(api.nvim_buf_get_name(bufnr), cwd)
+  local abs_path = pl:absolute(api.nvim_buf_get_name(win_ctx.bufnr), win_ctx.cwd)
   local path = no_empty(condense_path(abs_path))
   local path_exists = not (path and pl:is_uri(path))
       and pl:readable((path and pl:parent(abs_path)) or ".")
@@ -151,7 +199,7 @@ function M.generate()
   local basename, parent_path
 
   if not path_exists then
-    local condese_bufname = condense_path(bufname)
+    local condese_bufname = condense_path(win_ctx.bufname)
     basename = no_empty(pl:basename(condese_bufname))
     parent_path = pl:parent(condese_bufname)
   elseif path then
@@ -163,11 +211,13 @@ function M.generate()
   local path_segments = {}
   local show_repo
 
-  if path_exists and (not path or vim.startswith(abs_path, cwd)) then
+  if path_exists and win_ctx.bufname ~= ""
+    and (not path or vim.startswith(abs_path, win_ctx.cwd))
+  then
     show_repo = true
     winbar:add_child(StatusItem({
       StatusItem(M.config.symbols.repo .. " ", "Directory"),
-      StatusItem(pl:basename(condense_path(cwd, true)), "WinBar"),
+      StatusItem(pl:basename(condense_path(win_ctx.cwd, true)), "WinBar"),
     }))
   end
 
@@ -180,19 +230,23 @@ function M.generate()
   if basename then
     local comp = StatusItem({})
 
-    if vim.bo[bufnr].modified then
+    if vim.bo[win_ctx.bufnr].modified then
       comp:add_child(StatusItem("[+] ", "String"))
+    end
+
+    if not vim.bo[win_ctx.bufnr].modifiable or vim.bo[win_ctx.bufnr].readonly then
+      comp:add_child(StatusItem(fmt("%s ", symbols.readonly), "DiagnosticInfo"))
     end
 
     comp:add_child(StatusItem(basename, "WinBar"))
     table.insert(path_segments, comp)
   end
 
-  path_segments = truncate_path_segments(path_segments, win_width, show_repo)
+  path_segments = truncate_path_segments(path_segments, win_ctx.width, show_repo)
   append(unpack(path_segments))
 
   local ret = winbar:render()
-  M.cache:put(winid, ret)
+  M.state.cache:put(winid, ret)
 
   return ret
 end
@@ -200,52 +254,105 @@ end
 local update_queued = false
 local queued = {}
 
+function M.update(winid)
+  M.state.cache:invalidate(winid)
+
+  if vim.api.nvim_win_is_valid(winid) then
+    M.check_attach(winid)
+  end
+end
+
+---Debounce multiple updates to the same windows until the time the editor is
+---ready to redraw.
+---@param winid integer
 function M.request_update(winid)
-  table.insert(queued, winid)
+  if not queued[winid] then
+    -- This window has not been queued before: update immediately
+    M.update(winid)
+  end
+
+  queued[winid] = true
 
   if update_queued then return end
+  update_queued = true
 
   vim.schedule(function()
-    for _, id in ipairs(queued) do
-      M.cache:invalidate(id)
+    if next(queued) then
+      for id, _ in pairs(queued) do
+        M.update(id)
+      end
+
+      queued = {}
     end
 
-    vim.cmd.redrawstatus()
-
-    queued = {}
+    -- vim.cmd.redrawstatus()
     update_queued = false
   end)
 end
 
-au.declare_group("user.winbar", {}, {
-  {
-    { "WinEnter", "WinLeave", "BufWinEnter", "BufModifiedSet" },
-    callback = function(ctx)
-      local win_match, buf_match
+function M.attach(winid)
+  local state = M.state.attached[winid]
 
-      if ctx.event:match("^Win") then
-        if vim.tbl_contains({ "WinLeave", "WinEnter" }, ctx.event) then
+  if not state then
+    state = {
+      prev_bar = vim.wo[winid].winbar,
+      our_bar = "%{%v:lua.require'user.modules.winbar'.generate()%}",
+    }
+    M.state.attached[winid] = state
+  end
+
+  if vim.wo[winid].winbar ~= state.our_bar then
+    api.nvim_win_set_option(winid, "winbar", state.our_bar)
+  end
+end
+
+function M.detach(winid)
+  local state = M.state.attached[winid]
+  vim.wo[winid].winbar = state and state.prev_bar
+  M.state.attached[winid] = nil
+end
+
+function M.check_attach(winid)
+  local win_ctx = M.win_context(winid)
+
+  if M.config.ignore(win_ctx) then
+    M.detach(winid)
+  else
+    M.attach(winid)
+  end
+end
+
+function M.init()
+  au.declare_group("user.winbar", {}, {
+    {
+      { "WinEnter", "WinLeave", "BufWinEnter", "BufModifiedSet" },
+      callback = function(ctx)
+        local win_match, buf_match
+
+        if ctx.event:match("^Win") then
+          if vim.tbl_contains({ "WinLeave", "WinEnter" }, ctx.event) then
+            buf_match = ctx.buf
+          else
+            win_match = tonumber(ctx.match)
+          end
+        elseif ctx.event:match("^Buf") then
           buf_match = ctx.buf
-        else
-          win_match = tonumber(ctx.match)
         end
-      elseif ctx.event:match("^Buf") then
-        buf_match = ctx.buf
-      end
 
-      if win_match then
-        M.request_update(win_match)
-      end
+        if win_match then
+          M.request_update(win_match)
+        end
 
-      if buf_match then
-        for _, winid in ipairs(api.nvim_list_wins()) do
-          if api.nvim_win_get_buf(winid) == buf_match then
-            M.request_update(winid)
+        if buf_match then
+          for _, winid in ipairs(api.nvim_list_wins()) do
+            if api.nvim_win_get_buf(winid) == buf_match then
+              M.request_update(winid)
+            end
           end
         end
-      end
-    end,
-  },
-})
+      end,
+    },
+  })
+end
 
 return M

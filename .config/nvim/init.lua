@@ -35,8 +35,7 @@ local lib = Config.lib
 local utils = Config.common.utils
 
 require("user")
-
-vim.opt.winbar = "%{%v:lua.require'user.modules.winbar'.generate()%}"
+require("user.modules.winbar").init()
 
 -- COMMAND ALIASES
 
