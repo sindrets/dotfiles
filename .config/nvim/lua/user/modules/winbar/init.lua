@@ -8,6 +8,7 @@ local api = vim.api
 local fmt = string.format
 
 local HOME_DIR = uv.os_homedir()
+local WINBAR_STRING = "%{%v:lua.require'user.modules.winbar'.generate()%}"
 
 local M = {}
 
@@ -21,7 +22,13 @@ M.config = {
   },
   ---@param ctx WindowContext
   ignore = function(ctx)
-    if ctx.buftype == "" and ctx.bufname == "" then
+    if ctx.bufname == "" then
+      return true
+    end
+
+    local cur_bar = api.nvim_get_option_value("winbar", { scope = "local", win = ctx.winid })
+    if cur_bar ~= "" and cur_bar ~= WINBAR_STRING then
+      -- Something else has set the winbar here: don't attach
       return true
     end
 
@@ -162,14 +169,14 @@ end
 
 function M.generate()
   local winid = api.nvim_get_current_win()
-  local win_ctx = M.win_context(winid)
-
   local cached = M.state.cache:get(winid)
 
   if cached then
     -- Cache hit: no need to regenerate
     return cached
   end
+
+  local win_ctx = M.win_context(winid)
 
   if M.config.ignore(win_ctx) then
     return ""
@@ -193,8 +200,9 @@ function M.generate()
 
   local abs_path = pl:absolute(api.nvim_buf_get_name(win_ctx.bufnr), win_ctx.cwd)
   local path = no_empty(condense_path(abs_path))
-  local path_exists = not (path and pl:is_uri(path))
-      and pl:readable((path and pl:parent(abs_path)) or ".")
+  local path_exists = win_ctx.bufname ~= ""
+      and not (path and pl:is_uri(path))
+      and pl:readable(abs_path)
 
   local basename, parent_path
 
@@ -262,24 +270,25 @@ function M.update(winid)
   end
 end
 
----Debounce multiple updates to the same windows until the time the editor is
----ready to redraw.
+---Debounce multiple updates to the same windows until the next time the editor
+---is ready to redraw.
 ---@param winid integer
 function M.request_update(winid)
-  if not queued[winid] then
+  if queued[winid] == nil then
     -- This window has not been queued before: update immediately
     M.update(winid)
+    queued[winid] = false
+  else
+    queued[winid] = true
   end
-
-  queued[winid] = true
 
   if update_queued then return end
   update_queued = true
 
   vim.schedule(function()
     if next(queued) then
-      for id, _ in pairs(queued) do
-        M.update(id)
+      for id, do_update in pairs(queued) do
+        if do_update then M.update(id) end
       end
 
       queued = {}
@@ -295,20 +304,27 @@ function M.attach(winid)
 
   if not state then
     state = {
-      prev_bar = vim.wo[winid].winbar,
-      our_bar = "%{%v:lua.require'user.modules.winbar'.generate()%}",
+      prev_bar = no_empty(api.nvim_get_option_value("winbar", {
+        scope = "local",
+        win = winid,
+      })),
     }
     M.state.attached[winid] = state
   end
 
-  if vim.wo[winid].winbar ~= state.our_bar then
-    api.nvim_win_set_option(winid, "winbar", state.our_bar)
+  if vim.wo[winid].winbar ~= WINBAR_STRING then
+    api.nvim_win_set_option(winid, "winbar", WINBAR_STRING)
   end
 end
 
 function M.detach(winid)
   local state = M.state.attached[winid]
-  vim.wo[winid].winbar = state and state.prev_bar
+  if not state then return end
+
+  if vim.wo[winid].winbar == WINBAR_STRING then
+    api.nvim_win_set_option(winid, "winbar", state.prev_bar or nil)
+  end
+
   M.state.attached[winid] = nil
 end
 
@@ -322,10 +338,14 @@ function M.check_attach(winid)
   end
 end
 
+function M.is_attached(winid)
+  return M.state.attached[winid] ~= nil
+end
+
 function M.init()
   au.declare_group("user.winbar", {}, {
     {
-      { "WinEnter", "WinLeave", "BufWinEnter", "BufModifiedSet" },
+      { "WinEnter", "WinLeave", "BufWinEnter", "BufModifiedSet", "BufWritePost" },
       callback = function(ctx)
         local win_match, buf_match
 

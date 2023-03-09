@@ -249,6 +249,8 @@ nnoremap <silent> <C-l> <Cmd>TermToggle<CR>
 tnoremap <silent> <C-l> <Cmd>TermToggle<CR>
 tnoremap <silent> <Esc> <C-\><C-n>
 tnoremap <silent> <M-Space> <Esc>
+" Clear screen + scrollback
+tnoremap <C-M-l> <C-a><C-k>clear<CR><Cmd>setl scrollback=1 so=0 <bar> setl scrollback=10000 so<<CR>
 xnoremap <C-s> :TermSend<CR>
 
 " Quickfix, Location list, Jumps
