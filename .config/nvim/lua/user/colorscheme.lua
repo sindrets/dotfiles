@@ -205,8 +205,8 @@ function M.generate_diff_colors(opt)
     hi("diffChanged", { fg = base_mod:to_css(), bg = "NONE", style = "NONE" })
   end
 
-  hi("DiffAddText", { bg = bg_add_text:to_css(), fg = "NONE", style = "NONE" })
-  hi("DiffDeleteText", { bg = bg_del_text:to_css(), fg = "NONE", style = "NONE" })
+  hi("DiffAddText", { bg = bg_add_text:to_css(), fg = base_add:to_css(), style = "NONE" })
+  hi("DiffDeleteText", { bg = bg_del_text:to_css(), fg = base_del:to_css(), style = "NONE" })
 
   hi("DiffInlineAdd", { bg = bg_add:to_css(), fg = base_add:to_css(), style = "NONE" })
   hi("DiffInlineDelete", { bg = bg_del:to_css(), fg = base_del:to_css(), style = "NONE" })

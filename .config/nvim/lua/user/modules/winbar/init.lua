@@ -19,6 +19,7 @@ M.config = {
     repo = "",
     ellipsis = "…",
     readonly = "",
+    link = "",
   },
   ---@param ctx WindowContext
   ignore = function(ctx)
@@ -70,34 +71,47 @@ end
 
 local function condense_path(path, no_relative)
   local scheme, p = "", path
+  local is_pathlike = false
 
   if pl:is_uri(path) then
     scheme, p = path:match("^(%w+://)(.*)")
+    is_pathlike = pl:is_abs(p)
   end
 
   if not no_relative then
     p = pl:relative(p, ".")
+
+    if scheme ~= "" and is_pathlike and not pl:is_abs(p) then
+      -- Given cwd: /home/john/foo
+      -- `uri_scheme:///home/john/foo/bar/baz` -> `uri_scheme://./bar/baz`
+      -- `uri_scheme://home/john/foo/bar/baz` would remain the same, as it doesn't look
+      -- like an absolute path without the uri scheme.
+      if p == "" then
+        p = "."
+      else
+        p = "./" .. p
+      end
+    end
   end
 
-  if p == "" then
-    if scheme ~= "" then p = "." end
-  elseif vim.startswith(p, HOME_DIR) then
+  if vim.startswith(p, HOME_DIR) then
     p = pl:join("~", pl:relative(p, HOME_DIR))
   end
 
   return scheme .. p
 end
 
+local SEP_ITEM_WIDTH = vim.fn.strdisplaywidth(M.SEP_ITEM:get_content())
+local ELLIPSIS_ITEM_WIDTH = vim.fn.strdisplaywidth(M.ELLIPSIS_ITEM:get_content())
+
 ---@param segments user.winbar.StatusItem[]
 ---@param max_width integer
 ---@param show_repo boolean
 local function truncate_path_segments(segments, max_width, show_repo)
-  local sep_width = #M.SEP_ITEM:get_content()
-  local ellipsis_width = #M.ELLIPSIS_ITEM:get_content()
   local total_width = 0
 
   local widths = vim.tbl_map(function(v)
-    local w = #v:get_content() + sep_width
+    local w = #v:get_content() + SEP_ITEM_WIDTH
     total_width = total_width + w
     return w
   end, segments)
@@ -108,7 +122,7 @@ local function truncate_path_segments(segments, max_width, show_repo)
   end
 
   local ret = {}
-  total_width = ellipsis_width
+  total_width = ELLIPSIS_ITEM_WIDTH
 
   if not show_repo then
     table.insert(ret, segments[1])
@@ -177,14 +191,7 @@ function M.generate()
   end
 
   local win_ctx = M.win_context(winid)
-
-  if M.config.ignore(win_ctx) then
-    return ""
-  end
-
-  local winbar = StatusItem({})
-
-  winbar:add_child(StatusItem(" "))
+  local winbar = StatusItem({ StatusItem(" ") })
 
   local function append(...)
     local children = winbar:get_children()
@@ -200,9 +207,8 @@ function M.generate()
 
   local abs_path = pl:absolute(api.nvim_buf_get_name(win_ctx.bufnr), win_ctx.cwd)
   local path = no_empty(condense_path(abs_path))
-  local path_exists = win_ctx.bufname ~= ""
-      and not (path and pl:is_uri(path))
-      and pl:readable(abs_path)
+  local is_uri = path and pl:is_uri(path)
+  local path_exists = win_ctx.bufname ~= "" and not is_uri and pl:readable(abs_path)
 
   local basename, parent_path
 
@@ -217,11 +223,9 @@ function M.generate()
 
   ---@type user.winbar.StatusItem[]
   local path_segments = {}
-  local show_repo
+  local show_repo = false
 
-  if path_exists and win_ctx.bufname ~= ""
-    and (not path or vim.startswith(abs_path, win_ctx.cwd))
-  then
+  if (not path or vim.startswith(abs_path, win_ctx.cwd)) then
     show_repo = true
     winbar:add_child(StatusItem({
       StatusItem(M.config.symbols.repo .. " ", "Directory"),
