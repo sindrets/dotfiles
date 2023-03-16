@@ -199,7 +199,7 @@ M.themes = {
           style = "bold",
         },
         ["git.branch"] = {
-          fg = "primary",
+          fg = "dim300",
           style = "bold",
         },
       }

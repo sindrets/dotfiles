@@ -74,7 +74,7 @@ return packer.startup({
 
     use "lewis6991/impatient.nvim"
 
-    -- SYNTAX
+    -- SYNTAX & FILETYPE PLUGINS
     use { "MTDL9/vim-log-highlighting" }
     use { "kevinoid/vim-jsonc" }
     use { "teal-language/vim-teal" }
@@ -88,6 +88,30 @@ return packer.startup({
       run = "mkdir -p syntax && cp turtle.vim syntax",
     }
     use { "lifepillar/pgsql.vim" }
+    use {
+      "lervag/vimtex",
+      setup = function()
+        vim.g.vimtex_view_method = "zathura"
+        vim.g.vimtex_quickfix_open_on_warning = 0
+        -- vim.g.vimtex_compiler_method = "latexrun"
+
+        vim.g.vimtex_compiler_latexmk = {
+          build_dir = '.tex',
+          callback = 1,
+          continuous = 1,
+          executable = "latexmk",
+          hooks = {},
+          options = {
+            "-shell-escape",
+            "-verbose",
+            "-file-line-error",
+            "-synctex=1",
+            "-interaction=nonstopmode",
+            -- [[-pdflatex=pdflatex --shell-escape  %O  %S]],
+          },
+        }
+      end,
+    }
 
     -- BEHAVIOUR
     use {
@@ -225,6 +249,7 @@ return packer.startup({
     use { "Rasukarusan/nvim-block-paste" }
     use { "godlygeek/tabular" }
     use { "tpope/vim-surround" }
+    use { "bkad/CamelCaseMotion" }
     use { "tweekmonster/startuptime.vim", cmd = { "StartupTime" } }
     use { "RRethy/vim-illuminate", config = conf("vim-illuminate") }
     use { "troydm/zoomwintab.vim" }

@@ -11,6 +11,7 @@ return function ()
         -- "markdown", -- NOTE: Parser seems immature. Revisit later.
         "c", -- NOTE: Performance is abysmal in files of any notable length.
         "cpp",
+        "latex",
       },
     },
     -- incremental_selection = {

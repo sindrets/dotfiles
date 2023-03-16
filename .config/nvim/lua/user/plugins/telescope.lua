@@ -2,7 +2,25 @@ return function ()
   local actions = require('telescope.actions')
   local action_state = require('telescope.actions.state')
 
-  require('telescope').setup{
+  local function deep_extend(...)
+    local args = { ... }
+    return vim.tbl_deep_extend("force", args[1], args[2] or {}, select(3, ...))
+  end
+
+  local picker_presets = {
+    vertical_preview_bottom = {
+      trim_text = true,
+      fname_width = 80,
+      path_display = { "truncate", },
+      layout_strategy = "vertical",
+      layout_config = {
+        preview_cutoff = 25,
+        mirror = true,
+      },
+    },
+  }
+
+  require("telescope").setup({
     defaults = {
       vimgrep_arguments = {
         'rg',
@@ -89,30 +107,15 @@ return function ()
       buffers = {
         sort_mru = true,
       },
-      quickfix = {
-        trim_text = true,
-        fname_width = 60,
-        path_display = {
-          "truncate",
-        },
-        layout_strategy = "vertical",
-        layout_config = {
-          preview_cutoff = 25,
-          mirror = true,
-        },
-      },
-      loclist = {
-        trim_text = true,
-        fname_width = 60,
-        path_display = {
-          "truncate",
-        },
-        layout_strategy = "vertical",
-        layout_config = {
-          preview_cutoff = 25,
-          mirror = true,
-        },
-      },
+      quickfix = deep_extend(picker_presets.vertical_preview_bottom),
+      loclist = deep_extend(picker_presets.vertical_preview_bottom),
+      lsp_references = deep_extend(picker_presets.vertical_preview_bottom),
+      lsp_definitions = deep_extend(picker_presets.vertical_preview_bottom),
+      lsp_type_definitions = deep_extend(picker_presets.vertical_preview_bottom),
+      lsp_implementations = deep_extend(picker_presets.vertical_preview_bottom),
+      lsp_document_symbols = deep_extend(picker_presets.vertical_preview_bottom),
+      lsp_workspace_symbols = deep_extend(picker_presets.vertical_preview_bottom),
+      lsp_dynamic_workspace_symbols = deep_extend(picker_presets.vertical_preview_bottom),
       current_buffer_fuzzy_find = {
         tiebreak = function(a, b)
           -- Sort tiebreaks by line number
@@ -126,7 +129,7 @@ return function ()
         override_generic_sorter = false, -- override the generic sorter
         override_file_sorter = true,     -- override the file sorter
         case_mode = "smart_case",        -- or "ignore_case" or "respect_case"
-                                         -- the default case_mode is "smart_case"
+        -- the default case_mode is "smart_case"
       },
       media_files = {
         -- filetypes whitelist
@@ -139,7 +142,7 @@ return function ()
         require("telescope.themes").get_dropdown({})
       },
     }
-  }
+  })
 
   -- Load extensions
   require('telescope').load_extension('notify')

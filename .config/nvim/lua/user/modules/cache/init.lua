@@ -19,8 +19,9 @@ end
 
 ---@param key any
 ---@param data any
-function Cache:put(key, data)
-  self.store[key] = CacheEntry(data)
+---@param opts? user.CacheEntry.opts
+function Cache:put(key, data, opts)
+  self.store[key] = CacheEntry(data, opts)
 end
 
 ---@param key any

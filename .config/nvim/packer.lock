@@ -1,4 +1,7 @@
 {
+  "CamelCaseMotion": {
+    "commit": "de439d7"
+  },
   "FixCursorHold.nvim": {
     "commit": "70a9516"
   },
@@ -250,6 +253,9 @@
   },
   "vim-vsnip-integ": {
     "commit": "1cf8990"
+  },
+  "vimtex": {
+    "commit": "9faaf00"
   },
   "zenbones.nvim": {
     "commit": "910b8c2"

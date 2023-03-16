@@ -6,6 +6,7 @@ local pl = Config.common.utils.pl
 local au = Config.common.au
 local api = vim.api
 local fmt = string.format
+local strwidth = vim.api.nvim_strwidth
 
 local HOME_DIR = uv.os_homedir()
 local WINBAR_STRING = "%{%v:lua.require'user.modules.winbar'.generate()%}"
@@ -20,6 +21,7 @@ M.config = {
     ellipsis = "…",
     readonly = "",
     link = "",
+    compare = "",
   },
   ---@param ctx WindowContext
   ignore = function(ctx)
@@ -101,17 +103,17 @@ local function condense_path(path, no_relative)
   return scheme .. p
 end
 
-local SEP_ITEM_WIDTH = vim.fn.strdisplaywidth(M.SEP_ITEM:get_content())
-local ELLIPSIS_ITEM_WIDTH = vim.fn.strdisplaywidth(M.ELLIPSIS_ITEM:get_content())
+local SEP_ITEM_WIDTH = strwidth(M.SEP_ITEM:get_content())
+local ELLIPSIS_ITEM_WIDTH = strwidth(M.ELLIPSIS_ITEM:get_content())
 
 ---@param segments user.winbar.StatusItem[]
 ---@param max_width integer
 ---@param show_repo boolean
-local function truncate_path_segments(segments, max_width, show_repo)
+local function truncate_path(segments, max_width, show_repo)
   local total_width = 0
 
   local widths = vim.tbl_map(function(v)
-    local w = #v:get_content() + SEP_ITEM_WIDTH
+    local w = strwidth(v:get_content()) + SEP_ITEM_WIDTH
     total_width = total_width + w
     return w
   end, segments)
@@ -142,6 +144,15 @@ local function truncate_path_segments(segments, max_width, show_repo)
   end
 
   return utils.vec_join(ret, utils.vec_slice(segments, slice_start))
+end
+
+local function truncate_path_segment(name)
+  if strwidth(name) <= 47 then return name end
+  -- Get the correct byte indices such that we don't accidentally end up
+  -- dismembering a multi-byte glyph.
+  local end_head = vim.str_byteindex(name, 23)
+  local start_tail = vim.str_byteindex(name, #name - 22)
+  return name:sub(1, end_head) .. symbols.ellipsis .. name:sub(start_tail)
 end
 
 ---@class WindowContext
@@ -227,15 +238,17 @@ function M.generate()
 
   if (not path or vim.startswith(abs_path, win_ctx.cwd)) then
     show_repo = true
+    local condense_cwd = condense_path(win_ctx.cwd, true)
+
     winbar:add_child(StatusItem({
       StatusItem(M.config.symbols.repo .. " ", "Directory"),
-      StatusItem(pl:basename(condense_path(win_ctx.cwd, true)), "WinBar"),
+      StatusItem(truncate_path_segment(pl:basename(condense_cwd)), "WinBar"),
     }))
   end
 
   if parent_path then
     for _, part in ipairs(pl:explode(parent_path)) do
-      table.insert(path_segments, StatusItem(part, "Comment"))
+      table.insert(path_segments, StatusItem(truncate_path_segment(part), "Comment"))
     end
   end
 
@@ -243,18 +256,29 @@ function M.generate()
     local comp = StatusItem({})
 
     if vim.bo[win_ctx.bufnr].modified then
+      -- Modified
       comp:add_child(StatusItem("[+] ", "String"))
     end
 
     if not vim.bo[win_ctx.bufnr].modifiable or vim.bo[win_ctx.bufnr].readonly then
+      -- Read only
       comp:add_child(StatusItem(fmt("%s ", symbols.readonly), "DiagnosticInfo"))
     end
 
-    comp:add_child(StatusItem(basename, "WinBar"))
+    if vim.wo[win_ctx.winid].diff then
+      -- Diff mode
+      comp:add_child(StatusItem(fmt("%s ", symbols.compare), "DiagnosticInfo"))
+    end
+
+    comp:add_child(StatusItem(truncate_path_segment(basename), "WinBar"))
     table.insert(path_segments, comp)
   end
 
-  path_segments = truncate_path_segments(path_segments, win_ctx.width, show_repo)
+  path_segments = truncate_path(
+    path_segments,
+    win_ctx.width - strwidth(winbar:get_content()),
+    show_repo
+  )
   append(unpack(path_segments))
 
   local ret = winbar:render()

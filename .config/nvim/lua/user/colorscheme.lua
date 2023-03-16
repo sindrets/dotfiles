@@ -180,12 +180,9 @@ function M.generate_diff_colors(opt)
     }) --[[@as table ]]
   end
 
-  ---@type Color
-  local base_add = base_colors.add
-  ---@type Color
-  local base_del = base_colors.del
-  ---@type Color
-  local base_mod = base_colors.mod
+  local base_add = base_colors.add --[[@as Color ]]
+  local base_del = base_colors.del --[[@as Color ]]
+  local base_mod = base_colors.mod --[[@as Color ]]
 
   local bg_add = base_add:blend(bg_normal, 0.85):mod_saturation(0.05)
   local bg_add_text = base_add:blend(bg_normal, 0.7):mod_saturation(0.05)
@@ -194,16 +191,20 @@ function M.generate_diff_colors(opt)
   local bg_mod = base_mod:blend(bg_normal, 0.85):mod_saturation(0.05)
   local bg_mod_text = base_mod:blend(bg_normal, 0.7):mod_saturation(0.05)
 
+  -- Builtin groups
+
   if not opt.no_override then
     hi("DiffAdd", { bg = bg_add:to_css(), fg = "NONE", style = "NONE" })
     hi("DiffDelete", { bg = bg_del:to_css(), fg = "NONE", style = "NONE" })
     hi("DiffChange", { bg = bg_mod:to_css(), fg = "NONE", style = "NONE" })
-    hi("DiffText", { bg = bg_mod_text:to_css(), fg = "NONE", style = "NONE" })
+    hi("DiffText", { bg = bg_mod_text:to_css(), fg = base_mod:to_css(), style = "NONE" })
 
     hi("diffAdded", { fg = base_add:to_css(), bg = "NONE", style = "NONE" })
     hi("diffRemoved", { fg = base_del:to_css(), bg = "NONE", style = "NONE" })
     hi("diffChanged", { fg = base_mod:to_css(), bg = "NONE", style = "NONE" })
   end
+
+  -- Custom groups
 
   hi("DiffAddText", { bg = bg_add_text:to_css(), fg = base_add:to_css(), style = "NONE" })
   hi("DiffDeleteText", { bg = bg_del_text:to_css(), fg = base_del:to_css(), style = "NONE" })
@@ -587,6 +588,9 @@ function M.apply_tweaks()
       })
       hi("StatusLine", { fg = hl.get_fg("String") })
       hi("MatchParen", { bg = "NONE" })
+      hi("String", { fg = hl.get_fg("PreProc") })
+      hi_link("Directory", "Accent", { clear = true })
+      hi_link("@string", "String")
       hi_link("NormalFloat", "Normal")
       hi_link("@text.math", "Function")
 

@@ -18,6 +18,16 @@ imap <C-j> <Down>
 imap <C-k> <Up>
 imap <C-l> <Right>
 
+" Smart case motions
+map <silent> w <Plug>CamelCaseMotion_w
+map <silent> b <Plug>CamelCaseMotion_b
+map <silent> e <Plug>CamelCaseMotion_e
+map <silent> ge <Plug>CamelCaseMotion_ge
+sunmap w
+sunmap b
+sunmap e
+sunmap ge
+
 " Navigate snippet placeholders
 imap <expr> <C-f> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : ''
 smap <expr> <C-f> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : ''
@@ -225,7 +235,7 @@ nnoremap ;; <Cmd>Telescope resume<CR>
 " Git
 nnoremap <leader>G <Cmd>lua Config.plugin.fugitive.status_open("tab", { use_last = true })<CR>
 nnoremap <leader>gs <Cmd>lua Config.plugin.fugitive.status_open("split")<CR>
-nnoremap <leader>gl <Cmd>Flogsplit -max-count=256<CR>
+nnoremap <leader>gl <Cmd>exe 'Flogsplit -max-count=256' <bar> wincmd J<CR>
 nnoremap <leader>ga <Cmd>silent exe '!git add %' <bar> lua Config.common.notify.git("Staged "
             \ .. Config.common.utils.str_quote(pl:vim_expand("%:.")))<CR>
 nnoremap <leader>gA <Cmd>silent exe '!git add .' <bar>lua Config.common.notify.git("Staged "

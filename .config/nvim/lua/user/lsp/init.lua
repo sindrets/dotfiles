@@ -1,5 +1,8 @@
-local cmp_lsp = require("cmp_nvim_lsp")
-local lspconfig = require("lspconfig")
+local cmp = prequire("cmp")
+local cmp_lsp = prequire("cmp_nvim_lsp")
+local lspconfig = prequire("lspconfig")
+
+if not lspconfig then return end
 
 local utils = Config.common.utils
 local notify = Config.common.notify
@@ -26,7 +29,7 @@ M.base_config = {
   on_attach = M.common_on_attach,
   capabilities = utils.tbl_union_extend(
     vim.lsp.protocol.make_client_capabilities(),
-    cmp_lsp.default_capabilities()
+    cmp_lsp and cmp_lsp.default_capabilities() or nil
   ),
 }
 
@@ -240,6 +243,8 @@ end
 -- Only show diagnostics if current word + line is not the same as last call.
 local last_diagnostics_word = nil
 function M.show_position_diagnostics()
+  if cmp and cmp.visible() then return end
+
   local cword = vim.fn.expand("<cword>")
   local cline = vim.api.nvim_win_get_cursor(0)[1]
   local bufnr = vim.api.nvim_get_current_buf()

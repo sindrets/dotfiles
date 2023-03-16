@@ -1,6 +1,11 @@
-local ok, impatient = pcall(require, "impatient")
+_G.prequire = function(modname)
+  local ok, mod = pcall(require, modname)
+  if ok then return mod end
+end
 
-if ok then
+local impatient = prequire("impatient")
+
+if impatient then
   impatient.enable_profile()
 end
 
@@ -16,11 +21,7 @@ _G.Config = {
   common = require("user.common"),
   fn = {},
   plugin = {},
-  state = {
-    git = {
-      rev_name_cache = {},
-    },
-  },
+  state = {},
 }
 
 ---Path library.
@@ -28,6 +29,12 @@ _G.pl = Config.common.utils.pl
 
 Config.lib = require("user.lib")
 Config.term = require("user.modules.term")
+
+local Cache = require("user.modules.cache")
+
+Config.state.git = {
+  rev_name_cache = Cache(),
+}
 
 local alias = require("user.modules.cmd_alias").alias
 local api = vim.api

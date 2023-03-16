@@ -436,7 +436,7 @@ M.components = {
   git = {
     branch = StatusComponent({
       provider = {
-        update = { "BufEnter", "CmdlineLeave" },
+        update = { "BufEnter", "CmdlineLeave", "FocusGained" },
         get = function()
           local rev, path, dir
 
@@ -461,9 +461,9 @@ M.components = {
           local cache = Config.state.git.rev_name_cache
           local key = path .. "#" .. rev
 
-          if cache[key] then
-            return cache[key] .. desc
-          elseif rev:match("^%x+$") then
+          if cache:get(key) then
+            return cache:get(key) .. desc
+          elseif rev == "HEAD" or rev:match("^%x+$") then
             -- Problem: Gitsigns shows the current HEAD as a commit SHA if it's
             -- anything other than the HEAD of a branch.
             -- Solution: Use git-name-rev to get more meaningful names.
@@ -484,7 +484,7 @@ M.components = {
               name = utils.str_match(out[1] or "", { "(.*)%^0", "(.*)" })
             end
 
-            cache[key] = name
+            cache:put(key, name, { lifetime = 60 * 1000 })
 
             return name .. desc
           else
@@ -573,7 +573,8 @@ function M.update()
           comps.block(),
           comps.vi_mode(),
           comps.paste_mode(),
-          comps.file.info(),
+          -- comps.file.info(),
+          comps.git.branch(),
           comps.git.diff_add(),
           comps.git.diff_mod(),
           comps.git.diff_del(),
@@ -598,7 +599,7 @@ function M.update()
             comps.lsp_server(),
             comps.file.indent_info(),
             comps.file.format(),
-            comps.git.branch(),
+            -- comps.git.branch(),
           },
           { left_sep = " " }
         ),

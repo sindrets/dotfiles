@@ -45,22 +45,20 @@ return function ()
 
       -- Navigation
       map("n", "]c", function()
-        if vim.wo.diff then return "]c" end
-        vim.schedule(function()
+        if vim.wo.diff then
+          vim.cmd("norm! ]c")
+        else
           gs.next_hunk()
-          vim.cmd("norm! zz")
-        end)
-        return "<Ignore>"
-      end, { expr = true })
+        end
+      end)
 
       map("n", "[c", function()
-        if vim.wo.diff then return "[c" end
-        vim.schedule(function()
+        if vim.wo.diff then
+          vim.cmd("norm! [c")
+        else
           gs.prev_hunk()
-          vim.cmd("norm! zz")
-        end)
-        return "<Ignore>"
-      end, { expr = true })
+        end
+      end)
 
       -- Actions
       map("n", "<leader>hs", gs.stage_hunk)

@@ -90,14 +90,14 @@ return function ()
     },
     keymaps = {
       view = {
-        ["-"] = actions.toggle_stage_entry,
+        { "n", "-", actions.toggle_stage_entry, { desc = "Stage / unstage the selected entry" } },
       },
       file_panel = {
-        ["<cr>"] = actions.focus_entry,
-        ["s"] = actions.toggle_stage_entry,
-        ["cc"] = "<Cmd>Git commit <bar> wincmd J<CR>",
-        ["ca"] = "<Cmd>Git commit --amend <bar> wincmd J<CR>",
-        ["c<Space>"] = ":Git commit ",
+        { "n", "<cr>", actions.focus_entry, { desc = "Focus the selected entry" } },
+        { "n", "s", actions.toggle_stage_entry, { desc = "Stage / unstage the selected entry" } },
+        { "n", "cc",  "<Cmd>Git commit <bar> wincmd J<CR>", { desc = "Commit staged changes" } },
+        { "n", "ca",   "<Cmd>Git commit --amend <bar> wincmd J<CR>", { desc = "Amend the last commit" } },
+        { "n", "c<space>",  ":Git commit ", { desc = "Populate command line with \":Git commit \"" } },
       },
       file_history_panel = {
         ["<cr>"] = actions.focus_entry,

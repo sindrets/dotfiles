@@ -3,6 +3,7 @@
 ---@field data any
 ---@field valid boolean
 ---@field timestamp integer
+---@field expires integer
 local CacheEntry = setmetatable({
   init = function() end,
 }, {
@@ -13,10 +14,25 @@ local CacheEntry = setmetatable({
   end,
 })
 
-function CacheEntry:init(data)
+---@class user.CacheEntry.opts
+---@field lifetime integer # (ms)
+---@field expires integer # (ns)
+
+---@param data any
+---@param opts? user.CacheEntry.opts
+function CacheEntry:init(data, opts)
+  opts = opts or {}
   self.data = data
   self.valid = true
   self.timestamp = uv.hrtime()
+
+  assert(not (opts.lifetime and opts.expires), "Fields `lifetime` and `expires` are incompatible!")
+
+  if opts.lifetime then
+    self.expires = self.timestamp + (opts.lifetime * 1000000)
+  elseif opts.expires then
+    self.expires = opts.expires
+  end
 end
 
 function CacheEntry:invalidate()
@@ -24,7 +40,16 @@ function CacheEntry:invalidate()
 end
 
 function CacheEntry:is_valid()
-  return self.valid
+  if not self.valid then return false end
+
+  if self.expires then
+    if uv.hrtime() > self.expires then
+      self:invalidate()
+      return false
+    end
+  end
+
+  return true
 end
 
 function CacheEntry:get_data()
