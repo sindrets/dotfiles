@@ -1,10 +1,11 @@
 return function ()
   require("indent_blankline").setup({
     char = "▏",
+    context_char = "▏",
     -- space_char = " ",
     space_char_blankline = "⠀",
-    use_treesitter = true,
-    use_treesitter_scope = true,
+    use_treesitter = false,
+    use_treesitter_scope = false,
     show_trailing_blankline_indent = false,
     show_current_context = true,
     max_indent_increase = 2,

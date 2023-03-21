@@ -63,5 +63,8 @@ return function()
     providers_regex_syntax_allowlist = {},
     -- under_cursor: whether or not to illuminate under the cursor
     under_cursor = true,
+    -- large_file_cutoff: number of lines at which to use large_file_config
+    -- The `under_cursor` option is disabled when this cutoff is hit
+    large_file_cutoff = 20000,
   })
 end

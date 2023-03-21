@@ -25,7 +25,9 @@ end
 -- lua_add_lib("$VIMRUNTIME")
 -- lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
 
-require("lspconfig").sumneko_lua.setup(Config.lsp.create_config(
+-- "$schema" = "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json"
+
+require("lspconfig").lua_ls.setup(Config.lsp.create_config(
   require("lua-dev").setup({
     library = {
       vimruntime = false, -- runtime path
@@ -57,6 +59,7 @@ require("lspconfig").sumneko_lua.setup(Config.lsp.create_config(
         },
         workspace = {
           library = get_lib(),
+          checkThirdParty = false,
           maxPreload = 2000,
           preloadFileSize = 50000
         },

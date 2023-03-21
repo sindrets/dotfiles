@@ -467,21 +467,32 @@ M.components = {
             -- Problem: Gitsigns shows the current HEAD as a commit SHA if it's
             -- anything other than the HEAD of a branch.
             -- Solution: Use git-name-rev to get more meaningful names.
-            local out, code = utils.system_list({
+
+            -- Check reflog to find the last checkout
+            local name = ""
+            local out = utils.system_list({
               "git",
-              "name-rev",
-              "--name-only",
-              "--no-undefined",
-              "--always",
-              rev
+              "reflog",
+              "--pretty=format:%gs",
+              "--grep-reflog=^checkout: ",
+              "-n1",
             }, pl:readable(dir) and dir or pl:realpath("."))
 
-            local name
+            if out[1] and out[1] ~= "" then
+              name = out[1]:match("^checkout: moving from %S+ to (%S+)$")
 
-            if code ~= 0 or not out[1] then
-              name = ""
-            else
-              name = utils.str_match(out[1] or "", { "(.*)%^0", "(.*)" })
+              out = utils.system_list({
+                "git",
+                "name-rev",
+                "--name-only",
+                "--no-undefined",
+                "--always",
+                name,
+              }, pl:readable(dir) and dir or pl:realpath("."))
+
+              if out[1] and out[1] ~= "" then
+                name = utils.str_match(out[1], { "(.*)%^0", "(.*)" })
+              end
             end
 
             cache:put(key, name, { lifetime = 60 * 1000 })

@@ -684,6 +684,7 @@ function M.apply_tweaks()
     })
     hi("Pmenu", { bg = bg_normal:clone():mod_value(-0.025):to_css() })
     hi("PmenuSbar", { bg = Color.from_hl("Pmenu", "bg"):mod_value(0.05):to_css() })
+    hi("PmenuThumb", { bg = Color.from_hl("PmenuSbar", "bg"):mod_value(0.15):to_css(), fg = "NONE" })
     hi("Search", { bg = bg_normal:clone():mod_value(0.1):to_css() })
     hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:clone():mod_value(-0.05):to_css() })
     hi("diffAdded", { fg = "#B1D196" })
@@ -693,7 +694,11 @@ function M.apply_tweaks()
       bg = Color.from_hl("diffChanged", "fg"):blend(bg_normal, 0.85):to_css(),
       style = "NONE",
     })
-    hi({ "SignColumn", "FoldColumn" }, { bg = "NONE" })
+    hi({ "WinBar", "WinBarNC" }, { style = "bold", explicit = true })
+    hi("StatusLine", { fg = Color.from_hl("StatusLine", "bg"):highlight(0.6):mod_saturation(-0.15):to_css() })
+    hi({ "FoldColumn", "Folded" }, { fg = hl.get_fg("Conceal") })
+    hi("Whitespace", { fg = bg_normal:clone():highlight(0.15):to_css() })
+    hi("IndentBlanklineContextChar", { fg = Color.from_hl("Whitespace", "fg"):highlight(0.15):to_css() })
     hi_link("@parameter", "@constant")
     hi_link("CmpItemMenuDefault", "Comment", { clear = true })
     hi_link("fugitiveHash", "@function")
@@ -716,6 +721,15 @@ function M.apply_tweaks()
       :mod_value(-0.03)
       :to_css(),
   })
+
+  -- Remove bg from various groups
+  hi(
+    { "LineNr", "CursorLineNr", "CursorLineSign", "CursorLineFold", "FoldColumn", "SignColumn" },
+    { bg = "NONE" }
+  )
+
+  hi_link("CursorLineFold", "FoldColumn", { default = true })
+  hi_link("CursorLineSign", "SignColumn", { default = true })
 
   -- Generate diff hl
   if do_diff_gen then
@@ -796,8 +810,8 @@ function M.apply_tweaks()
     { clear = true }
   )
 
-  hi_link("IndentBlanklineChar", "Whitespace")
-  hi_link("IndentBlanklineSpaceChar", "Whitespace")
+  hi_link("IndentBlanklineChar", "Whitespace", { clear = true })
+  hi_link("IndentBlanklineSpaceChar", "Whitespace", { clear = true })
 
   -- Make breaking changes stand out more
   hi("packerBreakingChange", {
@@ -843,30 +857,28 @@ function M.apply_tweaks()
   end
 end
 
-hi_link("LspReferenceText", "Visual", { default = true })
-hi_link({ "LspReferenceRead", "LspReferenceWrite" }, "LspReferenceText", { default = true })
-hi_link(
-  { "IlluminatedWordText", "IlluminatedWordRead", "IlluminatedWordWrite" },
-  "LspReferenceText",
-  { default = true }
-)
+function M.apply()
+  hi_link("LspReferenceText", "Visual", { default = true })
+  hi_link({ "LspReferenceRead", "LspReferenceWrite" }, "LspReferenceText", { default = true })
+  hi_link(
+    { "IlluminatedWordText", "IlluminatedWordRead", "IlluminatedWordWrite" },
+    "LspReferenceText",
+    { default = true }
+  )
 
-M.apply_log_defaults()
+  M.apply_log_defaults()
 
-Config.common.au.declare_group("colorscheme_config", {}, {
-  { "ColorSchemePre", callback = function(state) M.setup_colorscheme(state.match) end, },
-  { "ColorScheme", callback = function(_) M.apply_tweaks() end, },
-})
+  -- NOTE: Seems like firenvim doesn't load colorscheme properly if loaded early.
+  -- Load later in autocmd instead.
+  if not vim.g.started_by_firenvim then
+    if M.bg then
+      vim.opt.bg = M.bg
+    end
+    vim.cmd("hi clear")
+    vim.cmd("colorscheme " .. M.name)
+  end
+end
 
 Config.colorscheme = M
-
--- NOTE: Seems like firenvim doesn't load colorscheme properly if loaded early.
--- Load later in autocmd instead.
-if not vim.g.started_by_firenvim then
-  if M.bg then
-    vim.opt.bg = M.bg
-  end
-  vim.cmd("colorscheme " .. M.name)
-end
 
 return M

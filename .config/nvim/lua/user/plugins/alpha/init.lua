@@ -67,7 +67,7 @@ return function()
 
   local function setup_highlights()
     hl.hi_link("DashboardNormal", "Normal", { default = true })
-    hl.hi("DashboardEndOfBuffer", { fg = "bg", bg = "bg", default = true })
+    hl.hi("DashboardEndOfBuffer", { fg = hl.get_bg("Normal"), bg = hl.get_bg("Normal"), default = true })
     hl.hi_link("DashboardHeader", "Type", { default = true })
     hl.hi_link("DashboardCenter", "Keyword", { default = true })
     -- hl.hi_link("DashboardShortCut", "String", { default = true })

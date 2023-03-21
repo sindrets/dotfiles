@@ -12,8 +12,8 @@ local notify = Config.common.notify
 local api = vim.api
 local command = api.nvim_create_user_command
 
-local function get_range(e)
-  return { e.range, e.line1, e.line2 }
+local function get_range(c)
+  return { c.range, c.line1, c.line2 }
 end
 
 local function expand_shell_arg(arg)
@@ -28,23 +28,23 @@ command("Messages", function()
   Config.fn.update_messages_win()
 end, { bar = true })
 
-command("Grep", function(e)
-  Config.lib.comfy_grep(false, unpack(e.fargs))
+command("Grep", function(c)
+  Config.lib.comfy_grep(false, unpack(c.fargs))
 end, { nargs = "+", complete = "file" })
 
-command("Lgrep", function(e)
-  Config.lib.comfy_grep(true, unpack(e.fargs))
+command("Lgrep", function(c)
+  Config.lib.comfy_grep(true, unpack(c.fargs))
 end, { nargs = "+", complete = "file" })
 
 command("Terminal", "exe '<mods> sp' | exe 'term <args>'", { nargs = "*", complete = "shellcmd" })
 
 command("TermTab", "tab sp | exe 'term' | startinsert", { bar = true })
 
-command("Job", function(e)
+command("Job", function(c)
   local stdout, stderr, code
-  local raw_cmd = e.args
+  local raw_cmd = c.args
   local cmd = raw_cmd:gsub("'", "''")
-  local silent = (e.smods.silent and 1 or 0) + (e.smods.emsg_silent and 1 or 0)
+  local silent = (c.smods.silent and 1 or 0) + (c.smods.emsg_silent and 1 or 0)
 
   ---@diagnostic disable-next-line: unused-local
   local function cb(job_id, data, event_name)
@@ -95,53 +95,53 @@ command("Job", function(e)
   })
 end, { nargs = "*", complete = "shellcmd" })
 
-command("HelpHere", function(e)
-  Config.lib.cmd.help_here(e.args)
+command("HelpHere", function(c)
+  Config.lib.cmd.help_here(c.args)
 end, { bar = true, nargs = 1, complete = "help" })
 
-command("ManHere", function(e)
-  Config.lib.cmd.man_here(unpack(e.fargs))
+command("ManHere", function(c)
+  Config.lib.cmd.man_here(unpack(c.fargs))
 end, { bar = true, nargs = 1, complete = require("man").man_complete })
 
-command("Scratch", function(e)
-  Config.lib.new_scratch_buf(e.fargs[1])
+command("Scratch", function(c)
+  Config.lib.new_scratch_buf(c.fargs[1])
 end, { bar = true, nargs = "?", complete = "filetype" })
 
-command("SplitOn", function(e)
-  Config.lib.split_on_pattern(e.args, get_range(e), e.bang)
+command("SplitOn", function(c)
+  Config.lib.split_on_pattern(c.args, get_range(c), c.bang)
 end, { bar = true, range = true, bang = true, nargs = "?" })
 
-command("BRemove", function(e)
-  Config.lib.remove_buffer(e.bang, tonumber(e.fargs[1]))
+command("BRemove", function(c)
+  Config.lib.remove_buffer(c.bang, tonumber(c.fargs[1]))
 end, { bar = true, bang = true })
 
-command("ReadEx", function(e)
-  Config.lib.read_ex(get_range(e), unpack(e.fargs))
+command("ReadEx", function(c)
+  Config.lib.read_ex(get_range(c), unpack(c.fargs))
 end, { nargs = "*", range = true, complete = "command" })
 
-command("Rnew", function(e)
-  Config.lib.cmd.read_new(unpack(e.fargs))
+command("Rnew", function(c)
+  Config.lib.cmd.read_new(unpack(c.fargs))
 end, {
   nargs = "+",
   complete = function(arg_lead, cmd_line, cur_pos)
-    local c = arg_parser.scan(cmd_line, { allow_quoted = false, cur_pos = cur_pos })
+    local ctx = arg_parser.scan(cmd_line, { allow_quoted = false, cur_pos = cur_pos })
 
-    if #c.args > 1 then
-      local prefix = c.args[2]:sub(1, 1)
+    if #ctx.args > 1 then
+      local prefix = ctx.args[2]:sub(1, 1)
 
-      if c.argidx == 2 then
-        arg_lead = c.args[2]:sub(2)
+      if ctx.argidx == 2 then
+        arg_lead = ctx.args[2]:sub(2)
       end
 
       if prefix == ":" then
         return vim.tbl_map(function(v)
-          return c.argidx == 2 and prefix .. v or v
+          return ctx.argidx == 2 and prefix .. v or v
         end, vim.fn.getcompletion(arg_lead, "command"))
       elseif prefix == "!" then
         return utils.vec_join(
           expand_shell_arg(arg_lead),
           vim.tbl_map(function(v)
-            return c.argidx == 2 and prefix .. v or v
+            return ctx.argidx == 2 and prefix .. v or v
           end, vim.fn.getcompletion(arg_lead, "shellcmd"))
         )
       end
@@ -160,21 +160,21 @@ command("HiShow", function()
   vim.cmd("ColorizerAttachToBuffer")
 end, { bar = true })
 
-command("ExecuteSelection", function(e)
-  Config.lib.cmd.exec_selection(get_range(e))
+command("ExecuteSelection", function(c)
+  Config.lib.cmd.exec_selection(get_range(c))
 end, { bar = true, range = true })
 
-command("CompareDir", function(e)
+command("CompareDir", function(c)
   vim.cmd("tabnew")
-  vim.t.paths = e.fargs
+  vim.t.paths = c.fargs
   vim.t.compare_mode = true
 
   vim.t.compare_a = api.nvim_get_current_win()
   vim.cmd("belowright vsp")
   vim.t.compare_b = api.nvim_get_current_win()
 
-  vim.cmd("silent 1windo lcd " .. vim.fn.fnameescape(e.fargs[1]))
-  vim.cmd("silent 2windo lcd " .. vim.fn.fnameescape(e.fargs[2]))
+  vim.cmd("silent 1windo lcd " .. vim.fn.fnameescape(c.fargs[1]))
+  vim.cmd("silent 2windo lcd " .. vim.fn.fnameescape(c.fargs[2]))
 
   for _, winid in ipairs({ vim.t.compare_a, vim.t.compare_b }) do
     api.nvim_win_call(winid, function()
@@ -183,19 +183,19 @@ command("CompareDir", function(e)
   end
 end, { bar = true, nargs = "+", complete = "dir" })
 
-command("MdViewEdit", function(e)
-  Config.lib.cmd.md_view(false, e.fargs[1])
+command("MdViewEdit", function(c)
+  Config.lib.cmd.md_view(false, c.fargs[1])
 end, { bar = true, nargs = "?", complete = "file" })
 
 command("MdViewNew", function()
   Config.lib.cmd.md_view(true)
 end, { bar = true })
 
-command("Windows", function(e)
-  Config.lib.cmd.windows(e.bang)
+command("Windows", function(c)
+  Config.lib.cmd.windows(c.bang)
 end, { bar = true, bang = true })
 
-command("NeorgExport", function(e)
+command("NeorgExport", function(c)
   for _, dep in ipairs({ "neorg-pandoc-linux86", "pandoc", "neorg-export" }) do
     if vim.fn.executable(dep) ~= 1 then
       notify.error(("'%s' is not executable!"):format(dep))
@@ -205,12 +205,12 @@ command("NeorgExport", function(e)
 
   local in_name, out_name
 
-  if #e.fargs > 1 then
-    in_name = vim.fn.expand(e.fargs[1])
-    out_name = vim.fn.expand(e.fargs[2])
-  elseif #e.fargs == 1 then
+  if #c.fargs > 1 then
+    in_name = vim.fn.expand(c.fargs[1])
+    out_name = vim.fn.expand(c.fargs[2])
+  elseif #c.fargs == 1 then
     in_name = vim.fn.expand("%:p")
-    out_name = vim.fn.expand(e.fargs[1])
+    out_name = vim.fn.expand(c.fargs[1])
   else
     in_name = vim.fn.expand("%:p")
     out_name = in_name:sub(1, -math.max(#pl:extension(in_name), 1) - 2) .. ".pdf"
@@ -232,3 +232,37 @@ command("NeorgExport", function(e)
     end,
   }):start()
 end, { nargs = "*", complete = "file" })
+
+command("Profile", function(c)
+  local profile = require("plenary.profile")
+  local ctx = arg_parser.scan(c.args, { allow_quoted = false })
+  local subcmd = ctx.args[1]
+
+  if not subcmd then
+    utils.err("No sub command given!")
+    return
+  end
+
+  if subcmd == "start" then
+    local out_file = c.args[2] or "/tmp/nvim-profile"
+    ---@diagnostic disable-next-line: param-type-mismatch
+    profile.start(out_file, { flame = true })
+  elseif subcmd == "stop" then
+    profile.stop()
+  end
+end, {
+  nargs = "+",
+  complete = function(arg_lead, cmd_line, cur_pos)
+    local ctx = arg_parser.scan(cmd_line, { allow_quoted = false, cur_pos = cur_pos })
+
+    local candidates = {}
+
+    if ctx.argidx == 2 then
+      candidates = { "start", "stop" }
+    elseif ctx.argidx == 3 then
+      candidates = vim.fn.getcompletion(arg_lead, "file")
+    end
+
+    return arg_parser.process_candidates(candidates, ctx)
+  end,
+})

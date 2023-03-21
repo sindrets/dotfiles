@@ -26,6 +26,7 @@ M.config = {
   ---@param ctx WindowContext
   ignore = function(ctx)
     if ctx.bufname == "" then
+      if vim.wo[ctx.winid].diff then return false end
       return true
     end
 
@@ -236,6 +237,8 @@ function M.generate()
   local path_segments = {}
   local show_repo = false
 
+  -- Repo / cwd
+
   if (not path or vim.startswith(abs_path, win_ctx.cwd)) then
     show_repo = true
     local condense_cwd = condense_path(win_ctx.cwd, true)
@@ -246,13 +249,19 @@ function M.generate()
     }))
   end
 
+  -- Parent path
+
   if parent_path then
     for _, part in ipairs(pl:explode(parent_path)) do
       table.insert(path_segments, StatusItem(truncate_path_segment(part), "Comment"))
     end
   end
 
-  if basename then
+  -- Basename
+
+  do
+    if not basename then basename = "[No Name]" end
+
     local comp = StatusItem({})
 
     if vim.bo[win_ctx.bufnr].modified then
@@ -341,7 +350,7 @@ function M.attach(winid)
   end
 
   if vim.wo[winid].winbar ~= WINBAR_STRING then
-    api.nvim_win_set_option(winid, "winbar", WINBAR_STRING)
+    api.nvim_set_option_value("winbar", WINBAR_STRING, { scope = "local", win = winid })
   end
 end
 
@@ -350,7 +359,7 @@ function M.detach(winid)
   if not state then return end
 
   if vim.wo[winid].winbar == WINBAR_STRING then
-    api.nvim_win_set_option(winid, "winbar", state.prev_bar or nil)
+    api.nvim_set_option_value("winbar", state.prev_bar or nil, { scope = "local", win = winid })
   end
 
   M.state.attached[winid] = nil
@@ -363,6 +372,12 @@ function M.check_attach(winid)
     M.detach(winid)
   else
     M.attach(winid)
+  end
+end
+
+function M.check_all()
+  for _, winid in ipairs(api.nvim_list_wins()) do
+    M.check_attach(winid)
   end
 end
 
@@ -380,6 +395,7 @@ function M.init()
         if ctx.event:match("^Win") then
           if vim.tbl_contains({ "WinLeave", "WinEnter" }, ctx.event) then
             buf_match = ctx.buf
+            win_match = api.nvim_get_current_win()
           else
             win_match = tonumber(ctx.match)
           end
@@ -389,9 +405,7 @@ function M.init()
 
         if win_match then
           M.request_update(win_match)
-        end
-
-        if buf_match then
+        elseif buf_match then
           for _, winid in ipairs(api.nvim_list_wins()) do
             if api.nvim_win_get_buf(winid) == buf_match then
               M.request_update(winid)
@@ -401,6 +415,8 @@ function M.init()
       end,
     },
   })
+
+  M.check_all()
 end
 
 return M

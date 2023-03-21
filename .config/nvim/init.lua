@@ -3,12 +3,6 @@ _G.prequire = function(modname)
   if ok then return mod end
 end
 
-local impatient = prequire("impatient")
-
-if impatient then
-  impatient.enable_profile()
-end
-
 ---Pretty print. Alias for `vim.inspect()`.
 _G.pp = function(a, opt)
   print(vim.inspect(a, opt))
@@ -42,7 +36,11 @@ local lib = Config.lib
 local utils = Config.common.utils
 
 require("user")
-require("user.modules.winbar").init()
+api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    require("user.modules.winbar").init()
+  end,
+})
 
 -- COMMAND ALIASES
 
