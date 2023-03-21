@@ -26,6 +26,9 @@
 [difftool "nvimdiff"]
 	cmd = nvim -d $LOCAL $REMOTE
 
+[rebase]
+	autoStash = true
+
 [merge]
 	tool = nvimmerge
 	conflictstyle = zdiff3
