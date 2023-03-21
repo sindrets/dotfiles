@@ -436,7 +436,7 @@ M.components = {
   git = {
     branch = StatusComponent({
       provider = {
-        update = { "BufEnter", "CmdlineLeave", "FocusGained" },
+        -- update = { "BufEnter", "CmdlineLeave", "FocusGained" },
         get = function()
           local rev, path, dir
 

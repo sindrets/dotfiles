@@ -2,6 +2,7 @@ local utils = Config.common.utils
 local pl = utils.pl
 
 local api = vim.api
+local fmt = string.format
 
 local M = {}
 
@@ -809,6 +810,38 @@ function cmd.windows(all)
   end
 
   print(table.concat(res, "\n"))
+end
+
+function M.nav_display_line(delta)
+  local old_cursor = vim.fn.getcurpos()
+  vim.cmd("norm! g0")
+  local old_dsp_first = vim.fn.getcurpos()
+  vim.cmd("norm! g$")
+  local old_dsp_last = vim.fn.getcurpos()
+
+  local old_full_line = api.nvim_buf_get_lines(0, old_cursor[2] - 1, old_cursor[2], false)[1]
+  local old_dsp_line = old_full_line:sub(old_dsp_first[3], old_dsp_last[3])
+  local old_dsp_lead = old_dsp_line:sub(1, old_cursor[3] - old_dsp_first[3])
+
+  local motion = delta < 0 and "gk" or "gj"
+  vim.cmd(fmt("norm! %d%s", math.abs(delta), motion))
+
+  vim.cmd("norm! g0")
+  local dsp_first = vim.fn.getcurpos()
+  vim.cmd("norm! g$")
+  local dsp_last = vim.fn.getcurpos()
+
+  -- local full_line = api.nvim_buf_get_lines(0, new_cursor[2] - 1, new_cursor[2], false)[1]
+  -- local dsp_line = full_line:sub(dsp_first[3], dsp_last[3])
+
+  vim.fn.winrestview({
+    col = utils.clamp(
+      dsp_first[3] + vim.api.nvim_strwidth(old_dsp_lead) - 1,
+      dsp_first[3],
+      dsp_last[3]
+    ),
+    curswant = old_cursor[5],
+  })
 end
 
 M.BufToggleEntry = BufToggleEntry

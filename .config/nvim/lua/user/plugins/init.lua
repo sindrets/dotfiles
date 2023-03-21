@@ -258,7 +258,7 @@ require("lazy").setup({
   { "bkad/CamelCaseMotion" },
   { "tweekmonster/startuptime.vim", cmd = { "StartupTime" } },
   { "RRethy/vim-illuminate", config = conf("vim-illuminate"), event = "VeryLazy" },
-  { "troydm/zoomwintab.vim" },
+  { "troydm/zoomwintab.vim", cmd = { "ZoomWinTabIn", "ZoomWinTabOut", "ZoomWinTabToggle" } },
   {
     "rcarriga/nvim-notify",
     config = function()

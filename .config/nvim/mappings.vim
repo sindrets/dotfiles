@@ -7,10 +7,10 @@ xnoremap <silent> <expr> j v:count == 0 ? 'gj' : 'j'
 xnoremap <silent> <expr> k v:count == 0 ? 'gk' : 'k'
 xnoremap <silent> <expr> <DOWN> v:count == 0 ? 'gj' : '<DOWN>'
 xnoremap <silent> <expr> <UP> v:count == 0 ? 'gk' : '<UP>'
-inoremap <silent> <expr> <DOWN> pumvisible() 
-            \ ? '<DOWN>' : '<Cmd>set ve+=onemore <bar> exe "norm! gj" <bar> set ve-=onemore<CR>'
-inoremap <silent> <expr> <UP> pumvisible() 
-            \ ? '<UP>' : '<Cmd>set ve+=onemore <bar> exe "norm! gk" <bar> set ve-=onemore<CR>'
+inoremap <silent> <expr> <DOWN> pumvisible()
+            \ ? '<DOWN>' : '<Cmd>lua require"user.lib".nav_display_line(1)<CR>'
+inoremap <silent> <expr> <UP> pumvisible()
+            \ ? '<UP>' : '<Cmd>lua require"user.lib".nav_display_line(-1)<CR>'
 
 " Navigate in insert mode
 imap <C-h> <Left>
@@ -19,14 +19,16 @@ imap <C-k> <Up>
 imap <C-l> <Right>
 
 " Smart case motions
-map <silent> w <Plug>CamelCaseMotion_w
-map <silent> b <Plug>CamelCaseMotion_b
-map <silent> e <Plug>CamelCaseMotion_e
-map <silent> ge <Plug>CamelCaseMotion_ge
+noremap <silent> w <Plug>CamelCaseMotion_w
+noremap <silent> b <Plug>CamelCaseMotion_b
+noremap <silent> e <Plug>CamelCaseMotion_e
+noremap <silent> ge <Plug>CamelCaseMotion_ge
 sunmap w
 sunmap b
 sunmap e
 sunmap ge
+inoremap <C-w> <C-\><C-o>d<Plug>CamelCaseMotion_b
+inoremap <C-BS> <C-\><C-o>d<Plug>CamelCaseMotion_b
 
 " Navigate snippet placeholders
 imap <expr> <C-f> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : ''
