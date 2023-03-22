@@ -84,20 +84,7 @@ vim.api.nvim_create_autocmd({ "BufRead" }, {
     callback = function(ctx)
         -- Disable stuff in big files
 
-        local bytes = vim.api.nvim_buf_get_offset(ctx.buf, vim.api.nvim_buf_line_count(ctx.buf))
-        local kb = bytes / 1024
-
-        -- Approximations of file size going by number of lines in normal code
-        -- (i.e. not minified):
-        --
-        -- 2500 lines   ≅ 84.62 kb
-        -- 5000 lines   ≅ 165.76 kb
-        -- 10000 lines  ≅ 320.86 kb
-        -- 20000 lines  ≅ 649.94 kb
-        -- 40000 lines  ≅ 1314.56 kb
-        -- 80000 lines  ≅ 2634.88 kb
-        -- 160000 lines ≅ 5249.33 kb
-        -- 320000 lines ≅ 10656.35 kb
+        local kb = Config.common.utils.buf_get_size(ctx.buf)
 
         if kb > 400 then
             local ts_context = prequire("treesitter-context")
