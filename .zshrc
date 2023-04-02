@@ -135,6 +135,12 @@ function update_theme() {
     fi
 }
 
+function nv-helptags() {
+    nvim --headless --clean -u NORC \
+        -c "helptags $([ -n "$1" ] && echo "$1" || echo doc)" \
+        -c "qa"
+}
+
 cur_term="$(get_term)"
 update_theme
 
@@ -232,7 +238,6 @@ alias nvim-conf="nvim --cmd 'cd ~/.config/nvim' -c 'args %' ~/.config/nvim/init.
 alias nv-conf="nvim-conf"
 alias nvim-pager="nvim -Rnc 'set bt=nowrite noswapfile ul=-1 nolist nonu nornu scl=yes:1 | lua Config.lib.set_center_cursor(true)'"
 alias nv-pager="nvim-pager"
-alias nv-helptags="nvim --headless --clean -u NORC -c 'helptags doc | qa'"
 alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"
 alias zsh-conf="$EDITOR ~/.zshrc"

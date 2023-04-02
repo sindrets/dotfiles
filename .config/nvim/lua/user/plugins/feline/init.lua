@@ -568,7 +568,7 @@ function M.update()
   end
 
   hl.hi("StatusLine", { fg = fg, bg = bg, gui = "NONE" })
-  hl.hi("StatusLineNC", { fg = fg, bg = bg, ctermfg = 1, gui = "NONE", unlink = true })
+  hl.hi("StatusLineNC", { fg = fg, bg = bg, ctermfg = 1, gui = "NONE", link = -1 })
 
   styles.color_palettes.default = vim.deepcopy({ fg = fg, bg = bg })
 

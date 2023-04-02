@@ -120,8 +120,8 @@ function M.generate_base_colors()
 
     if data then
       groups[target] = {
-        fg = data.fg and Color.from_hex(data.fg) or default_fg,
-        bg = data.bg and Color.from_hex(data.bg) or default_bg,
+        fg = data.fg and Color.from_hex(bit.lshift(data.fg, 8) + 0xff) or default_fg,
+        bg = data.bg and Color.from_hex(bit.lshift(data.bg, 8) + 0xff) or default_bg,
       }
     end
   end
@@ -551,7 +551,6 @@ function M.apply_tweaks()
       hi({ "NormalFloat", "StatusLine" }, { bg = bg_normal:clone():mod_value(-0.05):to_css() })
       hi("VertSplit", { fg = bg_normal:clone():mod_value(-0.25):to_css() })
     end
-    M.apply_log_defaults()
 
     -- Remove bg for diagnostics.
     for _, name in ipairs({ "Error", "Warn", "Info", "Hint" }) do
@@ -687,6 +686,7 @@ function M.apply_tweaks()
     hi("PmenuThumb", { bg = Color.from_hl("PmenuSbar", "bg"):mod_value(0.15):to_css(), fg = "NONE" })
     hi("Search", { bg = bg_normal:clone():mod_value(0.1):to_css() })
     hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:clone():mod_value(-0.05):to_css() })
+    hi("CursorLineSB", { bg = Color.from_hl("NormalSB", "bg"):mod_value(0.02):to_css() })
     hi("diffAdded", { fg = "#B1D196" })
     hi("diffRemoved", { fg = "#D06F79" })
     hi("diffChanged", { fg = "#8CAFD2" })
@@ -698,18 +698,22 @@ function M.apply_tweaks()
     hi("StatusLine", { fg = Color.from_hl("StatusLine", "bg"):highlight(0.6):mod_saturation(-0.15):to_css() })
     hi({ "FoldColumn", "Folded" }, { fg = hl.get_fg("Conceal") })
     hi("Whitespace", { fg = bg_normal:clone():highlight(0.15):to_css() })
+    hi(
+      { "@text", "@text.literal.markdown", "vimUserFunc", "vimEmbedError", "cssMediaComma" },
+      { fg = "fg", explicit = true, link = -1 }
+    )
     hi("IndentBlanklineContextChar", { fg = Color.from_hl("Whitespace", "fg"):highlight(0.15):to_css() })
     hi_link("@parameter", "@constant")
     hi_link("CmpItemMenuDefault", "Comment", { clear = true })
     hi_link("fugitiveHash", "@function")
-    hi("DiffviewCursorLine", {
-      bg = Color.from_hl("DiffviewNormal", "bg"):mod_value(-0.05):to_css()
-    })
+    hi_link("DiffviewCursorLine", "CursorLineSB")
+    hi("DiffviewFolderName", { bg = "NONE" })
 
     M.unstyle_telescope()
   end
 
   M.generate_base_colors()
+  M.apply_log_defaults()
 
   -- Treesitter
   hi("@text.emphasis", { style = "italic" })
@@ -748,7 +752,7 @@ function M.apply_tweaks()
   })
   hi_link("LspInfoBorder", "FloatBorder")
 
-  hi("MsgSeparator", { fg = hl.get_fg("FloatBorder"), bg = hl.get_bg("MsgArea") })
+  hi("MsgSeparator", { fg = hl.get_fg("FloatBorder"), bg = hl.get_bg("MsgArea"), link = -1 })
 
   hi("MatchParen", { style = "underline", sp = fg_normal:to_css() })
 
@@ -800,7 +804,7 @@ function M.apply_tweaks()
 
   hi("LspReferenceText", {
     bg = Color.from_hl("CursorLine", "bg"):highlight(0.08):to_css(),
-    unlink = true,
+    link = -1,
     explicit = true,
   })
   hi_link({ "LspReferenceRead", "LspReferenceWrite" }, "LspReferenceText", { clear = true })

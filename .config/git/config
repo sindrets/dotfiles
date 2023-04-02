@@ -50,6 +50,7 @@
 	required = true
 [alias]
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %C(bold blue)<%an> %Cgreen(%cr)%Creset' --abbrev-commit
+	wt = "!f() { local common_dir=\"$(git rev-parse --git-common-dir)\"; git worktree add \"$common_dir/trees/$1\" -b \"$1\"; }; f"
 [credential "https://github.com"]
 	helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]

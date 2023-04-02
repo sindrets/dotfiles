@@ -132,7 +132,7 @@ function Color.from_hl(groups, attr)
   if value == nil then
     return
   elseif type(value) == "number" then
-    value = bit.lshift(value, 8)
+    value = bit.lshift(value, 8) + 0xff
   end
 
   return Color.from_hex(value)
