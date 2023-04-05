@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+out() { printf "$1 $2\n" "${@:3}"; }
+error() { out "==> ERROR:" "$@"; } >&2
+fatal() { error "$@"; exit 1; }
+
+usage() {
+  cat <<EOF
+usage: ${0##*/} [OPTIONS] [PR_ID]
+
+Git fetch a GitHub PR branch and set it up with the approtiate merge, remote,
+and push configuration.
+
+  Options:
+    -h, --help      Print this help message
+EOF
+}
+
+if [[ ! $1 || $1 = @(-h|--help) ]]; then
+  usage
+  exit $(( $# ? 0 : 1 ))
+fi
+
+id="$1"
+bname="pr/$id"
+
+set +e
+data="$(gh api "/repos/{owner}/{repo}/pulls/$id")"
+
+if [[ $? -ne 0 ]]; then
+  fatal "Failed to retrieve PR!"
+fi
+set -e
+
+remote_url="$(jq --raw-output '.head.repo.html_url' <<<${data})"
+ref="$(jq --raw-output '.head.ref' <<<${data})"
+
+git fetch origin "pull/$id/head:$bname"
+git config --local --replace "branch.$bname.merge" "refs/heads/$ref"
+git config --local --replace "branch.$bname.remote" "$remote_url"
+git config --local --replace "branch.$bname.pushRemote" "$remote_url"
