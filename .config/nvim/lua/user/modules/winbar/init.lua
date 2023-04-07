@@ -386,9 +386,15 @@ function M.is_attached(winid)
 end
 
 function M.init()
+  local events = { "WinEnter", "WinLeave", "BufWinEnter", "BufModifiedSet", "BufWritePost" }
+
+  if vim.fn.has("nvim-0.9") then
+    utils.vec_push(events, "WinResized")
+  end
+
   au.declare_group("user.winbar", {}, {
     {
-      { "WinEnter", "WinLeave", "BufWinEnter", "BufModifiedSet", "BufWritePost" },
+      events,
       callback = function(ctx)
         local win_match, buf_match
 

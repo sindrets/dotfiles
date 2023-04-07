@@ -154,7 +154,7 @@ require("lazy").setup({
     end,
     event = "VeryLazy",
   },
-  use_local { "sindrets/lua-dev.nvim" },
+  use_local { "folke/neodev.nvim" },
   { "neovim/nvim-lspconfig" },
   {
     "jose-elias-alvarez/null-ls.nvim",

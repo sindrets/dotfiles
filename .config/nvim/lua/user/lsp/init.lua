@@ -1,3 +1,14 @@
+require("neodev").setup({
+  library = {
+    vimruntime = false, -- runtime path
+    types = true, -- full signature, docs and completion of vim.api, vim.treesitter, vim.lsp and others
+    -- plugins = false, -- installed opt or start plugins in packpath
+    -- you can also specify the list of plugins to make available as a workspace library
+    plugins = false,
+  },
+  runtime_path = false, -- enable this to get completion in require strings. Slow!
+})
+
 local cmp = prequire("cmp")
 local cmp_lsp = prequire("cmp_nvim_lsp")
 local lspconfig = prequire("lspconfig")

@@ -34,7 +34,7 @@ if [[ $? -ne 0 ]]; then
 fi
 set -e
 
-remote_url="$(jq --raw-output '.head.repo.html_url' <<<${data})"
+remote_url="$(jq --raw-output '.head.repo.clone_url' <<<${data})"
 ref="$(jq --raw-output '.head.ref' <<<${data})"
 
 git fetch origin "pull/$id/head:$bname"

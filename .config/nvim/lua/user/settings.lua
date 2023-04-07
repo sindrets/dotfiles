@@ -62,7 +62,8 @@ opt.diffopt = list {
   "filler",
   "closeoff",
   "iwhite",
-  "vertical"
+  "vertical",
+  "linematch:100",
 }
 opt.pyxversion = 3
 opt.shada = list {
@@ -136,7 +137,8 @@ vim.env.MANWIDTH = 80 -- Text width in man pages.
 
 local init_extra_path = vim.fn.fnamemodify(vim.fn.expand("$MYVIMRC"), ":h") .. "/init_extra.vim"
 if vim.fn.filereadable(init_extra_path) == 1 then
-  vim.cmd("source " .. vim.fn.fnameescape(init_extra_path))
+  local data = vim.secure.read(init_extra_path)
+  if data then vim.cmd.source(init_extra_path) end
 end
 
 vim.g.mapleader = " "

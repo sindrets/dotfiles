@@ -131,6 +131,10 @@ nnoremap <S-Up> <Cmd>exe win_gettype(0) ==# "popup" ? "FloatMove +0 -1" : "WinSh
 nnoremap <M-S-Space> <Cmd>Float --toggle<CR>
 tnoremap <M-S-Space> <Cmd>Float --toggle<CR>
 
+" Window zoom
+nnoremap <C-w>o <Cmd>ZoomWinTabToggle<CR>
+nnoremap <C-w><C-o> <Cmd>ZoomWinTabToggle<CR>
+
 " Scratchpad
 nnoremap <M-S--> <Cmd>Scratchpad move<CR>
 nnoremap <M--> <Cmd>Scratchpad show<CR>

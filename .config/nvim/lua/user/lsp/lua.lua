@@ -11,12 +11,12 @@ end
 
 local lua_lib = {}
 
--- local function lua_add_lib(lib)
---   for _, p in pairs(vim.fn.expand(lib, false, true)) do
---     p = vim.loop.fs_realpath(p)
---     lua_lib[p] = true
---   end
--- end
+local function lua_add_lib(lib)
+  for _, p in pairs(vim.fn.expand(lib, false, true)) do
+    p = vim.loop.fs_realpath(p) --[[@as string ]]
+    lua_lib[p] = true
+  end
+end
 
 local function get_lib()
   return vim.tbl_keys(lua_lib)
@@ -24,21 +24,12 @@ end
 
 -- lua_add_lib("$VIMRUNTIME")
 -- lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
+lua_add_lib(vim.fn.stdpath("data") .. "/lazy/plenary.nvim/lua")
 
 -- "$schema" = "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json"
 
-require("lspconfig").lua_ls.setup(Config.lsp.create_config(
-  require("lua-dev").setup({
-    library = {
-      vimruntime = false, -- runtime path
-      types = true, -- full signature, docs and completion of vim.api, vim.treesitter, vim.lsp and others
-      -- plugins = false, -- installed opt or start plugins in packpath
-      -- you can also specify the list of plugins to make available as a workspace library
-      plugins = { "plenary.nvim" },
-    },
-    runtime_path = false, -- enable this to get completion in require strings. Slow!
-  }),
-  {
+require("lspconfig").lua_ls.setup(
+  Config.lsp.create_config({
     cmd = {
       "lua-language-server"
     },

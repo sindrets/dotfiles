@@ -127,7 +127,7 @@ version)
 	goto_main_worktree
 	;;
 *)
-	directory=$(git worktree list --porcelain | awk '/'"$arg"'/ {print; exit}' | grep -oP '(?<=worktree ).*')
+	directory="$(git worktree list --porcelain | perl -ne "if (m/worktree (.*\/$arg)\$/) { print \$1 }")"
 	;;
 esac
 

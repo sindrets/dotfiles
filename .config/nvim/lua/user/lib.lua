@@ -313,7 +313,7 @@ end
 
 function M.indent_size()
   if vim.o.expandtab then
-    return vim.o.spaces
+    return vim.o.shiftwidth
   else
     return vim.o.tabstop
   end
@@ -462,7 +462,7 @@ end
 function M.comfy_grep(use_loclist, ...)
   local args = { ... }
   local cargs = vim.tbl_map(function(arg)
-    return vim.fn.shellescape(arg):gsub("[|]", { ["'"] = "''", ["|"] = "\\|" })
+    return (vim.fn.shellescape(arg):gsub("[|]", { ["'"] = "''", ["|"] = "\\|" }))
   end, args) --[[@as table ]]
 
   local command = use_loclist and "lgrep! " or "grep! "
@@ -632,7 +632,7 @@ function expr.next_reference(reverse)
   if type(reverse) ~= "boolean" then
     reverse = false
   end
-  if #vim.lsp.buf_get_clients(0) > 0 then
+  if #vim.lsp.get_active_clients({ bufnr = 0 }) > 0 then
     return utils.t(string.format(
       '<Cmd>lua require("illuminate").goto_%s_reference()<CR>',
       reverse and "prev" or "next"

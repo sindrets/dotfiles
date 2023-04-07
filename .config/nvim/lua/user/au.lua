@@ -13,8 +13,10 @@ M.project_config_paths = {
   ".vim/init.lua",
   ".vim/nvimrc.vim",
   ".vim/nvimrc.lua",
+  ".vim/nvimrc",
   ".nvimrc.vim",
   ".nvimrc.lua",
+  ".nvimrc",
 }
 
 local last_sourced_config = nil
@@ -26,7 +28,10 @@ function M.source_project_config()
       local project_config_path = utils.pl:realpath(file)
 
       if last_sourced_config ~= project_config_path then
-        if file:match("%.lua$") then
+        local ext = pl:extension(file)
+        if ext == "lua" or ext == nil then
+          local data = vim.secure.read(file)
+          if not data then return end
           local code_chunk = loadfile(file)
 
           if code_chunk then
@@ -43,7 +48,8 @@ function M.source_project_config()
             Config.state.project_config = out
           end
         else
-          vim.cmd("source " .. file)
+          local data = vim.secure.read(file)
+          if data then vim.cmd.source(file) end
         end
 
         last_sourced_config = project_config_path

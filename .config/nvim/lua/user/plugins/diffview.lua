@@ -66,6 +66,9 @@ return function ()
       DiffviewFileHistory = {},
     },
     hooks = {
+      diff_buf_read = function()
+        vim.opt_local.wrap = false
+      end,
       ---@diagnostic disable-next-line: unused-local
       diff_buf_win_enter = function(bufnr, winid, ctx)
         -- Highlight 'DiffChange' as 'DiffDelete' on the left, and 'DiffAdd' on
@@ -100,7 +103,7 @@ return function ()
         { "n", "c<space>",  ":Git commit ", { desc = "Populate command line with \":Git commit \"" } },
       },
       file_history_panel = {
-        ["<cr>"] = actions.focus_entry,
+        { "n", "<cr>", actions.focus_entry, { desc = "Focus the selected entry" } },
       },
     }
   })
