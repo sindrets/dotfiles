@@ -178,7 +178,7 @@ command("CompareDir", function(c)
 
   for _, winid in ipairs({ vim.t.compare_a, vim.t.compare_b }) do
     api.nvim_win_call(winid, function()
-      vim.cmd("edit " .. uv.getcwd())
+      vim.cmd("edit " .. uv.cwd())
     end)
   end
 end, { bar = true, nargs = "+", complete = "dir" })
@@ -266,3 +266,13 @@ end, {
     return arg_parser.process_candidates(candidates, ctx)
   end,
 })
+
+command("UnloadMod", function(c)
+  print(c.fargs[1])
+  for mod, _ in pairs(package.loaded) do
+    if mod:match("^" .. c.fargs[1] .. ".*") then
+      print(mod)
+      package.loaded[mod] = nil
+    end
+  end
+end, { nargs = "+", bar = true })

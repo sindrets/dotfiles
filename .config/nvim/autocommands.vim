@@ -38,7 +38,9 @@ augroup NvimConfig
                 \ | bd | endif
 
     au TermOpen,BufEnter * lua
-                \ if vim.bo[Config.state.term.actual_curbuf or 0].buftype == "terminal" then
+                \ if vim.bo[Config.state.term.actual_curbuf or 0].buftype == "terminal"
+                \   and vim.fn.line("w$") == vim.fn.line("$")
+                \ then
                 \       vim.cmd("startinsert")
                 \ end
 

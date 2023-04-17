@@ -1,3 +1,25 @@
+" Temporarily set 'lazyredraw' and execute {cmd}.
+function! s:LazyCmd(cmd) abort
+    let l:save_lazyredraw = &lazyredraw
+    try
+        set lazyredraw
+        call execute(a:cmd)
+    catch /.*/
+        echohl ErrorMsg
+        echom v:exception
+        echohl NONE
+    finally
+        if !l:save_lazyredraw
+            set nolazyredraw
+        endif
+    endtry
+endfunction
+
+" Temporarily set 'lazyredraw' and execute normal mode commands {cmd}.
+function! s:LazyNorm(cmd) abort
+    call s:LazyCmd("norm! " . a:cmd)
+endfunction
+
 " Allow movement through display lines (wrapped lines)
 nnoremap <silent> <expr> j v:count == 0 ? 'gj' : 'j'
 nnoremap <silent> <expr> k v:count == 0 ? 'gk' : 'k'
@@ -49,7 +71,7 @@ inoremap <Home> <Cmd>normal g^<CR>
 inoremap <End> <C-\><C-O>g$
 
 " Yank, delete, paste
-nnoremap <expr> y PlusYank()
+nnoremap <expr> y <SID>PlusYank()
 nnoremap <expr> yy v:register == '"' ? '"+yy' : 'yy'
 nnoremap <expr> Y v:register == '"' ? '"+y$' : 'y$'
 nnoremap <M-p> "+p
@@ -288,8 +310,8 @@ nnoremap ]D <Cmd>exe 'norm! G0' <bar> exe 'lua vim.diagnostic.goto_prev({ float 
 nnoremap <expr> [r v:lua.Config.lib.expr.next_reference(v:true)
 nnoremap <expr> ]r v:lua.Config.lib.expr.next_reference()
 
-nnoremap n nzz
-nnoremap N Nzz
+nnoremap n <Cmd>set hlsearch <bar> call <SID>LazyNorm("nzz")<CR>
+nnoremap N <Cmd>set hlsearch <bar> call <SID>LazyNorm("Nzz")<CR>
 
 " Center jumplist jumps and remap jump forward
 nnoremap <C-o> <C-o>zz
@@ -338,8 +360,9 @@ vnoremap cn "vy/\V<C-R>=escape(@",'/\')<CR><CR>``cgn
 nnoremap / /\v
 nnoremap ? ?\v
 
-" Repeat prev macro
-nmap , @@
+" Use 'lazyredraw' when repeating macro
+nnoremap @@ <Cmd>call <SID>LazyNorm("@@")<CR>
+nnoremap Q <Cmd>call <SID>LazyNorm("@@")<CR>
 
 " }}}
 
@@ -349,10 +372,10 @@ nnoremap <F10> <Cmd>lua require'user.lib'.print_syn_group()<CR>
 " OPERATOR FUNCTIONS
 
 " Always yank to plus registry by default.
-function! PlusYank(type = "")
+function! s:PlusYank(type = "") abort
     if a:type == ''
         let b:_register = v:register
-        set opfunc=PlusYank
+        set opfunc=<SID>PlusYank
         return 'g@'
     endif
 

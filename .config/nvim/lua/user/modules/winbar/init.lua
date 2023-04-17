@@ -259,9 +259,11 @@ function M.generate()
 
   -- Basename
 
-  do
-    if not basename then basename = "[No Name]" end
+  if not basename and not win_ctx.filetype == "lir" then
+    basename = "[No Name]"
+  end
 
+  if basename then
     local comp = StatusItem({})
 
     if vim.bo[win_ctx.bufnr].modified then
@@ -388,8 +390,8 @@ end
 function M.init()
   local events = { "WinEnter", "WinLeave", "BufWinEnter", "BufModifiedSet", "BufWritePost" }
 
-  if vim.fn.has("nvim-0.9") then
-    utils.vec_push(events, "WinResized")
+  if vim.fn.has("nvim-0.9") == 1 then
+    table.insert(events, "WinResized")
   end
 
   au.declare_group("user.winbar", {}, {

@@ -8,7 +8,7 @@
 ---
 ---Override the default colorscheme by defining the environment variable
 ---`NVIM_COLORSCHEME` using the same format.
-local DEFAULT_COLORSCHEME = "nordic dark"
+local DEFAULT_COLORSCHEME = "default_dark dark"
 
 local Color = Config.common.color.Color
 local utils = Config.common.utils
@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "oxocarbon-lua"
+M.DEFAULT_DARK = "vscode"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -45,6 +45,8 @@ do
   end
 end
 
+local diagnostic_kinds = { "Error", "Warn", "Info", "Hint", "Ok" }
+
 function M.supports_sp_underline()
   if vim.g.started_by_firenvim then
     return true
@@ -57,13 +59,12 @@ function M.apply_sp_underline()
   for _, name in ipairs(spell_names) do
     local fg = hl.get_fg("Spell" .. name)
     if fg then
-      hi("Spell" .. name, { style = "undercurl", sp = fg, fg = "NONE" })
+      hi("Spell" .. name, { style = "undercurl", sp = fg, fg = "NONE", bg = "NONE" })
     end
   end
 
   -- Normalize diagnostic underlines
-  local diagnostic_names = { "Error", "Warn", "Info", "Hint" }
-  for _, name in ipairs(diagnostic_names) do
+  for _, name in ipairs(diagnostic_kinds) do
     hi_clear("DiagnosticUnderline" .. name)
     hi("DiagnosticUnderline" .. name, {
       style = "underline",
@@ -194,24 +195,24 @@ function M.generate_diff_colors(opt)
   -- Builtin groups
 
   if not opt.no_override then
-    hi("DiffAdd", { bg = bg_add:to_css(), fg = "NONE", style = "NONE" })
-    hi("DiffDelete", { bg = bg_del:to_css(), fg = "NONE", style = "NONE" })
-    hi("DiffChange", { bg = bg_mod:to_css(), fg = "NONE", style = "NONE" })
-    hi("DiffText", { bg = bg_mod_text:to_css(), fg = base_mod:to_css(), style = "NONE" })
+    hi("DiffAdd", { bg = bg_add:to_css(), fg = "NONE", style = "NONE", explicit = true })
+    hi("DiffDelete", { bg = bg_del:to_css(), fg = "NONE", style = "NONE", explicit = true })
+    hi("DiffChange", { bg = bg_mod:to_css(), fg = "NONE", style = "NONE", explicit = true })
+    hi("DiffText", { bg = bg_mod_text:to_css(), fg = base_mod:to_css(), style = "NONE", explicit = true })
 
-    hi("diffAdded", { fg = base_add:to_css(), bg = "NONE", style = "NONE" })
-    hi("diffRemoved", { fg = base_del:to_css(), bg = "NONE", style = "NONE" })
-    hi("diffChanged", { fg = base_mod:to_css(), bg = "NONE", style = "NONE" })
+    hi("diffAdded", { fg = base_add:to_css(), bg = "NONE", style = "NONE", explicit = true })
+    hi("diffRemoved", { fg = base_del:to_css(), bg = "NONE", style = "NONE", explicit = true })
+    hi("diffChanged", { fg = base_mod:to_css(), bg = "NONE", style = "NONE", explicit = true })
   end
 
   -- Custom groups
 
-  hi("DiffAddText", { bg = bg_add_text:to_css(), fg = base_add:to_css(), style = "NONE" })
-  hi("DiffDeleteText", { bg = bg_del_text:to_css(), fg = base_del:to_css(), style = "NONE" })
+  hi("DiffAddText", { bg = bg_add_text:to_css(), fg = base_add:to_css(), style = "NONE", explicit = true })
+  hi("DiffDeleteText", { bg = bg_del_text:to_css(), fg = base_del:to_css(), style = "NONE", explicit = true })
 
-  hi("DiffInlineAdd", { bg = bg_add:to_css(), fg = base_add:to_css(), style = "NONE" })
-  hi("DiffInlineDelete", { bg = bg_del:to_css(), fg = base_del:to_css(), style = "NONE" })
-  hi("DiffInlineChange", { bg = bg_mod:to_css(), fg = base_mod:to_css(), style = "NONE" })
+  hi("DiffInlineAdd", { bg = bg_add:to_css(), fg = base_add:to_css(), style = "NONE", explicit = true })
+  hi("DiffInlineDelete", { bg = bg_del:to_css(), fg = base_del:to_css(), style = "NONE", explicit = true })
+  hi("DiffInlineChange", { bg = bg_mod:to_css(), fg = base_mod:to_css(), style = "NONE", explicit = true })
 end
 
 ---Give Telescope its default appearance.
@@ -500,6 +501,7 @@ function M.apply_tweaks()
 
   elseif colors_name == "doom-one" then
     if bg == "dark" then
+      hi("Primary", { fg = hl.get_fg("Keyword") })
       hi("diffAdded", { bg = "NONE", fg = "#97BE65", })
       hi("diffRemoved", { bg = "NONE", fg = "#FF6C69", })
       hi("diffChanged", { fg = "#51afef", })
@@ -553,7 +555,7 @@ function M.apply_tweaks()
     end
 
     -- Remove bg for diagnostics.
-    for _, name in ipairs({ "Error", "Warn", "Info", "Hint" }) do
+    for _, name in ipairs(diagnostic_kinds) do
       hi("Diagnostic" .. name, { bg = "NONE" })
     end
 
@@ -710,10 +712,27 @@ function M.apply_tweaks()
     hi("DiffviewFolderName", { bg = "NONE" })
 
     M.unstyle_telescope()
+
+  elseif colors_name == "vscode" then
+    hi("Primary", { fg = hl.get_fg("@boolean") })
+    hi("Accent", { fg = hl.get_fg("Statement") })
+    hi({ "Comment", "@comment" }, { fg = fg_normal:clone():blend(bg_normal, 0.5):to_css() })
+    hi("diffChanged", { fg = hl.get_fg("@boolean"), explicit = true })
+    hi("WarningMsg", { fg = hl.get_fg("Special") })
+    hi("DiagnosticHint", { fg = hl.get_fg("Structure") })
+    hi(
+      { "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" },
+      { fg = hl.get_fg("@boolean") }
+    )
+    hi("IndentBlanklineContextChar", { gui = "" })
+    hi("DiffviewFilePanelSelected", { fg = hl.get_fg("Function"), explicit = true })
+    hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:clone():highlight(0.03):to_css() })
   end
 
   M.generate_base_colors()
   M.apply_log_defaults()
+
+  hi({ "WinBar", "WinBarNC" }, { style = "bold", explicit = true })
 
   -- Treesitter
   hi("@text.emphasis", { style = "italic" })
@@ -728,9 +747,15 @@ function M.apply_tweaks()
 
   -- Remove bg from various groups
   hi(
-    { "LineNr", "CursorLineNr", "CursorLineSign", "CursorLineFold", "FoldColumn", "SignColumn" },
+    {
+      "LineNr", "CursorLineNr", "CursorLineSign", "CursorLineFold", "FoldColumn", "SignColumn",
+      "Directory", "ModeMsg",
+    },
     { bg = "NONE" }
   )
+  for _, kind in ipairs(diagnostic_kinds) do
+    hi("DiagnosticSign" .. kind, { bg = "NONE" })
+  end
 
   hi_link("CursorLineFold", "FoldColumn", { default = true })
   hi_link("CursorLineSign", "SignColumn", { default = true })
@@ -749,6 +774,7 @@ function M.apply_tweaks()
   hi("FloatBorder", {
     bg = hl.get_bg("NormalFloat") or "NONE",
     fg = hl.get_fg({ "FloatBorder", "Normal" }),
+    explicit = true,
   })
   hi_link("LspInfoBorder", "FloatBorder")
 
@@ -842,6 +868,9 @@ function M.apply_tweaks()
   hi_link("LirFolderIcon", "Directory", { default = true })
   hi_link("LirDir", "Directory")
   hi_link("DevIconLirFolderNode", "LirFolderIcon")
+  hi_link("LirGitStatusIndex", "DiffviewStatusAdded")
+  hi_link("LirGitStatusWorktree", "DiffviewStatusModified")
+  hi_link("LirGitStatusUnmerged", "DiffviewStatusUnmerged")
 
   hi("BufferLineTabSelected", {
     bg = bg_normal:clone():highlight(0.1):to_css(),

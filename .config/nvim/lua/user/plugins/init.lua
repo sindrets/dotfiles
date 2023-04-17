@@ -378,6 +378,7 @@ require("lazy").setup({
     opts = { cursorline = { hide_unfocused = false } },
     lazy = true,
   },
+  { "Mofiqul/vscode.nvim", lazy = true },
 }, {
   ui = {
     border = "single",
