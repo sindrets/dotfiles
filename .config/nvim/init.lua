@@ -40,6 +40,8 @@ Config.term = require("user.modules.term")
 
 local Cache = require("user.modules.cache")
 
+require("user.modules.buf_cleaner").enable()
+
 Config.state.git = {
   rev_name_cache = Cache(),
 }
