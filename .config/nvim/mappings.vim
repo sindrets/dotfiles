@@ -360,7 +360,8 @@ vnoremap cn "vy/\V<C-R>=escape(@",'/\')<CR><CR>``cgn
 nnoremap / /\v
 nnoremap ? ?\v
 
-" Use 'lazyredraw' when repeating macro
+" Use 'lazyredraw' when replaying macro
+nnoremap @ <Cmd>call <SID>LazyNorm("@" . getcharstr())<CR>
 nnoremap @@ <Cmd>call <SID>LazyNorm("@@")<CR>
 nnoremap Q <Cmd>call <SID>LazyNorm("@@")<CR>
 
@@ -374,15 +375,15 @@ nnoremap <F10> <Cmd>lua require'user.lib'.print_syn_group()<CR>
 " Always yank to plus registry by default.
 function! s:PlusYank(type = "") abort
     if a:type == ''
-        let b:_register = v:register
+        let b:save_register = v:register
         set opfunc=<SID>PlusYank
         return 'g@'
     endif
 
-    let l:reg = b:_register == '"' ? '+' : b:_register
-    let sel_save = &selection
-    let cb_save = &clipboard
-    let visual_marks_save = [getpos("'<"), getpos("'>")]
+    let l:reg = b:save_register == '"' ? '+' : b:save_register
+    let l:save_sel = &selection
+    let l:save_cb = &clipboard
+    let l:save_visual_marks = [getpos("'<"), getpos("'>")]
 
     try
         set clipboard= selection=inclusive
@@ -393,10 +394,10 @@ function! s:PlusYank(type = "") abort
                     \ }
         silent exe 'keepjumps normal! ' .. get(commands, a:type, '')
     finally
-        call setpos("'<", visual_marks_save[0])
-        call setpos("'>", visual_marks_save[1])
-        let &clipboard = cb_save
-        let &selection = sel_save
+        call setpos("'<", l:save_visual_marks[0])
+        call setpos("'>", l:save_visual_marks[1])
+        let &clipboard = l:save_cb
+        let &selection = l:save_sel
     endtry
 endfunction
 

@@ -35,6 +35,8 @@ function StatusComponent:init(opt)
   self.hl = opt.hl
   self.truncate_hide = opt.truncate_hide
   self.priority = opt.priority
+  self.left_sep = opt.left_sep
+  self.right_sep = opt.right_sep
 
   local mt = getmetatable(self)
 
@@ -48,6 +50,8 @@ function StatusComponent:init(opt)
       hl = self.hl,
       truncate_hide = self.truncate_hide,
       pritority = self.priority,
+      left_sep = self.left_sep,
+      right_sep = self.right_sep,
     })
   end
 end

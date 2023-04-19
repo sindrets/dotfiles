@@ -8,7 +8,7 @@
 ---
 ---Override the default colorscheme by defining the environment variable
 ---`NVIM_COLORSCHEME` using the same format.
-local DEFAULT_COLORSCHEME = "default_dark dark"
+local DEFAULT_COLORSCHEME = "default_dark"
 
 local Color = Config.common.color.Color
 local utils = Config.common.utils
@@ -107,6 +107,18 @@ function M.apply_terminal_defaults()
   vim.g.terminal_color_15 = "#c0caf5"
 end
 
+---[Graph](https://www.desmos.com/calculator/tmiqlckphe)
+---@param k number # Slope
+function M.parametric_ease_out(k)
+  ---@param x number # [0,1]
+  ---@return number # Progression
+  return function(x)
+    if x <= 0 then return 0 end
+    if x >= 1 then return 1 end
+    return math.pow(1 - x, 2 * (k + 1 / 2)) * (-1) + 1
+  end
+end
+
 function M.generate_base_colors()
   local bg = vim.o.bg
   local default_bg = Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
@@ -129,14 +141,16 @@ function M.generate_base_colors()
 
   -- Generate dimmed color variants
 
+  local f = M.parametric_ease_out(0.4)
+
   local first, last = 1, 9
 
   for i = first, last do
-    local f = (i - first + 1) / (last - first + 2)
-    local v = math.floor(f * 1000)
+    local fstep = (i - first + 1) / (last - first + 2)
+    local step_name = math.floor(fstep * 1000)
 
     for group, values in pairs(groups) do
-      hi(group .. "Dim" .. v, { fg = values.fg:clone():blend(values.bg, f):to_css() })
+      hi(group .. "Dim" .. step_name, { fg = values.fg:clone():blend(values.bg, f(fstep)):to_css() })
     end
   end
 end
@@ -714,19 +728,30 @@ function M.apply_tweaks()
     M.unstyle_telescope()
 
   elseif colors_name == "vscode" then
-    hi("Primary", { fg = hl.get_fg("@boolean") })
-    hi("Accent", { fg = hl.get_fg("Statement") })
     hi({ "Comment", "@comment" }, { fg = fg_normal:clone():blend(bg_normal, 0.5):to_css() })
-    hi("diffChanged", { fg = hl.get_fg("@boolean"), explicit = true })
     hi("WarningMsg", { fg = hl.get_fg("Special") })
     hi("DiagnosticHint", { fg = hl.get_fg("Structure") })
-    hi(
-      { "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" },
-      { fg = hl.get_fg("@boolean") }
-    )
     hi("IndentBlanklineContextChar", { gui = "" })
     hi("DiffviewFilePanelSelected", { fg = hl.get_fg("Function"), explicit = true })
     hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:clone():highlight(0.03):to_css() })
+    hi_link("CurSearch", "IncSearch")
+    if bg == "dark" then
+      hi("Primary", { fg = hl.get_fg("@boolean") })
+      hi("Accent", { fg = hl.get_fg("Statement") })
+      hi("diffChanged", { fg = hl.get_fg("@boolean"), explicit = true })
+      hi(
+        { "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" },
+        { fg = hl.get_fg("@boolean") }
+      )
+    else
+      hi("Primary", { fg = hl.get_fg("@variable") })
+      hi("Accent", { fg = hl.get_fg("Structure") })
+      hi("diffChanged", { fg = hl.get_fg("@label"), explicit = true })
+      hi(
+        { "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" },
+        { fg = hl.get_fg("@variable") }
+      )
+    end
   end
 
   M.generate_base_colors()
@@ -818,6 +843,8 @@ function M.apply_tweaks()
   hi_link("NeogitCommitViewHeader", "Title")
   hi_link("NeogitDiffAddHighlight", "DiffInlineAdd")
   hi_link("NeogitDiffDeleteHighlight", "DiffInlineDelete")
+
+  hi("BufferLineModified", { bg = hl.get_bg("BufferLineBuffer") })
 
   for _, kind in ipairs({ "Error", "Warn", "Info", "Debug", "Trace" }) do
     local s = "Notify" .. kind:upper()

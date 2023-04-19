@@ -16,9 +16,9 @@ vim.api.nvim_create_autocmd("ColorScheme", {
 require("user.settings")
 require("user.plugins")
 
-vim.cmd("source " .. config_dir .. "/mappings.vim")
+vim.cmd.source(config_dir .. "/mappings.vim")
 require("user.commands")
-vim.cmd("source " .. config_dir .. "/autocommands.vim")
+vim.cmd.source(config_dir .. "/autocommands.vim")
 
 -- Colorscheme tweaks and settings
 require("user.colorscheme").apply()
