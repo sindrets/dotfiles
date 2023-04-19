@@ -1,7 +1,10 @@
+local lazy = require("user.lazy")
+
 return {
-  au = require("user.common.au"),
-  color = require("user.common.color"),
-  hl = require("user.common.hl"),
-  utils = require("user.common.utils"),
-  notify = require("user.common.notify"),
+  au = lazy.require("user.common.au"), ---@module "user.common.au"
+  color = lazy.require("user.common.color"), ---@module "user.common.color"
+  hl = lazy.require("user.common.hl"), ---@module "user.common.hl"
+  utils = lazy.require("user.common.utils"), ---@module "user.common.utils"
+  notify = lazy.require("user.common.notify"), ---@module "user.common.notify"
+  loop = lazy.require("user.common.loop"), ---@module "user.common.loop"
 }
