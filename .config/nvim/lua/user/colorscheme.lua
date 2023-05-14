@@ -731,10 +731,14 @@ function M.apply_tweaks()
     hi({ "Comment", "@comment" }, { fg = fg_normal:clone():blend(bg_normal, 0.5):to_css() })
     hi("WarningMsg", { fg = hl.get_fg("Special") })
     hi("DiagnosticHint", { fg = hl.get_fg("Structure") })
-    hi("IndentBlanklineContextChar", { gui = "" })
-    hi("DiffviewFilePanelSelected", { fg = hl.get_fg("Function"), explicit = true })
     hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:clone():highlight(0.03):to_css() })
     hi_link("CurSearch", "IncSearch")
+    hi_link("@text.literal", "@constructor")
+    hi("IndentBlanklineContextChar", { gui = "" })
+    hi("DiffviewFilePanelSelected", { fg = hl.get_fg("Function"), explicit = true })
+    hi_link("DiffviewReference", "@keyword")
+    hi_link("TelescopePromptPrefix", "Accent")
+
     if bg == "dark" then
       hi("Primary", { fg = hl.get_fg("@boolean") })
       hi("Accent", { fg = hl.get_fg("Statement") })
@@ -845,6 +849,7 @@ function M.apply_tweaks()
   hi_link("NeogitDiffDeleteHighlight", "DiffInlineDelete")
 
   hi("BufferLineModified", { bg = hl.get_bg("BufferLineBuffer") })
+  hi("BufferLineModifiedVisible", { bg = hl.get_bg("BufferLineBufferVisible") })
 
   for _, kind in ipairs({ "Error", "Warn", "Info", "Debug", "Trace" }) do
     local s = "Notify" .. kind:upper()

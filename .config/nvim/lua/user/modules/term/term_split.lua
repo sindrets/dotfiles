@@ -1,10 +1,10 @@
+local oop = require("user.oop")
 local lazy = require("user.lazy")
+
 local utils = Config.common.utils
 
----@type Terminal
-local Terminal = lazy.require("user.modules.term.terminal")
----@module "user.modules.term"
-local term_lib = lazy.require("user.modules.term")
+local Terminal = lazy.require("user.modules.term.terminal") ---@type Terminal
+local term_lib = lazy.require("user.modules.term") ---@module "user.modules.term"
 
 local api = vim.api
 local state = Config.state.term
@@ -26,22 +26,13 @@ end
 ---@field width integer
 ---@field height integer
 
----@class TermSplit
+---@class TermSplit : user.Object
 ---@field winid integer
 ---@field bufnr integer
 ---@field config TermSplit.Config
 ---@field last_width integer
 ---@field last_height integer
-local TermSplit = setmetatable({
-  init = function() --[[ stub ]] end,
-}, {
-  __call = function(t, ...)
-    local this = setmetatable({}, { __index = t })
-    this:init(...)
-
-    return this
-  end,
-})
+local TermSplit = oop.create_class("TermSplit")
 
 TermSplit.winopts = {
   winfixwidth = true,

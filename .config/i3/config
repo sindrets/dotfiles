@@ -272,7 +272,7 @@ set_from_resource $cyan           color6
 set_from_resource $cyanBright     color14
 set_from_resource $white          color7
 set_from_resource $whiteBright    color15
-set               $borderActive   #b1b1b1
+set               $borderActive   #569cd6
 set               $borderInactive #333333
 
 #class                  border          backgr.     text   indicator       child_border

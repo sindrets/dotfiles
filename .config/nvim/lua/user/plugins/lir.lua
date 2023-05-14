@@ -173,7 +173,7 @@ return function()
       return
     end
 
-    local _, code, err = utils.system_list({ "git", "add", cur.fullpath }, toplevel)
+    local _, code, err = utils.job({ "git", "add", cur.fullpath }, toplevel)
 
     if code ~= 0 then
       notify.git.error("Failed to stage path: " .. err)
@@ -191,7 +191,7 @@ return function()
       return
     end
 
-    local _, code, err = utils.system_list({ "git", "add", ctx.dir }, toplevel)
+    local _, code, err = utils.job({ "git", "add", ctx.dir }, toplevel)
 
     if code ~= 0 then
       notify.git.error("Failed to stage path: " .. err)
@@ -210,7 +210,7 @@ return function()
       return
     end
 
-    local _, code, err = utils.system_list({ "git", "reset", "--", cur.fullpath }, toplevel)
+    local _, code, err = utils.job({ "git", "reset", "--", cur.fullpath }, toplevel)
 
     if code ~= 0 then
       notify.git.error("Failed to reset path: " .. err)
@@ -228,7 +228,7 @@ return function()
       return
     end
 
-    local _, code, err = utils.system_list({ "git", "reset", "--", ctx.dir }, toplevel)
+    local _, code, err = utils.job({ "git", "reset", "--", ctx.dir }, toplevel)
 
     if code ~= 0 then
       notify.git.error("Failed to reset path: " .. err)

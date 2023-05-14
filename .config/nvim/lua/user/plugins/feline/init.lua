@@ -22,7 +22,7 @@ M.statusline = {}
 M.components = {}
 
 local icons = {
-  modified = "",
+  modified = "󰆓",
   line_number = "",
   lsp_server = "",
   indent = "",
@@ -470,18 +470,23 @@ M.components = {
 
             -- Check reflog to find the last checkout
             local name = ""
-            local out = utils.system_list({
+            local out = utils.job({
               "git",
               "reflog",
               "--pretty=format:%gs",
-              "--grep-reflog=^checkout: ",
+              "-E",
+              "--grep-reflog=^checkout: |^rebase \\((start|finish)\\): (checkout|returning) ",
               "-n1",
             }, pl:readable(dir) and dir or pl:realpath("."))
 
             if out[1] and out[1] ~= "" then
-              name = out[1]:match("^checkout: moving from %S+ to (%S+)$")
+              name = utils.str_match(out[1], {
+                "^checkout: moving from %S+ to (%S+)$",
+                "^rebase %(start%): checkout (%S+)",
+                "^rebase %(finish%): returning (%S+)",
+              })
 
-              out = utils.system_list({
+              out = utils.job({
                 "git",
                 "name-rev",
                 "--name-only",

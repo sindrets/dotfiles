@@ -16,6 +16,7 @@ return function ()
           "c", -- NOTE: Performance is abysmal in files of any notable length.
           "cpp",
           "latex",
+          "comment",
         }, lang)
       end,
     },

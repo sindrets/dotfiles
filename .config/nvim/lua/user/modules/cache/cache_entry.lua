@@ -1,18 +1,12 @@
+local oop = require("user.oop")
+
 ---@class user.CacheEntry
 ---@operator call : user.CacheEntry
 ---@field data any
 ---@field valid boolean
 ---@field timestamp integer
 ---@field expires integer
-local CacheEntry = setmetatable({
-  init = function() end,
-}, {
-  __call = function(t, ...)
-    local self = setmetatable({}, { __index = t })
-    self:init(...)
-    return self
-  end,
-})
+local CacheEntry = oop.create_class("CacheEntry")
 
 ---@class user.CacheEntry.opts
 ---@field lifetime integer # (ms)

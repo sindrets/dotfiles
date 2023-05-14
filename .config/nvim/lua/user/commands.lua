@@ -2,11 +2,14 @@
 -- All commands documented in `:h sindrets-commands`.
 --]]
 
+local async = require("user.async")
 local lazy = require("diffview.lazy")
 
----@module "diffview.arg_parser"
-local arg_parser = lazy.require("diffview.arg_parser")
+local Job = lazy.access("diffview.job", "Job") ---@type diffview.Job|LazyModule
+local arg_parser = lazy.require("diffview.arg_parser") ---@module "diffview.arg_parser"
 
+local await = async.await
+local fmt = string.format
 local utils = Config.common.utils
 local notify = Config.common.notify
 local api = vim.api
@@ -105,6 +108,7 @@ end, { bar = true, nargs = 1, complete = require("man").man_complete })
 
 command("Scratch", function(c)
   Config.lib.new_scratch_buf(c.fargs[1])
+  vim.cmd.IndentBlanklineEnable()
 end, { bar = true, nargs = "?", complete = "filetype" })
 
 command("SplitOn", function(c)
@@ -195,7 +199,7 @@ command("Windows", function(c)
   Config.lib.cmd.windows(c.bang)
 end, { bar = true, bang = true })
 
-command("NeorgExport", function(c)
+command("NeorgExport", async.void(function(c)
   for _, dep in ipairs({ "neorg-pandoc-linux86", "pandoc", "neorg-export" }) do
     if vim.fn.executable(dep) ~= 1 then
       notify.error(("'%s' is not executable!"):format(dep))
@@ -216,22 +220,23 @@ command("NeorgExport", function(c)
     out_name = in_name:sub(1, -math.max(#pl:extension(in_name), 1) - 2) .. ".pdf"
   end
 
-  utils.Job:new({
+  local job = Job({
     command = "neorg-export",
     args = { in_name, out_name },
-    on_exit = function(j)
-      if j.code ~= 0 then
-        notify.error(j:stderr_result()[1] and j:stderr_result() or { "" }, {
-          title = "Document export failed with exit code " .. j.code
-        })
-      else
-        notify.info(("Document exported to %s"):format(
-          utils.str_quote(pl:relative(out_name, "."))
-        ))
-      end
-    end,
-  }):start()
-end, { nargs = "*", complete = "file" })
+  })
+
+  local ok = await(job)
+
+  if not ok then
+    notify.error(job.stderr, {
+      title = "Document export failed with exit code " .. job.code
+    })
+  else
+    notify.info(
+      fmt("Document exported to %s", utils.str_quote(pl:relative(out_name, ".")))
+    )
+  end
+end), { nargs = "*", complete = "file" })
 
 command("Profile", function(c)
   local profile = require("plenary.profile")

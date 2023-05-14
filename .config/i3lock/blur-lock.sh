@@ -3,7 +3,7 @@
 lighticon="/home/sindrets/.config/i3lock/img/lock-icon-light-200.png"
 darkicon="/home/sindrets/.config/i3lock/img/lock-icon-dark-200.png"
 tmpbg='/tmp/i3lock-bg.jpg'
-darken_amount=20
+darken_amount=5
 ind_radius=140
 
 # take a screenshot
@@ -80,7 +80,7 @@ iconHHeight="$[$(identify -format '%h' "$icon") / 2]"
 
 # blur the screenshot by resizing and scaling back up (faster than gaussian blur)
 #convert "$tmpbg" -filter Gaussian -thumbnail 20% -sample 500% "$tmpbg"
-convert "$tmpbg" -scale 10% -blur 0x6 -resize 1000% -brightness-contrast -"$darken_amount"x-"$darken_amount" \
+convert "$tmpbg" -scale 16.66% -blur 0x6 -resize 600% -brightness-contrast -"$darken_amount"x-"$darken_amount" \
     "$icon" -geometry +"$[$width / 2 + $offsetX - $iconHWidth]"+"$[$height / 2 + $offsetY - $iconHHeight - $ind_radius - $iconHHeight - 30]" -composite "$tmpbg"
 
 time_size=64

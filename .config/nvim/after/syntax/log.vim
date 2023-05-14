@@ -5,4 +5,5 @@ syn match logDate /\v(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\ \d{1,2}\ (Jan|Feb|Mar|Apr|Ma
 
 if bufname() =~ 'diffview.log$'
   syn match logPath /\v\S*\/\S*\/diffview.nvim\/lua\/diffview\// conceal
+  syn match logPath /\v\.\.\.\S*\/lua\/diffview\// conceal
 endif

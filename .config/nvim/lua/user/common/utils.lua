@@ -1,6 +1,7 @@
+---@diagnostic disable: duplicate-doc-field
 local lazy = require("user.lazy")
 
-local async = lazy.require("plenary.async") ---@module "plenary.async"
+local Job = lazy.access("diffview.job", "Job") ---@type diffview.Job|LazyModule
 local winshift_lib = lazy.require("winshift.lib") ---@module "winshift.lib"
 
 local api = vim.api
@@ -16,18 +17,6 @@ local path_sep = package.config:sub(1, 1)
 M.pl = lazy.require("diffview.path", function(m)
   return m.PathLib({ separator = "/" })
 end)
-
----@module "plenary.job"
-M.Job = lazy.require("plenary.job", function(m)
-  -- Ensure plenary's `new` method will use the right metatable when this is
-  -- invoked as a method.
-  local new = m.new
-  function m.new(_, ...)
-    return new(m, ...)
-  end
-  return m
-end)
-local Job = M.Job
 
 -- Set up completion wrapper used by `vim.ui.input()`
 vim.cmd([[
@@ -670,25 +659,17 @@ function M.vec_remove(t, v)
   return false
 end
 
----@class utils.system_list.Opt
+---@class utils.job.Opt
 ---@field cwd string Working directory of the job.
----@field fail_on_empty boolean Return code 1 if stdout is empty and code is 0.
----@field retry_on_empty integer Number of times to retry job if stdout is empty and code is 0. Implies `fail_on_empty`.
+---@field writer string|string[] Something that will write to the stdin of this job.
+---@field silent boolean Supress log output.
+---@field fail_on_empty boolean Return code 1 if stdout is empty.
+---@field retry integer Number of times the job will be retried if it fails.
+---@field log_opt Logger.log_job.Opt
 
----Get the output of a system command.
 ---@param cmd string[]
----@param cwd_or_opt? string|utils.system_list.Opt
----@return string[] stdout
----@return integer code
----@return string[] stderr
----@overload fun(cmd: string[], cwd: string?)
----@overload fun(cmd: string[], opt: utils.system_list.Opt?)
-function M.system_list(cmd, cwd_or_opt)
-  if vim.in_fast_event() then
-    async.util.scheduler()
-  end
-
-  ---@type utils.system_list.Opt
+---@param cwd_or_opt? string|utils.job.Opt
+function M.job(cmd, cwd_or_opt)
   local opt
 
   if type(cwd_or_opt) == "string" then
@@ -697,41 +678,27 @@ function M.system_list(cmd, cwd_or_opt)
     opt = cwd_or_opt or {}
   end
 
-  opt.fail_on_empty = vim.F.if_nil(opt.fail_on_empty, (opt.retry_on_empty or 0) > 0)
-
-  local command = table.remove(cmd, 1)
-  local num_retries = 0
-  local max_retries = opt.retry_on_empty or 0
-  local job, stdout, stderr, code, empty
-  local job_spec = {
-    command = command,
-    args = cmd,
+  local job = Job({
+    command = cmd[1],
+    args = M.vec_slice(cmd, 2),
     cwd = opt.cwd,
-    on_stderr = function(_, data)
-      table.insert(stderr, data)
-    end,
-  }
+    retry = opt.retry,
+    fail_cond = opt.fail_on_empty and Job.FAIL_COND.on_empty or nil,
+    writer = opt.writer,
+    log_opt = vim.tbl_extend("keep", opt.log_opt or {}, {
+      silent = opt.silent,
+      debuginfo = debug.getinfo(2, "Sl"),
+    }),
+  })
 
-  for i = 0, max_retries do
-    if i > 0 then
-      num_retries = num_retries + 1
-    end
+  local ok = job:sync()
+  local code = job.code
 
-    stderr = {}
-    job = Job:new(job_spec)
-    stdout, code = job:sync()
-    empty = not (stdout[1] and stdout[1] ~= "")
-
-    if (code ~= 0 or not empty) then
-      break
-    end
+  if not ok then
+    if opt.fail_on_empty then code = 1 end
   end
 
-  if opt.fail_on_empty and code == 0 and empty then
-    code = 1
-  end
-
-  return stdout, code, stderr
+  return job.stdout, code, job.stderr
 end
 
 ---@class ListBufsSpec

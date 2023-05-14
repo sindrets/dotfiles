@@ -1,6 +1,8 @@
-local utils = Config.common.utils
+local oop = require("user.oop")
 
+local utils = Config.common.utils
 local api = vim.api
+
 local uid_counter = 0
 
 local function get_uid()
@@ -12,23 +14,14 @@ local function get_shell()
   return vim.o.shell
 end
 
----@class Terminal
+---@class Terminal : user.Object
 ---@field id integer
 ---@field jobid integer
 ---@field bufnr integer
 ---@field name string
 ---@field cwd string
 ---@field keymaps table
-local Terminal = setmetatable({
-  init = function() --[[ stub ]] end,
-}, {
-  __call = function(t, ...)
-    local this = setmetatable({}, { __index = t })
-    this:init(...)
-
-    return this
-  end,
-})
+local Terminal = oop.create_class("Terminal")
 
 Terminal.bufopts = {
   undolevels = -1,

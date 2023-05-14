@@ -1,17 +1,10 @@
 local CacheEntry = require("user.modules.cache.cache_entry")
+local oop = require("user.oop")
 
 ---@class user.Cache
 ---@operator call : user.Cache
 ---@field store table<any, user.CacheEntry>
-local Cache = setmetatable({
-  init = function() end,
-}, {
-  __call = function(t, ...)
-    local self = setmetatable({}, { __index = t })
-    self:init(...)
-    return self
-  end,
-})
+local Cache = oop.create_class("Cache")
 
 function Cache:init()
   self.store = {}

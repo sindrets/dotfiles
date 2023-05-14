@@ -11,11 +11,17 @@ local M = {}
 M.CLEANUP_INTERVAL = 1000 * 60
 M.EXPIRATION_TIME = 1000 * 60 * 10 -- 10 min
 
+---@private
 ---@type Closeable?
-M._interval = nil
+M._interval_handle = nil
 
+---@private
 ---@type { [integer]: buf_cleaner.BufState }
 M.state_map = {}
+
+local function get_timestamp()
+  return uv.hrtime() / 1000000
+end
 
 ---@class buf_cleaner.BufState
 ---@field changetick integer
@@ -26,17 +32,32 @@ local function new_buf_state(bufnr, opt)
 
   return {
     changetick = opt.changetick or api.nvim_buf_get_changedtick(bufnr),
-    timestamp = opt.timestamp or (uv.hrtime() / 1000000),
+    timestamp = opt.timestamp or get_timestamp(),
   }
 end
 
 function M.enable()
-  if M._interval then
+  if M._interval_handle then
     Config.common.notify.warn("Already running.", { title = "buf_cleaner" })
     return
   end
 
-  M._interval = loop.set_interval(
+  api.nvim_create_augroup("buf_cleaner", { clear = true })
+  api.nvim_create_autocmd("BufLeave", {
+    group = "buf_cleaner",
+    callback = function(e)
+      local buf_state = M.state_map[e.buf]
+      if buf_state then
+        -- Update timestamp on buffers we track
+        buf_state.timestamp = math.max(
+          buf_state.timestamp,
+          get_timestamp() - M.EXPIRATION_TIME / 2
+        )
+      end
+    end,
+  })
+
+  M._interval_handle = loop.set_interval(
     async.void(function()
       await(async.scheduler())
 
@@ -72,7 +93,10 @@ function M.enable()
               and not vim.bo[bufnr].modified -- Don't delete buffers if they're modified
             then
               -- Buffer has expired: delete
-              local ok, err = pcall(api.nvim_buf_delete, bufnr, {})
+              local ok, err = pcall(function()
+                api.nvim_buf_delete(bufnr, { unload = true })
+                vim.bo[bufnr].buflisted = false
+              end)
 
               if not ok and err then
                 api.nvim_err_writeln(err)
@@ -89,9 +113,11 @@ function M.enable()
 end
 
 function M.disable()
-  if M._interval then
-    M._interval.close()
-    M._interval = nil
+  api.nvim_create_augroup("buf_cleaner", { clear = true })
+
+  if M._interval_handle then
+    M._interval_handle.close()
+    M._interval_handle = nil
   end
 end
 

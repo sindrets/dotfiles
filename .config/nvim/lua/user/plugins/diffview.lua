@@ -101,6 +101,8 @@ return function ()
         { "n", "cc",  "<Cmd>Git commit <bar> wincmd J<CR>", { desc = "Commit staged changes" } },
         { "n", "ca",   "<Cmd>Git commit --amend <bar> wincmd J<CR>", { desc = "Amend the last commit" } },
         { "n", "c<space>",  ":Git commit ", { desc = "Populate command line with \":Git commit \"" } },
+        { "n", "rr",  "<Cmd>Git rebase --continue <bar> wincmd J<CR>", { desc = "Continue the current rebase" } },
+        { "n", "re",  "<Cmd>Git rebase --edit-todo <bar> wincmd J<CR>", { desc = "Edit the current rebase todo list." } },
       },
       file_history_panel = {
         { "n", "<cr>", actions.focus_entry, { desc = "Focus the selected entry" } },

@@ -11,6 +11,8 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local api = vim.api
+
 local function conf(config_name)
   return require(string.format("user.plugins.%s", config_name))
 end
@@ -171,7 +173,8 @@ require("lazy").setup({
         max_height = 12,
         handler_opts = {
           border = "single"
-        }
+        },
+        timer_interval = 200,
       })
     end,
   },
@@ -320,7 +323,7 @@ require("lazy").setup({
     build = "cd app && yarn install",
     ft = { "markdown" },
     init = function ()
-      vim.api.nvim_exec([[
+      api.nvim_exec2([[
         function! MkdpOpenInNewWindow(url)
           if executable("qutebrowser")
             call jobstart([ "qutebrowser", "--target", "window", a:url ])
@@ -332,7 +335,7 @@ require("lazy").setup({
             echoerr '[MKDP] No suitable browser!'
           endif
         endfunction
-        ]], false)
+      ]], {})
       vim.g.mkdp_browserfunc = "MkdpOpenInNewWindow"
     end,
   },
@@ -357,28 +360,27 @@ require("lazy").setup({
 
   -- COLOR SCHEMES
   { "rktjmp/lush.nvim", lazy = true },
-  { "arzg/vim-colors-xcode", lazy = true },
-  { "sainnhe/gruvbox-material", lazy = true },
-  { "gruvbox-community/gruvbox", lazy = true },
-  { "folke/tokyonight.nvim", lazy = true },
-  { "sindrets/material.nvim", lazy = true },
-  { "sindrets/rose-pine-neovim", name = "rose-pine", lazy = true },
-  { "mcchrish/zenbones.nvim", dependencies = "rktjmp/lush.nvim", lazy = true },
-  { "sainnhe/everforest", lazy = true },
-  { "Cybolic/palenight.vim", lazy = true },
-  { "olimorris/onedarkpro.nvim", branch = "main", lazy = true },
-  { "NTBBloodbath/doom-one.nvim", lazy = true },
-  { "catppuccin/nvim", name = "catppuccin", lazy = true },
-  use_local { "sindrets/dracula-vim", name = "dracula", lazy = true },
-  { "projekt0n/github-nvim-theme", lazy = true },
-  { "rebelot/kanagawa.nvim", lazy = true },
-  use_local { "sindrets/oxocarbon-lua.nvim", lazy = true },
+  { "arzg/vim-colors-xcode" },
+  { "sainnhe/gruvbox-material" },
+  { "gruvbox-community/gruvbox" },
+  { "folke/tokyonight.nvim" },
+  { "sindrets/material.nvim" },
+  { "sindrets/rose-pine-neovim", name = "rose-pine" },
+  { "mcchrish/zenbones.nvim", dependencies = "rktjmp/lush.nvim" },
+  { "sainnhe/everforest" },
+  { "Cybolic/palenight.vim" },
+  { "olimorris/onedarkpro.nvim", branch = "main" },
+  { "NTBBloodbath/doom-one.nvim" },
+  { "catppuccin/nvim", name = "catppuccin" },
+  use_local { "sindrets/dracula-vim", name = "dracula" },
+  { "projekt0n/github-nvim-theme" },
+  { "rebelot/kanagawa.nvim" },
+  use_local { "sindrets/oxocarbon-lua.nvim" },
   {
     "AlexvZyl/nordic.nvim",
     opts = { cursorline = { hide_unfocused = false } },
-    lazy = true,
   },
-  { "Mofiqul/vscode.nvim", lazy = true },
+  { "Mofiqul/vscode.nvim" },
 }, {
   ui = {
     border = "single",

@@ -1,3 +1,5 @@
+local oop = require("user.oop")
+
 local uid_counter = 0
 local function get_uid()
   uid_counter = uid_counter + 1
@@ -9,18 +11,10 @@ end
 ---@field opts table
 ---@field update string[]|function
 
----@class StatusComponent
+---@class StatusComponent : user.Object
 ---@operator call : StatusComponent
 ---@field provider StatusComponent.provider
-local StatusComponent = setmetatable({
-  init = function() --[[ stub ]] end,
-}, {
-  __call = function(t, ...)
-    local this = setmetatable({}, { __index = t })
-    this:init(...)
-    return this
-  end,
-})
+local StatusComponent = oop.create_class("StatusComponent")
 
 function StatusComponent:init(opt)
   if type(opt.provider) ~= "table" then

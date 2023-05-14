@@ -12,20 +12,7 @@ end
 _G.uv = vim.loop
 
 _G.Config = {
-  fn = {
-    ---@param super_class? table
-    create_class = function(super_class)
-      return setmetatable({ super = function() return super_class end }, {
-        __index = super_class,
-        __call = function(t, ...)
-          local self = setmetatable({}, { __index = t })
-          function self:class() return t end
-          if self.init then self:init(...) end
-          return self
-        end,
-      })
-    end
-  },
+  fn = {},
   plugin = {},
   state = {},
 }
@@ -38,9 +25,10 @@ _G.pl = Config.common.utils.pl
 Config.lib = require("user.lib")
 Config.term = require("user.modules.term")
 
-local Cache = require("user.modules.cache")
+Config.buf_cleaner = require("user.modules.buf_cleaner")
+Config.buf_cleaner.enable()
 
-require("user.modules.buf_cleaner").enable()
+local Cache = require("user.modules.cache")
 
 Config.state.git = {
   rev_name_cache = Cache(),
@@ -121,11 +109,11 @@ Config.fn.toggle_outline = lib.create_buf_toggler(
 
 ---@return string[]
 local function get_messages()
-  local msgs = vim.api.nvim_exec("message", true)
+  local ret = api.nvim_exec2("messages", { output = true })
   -- Filter out empty lines.
   return vim.tbl_filter(function(v)
     return v ~= ""
-  end, vim.split(msgs, "\n"))
+  end, vim.split(ret.output, "\n"))
 end
 
 local function open_messages_win()

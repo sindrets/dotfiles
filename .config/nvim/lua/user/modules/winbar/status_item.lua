@@ -1,3 +1,5 @@
+local oop = require("user.oop")
+
 local utils = Config.common.utils
 local fmt = string.format
 
@@ -12,15 +14,7 @@ local fmt = string.format
 ---@field hl string?
 ---@field children user.winbar.StatusItem[]?
 ---@field state user.winbar.StatusItem.state
-local StatusItem = setmetatable({
-  init = function() end,
-}, {
-  __call = function(t, ...)
-    local self = setmetatable({}, { __index = t })
-    self:init(...)
-    return self
-  end,
-})
+local StatusItem = oop.create_class("StatusItem")
 
 function StatusItem:init(x, hl)
   if type(x) == "table" then

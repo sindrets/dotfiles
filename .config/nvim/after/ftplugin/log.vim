@@ -1,1 +1,1 @@
-setl cc= nolist
+setl cc= nolist nowrap

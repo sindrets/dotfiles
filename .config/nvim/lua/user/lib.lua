@@ -692,8 +692,9 @@ function cmd.exec_selection(range)
   local lines
   ---@cast range integer[]
   if type(range) == "table" and range[1] > 0 then
-    table.sort(range)
-    lines = api.nvim_buf_get_lines(0, range[2] - 1, range[3], false)
+    local r = utils.vec_join(range[2], range[3])
+    table.sort(r)
+    lines = api.nvim_buf_get_lines(0, r[1] - 1, r[2], false)
   else
     lines = M.get_visual_selection()
   end

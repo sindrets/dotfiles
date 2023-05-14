@@ -27,9 +27,9 @@ return function ()
     auto_preview = false, -- automatically preview the location of the diagnostic. <esc> to close preview and go back
     signs = {
       -- icons / text used for a diagnostic
-      error = "",
+      error = "󰅚",
       warning = "",
-      hint = "",
+      hint = "󰌶",
       information = ""
     },
     use_lsp_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client

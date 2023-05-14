@@ -12,7 +12,7 @@ return function ()
         name = "Xml",
       },
       cs = {
-        icon = "",
+        icon = "󰌛",
         color = "#0d5786",
         name = "Cs",
       },
@@ -27,22 +27,22 @@ return function ()
         name = "Teal",
       },
       el = {
-        icon = "ﬦ",
+        icon = "󰘧",
         color = "#5D439C",
         name = "Elisp",
       },
       lisp = {
-        icon = "ﬦ",
+        icon = "󰘧",
         color = "#264B8B",
         name = "Lisp",
       },
       scm = {
-        icon = "ﬦ",
+        icon = "󰘧",
         color = "#264B8B",
         name = "Scheme",
       },
       rkt = {
-        icon = "ﬦ",
+        icon = "󰘧",
         color = "#264B8B",
         name = "Racket",
       },
@@ -57,7 +57,7 @@ return function ()
         name = "Makefile",
       },
       lir_folder_icon = {
-        icon = "",
+        icon = "",
         color = "#7ebae4",
         name = "LirFolderNode",
       },

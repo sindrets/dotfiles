@@ -3,6 +3,7 @@ return function()
   local utils = Config.common.utils
   local api = vim.api
   local km = vim.keymap
+  local fmt = string.format
 
   local M = {
     sid_cache = {}
@@ -22,7 +23,9 @@ return function()
   end
 
   ---Call a fugitive function.
-  ---@param file_or_sid string|integer Either the name of the fugitive script file to call from, or the sid of its script. (Use 0 to default to "autoload/fugitive.vim")
+  ---@param file_or_sid string|integer #
+  ---Either the name of the fugitive script file to call from, or the sid of
+  ---its script. (Use 0 to default to "autoload/fugitive.vim")
   ---@param func string Function name.
   ---@param ... any Arguments.
   ---@return unknown
@@ -39,7 +42,7 @@ return function()
       sid = M.get_sid(file_or_sid --[[@as string ]])
     end
 
-    return vim.call(("<SNR>%d_%s"):format(sid, func), ...)
+    return vim.fn[fmt("<SNR>%d_%s", sid, func)](...)
   end
 
   ---Get the fugitive context for the item under the cursor.
@@ -95,7 +98,7 @@ return function()
     end
 
     if setup then vim.cmd(setup) end
-    ok, err = pcall(vim.cmd, open)
+    ok, err = pcall(vim.cmd --[[@as function ]], open)
 
     if not ok then
       if type(err) == "string" and err:match("file does not belong to a Git repository") then
@@ -104,7 +107,7 @@ return function()
         run_cleanup(cleanup)
         if setup then vim.cmd(setup) end
         vim.cmd("keepalt noautocmd enew | setl bufhidden=wipe bt=nofile")
-        ok, err = pcall(vim.cmd, open)
+        ok, err = pcall(vim.cmd --[[@as function ]], open)
       end
 
       if not ok then
@@ -209,11 +212,14 @@ return function()
                 end
               end
 
-              vim.cmd(("G%s %s %s | norm! zv"):format(
-                edit_kind,
-                info.offset and ("+" .. info.offset) or "",
-                vim.fn.fnameescape(info.paths[1])
-              ))
+              vim.cmd(
+                fmt(
+                  "G%s %s %s | norm! zv",
+                  edit_kind,
+                  info.offset and ("+" .. info.offset) or "",
+                  vim.fn.fnameescape(info.paths[1])
+                )
+              )
             end
           elseif info.commit then
             local wins = find_commit_views(0)
@@ -227,7 +233,12 @@ return function()
               vim.w.fugitive_type = "commit_view"
             end
 
-            vim.cmd(("Git ++curwin show --stat --patch --diff-merges=first-parent %s --"):format(info.commit))
+            vim.cmd(
+              fmt(
+                "Git ++curwin show --stat --patch --diff-merges=first-parent %s --",
+                info.commit
+              )
+            )
           end
         end, { buffer = ctx.buf })
 
@@ -238,9 +249,9 @@ return function()
 
           if info then
             if #info.paths > 0 then
-              vim.cmd(("DiffviewOpen --selected-file=%s"):format(vim.fn.fnameescape(info.paths[1])))
+              vim.cmd(fmt("DiffviewOpen --selected-file=%s", vim.fn.fnameescape(info.paths[1])))
             elseif info.commit ~= "" then
-              vim.cmd(("DiffviewOpen %s^!"):format(info.commit))
+              vim.cmd(fmt("DiffviewOpen %s^!", info.commit))
             end
           end
         end, {
@@ -253,9 +264,9 @@ return function()
 
           if info then
             if #info.paths > 0 then
-              vim.cmd(("DiffviewFileHistory %s"):format(vim.fn.fnameescape(info.paths[1])))
+              vim.cmd(fmt("DiffviewFileHistory %s", vim.fn.fnameescape(info.paths[1])))
             elseif info.commit ~= "" then
-              vim.cmd(("DiffviewFileHistory --range=%s"):format(info.commit))
+              vim.cmd(fmt("DiffviewFileHistory --range=%s", info.commit))
             end
           end
         end, {
@@ -277,10 +288,13 @@ return function()
           local info = M.get_blame_cursor_info()
 
           if info then
-            vim.cmd(("DiffviewOpen %s^! --selected-file=%s"):format(
-              info.commit,
-              vim.fn.fnameescape(info.file)
-            ))
+            vim.cmd(
+              fmt(
+                "DiffviewOpen %s^! --selected-file=%s",
+                info.commit,
+                vim.fn.fnameescape(info.file)
+              )
+            )
           end
         end, {
           buffer = ctx.buf,
@@ -291,10 +305,13 @@ return function()
           local info = M.get_blame_cursor_info()
 
           if info then
-            vim.cmd(("DiffviewFileHistory --range=%s %s"):format(
-              info.commit,
-              vim.fn.fnameescape(info.file)
-            ))
+            vim.cmd(
+              fmt(
+                "DiffviewFileHistory --range=%s %s",
+                info.commit,
+                vim.fn.fnameescape(info.file)
+              )
+            )
           end
         end, {
           buffer = ctx.buf,
@@ -324,11 +341,14 @@ return function()
 
             if #wins > 0 then
               api.nvim_set_current_win(wins[1])
-              vim.cmd(("Gedit %s %s %s"):format(
-                offset and ("+" .. offset) or "",
-                commit,
-                postcmd and ("|" .. postcmd) or ""
-              ))
+              vim.cmd(
+                fmt(
+                  "Gedit %s %s %s",
+                  offset and ("+" .. offset) or "",
+                  commit,
+                  postcmd and ("|" .. postcmd) or ""
+                )
+              )
               return
             end
           end
@@ -343,12 +363,15 @@ return function()
             if commit:find(":") then
               local path
               commit, path = commit:match("^(.-)^?:(.*)")
-              vim.cmd(("DiffviewOpen %s^! --selected-file=%s"):format(
-                commit,
-                vim.fn.fnameescape(pl:join(vim.call("FugitiveWorkTree"), path))
-              ))
+              vim.cmd(
+                fmt(
+                  "DiffviewOpen %s^! --selected-file=%s",
+                  commit,
+                  vim.fn.fnameescape(pl:join(vim.fn.FugitiveWorkTree(), path))
+                )
+              )
             else
-              vim.cmd(("DiffviewOpen %s^!"):format(commit))
+              vim.cmd(fmt("DiffviewOpen %s^!", commit))
             end
           end
         end, {
@@ -363,12 +386,15 @@ return function()
             if commit:find(":") then
               local path
               commit, path = commit:match("^(.-)^?:(.*)")
-              vim.cmd(("DiffviewFileHistory --range=%s %s"):format(
-                commit,
-                vim.fn.fnameescape(pl:join(vim.call("FugitiveWorkTree"), path))
-              ))
+              vim.cmd(
+                fmt(
+                  "DiffviewFileHistory --range=%s %s",
+                  commit,
+                  vim.fn.fnameescape(pl:join(vim.fn.FugitiveWorkTree(), path))
+                )
+              )
             else
-              vim.cmd(("DiffviewFileHistory --range=%s"):format(commit))
+              vim.cmd(fmt("DiffviewFileHistory --range=%s", commit))
             end
 
           end

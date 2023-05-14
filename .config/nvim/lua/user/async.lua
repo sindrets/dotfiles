@@ -1,6 +1,9 @@
----@diagnostic disable: invisible, duplicate-doc-alias, duplicate-doc-field, duplicate-set-field
-local create_class = Config.fn.create_class
+---@diagnostic disable: duplicate-doc-alias, duplicate-doc-field, duplicate-set-field
+local ffi = require("user.ffi")
+local oop = require("user.oop")
+
 local fmt = string.format
+local uv = vim.loop
 
 local DEFAULT_ERROR = "Unkown error."
 
@@ -14,9 +17,7 @@ M._watching = setmetatable({}, { __mode = "k" })
 ---@type { [thread]: Future }
 M._handles = {}
 
----@class AsyncFunc : function
----@operator call : Future
-
+---@alias AsyncFunc (fun(...): Future)
 ---@alias AsyncKind "callback"|"void"
 
 local function tbl_pack(...)
@@ -96,8 +97,8 @@ local function current_thread()
   end
 end
 
----@class Waitable
-local Waitable = create_class()
+---@class Waitable : user.Object
+local Waitable = oop.create_class("Waitable")
 
 ---@abstract
 ---@return any ... # Any values returned by the waitable
@@ -110,13 +111,15 @@ M.Waitable = Waitable
 ---@field private thread thread
 ---@field private listeners Future[]
 ---@field private parent? Future
+---@field private func? function
 ---@field private return_values? any[]
 ---@field private err? string
 ---@field private kind AsyncKind
 ---@field private started boolean
 ---@field private awaiting_cb boolean
 ---@field private done boolean
-local Future = create_class(Waitable)
+---@field private has_raised boolean # `true` if this future has raised an error.
+local Future = oop.create_class("Future", Waitable)
 
 function Future:init(opt)
   opt = opt or {}
@@ -135,6 +138,7 @@ function Future:init(opt)
   self.started = false
   self.awaiting_cb = false
   self.done = false
+  self.has_raised = false
 end
 
 ---@private
@@ -173,7 +177,7 @@ end
 function Future:dprint(...)
   if not (Config.state.DEBUG or M._watching[self]) then return end
 
-  local args = { fmt("%.2f", vim.loop.hrtime() / 1000000), self, "::", ... }
+  local args = { fmt("%.2f", uv.hrtime() / 1000000), self, "::", ... }
   local t = {}
 
   for i = 1, table.maxn(args) do
@@ -189,13 +193,11 @@ function Future:dprintf(...)
   self:dprint(fmt(...))
 end
 
----@private
 ---Start logging debug info about this future.
 function Future:watch()
   M._watching[self] = true
 end
 
----@private
 ---Stop logging debug info about this future.
 function Future:unwatch()
   M._watching[self] = nil
@@ -208,6 +210,14 @@ function Future:is_watching()
 end
 
 ---@private
+---@param force? boolean
+function Future:raise(force)
+  if self.has_raised and not force then return end
+  self.has_raised = true
+  error(self.err)
+end
+
+---@private
 function Future:step(...)
   self:dprint("step")
   local ret = { coroutine.resume(self.thread, ...) }
@@ -215,15 +225,24 @@ function Future:step(...)
 
   if not ok then
     local err = ret[2] or DEFAULT_ERROR
+    local func_info
+
+    if self.func then
+      func_info = debug.getinfo(self.func, "uS")
+    end
+
     local msg = fmt(
-      "%s :: The coroutine failed with this message: \n%s",
-      dstring(self.thread),
-      debug.traceback(self.thread, err)
+    "The coroutine failed with this message: \n"
+    .. "\tcontext: cur_thread=%s co_thread=%s %s\n%s",
+    dstring(current_thread() or "main"),
+    dstring(self.thread),
+    func_info and fmt("co_func=%s:%d", func_info.short_src, func_info.linedefined) or "",
+    debug.traceback(self.thread, err)
     )
     self:set_done(true)
     self:notify_all(false, msg)
     self:destroy()
-    error(msg)
+    self:raise()
     return
   end
 
@@ -264,7 +283,7 @@ end
 ---@return any ... # Return values
 function Future:await()
   if self.err then
-    error(self.err)
+    self:raise(true)
     return
   end
 
@@ -302,14 +321,21 @@ function Future:await()
   self:dprintf("awaiting: yielding=%s listeners=%s", dstring(current), dstring(self.listeners))
   coroutine.yield()
 
-  if self.return_values then
-    local ok, err = self.return_values[1], self.return_values[2]
+  local ok
+
+  if not self.return_values then
+    ok = self.err == nil
+  else
+    ok = self.return_values[1]
 
     if not ok then
-      self.err = err or DEFAULT_ERROR
-      error(self.err)
-      return
+      self.err = self.return_values[2] or DEFAULT_ERROR
     end
+  end
+
+  if not ok then
+    self:raise(true)
+    return
   end
 
   return self:get_returned()
@@ -338,7 +364,7 @@ function Future:toplevel_await()
   end
 
   if self.err then
-    error(self.err)
+    self:raise(true)
     return
   end
 
@@ -354,18 +380,18 @@ end
 ---@param func function
 ---@param opt async._run.Opt
 function M._run(func, opt)
+  ---@diagnostic disable: invisible
   opt = opt or {}
 
   local handle ---@type Future
   local wrapped_cb
-  local use_err_handler = not not (current_thread())
+  local use_err_handler = not not current_thread()
 
   local function wrapped_func(...)
     if use_err_handler then
       -- We are not on the main thread: use custom err handler
       local ok = xpcall(func, function(err)
-        local msg = debug.traceback(err, 2)
-        handle:notify_all(false, msg)
+        handle.err = debug.traceback(err, 2)
       end, ...)
 
       if not ok then
@@ -413,10 +439,12 @@ function M._run(func, opt)
 
   handle = Future({ func = wrapped_func, kind = opt.kind })
   handle:dprint("created thread")
+  handle.func = func
   handle.started = true
   handle:step(tbl_unpack(opt.args))
 
   return handle
+  ---@diagnostic enable: invisible
 end
 
 ---Create an async task for a function with no return values.
@@ -460,9 +488,27 @@ function M.await(waitable)
   return waitable:await()
 end
 
---
--- VARIOUS ASYNC UTILITIES
---
+---Await the async function `x` with the given arguments in protected mode. `x`
+---may also be a waitable, in which case the subsequent parameters are ignored.
+---@param x AsyncFunc|Waitable # The async function or waitable.
+---@param ... any # Arguments to be applied to the `x` if it's a function.
+---@return boolean ok # `false` if the execution of `x` failed.
+---@return any result # Either the first returned value from `x` or an error message.
+---@return any ... # Any subsequent values returned from `x`.
+function M.pawait(x, ...)
+  local args = tbl_pack(...)
+  return pcall(function()
+    if type(x) == "function" then
+      return M.await(x(tbl_unpack(args)))
+    else
+      return x:await()
+    end
+  end)
+end
+
+-- ###############################
+-- ### VARIOUS ASYNC UTILITIES ###
+-- ###############################
 
 local await = M.await
 
@@ -493,15 +539,12 @@ end
 
 ---Run the given async tasks concurrently, and then wait for them all to
 ---terminate.
----@param ... AsyncFunc|Future
-M.join = M.void(function(...)
-  local args = { ... }
+---@param tasks (AsyncFunc|Future)[]
+M.join = M.void(function(tasks)
   local futures = {} ---@type Future[]
 
   -- Ensure all async tasks are started
-  for i = 1, select("#", ...) do
-    local cur = args[i]
-
+  for _, cur in ipairs(tasks) do
     if cur then
       if type(cur) == "function" then
         futures[#futures+1] = cur()
@@ -513,10 +556,8 @@ M.join = M.void(function(...)
   end
 
   -- Await all futures
-  for i, future in ipairs(futures) do
-    dprint("waiting", i, future)
+  for _, future in ipairs(futures) do
     await(future)
-    dprint("finished", i, future)
   end
 end)
 
@@ -542,8 +583,8 @@ end)
 ---Async task that resolves after the given `timeout` ms passes.
 ---@param timeout integer # Duration of the timeout (ms)
 M.timeout = M.wrap(function(timeout, callback)
-  local timer = vim.loop.new_timer()
-  assert(timer, "Failed to initialize timer!")
+  local timer = assert(uv.new_timer())
+
   timer:start(
     timeout,
     0,
@@ -555,6 +596,17 @@ M.timeout = M.wrap(function(timeout, callback)
 end)
 
 ---Yield until the Neovim API is available.
-M.scheduler = M.wrap(vim.schedule, 1)
+---@param fast_only? boolean # Only schedule if in an |api-fast| event.
+---   When this is `true`, the scheduler will resume immediately unless the
+---   editor is in an |api-fast| event. This means that the API might still be
+---   limited by other locks (i.e. |textlock|).
+M.scheduler = M.wrap(function(fast_only, callback)
+  if not ffi.nvim_is_locked() or (fast_only and not vim.in_fast_event()) then
+    callback()
+    return
+  end
+
+  vim.schedule(callback)
+end)
 
 return M

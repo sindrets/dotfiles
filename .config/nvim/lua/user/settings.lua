@@ -19,6 +19,7 @@ opt.smartcase = true
 opt.wildignorecase = true
 opt.showcmd = true
 opt.mouse = "a"
+opt.mousemoveevent = true
 opt.hidden = true
 opt.cursorline = true
 opt.guicursor = list {

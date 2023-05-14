@@ -176,4 +176,26 @@ function M.set_interval(func, delay)
   return ret
 end
 
+---Call `func` after a fixed time delay.
+---@param func function
+---@param delay integer # Delay until execution (ms)
+---@return Closeable
+function M.set_timeout(func, delay)
+  local timer = assert(uv.new_timer())
+
+  local ret = {
+    close = function()
+      timer:stop()
+      M.try_close(timer)
+    end,
+  }
+
+  timer:start(delay, 0, function()
+    func()
+    ret.close()
+  end)
+
+  return ret
+end
+
 return M
