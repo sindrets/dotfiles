@@ -43,9 +43,35 @@ local mt_func_names = {
   "__call",
 }
 
+local function new_instance(class, ...)
+  local inst = { class = class }
+  local mt = { __index = class }
+
+  for _, mt_name in ipairs(mt_func_names) do
+    local class_mt_func = class[mt_name]
+
+    if type(class_mt_func) == "function" then
+      mt[mt_name] = wrap_mt_func(class_mt_func, inst)
+    elseif class_mt_func ~= nil then
+      mt[mt_name] = class_mt_func
+    end
+  end
+
+  local self = setmetatable(inst, mt)
+  self:init(...)
+
+  return self
+end
+
+local function tostring(class)
+  return fmt("<class %s>", class.__name)
+end
+
 ---@generic T : user.Object
+---@generic U : user.Object
 ---@param name string
 ---@param super_class? T
+---@return U new_class
 function M.create_class(name, super_class)
   super_class = super_class or M.Object
 
@@ -53,32 +79,12 @@ function M.create_class(name, super_class)
     {
       __name = name,
       super_class = super_class,
+      init = function(...) end,
     },
     {
       __index = super_class,
-      __call = function(t, ...)
-        local inst = { class = t }
-        local mt = { __index = t }
-
-        for _, mt_name in ipairs(mt_func_names) do
-          local class_mt_func = t[mt_name]
-
-          if type(class_mt_func) == "function" then
-            mt[mt_name] = wrap_mt_func(class_mt_func, inst)
-          elseif class_mt_func ~= nil then
-            mt[mt_name] = class_mt_func
-          end
-        end
-
-        local self = setmetatable(inst, mt)
-
-        if self.init then self:init(...) end
-
-        return self
-      end,
-      __tostring = function(_)
-        return fmt("<class %s>", name)
-      end,
+      __call = new_instance,
+      __tostring = tostring,
     }
   )
 end
@@ -130,6 +136,7 @@ function Object:classpath()
 
   while cur do
     ret = cur.__name .. "." .. ret
+    cur = cur.super_class
   end
 
   return ret
@@ -179,7 +186,7 @@ end
 ---@return boolean
 function M.is_class(x)
   if type(x) ~= "table" then return false end
-  return type(rawget(x, "__name")) == "string" and rawget(x, "instanceof") == Object.instanceof
+  return type(rawget(x, "__name")) == "string" and x.instanceof == Object.instanceof
 end
 
 ---@param x any

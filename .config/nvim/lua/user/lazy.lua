@@ -1,7 +1,10 @@
+---@diagnostic disable: duplicate-doc-field
+local fmt = string.format
+
 local lazy = {}
 
----@class LazyModule : { [string] : any }
----@field __get fun(): any Load the module if needed, and return it.
+---@class LazyModule : { [string] : unknown }
+---@field __get fun(): unknown Load the module if needed, and return it.
 ---@field __loaded boolean Indicates that the module has been loaded.
 
 ---Create a table the triggers a given handler every time it's accessed or
@@ -12,47 +15,37 @@ local lazy = {}
 ---@param handler fun(t: any): table?
 ---@return LazyModule
 function lazy.wrap(t, handler)
-  local use_handler = type(handler) == "function"
-  local export = not use_handler and t or nil
+  local export
 
-  local function __get()
-    if export then
+  local ret = {
+    __get = function()
+      if export == nil then
+        ---@cast handler function
+        export = handler(t)
+      end
+
       return export
-    end
+    end,
+    __loaded = function()
+      return export ~= nil
+    end,
+  }
 
-    if use_handler then
-      ---@cast handler function
-      export = handler(t)
-    end
-
-    return export
-  end
-
-  return setmetatable({}, {
+  return setmetatable(ret, {
     __index = function(_, key)
-      if key == "__get" then
-        return __get
-      end
-      if not export then
-        __get()
-      end
+      if export == nil then ret.__get() end
       ---@cast export table
       return export[key]
     end,
     __newindex = function(_, key, value)
-      if not export then
-        __get()
-      end
+      if export == nil then ret.__get() end
       export[key] = value
     end,
     __call = function(_, ...)
-      if not export then
-        __get()
-      end
+      if export == nil then ret.__get() end
       ---@cast export table
       return export(...)
     end,
-    __get = __get,
   })
 end
 
@@ -65,11 +58,9 @@ end
 ---Example:
 ---
 ---```lua
---- -- Without handler
 --- local foo = require("bar")
 --- local foo = lazy.require("bar")
 ---
---- -- With handler
 --- local foo = require("bar").baz({ qux = true })
 --- local foo = lazy.require("bar", function(module)
 ---    return module.baz({ qux = true })
@@ -90,31 +81,38 @@ function lazy.require(require_path, handler)
   end)
 end
 
----Lazily access a table value. The `access_path` is a `.` separated string of
----table keys. If `x` is a string, it's treated as a lazy require.
+---Lazily access a table value. If `x` is a string, it's treated as a lazy
+---require.
 ---
 ---Example:
 ---
----```lua 
---- -- With table:
+---```lua
+--- -- table:
 --- local foo = bar.baz.qux.quux
 --- local foo = lazy.access(bar, "baz.qux.quux")
+--- local foo = lazy.access(bar, { "baz", "qux", "quux" })
 ---
---- -- With require path:
+--- -- require:
 --- local foo = require("bar").baz.qux.quux
 --- local foo = lazy.access("bar", "baz.qux.quux")
+--- local foo = lazy.access("bar", { "baz", "qux", "quux" })
 ---```
 ---@param x table|string Either the table to be accessed, or a module require path.
----@param access_path string
+---@param access_path string|string[] Either a `.` separated string of table keys, or a list.
 ---@return LazyModule
 function lazy.access(x, access_path)
-  local keys = vim.split(access_path, ".", { plain = true })
+  local keys = type(access_path) == "table"
+      and access_path
+      or vim.split(access_path --[[@as string ]], ".", { plain = true })
 
   local handler = function(module)
     local export = module
+
     for _, key in ipairs(keys) do
       export = export[key]
+      assert(export ~= nil, fmt("Failed to lazy-access! No key '%s' in table!", key))
     end
+
     return export
   end
 
