@@ -168,7 +168,7 @@ function M.generate_diff_colors(opt)
   if type(opt.no_derive) == "nil" then
     opt.no_derive = {}
   elseif type(opt.no_derive) == "boolean" then
-    opt.no_derive = { all = true }
+    opt.no_derive = { all = opt.no_derive }
   end
 
   local bg_normal = Color.from_hex(hl_bg_normal)
@@ -227,6 +227,9 @@ function M.generate_diff_colors(opt)
   hi("DiffInlineAdd", { bg = bg_add:to_css(), fg = base_add:to_css(), style = "NONE", explicit = true })
   hi("DiffInlineDelete", { bg = bg_del:to_css(), fg = base_del:to_css(), style = "NONE", explicit = true })
   hi("DiffInlineChange", { bg = bg_mod:to_css(), fg = base_mod:to_css(), style = "NONE", explicit = true })
+
+  hi_link("@text.diff.add", "DiffInlineAdd")
+  hi_link("@text.diff.delete", "DiffInlineDelete")
 end
 
 ---Give Telescope its default appearance.
