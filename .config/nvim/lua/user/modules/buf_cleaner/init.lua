@@ -9,7 +9,7 @@ local loop = Config.common.loop
 local M = {}
 
 M.CLEANUP_INTERVAL = 1000 * 60
-M.EXPIRATION_TIME = 1000 * 60 * 10 -- 10 min
+M.EXPIRATION_TIME = 1000 * 60 * 15 -- 15 min
 
 ---@private
 ---@type Closeable?

@@ -48,7 +48,7 @@ return function ()
       log_options = {
         git = {
           single_file = {
-            diff_merges = "combined",
+            diff_merges = "first-parent",
             follow = true,
           },
           multi_file = {

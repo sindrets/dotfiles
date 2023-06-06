@@ -1,7 +1,5 @@
 local M = {}
 
-vim.env.GIT_DIR = vim.fn.expand("~/.dotfiles")
-
 M.lsp_config = {
   settings = {
     Lua = {

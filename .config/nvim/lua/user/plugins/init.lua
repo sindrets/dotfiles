@@ -290,6 +290,7 @@ require("lazy").setup({
   use_local { "sindrets/winshift.nvim", config = conf("winshift"), cmd = "WinShift" },
   use_local { "sindrets/view-tween.nvim", config = conf("view-tween") },
   use_local { "sindrets/scratchpad.nvim" },
+  { "will133/vim-dirdiff" },
   {
     "simrat39/symbols-outline.nvim",
     config = conf("symbols-outline"),
@@ -357,6 +358,7 @@ require("lazy").setup({
     cond = vim.fn.has("nvim-0.8") ~= 1,
   },
   { "xorid/asciitree.nvim", cmd = { "AsciiTree", "AsciiTreeUndo" } },
+  { "echasnovski/mini.splitjoin", version = false, config = {} },
 
   -- COLOR SCHEMES
   { "rktjmp/lush.nvim", lazy = true },
