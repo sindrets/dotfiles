@@ -310,6 +310,9 @@ nnoremap ]D <Cmd>exe 'norm! G0' <bar> exe 'lua vim.diagnostic.goto_prev({ float 
 nnoremap <expr> [r v:lua.Config.lib.expr.next_reference(v:true)
 nnoremap <expr> ]r v:lua.Config.lib.expr.next_reference()
 
+nmap ø [
+nmap æ ]
+
 nnoremap n <Cmd>set hlsearch <bar> call <SID>LazyNorm("nzz")<CR>
 nnoremap N <Cmd>set hlsearch <bar> call <SID>LazyNorm("Nzz")<CR>
 

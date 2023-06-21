@@ -1,6 +1,8 @@
 #compdef wt
 
 # From: https://github.com/yankeexe/git-worktree-switcher
+#
+# INSTALL: sudo ln -s "$(realpath ./_wt_completion)" /usr/share/zsh/site-functions/_wt
 
 # AUTOCOMPLETION FOR ZSH
 # Reference: https://zsh.sourceforge.io/Doc/Release/Completion-Widgets.html

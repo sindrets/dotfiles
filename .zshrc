@@ -141,6 +141,16 @@ function nv-helptags() {
         -c "qa"
 }
 
+function soenv() {
+    [[ -z "$1" ]] && set -- ".env"
+
+    for f in $@; do
+        set -a
+        source "$f"
+        set +a
+    done
+}
+
 cur_term="$(get_term)"
 update_theme
 

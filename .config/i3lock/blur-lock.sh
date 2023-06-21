@@ -14,7 +14,12 @@ scrot -o "$tmpbg" --quality 100
 VALUE="60" #brightness value to compare to
 
 # parse dimensions + position of primary display, to center icon on multi-monitor setups
-resPos="$(xrandr | grep primary | awk '{print $4}')"
+randrData="$(xrandr --current)"
+resPos="$(echo "$randrData" | grep primary | awk '{print $4}')"
+
+if [[ -z "$resPos" ]]; then
+  resPos="$(echo "$randrData" | grep ' connected ' | awk '{print $3}')"
+fi
 
 width="$(echo $resPos | perl -lne 'print $& if /[0-9]*(?=x)/')"
 height="$(echo $resPos | perl -lne 'print $& if /(?<=x)[0-9]*/')"

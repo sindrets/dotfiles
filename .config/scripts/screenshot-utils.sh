@@ -1,5 +1,8 @@
 #!/bin/bash
-target="$HOME/Pictures/screenshots/`date +'%Y-%m-%d-%H%M%S'`_maim.png"
+target_dir="$HOME/Pictures/screenshots/"
+target="$target_dir/`date +'%Y-%m-%d-%H%M%S'`_maim.png"
+
+mkdir -p "$target_dir"
 
 case "$1" in
     -s)

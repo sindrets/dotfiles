@@ -297,7 +297,7 @@ require("lazy").setup({
     cmd = { "SymbolsOutline", "SymbolsOutlineClose", "SymbolsOutlineOpen" },
   },
   {
-    "p00f/nvim-ts-rainbow",
+    "HiPhish/nvim-ts-rainbow2",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     config = conf("nvim-ts-rainbow"),
   },
@@ -359,6 +359,13 @@ require("lazy").setup({
   },
   { "xorid/asciitree.nvim", cmd = { "AsciiTree", "AsciiTreeUndo" } },
   { "echasnovski/mini.splitjoin", version = false, config = {} },
+  {
+    "ellisonleao/dotenv.nvim",
+    config = {
+      enable_on_load = true, -- will load your .env file upon loading a buffer
+      verbose = false, -- show error notification if .env file is not found and if .env is loaded
+    },
+  },
 
   -- COLOR SCHEMES
   { "rktjmp/lush.nvim", lazy = true },

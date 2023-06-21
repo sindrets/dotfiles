@@ -885,15 +885,23 @@ function M.apply_tweaks()
     style = "underline,bold",
   })
 
-  -- Adjust ts-rainbow colors for light color schemes
+  -- Adjust ts-rainbow colors depending on brightness
   if bg_normal.lightness >= 0.5 then
-    hi("rainbowcol1", { fg = "#e05661" })
-    hi("rainbowcol2", { fg = "#cc901f" })
-    hi("rainbowcol3", { fg = "#cc641f" })
-    hi("rainbowcol4", { fg = "#429e3b" })
-    hi("rainbowcol5", { fg = "#118dc3" })
-    hi("rainbowcol6", { fg = "#56b6c2" })
-    hi("rainbowcol7", { fg = "#9a77cf" })
+    hi("TSRainbowRed", { fg = "#e05661" })
+    hi("TSRainbowOrange", { fg = "#cc901f" })
+    hi("TSRainbowYellow", { fg = "#cc641f" })
+    hi("TSRainbowGreen", { fg = "#429e3b" })
+    hi("TSRainbowCyan", { fg = "#118dc3" })
+    hi("TSRainbowBlue", { fg = "#56b6c2" })
+    hi("TSRainbowViolet", { fg = "#9a77cf" })
+  else
+    hi("TSRainbowRed", { fg = "#bf616a" })
+    hi("TSRainbowOrange", { fg = "#d08770" })
+    hi("TSRainbowYellow", { fg = "#ebcb8b" })
+    hi("TSRainbowGreen", { fg = "#a3be8c" })
+    hi("TSRainbowCyan", { fg = "#88c0d0" })
+    hi("TSRainbowBlue", { fg = "#5e81ac" })
+    hi("TSRainbowViolet", { fg = "#b48ead" })
   end
 
   hi("LirFloatCursorLine", {
