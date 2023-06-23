@@ -251,8 +251,8 @@ require("lazy").setup({
   { "tpope/vim-abolish" },
   {
     "alvan/vim-closetag", init = function ()
-      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md"
-      vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown"
+      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md,*.hbs"
+      vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown,handlebars"
     end
   },
   { "Rasukarusan/nvim-block-paste" },
@@ -349,13 +349,14 @@ require("lazy").setup({
   {
     "nvim-neorg/neorg",
     config = conf("neorg"),
+    build = ":Neorg sync-parsers",
     dependencies = {
       "nvim-treesitter",
       "telescope.nvim",
       "nvim-lua/plenary.nvim",
       "nvim-neorg/neorg-telescope"
     },
-    cond = vim.fn.has("nvim-0.8") ~= 1,
+    cond = vim.fn.has("nvim-0.8") == 1,
   },
   { "xorid/asciitree.nvim", cmd = { "AsciiTree", "AsciiTreeUndo" } },
   { "echasnovski/mini.splitjoin", version = false, config = {} },

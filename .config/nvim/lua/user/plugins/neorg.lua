@@ -8,18 +8,18 @@ return function()
           },
         },
       },
-      ["core.norg.qol.toc"] = {},
+      ["core.qol.toc"] = {},
       ['core.integrations.telescope'] = {},
-      ['core.norg.concealer'] = {},
+      ['core.concealer'] = {},
       ["core.export"] = {},
-      ["core.norg.dirman"] = {
+      ["core.dirman"] = {
         config = {
           workspaces = {
             uni = "~/Documents/uni/notes",
           },
         },
       },
-      ["core.norg.completion"] = {
+      ["core.completion"] = {
         config = {
           engine = "nvim-cmp",
         },
