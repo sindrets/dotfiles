@@ -1,10 +1,7 @@
 local opt = vim.opt
 
-local function list(value, str, sep)
-  sep = sep or ","
-  str = str or ""
-  value = type(value) == "table" and table.concat(value, sep) or value
-  return str ~= "" and table.concat({value, str}, sep) or value
+local function list(items, sep)
+  return table.concat(items, sep or ",")
 end
 
 opt.number = true
@@ -107,6 +104,15 @@ opt.laststatus = 3
 -- re-enable soon when this is fixed.
 -- @see [Neovim issue](https://github.com/neovim/neovim/issues/17765)
 opt.lazyredraw = false
+opt.formatoptions = table.concat({
+  "c", -- Auto wrap using 'textwidth'
+  "r", -- Auto insert comment leader
+  "o", -- Auto insert comment leader after "o" or "O"
+  "q", -- Allow formatting of comments with "gq"
+  "2", -- The second line decides the indent for the paragraph
+  "l", -- Long lines are not broken in insert mode
+  "j", -- Remove comment leader when joining lines
+})
 
 local data_backup = vim.fn.stdpath("data") .. "/backup"
 local data_undo = vim.fn.stdpath("data") .. "/undo"

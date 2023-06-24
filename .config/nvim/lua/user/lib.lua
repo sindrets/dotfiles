@@ -191,15 +191,18 @@ function M.workspace_files(opt)
       find_command = { "fd", "--type", "f", "-uu", "--strip-cwd-prefix" },
     })
   elseif vim.env.GIT_DIR or pl:readable("./.git") then
+    local cwd = uv.cwd()
     builtin.git_files({
       git_command = {
         "git",
+        "-C",
+        cwd,
         "ls-files",
         "--exclude-standard",
         "--others",
         "--cached",
         "--",
-        uv.cwd()
+        cwd,
       },
     })
   else

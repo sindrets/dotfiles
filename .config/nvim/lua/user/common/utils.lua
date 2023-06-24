@@ -32,25 +32,14 @@ vim.cmd([[
 ---@param schedule? boolean Schedule the echo call.
 function M.echo_multiln(msg, hl, schedule)
   if schedule then
-    vim.schedule(function()
-      M.echo_multiln(msg, hl, false)
-    end)
+    vim.schedule(function() M.echo_multiln(msg, hl, false) end)
     return
   end
 
-  vim.cmd("echohl " .. (hl or "None"))
+  if type(msg) ~= "table" then msg = { msg } end
 
-  if type(msg) ~= "table" then
-    msg = vim.split(msg, "\n")
-  end
-
-  for _, line in ipairs(msg) do
-    line = line:gsub('"', [[\"]])
-    line = line:gsub('\t', "    ")
-    vim.cmd(string.format('echom "%s"', line))
-  end
-
-  vim.cmd("echohl None")
+  local chunks = table.concat(msg, "\n")
+  api.nvim_echo({ { chunks, hl } }, true, {})
 end
 
 ---@param msg string|string[]
@@ -315,6 +304,49 @@ function M.str_match(str, patterns)
       return unpack(m)
     end
   end
+end
+
+---Smart multiline string that strips the leading indentation.
+---
+---Example:
+---
+---```lua
+--- utils.info(
+---   utils.mstring([[
+---     Some long formatted msg
+---     with multiple lines
+---     and line breaks.
+---   ]])
+--- )
+---```
+---@param str string
+---@param list? boolean
+function M.mstring(str, list)
+  local lines = vim.split(str, "\n", { plain = true, trimempty = false })
+  local ret = {}
+  local i = 1
+
+  if not lines[1]:match("^%s") then i = 2 end
+  if lines[#lines]:match("^%s*$") then lines[#lines] = nil end
+
+  local indent_size = math.huge
+
+  for j = i, math.min(#lines, 1024) do
+    if lines[j] ~= "" then
+      indent_size = math.min(indent_size, lines[j]:match("^%s*()") - 1)
+    end
+  end
+
+  if indent_size == math.huge then indent_size = 0 end
+  local content_pattern = "^" .. string.rep("%s?", indent_size) .. "(.*)$"
+
+  for _, line in ipairs(lines) do
+    ret[#ret + 1] = line:match(content_pattern)
+  end
+
+  if list then return ret end
+
+  return table.concat(ret, "\n")
 end
 
 function M.tbl_pack(...)
