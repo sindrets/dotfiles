@@ -61,7 +61,7 @@ end
 ---@field focus boolean Bring focus to the new terminal. (default: true)
 
 ---Create a new terminal and set it as the current terminal in the TermSplit.
----@param opt term.new.Opt
+---@param opt? term.new.Opt
 ---@return Terminal?
 function M.new(opt)
   opt = vim.tbl_extend("keep", opt or {}, { focus = true }) --[[@as term.new.Opt ]]
@@ -81,10 +81,12 @@ function M.new(opt)
       t = {
         ["<M-p>"] = M.prev,
         ["<M-n>"] = M.next,
+        ["<C-M-n>"] = M.new,
       },
       n = {
         ["<M-p>"] = M.prev,
         ["<M-n>"] = M.next,
+        ["<C-M-n>"] = M.new,
       },
     }
   }) --[[@as Terminal ]]

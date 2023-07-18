@@ -161,7 +161,7 @@ export LC_ALL=en_US.UTF-8 # force all applications to use default language for o
 export LESS=-r # scroll pager with mouse wheel.
 export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
-export GIT_DIRECTORY="$HOME/Documents/git"
+export GIT_WORKSPACE="$HOME/Documents/git"
 export MANWIDTH=80 # text width in man pages
 export MANPAGER="$(which nvim) -nc 'setl nolist scl=yes:1 | lua Config.lib.set_center_cursor(true)' +Man! -"
 
@@ -240,7 +240,7 @@ alias getclip="xclip -selection c -o"
 alias tree="exa --tree --icons --group-directories-first"
 alias ip="ip -c -h"
 alias h="cd ~"
-alias g="cd $GIT_DIRECTORY"
+alias g="cd $GIT_WORKSPACE"
 alias m="cd ~/Documents/misc"
 alias r="source ~/.zshrc"
 alias nv="nvim"

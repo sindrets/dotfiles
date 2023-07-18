@@ -99,6 +99,7 @@ nnoremap ~ <Cmd>buffer #<CR>
 nnoremap <silent> <leader>w <Cmd>lua require'user.lib'.remove_buffer()<CR>
 nnoremap <leader>W <Cmd>bd<CR>
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
+nnoremap X <Cmd>bd<CR>
 
 " Navigate tabs
 nnoremap <silent> <Leader><Tab> g<Tab>
@@ -276,6 +277,16 @@ nnoremap <leader>gd <Cmd>DiffviewOpen<CR>
 nnoremap <leader>gh <Cmd>DiffviewFileHistory<CR>
 nnoremap <leader>gH <Cmd>DiffviewFileHistory %<CR>
 xnoremap <leader>gh <Esc><Cmd>'<,'>DiffviewFileHistory<CR>
+
+" Diff
+xnoremap <silent> <leader>do :diffget<CR>
+xnoremap <silent> <leader>dp :diffput<CR>
+"   toggle iwhite
+nnoremap <leader>ow <Cmd>
+            \ lua if vim.tbl_contains(vim.opt.diffopt:get(), "iwhite") then
+            \ vim.opt.diffopt:remove("iwhite"); Config.common.notify.info("'iwhite' disabled.");
+            \ else vim.opt.diffopt:append("iwhite"); Config.common.notify.info("'iwhite' enabled.");
+            \ end<CR>
 
 " LspTrouble and Symbols outline
 nnoremap <A-S-D> <Cmd>lua Config.fn.toggle_diagnostics()<CR>

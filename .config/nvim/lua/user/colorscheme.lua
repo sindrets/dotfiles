@@ -659,10 +659,12 @@ function M.apply_tweaks()
     M.unstyle_telescope()
 
   elseif colors_name == "kanagawa" then
-    hi("VertSplit", { bg = "NONE", fg = "#0f0f0f" })
+    hi("WinSeparator", { bg = "NONE", fg = "#444444" })
     hi("diffChanged", { fg = "#7E9CD8" })
     hi("Whitespace", { fg = bg_normal:clone():highlight(0.18):to_css() })
     hi("BufferLineIndicatorSelected", { fg = "#7E9CD8" })
+
+    vim.g.terminal_color_8 = "#393836"
 
   elseif colors_name == "oxocarbon-lua" then
     if bg == "dark" then
@@ -768,6 +770,7 @@ function M.apply_tweaks()
 
   -- Treesitter
   hi("@text.emphasis", { style = "italic" })
+  hi("@text.uri", { style = "underline" })
   hi("TreesitterContext", { bg = bg_normal:clone():highlight(0.08):to_css() })
   hi_link("@neorg.markup.verbatim", "@text.literal")
 

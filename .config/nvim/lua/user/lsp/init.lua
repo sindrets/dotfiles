@@ -104,7 +104,8 @@ end
 require("user.lsp.java")
 
 -- Typescript
-lspconfig.tsserver.setup(M.create_config())
+-- lspconfig.tsserver.setup(M.create_config())
+require("user.lsp.typescript");
 
 -- Python
 lspconfig.pyright.setup(M.create_config())

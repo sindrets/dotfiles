@@ -179,6 +179,10 @@ require("lazy").setup({
     end,
   },
   {
+    "pmizio/typescript-tools.nvim",
+    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+  },
+  {
     "anuvyklack/pretty-fold.nvim",
     config = conf("pretty-fold"),
   },
@@ -251,8 +255,8 @@ require("lazy").setup({
   { "tpope/vim-abolish" },
   {
     "alvan/vim-closetag", init = function ()
-      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md,*.hbs"
-      vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown,handlebars"
+      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md,*.hbs,*.tsx"
+      vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown,handlebars,typescriptreact"
     end
   },
   { "Rasukarusan/nvim-block-paste" },

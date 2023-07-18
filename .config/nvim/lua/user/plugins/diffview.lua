@@ -39,10 +39,13 @@ return function ()
         flatten_dirs = true,
         folder_statuses = "only_folded",
       },
-      win_config = {
-        position = "left",
-        width = 35,
-      },
+      win_config = function()
+        local editor_width = vim.o.columns
+        return {
+          position = "left",
+          width = editor_width >= 247 and 45 or 35,
+        }
+      end,
     },
     file_history_panel = {
       log_options = {
