@@ -151,6 +151,22 @@ function soenv() {
     done
 }
 
+function nvm() {
+    if [[ ! -x "$(whence -p nvm)" ]]; then
+        source /usr/share/nvm/init-nvm.sh
+        if [[ ! $? -eq 0 ]]; then
+            return
+        fi
+    fi
+
+    case $1 in
+        use | install)
+            unset npm_config_prefix;;
+    esac
+
+    nvm $@
+}
+
 cur_term="$(get_term)"
 update_theme
 

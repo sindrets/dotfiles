@@ -16,6 +16,7 @@ return function()
         config = {
           workspaces = {
             uni = "~/Documents/uni/notes",
+            default = "~/Documents/notes",
           },
         },
       },

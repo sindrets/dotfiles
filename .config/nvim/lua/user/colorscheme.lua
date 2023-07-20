@@ -747,6 +747,7 @@ function M.apply_tweaks()
     if bg == "dark" then
       hi("Primary", { fg = hl.get_fg("@boolean") })
       hi("Accent", { fg = hl.get_fg("Statement") })
+      hi("@text.uri", { fg = "#40A6FF" })
       hi("diffChanged", { fg = hl.get_fg("@boolean"), explicit = true })
       hi(
         { "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" },
@@ -755,6 +756,7 @@ function M.apply_tweaks()
     else
       hi("Primary", { fg = hl.get_fg("@variable") })
       hi("Accent", { fg = hl.get_fg("Structure") })
+      hi("@text.uri", { fg = hl.get_fg("@constant") })
       hi("diffChanged", { fg = hl.get_fg("@label"), explicit = true })
       hi(
         { "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" },
