@@ -350,7 +350,7 @@ require("lazy").setup({
     init = conf("firenvim"),
   },
   { "honza/vim-snippets" },
-  {
+  use_local {
     "nvim-neorg/neorg",
     config = conf("neorg"),
     build = ":Neorg sync-parsers",
@@ -371,6 +371,7 @@ require("lazy").setup({
       verbose = false, -- show error notification if .env file is not found and if .env is loaded
     },
   },
+  { "lambdalisue/suda.vim" },
 
   -- COLOR SCHEMES
   { "rktjmp/lush.nvim", lazy = true },

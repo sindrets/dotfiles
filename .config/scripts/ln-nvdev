@@ -87,7 +87,7 @@ function create_link() {
   fi
 
   ln -s "$1" "$link_name"
-  echo "• Created new link: '$link_name'"
+  echo "• Created new link: '$link_name' -> '$1'"
 }
 
 function delete_link() {

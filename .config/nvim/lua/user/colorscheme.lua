@@ -352,7 +352,8 @@ function M.apply_tweaks()
   local bg = vim.o.bg
   local bg_normal = Color.from_hl("Normal", "bg")
       or Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
-  local fg_normal = Color.from_hl("Normal", "fg") --[[@as Color ]]
+  local fg_normal = Color.from_hl("Normal", "fg")
+  if not fg_normal then return end
   local base_colors = M.find_base_colors()
 
   hi_clear({ "Cursor", "TermCursor" })
@@ -910,7 +911,8 @@ function M.apply_tweaks()
   end
 
   hi("LirFloatCursorLine", {
-    bg = Color.from_hl("NormalFloat", "bg"):highlight(0.06):to_css()
+    bg = Color.from_hl("NormalFloat", "bg"):highlight(0.06):to_css(),
+    link = -1,
   })
   hi_link("LirFloatNormal", "NormalFloat", { force = true })
   hi_link("LirFolderIcon", "Directory", { default = true })
