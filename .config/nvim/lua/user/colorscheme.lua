@@ -275,7 +275,7 @@ function M.find_base_colors()
 
   return {
     primary = primary,
-    accent = accent,
+    accent = accent --[[@as Color ]],
   }
 end
 
@@ -348,12 +348,17 @@ function M.apply_tweaks()
     Config.common.utils.err("'g:colors_name' is not set for the current color scheme!")
   end
 
-  local colors_name = vim.g.colors_name or ""
+  local fg_normal = Color.from_hl("Normal", "fg")
+
+  if not fg_normal then
+    utils.warn("Unable to get foreground color! Cannot apply colorscheme tweaks!")
+    return
+  end
+
   local bg = vim.o.bg
   local bg_normal = Color.from_hl("Normal", "bg")
       or Color.from_hex(bg == "dark" and "#111111" or "#eeeeee")
-  local fg_normal = Color.from_hl("Normal", "fg")
-  if not fg_normal then return end
+  local colors_name = vim.g.colors_name or ""
   local base_colors = M.find_base_colors()
 
   hi_clear({ "Cursor", "TermCursor" })
@@ -934,6 +939,11 @@ function M.apply_tweaks()
     bg = bg_normal:clone():mod_value(-0.05):to_css(),
     fg = "NONE",
   })
+
+  hi(
+    { "CmpItemKindFile", "CmpItemKindFolder" },
+    { fg = hl.get_fg("@text.uri"), explicit = true }
+  )
 
   if Config.plugin.feline then
     Config.plugin.feline.reload()
