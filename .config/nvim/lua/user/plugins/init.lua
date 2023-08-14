@@ -57,7 +57,8 @@ vim.g.markdown_fenced_languages = {
   "html",
   "python",
   "sh",
-  "bash=sh",
+  "bash",
+  "console=bash",
   "dosini",
   "ini=dosini",
   "lua",
@@ -66,6 +67,7 @@ vim.g.markdown_fenced_languages = {
   "javascript",
   "java",
   "vim",
+  "log",
 }
 
 ---@diagnostic disable-next-line: different-requires
@@ -396,6 +398,7 @@ require("lazy").setup({
     opts = { cursorline = { hide_unfocused = false } },
   },
   { "Mofiqul/vscode.nvim" },
+  { "kvrohit/rasmus.nvim" },
 }, {
   ui = {
     border = "single",

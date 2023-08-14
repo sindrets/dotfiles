@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "vscode"
+M.DEFAULT_DARK = "rasmus"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -223,6 +223,10 @@ function M.generate_diff_colors(opt)
 
   hi("DiffAddText", { bg = bg_add_text:to_css(), fg = base_add:to_css(), style = "NONE", explicit = true })
   hi("DiffDeleteText", { bg = bg_del_text:to_css(), fg = base_del:to_css(), style = "NONE", explicit = true })
+
+  hi("DiffFgAdd", { fg = base_add:to_css(), style = "NONE", explicit = true })
+  hi("DiffFgDelete", { fg = base_del:to_css(), style = "NONE", explicit = true })
+  hi("DiffFgChange", { fg = base_mod:to_css(), style = "NONE", explicit = true })
 
   hi("DiffInlineAdd", { bg = bg_add:to_css(), fg = base_add:to_css(), style = "NONE", explicit = true })
   hi("DiffInlineDelete", { bg = bg_del:to_css(), fg = base_del:to_css(), style = "NONE", explicit = true })
@@ -653,7 +657,7 @@ function M.apply_tweaks()
     hi_link("DashboardHeader", "Identifier")
     hi_link("DashboardCenter", "Keyword")
     -- hi_link("DashboardShortCut", "String")
-    hl.hi("DashboardShortCut", { fg = hl.get_fg("String"), style = "bold,reverse" })
+    hi("DashboardShortCut", { fg = hl.get_fg("String"), style = "bold,reverse" })
     hi_link("DashboardFooter", "Comment")
     hi_link("DiffviewFolderName", "Special")
     hi_clear("BufferLineBackground")
@@ -769,6 +773,46 @@ function M.apply_tweaks()
         { fg = hl.get_fg("@variable") }
       )
     end
+
+  elseif colors_name == "rasmus" then
+    local white = hl.get_fg("Normal")
+    local yellow = hl.get_fg("Tag")
+    local orange = hl.get_fg("PreProc")
+    local blue = hl.get_fg("Keyword")
+    local green = hl.get_fg("String")
+    local purple = hl.get_fg("diffIndexLine")
+    local search = blue
+
+    hi("Identifier", { fg = white, explicit = true })
+    hi("Special", { fg = orange, explicit = true })
+    hi_link("Number", "Special", { clear = true })
+    hi_link("Boolean", "Special", { clear = true })
+    hi("NormalFloat", { bg = bg_normal:clone():highlight(0.03):to_css() })
+    hi("NonText", { fg = bg_normal:clone():mod_value(0.2):to_css(), explicit = true })
+
+    hi("Search", { fg = "#323231", bg = search, explicit = true })
+    hi_link("IncSearch", "Search", { clear = true })
+    hi("CurSearch", { fg = search, bg = hl.get_fg("LineNr"), style = "bold", explicit = true })
+
+    hi("@field", { fg = purple, explicit = true })
+    hi("@keyword.operator", { fg = orange, explicit = true })
+    hi("@lsp.typemod.function.declaration", { fg = white, style = "bold", explicit = true })
+    hi_link("@lsp.typemod.method.declaration", "@lsp.typemod.function.declaration", { clear = true })
+    hi_link("@lsp.type.property", "@lsp", { clear = true })
+    hi("@lsp.type.class", { fg = green, explicit = true })
+
+    hi("diffChanged", { fg = blue, explicit = true })
+    hi_link("diffLine", "PreProc", { clear = true })
+    hi_link("diffSubname", "Keyword", { clear = true })
+    hi("fugitiveHash", { fg = hl.get_fg("diffIndexLine"), explicit = true })
+
+    hi_link(
+      { "DiffviewFilePanelSelected", "TelescopeMultiSelection" },
+      "Tag",
+      { clear = true }
+    )
+
+    M.unstyle_telescope()
   end
 
   M.generate_base_colors()
@@ -779,6 +823,8 @@ function M.apply_tweaks()
   -- Treesitter
   hi("@text.emphasis", { style = "italic" })
   hi("@text.uri", { style = "underline" })
+  hi_link("@lsp.mod.defaultLibrary", "Special", { clear = true })
+  hi_link("@lsp.type.variable.lua", "@lsp", { clear = true })
   hi("TreesitterContext", { bg = bg_normal:clone():highlight(0.08):to_css() })
   hi_link("@neorg.markup.verbatim", "@text.literal")
 
@@ -842,9 +888,9 @@ function M.apply_tweaks()
   hi_link({ "GitSignsDeleteLn", "GitSignsDeletePreview" }, "DiffInlineDelete", { clear = true })
   hi_link("GitSignsChangeLn", "DiffInlineChange", { clear = true })
   hi_link("GitSignsDeleteVirtLn", "DiffInlineDelete", { clear = true })
-  hi_link("GitSignsAdd", "diffAdded", { clear = true })
-  hi_link("GitSignsDelete", "diffRemoved", { clear = true })
-  hi_link("GitSignsChange", "diffChanged", { clear = true })
+  hi_link("GitSignsAdd", "DiffFgAdd", { clear = true })
+  hi_link("GitSignsDelete", "DiffFgDelete", { clear = true })
+  hi_link("GitSignsChange", "DiffFgChange", { clear = true })
   hi("GitSignsAddInline", {
     fg = hl.get_bg("DiffInlineAdd"),
     bg = hl.get_fg("DiffInlineAdd")
@@ -857,6 +903,12 @@ function M.apply_tweaks()
     fg = hl.get_bg("DiffInlineChange"),
     bg = hl.get_fg("DiffInlineChange")
   })
+
+  hi_link("diffOldFile", "DiffFgDelete", { clear = true })
+  hi_link("diffNewFile", "DiffFgAdd", { clear = true })
+  hi_link("fugitiveUnstagedModifier", "DiffFgChange", { clear = true })
+  hi_link("fugitiveUntrackedModifier", "DiffFgAdd", { clear = true })
+  hi_link("fugitiveStagedModifier", "DiffFgAdd", { clear = true })
 
   hi_link("NeogitCommitViewHeader", "Title")
   hi_link("NeogitDiffAddHighlight", "DiffInlineAdd")
