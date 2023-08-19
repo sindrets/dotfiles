@@ -5,9 +5,10 @@ return function ()
   require("trouble").setup {
     height = 10, -- height of the trouble list
     icons = true, -- use dev-icons for filenames
-    mode = "workspace_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
+    mode = "document_diagnostics", -- "workspace_diagnostics", "document_diagnostics", "quickfix", "lsp_references", "loclist"
     fold_open = "", -- icon used for open folds
     fold_closed = "", -- icon used for closed folds
+    cycle_results = false, -- cycle item list when reaching beginning or end of list
     action_keys = { -- key mappings for actions in the trouble list
       close = "q", -- close the list
       refresh = "R", -- manually refresh
@@ -28,7 +29,7 @@ return function ()
     signs = {
       -- icons / text used for a diagnostic
       error = "󰅚",
-      warning = "",
+      warning = "",
       hint = "󰌶",
       information = ""
     },

@@ -1,2 +1,2 @@
-setl sw=2
+setl et sw=2
 setl comments=:---,:--

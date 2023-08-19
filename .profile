@@ -27,7 +27,7 @@ appendpath '/usr/bin'
 appendpath "$HOME/.local/bin"
 appendpath "$HOME/.local/sbin"
 appendpath "$HOME/.config/scripts"
-appendpath "$HOME/.emacs.d/bin"
+appendpath "$HOME/.config/emacs/bin"
 appendpath "$(ruby -e 'puts Gem.user_dir')/bin"
 unset appendpath
 

@@ -144,6 +144,7 @@ require("lazy").setup({
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = conf("treesitter"),
+    commit = "82c948653909d8c1582f28313aa1cf9d68d66fe8",
   },
   { "nvim-treesitter/playground", dependencies = "nvim-treesitter/nvim-treesitter" },
   {
