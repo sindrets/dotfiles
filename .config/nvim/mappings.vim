@@ -258,7 +258,7 @@ nnoremap <M-O> <Cmd>Telescope lsp_dynamic_workspace_symbols<CR>
 nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
 nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
 nnoremap z= <Cmd>Telescope spell_suggest theme=get_cursor<CR>
-nnoremap <leader>fl <Cmd>Telescope current_buffer_fuzzy_find theme=get_ivy<CR>
+nnoremap <leader>fl <Cmd>Telescope current_buffer_fuzzy_find<CR>
 nnoremap ;; <Cmd>Telescope resume<CR>
 
 " Git

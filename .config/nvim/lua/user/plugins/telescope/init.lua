@@ -1,6 +1,7 @@
 return function ()
-  local actions = require('telescope.actions')
-  local action_state = require('telescope.actions.state')
+  local actions = require("telescope.actions")
+  local action_state = require("telescope.actions.state")
+  require("user.plugins.telescope.layout_strategies")
 
   local function deep_extend(...)
     local args = { ... }
@@ -118,6 +119,19 @@ return function ()
       lsp_workspace_symbols = deep_extend(picker_presets.vertical_preview_bottom),
       lsp_dynamic_workspace_symbols = deep_extend(picker_presets.vertical_preview_bottom),
       current_buffer_fuzzy_find = {
+        layout_strategy = "flex_bottom_pane",
+        layout_config = {
+          height = 25,
+          vertical = {
+            preview_cutoff = 13,
+          },
+        },
+        border = true,
+        borderchars = {
+          prompt = { "─", " ", " ", " ", "─", "─", " ", " " },
+          results = { "─", " ", " ", " ", "─", "─", " ", " " },
+          preview = { "─", "│", "─", "│", "╭", "╮", "╯", "╰" },
+        },
         tiebreak = function(a, b)
           -- Sort tiebreaks by line number
           return a.lnum < b.lnum
