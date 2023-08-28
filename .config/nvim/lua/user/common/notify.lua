@@ -25,12 +25,19 @@ local this = {
   cur = {},
 }
 
----@class Notify : { [string]: Notify }
+---@class Notify.Opt
+---@field title? string
+---@field icon? string
+---@field [string] any
+
+---@class Notify
+---@overload fun(msg: string, opt: Notify.Opt)
 ---@field trace Notify
 ---@field debug Notify
 ---@field info Notify
 ---@field warn Notify
 ---@field error Notify
+---@field [string] Notify
 local notify = setmetatable(this, {
   __index = function(_, k)
     if configs[k] then

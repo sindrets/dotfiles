@@ -1,9 +1,12 @@
 ---@diagnostic disable: duplicate-doc-field
+local async = require("user.async")
+local ffi = require("user.ffi")
 local lazy = require("user.lazy")
 
 local Job = lazy.access("diffview.job", "Job") ---@type diffview.Job|LazyModule
 local winshift_lib = lazy.require("winshift.lib") ---@module "winshift.lib"
 
+local await = async.await
 local api = vim.api
 
 local M = {}
@@ -164,8 +167,7 @@ end
 ---@return any result Return value
 function M.no_win_event_call(f)
   local last = vim.o.eventignore
-  ---@diagnostic disable-next-line: undefined-field
-  vim.opt.eventignore:prepend(
+  ;(vim.opt.eventignore --[[@as vim.Option ]]):prepend(
     "WinEnter,WinLeave,WinNew,WinClosed,BufWinEnter,BufWinLeave,BufEnter,BufLeave"
   )
   local ok, err = pcall(f)
@@ -452,7 +454,7 @@ end
 ---@return any?
 function M.tbl_access(t, table_path)
   local keys = type(table_path) == "table"
-      and table_path
+      and table_path ---@cast table_path string
       or vim.split(table_path, ".", { plain = true })
 
   local cur = t
@@ -474,7 +476,7 @@ end
 ---@param value any
 function M.tbl_set(t, table_path, value)
   local keys = type(table_path) == "table"
-      and table_path
+      and table_path ---@cast table_path string
       or vim.split(table_path, ".", { plain = true })
 
   local cur = t
@@ -497,7 +499,7 @@ end
 ---@param table_path string|string[] Either a `.` separated string of table keys, or a list.
 function M.tbl_ensure(t, table_path)
   local keys = type(table_path) == "table"
-      and table_path
+      and table_path ---@cast table_path string
       or vim.split(table_path, ".", { plain = true })
 
   if not M.tbl_access(t, keys) then
@@ -723,7 +725,15 @@ function M.job(cmd, cwd_or_opt)
     }),
   })
 
-  local ok = job:sync()
+  local was_locked = ffi.nvim_is_locked()
+  local ok = await(job:start())
+
+  if not was_locked then
+    -- If the editor was unlocked before running the job; ensure that it's
+    -- unlocked when we leave as well.
+    await(async.scheduler())
+  end
+
   local code = job.code
 
   if not ok then
@@ -1043,7 +1053,7 @@ local list_like_options = {
 }
 
 ---@class utils.set_local.Opt
----@field method '"set"'|'"remove"'|'"append"'|'"prepend"' Assignment method. (default: "set")
+---@field method "set"|"remove"|"append"|"prepend" Assignment method. (default: "set")
 
 ---@class utils.set_local.ListSpec : string[]
 ---@field opt utils.set_local.Opt
@@ -1062,6 +1072,7 @@ function M.set_local(winids, option_map, opt)
     api.nvim_win_call(id, function()
       for option, value in pairs(option_map) do
         local o = opt
+        ---@diagnostic disable-next-line: redundant-parameter
         local fullname = api.nvim_get_option_info(option).name
         local is_list_like = list_like_options[fullname]
         local cur_value = vim.o[fullname]
@@ -1082,14 +1093,17 @@ function M.set_local(winids, option_map, opt)
         else
           if o.method == "remove" then
             if is_list_like then
-              vim.opt_local[fullname] = cur_value:gsub(",?" .. vim.pesc(value), "")
+              vim.opt_local[fullname] = cur_value:gsub(",?" .. vim.pesc(tostring(value)), "")
             else
               vim.opt_local[fullname]:remove(value)
             end
 
           elseif o.method == "append" then
             if is_list_like then
-              vim.opt_local[fullname] = ("%s%s"):format(cur_value ~= "" and cur_value .. ",", value)
+              vim.opt_local[fullname] = ("%s%s"):format(
+                cur_value ~= "" and cur_value .. "," or "",
+                value
+              )
             else
               vim.opt_local[fullname]:append(value)
             end

@@ -13,7 +13,7 @@ local lua_lib = {}
 
 local function lua_add_lib(lib)
   for _, p in pairs(vim.fn.expand(lib, false, true)) do
-    p = vim.loop.fs_realpath(p) --[[@as string ]]
+    p = assert(vim.loop.fs_realpath(p))
     lua_lib[p] = true
   end
 end
@@ -24,7 +24,7 @@ end
 
 -- lua_add_lib("$VIMRUNTIME")
 -- lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
-lua_add_lib(vim.fn.stdpath("data") .. "/lazy/plenary.nvim/lua")
+-- lua_add_lib(vim.fn.stdpath("data") .. "/lazy/plenary.nvim/lua")
 
 -- "$schema" = "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json"
 

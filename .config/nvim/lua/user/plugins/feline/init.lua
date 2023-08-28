@@ -483,7 +483,7 @@ M.components = {
               name = utils.str_match(out[1], {
                 "^checkout: moving from %S+ to (%S+)$",
                 "^rebase %(start%): checkout (%S+)",
-                "^rebase %(finish%): returning (%S+)",
+                "^rebase %(finish%): returning to (%S+)",
               })
 
               out = utils.job({

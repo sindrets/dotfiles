@@ -781,8 +781,9 @@ function M.apply_tweaks()
     local blue = hl.get_fg("Keyword")
     local green = hl.get_fg("String")
     local purple = hl.get_fg("diffIndexLine")
-    local search = blue
+    local search = "#264b8b"
 
+    hi("String", { fg = "#f59cb6" })
     hi("Identifier", { fg = white, explicit = true })
     hi("Special", { fg = orange, explicit = true })
     hi("Number", { fg = purple, explicit = true })
@@ -797,14 +798,15 @@ function M.apply_tweaks()
     hi_link("@keyword.return", "Special", { clear = true })
     hi_link("@text.reference.vimdoc", "Special", { clear = true })
     hi_link("@parameter.vimdoc", "Keyword", { clear = true })
+    hi_link("@type.qualifier", "Number", { clear = true })
     hi("@lsp.typemod.function.declaration", { fg = white, style = "bold", explicit = true })
     hi_link("@lsp.typemod.method.declaration", "@lsp.typemod.function.declaration", { clear = true })
     hi_link("@lsp.type.property", "@lsp", { clear = true })
     hi("@lsp.type.class", { fg = green, explicit = true })
 
-    hi("Search", { fg = "#323231", bg = search, explicit = true })
+    hi("Search", { fg = white, bg = search, explicit = true })
     hi_link("IncSearch", "Search", { clear = true })
-    hi("CurSearch", { fg = search, bg = hl.get_fg("LineNr"), style = "bold", explicit = true })
+    hi("CurSearch", { fg = blue, bg = hl.get_fg("LineNr"), style = "bold", explicit = true })
 
     hi("diffRemoved", { fg = "#cf6c62", explicit = true })
     hi("diffChanged", { fg = blue, explicit = true })

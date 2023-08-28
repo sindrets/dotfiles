@@ -26,7 +26,7 @@ Config.lib = require("user.lib")
 Config.term = require("user.modules.term")
 
 Config.buf_cleaner = require("user.modules.buf_cleaner")
-Config.buf_cleaner.enable()
+Config.buf_cleaner.enable(true)
 
 local Cache = require("user.modules.cache")
 

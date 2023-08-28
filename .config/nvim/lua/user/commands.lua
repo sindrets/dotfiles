@@ -199,7 +199,7 @@ command("Windows", function(c)
   Config.lib.cmd.windows(c.bang)
 end, { bar = true, bang = true })
 
-command("NeorgExport", async.void(function(c)
+command("NeorgExport", async.new(function(c)
   for _, dep in ipairs({ "neorg-pandoc-linux86", "pandoc", "neorg-export" }) do
     if vim.fn.executable(dep) ~= 1 then
       notify.error(("'%s' is not executable!"):format(dep))

@@ -4,7 +4,9 @@ local async = require("user.async")
 
 local await = async.await
 local api = vim.api
+local fmt = string.format
 local loop = Config.common.loop
+local notify = Config.common.notify
 
 local M = {}
 
@@ -56,9 +58,14 @@ local function should_delete(bufnr, now, buf_state, win_buf_map)
   return true
 end
 
-function M.enable()
-  if M._interval_handle then
-    Config.common.notify.warn("Already running.", { title = "buf_cleaner" })
+function M.is_running()
+  return not not M._interval_handle
+end
+
+---@param silent? boolean
+function M.enable(silent)
+  if M.is_running() then
+    notify.warn("Already running.", { title = "buf_cleaner" })
     return
   end
 
@@ -78,7 +85,7 @@ function M.enable()
   })
 
   M._interval_handle = loop.set_interval(
-    async.void(function()
+    async.new(function()
       await(async.scheduler())
 
       local bufs = vim.tbl_filter(function(bufnr)
@@ -124,15 +131,60 @@ function M.enable()
     end),
     M.CLEANUP_INTERVAL
   )
+
+  if not silent then
+    notify.info("The buffer cleaner is running.", { title = "buf_cleaner" })
+  end
 end
 
-function M.disable()
+---@param silent? boolean
+function M.disable(silent)
   api.nvim_create_augroup("buf_cleaner", { clear = true })
 
   if M._interval_handle then
     M._interval_handle.close()
     M._interval_handle = nil
   end
+
+  if not silent then
+    notify.info("The buffer cleaner has been disabled.", { title = "buf_cleaner" })
+  end
 end
+
+api.nvim_create_user_command(
+  "BufCleaner",
+  function(ctx)
+    local arg_parser = require("diffview.arg_parser")
+    local argo = arg_parser.scan(ctx.args, {})
+    local subcmd = argo.args[1]
+
+    if subcmd then
+      if subcmd == "enable" then
+        M.enable()
+      elseif subcmd == "disable" then
+        M.disable()
+      elseif subcmd == "toggle" then
+        if M.is_running() then M.disable() else M.enable() end
+      elseif subcmd == "status" then
+        notify.info(fmt("The buffer cleaner is %srunning.", M.is_running() and "" or "not "))
+      end
+    end
+  end,
+  {
+    nargs = 1,
+    complete = function(arg_lead, cmd_line, cur_pos)
+      local arg_parser = require("diffview.arg_parser")
+      local ctx = arg_parser.scan(cmd_line, { allow_quoted = false, cur_pos = cur_pos })
+
+      local candidates = {}
+
+      if ctx.argidx == 2 then
+        candidates = { "enable", "disable", "toggle", "status" }
+      end
+
+      return arg_parser.process_candidates(candidates, ctx)
+    end,
+  }
+)
 
 return M
