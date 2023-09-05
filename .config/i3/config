@@ -374,4 +374,7 @@ bindsym XF86TouchpadOff exec --no-startup-id synclient Touchpadoff=1
 bindsym --release Print exec --no-startup-id "$HOME/.config/scripts/screenshot-utils.sh -s"
 bindsym --release Mod4+Shift+Print exec --no-startup-id "$HOME/.config/scripts/screenshot-utils.sh -a"
 
+
+include ~/.config/i3/config.d/*.conf
+
 # vim: ft=i3config
