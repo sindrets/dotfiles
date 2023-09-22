@@ -153,8 +153,7 @@ function soenv() {
 
 function nvm() {
     if [[ ! -x "$(whence -p nvm)" ]]; then
-        source /usr/share/nvm/init-nvm.sh
-        if [[ ! $? -eq 0 ]]; then
+        if ! source /usr/share/nvm/init-nvm.sh; then
             return
         fi
     fi
@@ -195,7 +194,7 @@ antigen bundle zsh-users/zsh-syntax-highlighting
 antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle softmoth/zsh-vim-mode@main
 antigen bundle zsh-vi-more/evil-registers
-antigen bundle mafredri/zsh-async
+antigen bundle mafredri/zsh-async@main
 antigen bundle sindresorhus/pure@main
 
 antigen apply

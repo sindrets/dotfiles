@@ -255,7 +255,7 @@ end
 -- Only show diagnostics if current word + line is not the same as last call.
 local last_diagnostics_word = nil
 function M.show_position_diagnostics()
-  if cmp and cmp.visible() then return end
+  if cmp and (cmp.core.view:visible() or vim.fn.pumvisible() == 1) then return end
 
   local cword = vim.fn.expand("<cword>")
   local cline = vim.api.nvim_win_get_cursor(0)[1]

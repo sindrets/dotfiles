@@ -113,6 +113,7 @@ opt.formatoptions = table.concat({
   "l", -- Long lines are not broken in insert mode
   "j", -- Remove comment leader when joining lines
 })
+opt.jumpoptions = "stack"
 
 local data_backup = vim.fn.stdpath("data") .. "/backup"
 local data_undo = vim.fn.stdpath("data") .. "/undo"

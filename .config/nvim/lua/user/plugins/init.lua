@@ -304,7 +304,7 @@ require("lazy").setup({
     cmd = { "SymbolsOutline", "SymbolsOutlineClose", "SymbolsOutlineOpen" },
   },
   {
-    "HiPhish/nvim-ts-rainbow2",
+    "HiPhish/rainbow-delimiters.nvim",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     config = conf("nvim-ts-rainbow"),
   },
