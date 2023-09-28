@@ -1,51 +1,65 @@
 return function ()
-  require("indent_blankline").setup({
-    char = "▏",
-    context_char = "▏",
-    -- space_char = " ",
-    space_char_blankline = "⠀",
-    use_treesitter = false,
-    use_treesitter_scope = false,
-    show_trailing_blankline_indent = false,
-    show_current_context = true,
-    max_indent_increase = 2,
-    buftype_exclude = {
-      "terminal",
-      "nofile",
+  local hooks = require("ibl.hooks")
+  local hi = Config.common.hl.hi
+
+  hooks.register(hooks.type.HIGHLIGHT_SETUP, vim.schedule_wrap(function()
+    -- Remove `nocombine`
+    hi(
+      {
+        "@ibl.indent.char.1",
+        "@ibl.whitespace.char.1",
+        "@ibl.scope.char.1",
+        "@ibl.scope.underline.1",
+      },
+      { style = "NONE" }
+    )
+  end))
+
+  require("ibl").setup({
+    enabled = true,
+    debounce = 200,
+    indent = {
+      char = "▏",
+      tab_char = "▏",
+      smart_indent_cap = true,
+      highlight = "Whitespace",
     },
-    filetype_exclude = {
-      "help",
-      "startify",
-      "dashboard",
-      "alpha",
-      "packer",
-      "NeogitStatus",
-      "NeogitCommitView",
-      "NeogitPopup",
-      "NeogitLogView",
-      "NeogitCommitMessage",
-      "man",
-      "sagasignature",
-      "sagahover",
-      "lspsagafinder",
-      "LspSagaCodeAction",
-      "TelescopePrompt",
-      "NvimTree",
-      "Trouble",
-      "DiffviewFiles",
-      "DiffviewFileHistory",
-      "Outline",
-      "lspinfo",
-      "fugitive",
-      "norg",
+    scope = {
+      enabled = true,
+      char = "▏",
+      show_start = false,
     },
-    context_patterns = {
-      "class", "return", "function", "method", "^if", "^while", "jsx_element",
-      "^for", "^object", "^table", "block", "arguments", "if_statement",
-      "else_clause", "jsx_element", "jsx_self_closing_element",
-      "try_statement", "catch_clause", "import_statement"
+    exclude = {
+      bufttypes = {
+        "terminal",
+        "nofile",
+      },
+      filetypes = {
+        "help",
+        "startify",
+        "dashboard",
+        "alpha",
+        "packer",
+        "NeogitStatus",
+        "NeogitCommitView",
+        "NeogitPopup",
+        "NeogitLogView",
+        "NeogitCommitMessage",
+        "man",
+        "sagasignature",
+        "sagahover",
+        "lspsagafinder",
+        "LspSagaCodeAction",
+        "TelescopePrompt",
+        "NvimTree",
+        "Trouble",
+        "DiffviewFiles",
+        "DiffviewFileHistory",
+        "Outline",
+        "lspinfo",
+        "fugitive",
+        "norg",
+      },
     },
   })
-
-  -- vim.cmd([[hi! IndentBlanklineContextChar guifg=fg]])
 end

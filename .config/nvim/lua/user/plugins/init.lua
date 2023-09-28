@@ -273,12 +273,13 @@ require("lazy").setup({
     "rcarriga/nvim-notify",
     config = function()
       ---@diagnostic disable-next-line: different-requires
-      vim.notify = require("notify")
-      vim.notify.setup({
+      local notify = require("notify")
+      notify.setup({
         max_width = 80,
         max_height = 15,
         top_down = false,
       })
+      vim.notify = notify
     end,
   },
 

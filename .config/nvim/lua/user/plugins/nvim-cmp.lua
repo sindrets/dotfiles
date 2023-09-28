@@ -1,7 +1,6 @@
 return function()
   local cmp = require("cmp")
   local cmp_autopairs = require("nvim-autopairs.completion.cmp")
-  local api = vim.api
   local utils = Config.common.utils
 
   local lsp_kinds = {
@@ -90,10 +89,7 @@ return function()
         option = {
           get_bufnrs = function()
             return vim.tbl_filter(
-              function(bufnr)
-                local bytesize = api.nvim_buf_get_offset(bufnr, api.nvim_buf_line_count(bufnr))
-                return bytesize < 1024 * 1024
-              end,
+              function(bufnr) return utils.buf_get_size(bufnr) < 1024 end,
               utils.vec_union(
                 utils.list_bufs({ listed = true }),
                 utils.list_bufs({ no_hidden = true })

@@ -89,7 +89,7 @@ return function()
 
     elements.footer = {
       type = "text",
-      val = { " " ..  version_lines[2] },
+      val = { "󰀘 " ..  version_lines[2] },
       opts = {
         position = "center",
         hl = "DashboardFooter",

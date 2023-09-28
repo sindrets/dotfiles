@@ -52,7 +52,7 @@ M.local_config_paths = {
 }
 
 function M.create_local_config(config)
-  local cwd = uv.cwd()
+  local cwd = assert(uv.cwd())
   local local_config = config_store[cwd]
   local project_config = Config.state.project_config
   config = config or {}
@@ -64,10 +64,11 @@ function M.create_local_config(config)
     else
       for _, path in ipairs(M.local_config_paths) do
         if pl:readable(path) then
-          notify.config("Using project-local LSP config: " .. utils.str_quote(path))
-          local code_chunk = loadfile(path)
-          if code_chunk then
-            local_config = code_chunk()
+          local data = vim.secure.read(path)
+
+          if data then
+            notify.config("Using project-local LSP config: " .. utils.str_quote(path))
+            utils.exec_lua(data)
             break
           end
         end
@@ -255,6 +256,7 @@ end
 -- Only show diagnostics if current word + line is not the same as last call.
 local last_diagnostics_word = nil
 function M.show_position_diagnostics()
+  -- NOTE: `cmp.visible()` is very slow (at least 10ms) !
   if cmp and (cmp.core.view:visible() or vim.fn.pumvisible() == 1) then return end
 
   local cword = vim.fn.expand("<cword>")

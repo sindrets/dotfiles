@@ -948,9 +948,6 @@ function M.apply_tweaks()
     { clear = true }
   )
 
-  hi_link("IndentBlanklineChar", "Whitespace", { clear = true })
-  hi_link("IndentBlanklineSpaceChar", "Whitespace", { clear = true })
-
   -- Make breaking changes stand out more
   hi("packerBreakingChange", {
     fg = hl.get_fg("DiagnosticError"),
