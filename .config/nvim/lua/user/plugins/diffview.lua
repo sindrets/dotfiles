@@ -109,33 +109,25 @@ return function ()
         {
           "n", "[c",
           actions.view_windo(function(_, sym)
-            if sym == "b" then
-              vim.cmd("norm! [c")
-            end
+            if sym == "b" then vim.cmd("norm! [c") end
           end)
         },
         {
           "n", "]c",
           actions.view_windo(function(_, sym)
-            if sym == "b" then
-              vim.cmd("norm! ]c")
-            end
+            if sym == "b" then vim.cmd("norm! ]c") end
           end)
         },
         {
           "n", "do",
           actions.view_windo(function(_, sym)
-            if sym == "b" then
-              vim.cmd("norm! do")
-            end
+            if sym == "b" then vim.cmd("norm! do") end
           end)
         },
         {
           "n", "dp",
           actions.view_windo(function(_, sym)
-            if sym == "b" then
-              vim.cmd("norm! dp")
-            end
+            if sym == "b" then vim.cmd("norm! dp") end
           end)
         },
       },

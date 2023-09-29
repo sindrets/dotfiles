@@ -164,6 +164,10 @@ nnoremap <M--> <Cmd>Scratchpad show<CR>
 tnoremap <M-S--> <Cmd>Scratchpad move<CR>
 tnoremap <M--> <Cmd>Scratchpad show<CR>
 
+" Journal
+nnoremap <leader>jo <Cmd>Neorg journal toc open<CR>
+nnoremap <leader>jj <Cmd>Neorg journal today<CR>
+
 nnoremap <Leader>q <Cmd>lua Config.lib.comfy_quit()<CR>
 nnoremap <C-q> <Cmd>lua Config.lib.comfy_quit()<CR>
 

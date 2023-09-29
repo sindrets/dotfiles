@@ -253,7 +253,7 @@ function M.remove_buffer(force, bufnr)
       -- bufnr("#") only works correctly when called from the current buffer.
       local alt_bufnr = bufnr == cur_bufnr and vim.fn.bufnr("#") or -1
 
-      if alt_bufnr ~= -1 then
+      if alt_bufnr ~= -1 and api.nvim_buf_is_loaded(alt_bufnr) then
         api.nvim_set_current_buf(alt_bufnr)
       else
         local listed = utils.list_bufs({ listed = true })
@@ -275,7 +275,8 @@ function M.remove_buffer(force, bufnr)
   end
 
   if api.nvim_buf_is_valid(bufnr) then
-    api.nvim_buf_delete(bufnr, { force = true })
+    api.nvim_buf_delete(bufnr, { unload = true, force = true })
+    vim.bo[bufnr].buflisted = false
   end
 end
 
