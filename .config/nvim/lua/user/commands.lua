@@ -108,7 +108,6 @@ end, { bar = true, nargs = 1, complete = require("man").man_complete })
 
 command("Scratch", function(c)
   Config.lib.new_scratch_buf(c.fargs[1])
-  vim.cmd.IndentBlanklineEnable()
 end, { bar = true, nargs = "?", complete = "filetype" })
 
 command("SplitOn", function(c)

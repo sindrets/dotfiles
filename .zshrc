@@ -320,7 +320,7 @@ autoload -U promptinit; promptinit
 zstyle :prompt:pure:git:stash show yes
 zstyle :prompt:pure:prompt:success color green
 export PURE_PROMPT_SYMBOL="ᐅ"
-export PURE_PROMPT_VICMD_SYMBOL="λ"
+export PURE_PROMPT_VICMD_SYMBOL="⟐"
 prompt pure
 
 read -rd '' aperture_logo <<'EOF'
