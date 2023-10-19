@@ -8,7 +8,7 @@ local api = vim.api
 local fmt = string.format
 local strwidth = vim.api.nvim_strwidth
 
-local HOME_DIR = uv.os_homedir()
+local HOME_DIR = assert(uv.os_homedir())
 local WINBAR_STRING = "%{%v:lua.require'user.modules.winbar'.generate()%}"
 
 local M = {}

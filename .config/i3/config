@@ -186,6 +186,8 @@ for_window [class="VirtualBox Machine"] move container to workspace $vm
 for_window [instance="fam-strom.1password.com"] floating enable border pixel 1
 for_window [class="1Password"] floating enable border pixel 1
 for_window [class="SpeedCrunch"] floating enable border pixel 1
+for_window [title="None"] floating enable
+for_window [title="^$"] floating enable
 for_window [class="steam"] border pixel 1
 for_window [class="steam" title="Friends List"] floating enable
 for_window [class="steam" title="Steam - News"] floating enable

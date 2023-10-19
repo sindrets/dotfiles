@@ -326,8 +326,9 @@ end
 ---Get the expected indent size of the current line.
 ---@return integer
 function M.get_cline_indent_size()
-  local lnum = api.nvim_win_get_cursor(0)[1]
-  if lnum == 0 then return 0 end
+  -- [lnum, col]
+  local save_cursor = api.nvim_win_get_cursor(0)
+  if save_cursor[1] == 0 then return 0 end
 
   local ok, size
   local indentexpr = vim.bo.indentexpr
@@ -335,12 +336,16 @@ function M.get_cline_indent_size()
   if indentexpr and indentexpr ~= "" then
     ok, size = pcall(vim.api.nvim_eval, indentexpr)
 
+    -- Restore cursor pos. 'indentexpr' is allowed to move the cursor.
+    api.nvim_win_set_cursor(0, save_cursor)
+
     if ok then
       return size
     end
   end
 
-  local indent = vim.fn.cindent(lnum)
+  local indent = vim.fn.cindent(save_cursor[1])
+
   return indent
 end
 
@@ -349,7 +354,7 @@ function M.full_indent()
   local col = pos[2]
   local cline = api.nvim_get_current_line()
   local last_col = #cline
-  local first_nonspace = cline:match("^%s-()%S")
+  local first_nonspace = cline:match("^%s*()%S")
 
   local tab_char = "	"
   if first_nonspace or col < last_col then
