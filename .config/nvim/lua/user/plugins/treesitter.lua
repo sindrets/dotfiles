@@ -1,4 +1,11 @@
-return function ()
+return function()
+  -- Map filetypes to TS parsers
+  for ft, parser in pairs({
+    handlebars = "glimmer",
+  }) do
+    vim.treesitter.language.register(ft, parser)
+  end
+
   require("nvim-treesitter.configs").setup({
     ensure_installed = "all",
     ignore_install = {
