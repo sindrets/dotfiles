@@ -83,6 +83,12 @@ xnoremap <M-p> "_d"+P
 inoremap <M-p> <Cmd>set paste <bar> exe 'norm! "+p' <bar> set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste <bar> exe 'norm! "+P' <bar> set nopaste<CR><RIGHT>
 
+" Yank path
+nnoremap yp <CMD>let @+ = expand("%")<CR>
+nnoremap yP <CMD>let @+ = expand("%:p")<CR>
+nnoremap yl <CMD>let @+ = printf("%s:%d", expand("%"), getcurpos()[1])<CR>
+nnoremap yL <CMD>let @+ = printf("%s:%d", expand("%:p"), getcurpos()[1])<CR>
+
 " File explorer
 nnoremap - <Cmd>LirExplore<CR>
 nnoremap _ <Cmd>exe 'e ' . getcwd()<CR>
