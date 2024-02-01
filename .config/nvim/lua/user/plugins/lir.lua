@@ -279,7 +279,6 @@ return function()
       ['a']     = actions.create_paths,         -- [a]dd
       ['m']     = actions.move,                 -- [m]ove
       ['<C-]>'] = actions.cd,
-      ['gy']    = actions.yank_path,            -- [y]ank path
       ['gx']    = actions.system_open,
       ['<C-h>'] = actions.toggle_show_hidden,   -- toggle [h]idden
       ['d']     = actions.delete,               -- [d]elete
@@ -336,7 +335,7 @@ return function()
 
     if not (pl:readable(abs_path) or pl:readable(pl:parent(abs_path) or "")) then
       -- Target cannot be derived to a readable directory: use cwd.
-      abs_path = pl:absolute(uv.cwd())
+      abs_path = pl:absolute(assert(uv.cwd()))
     elseif not pl:is_dir(abs_path) then
       -- Target is not a directory: use the parent.
       abs_path = pl:parent(abs_path)

@@ -1,4 +1,16 @@
 return function()
+  local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+
+  parser_config.haxe = {
+    install_info = {
+      url = "https://github.com/vantreeseba/tree-sitter-haxe",
+      files = { "src/parser.c" },
+      -- optional entries:
+      branch = "main",
+    },
+    filetype = "haxe",
+  }
+
   -- Map filetypes to TS parsers
   for ft, parser in pairs({
     handlebars = "glimmer",
@@ -10,6 +22,7 @@ return function()
     ensure_installed = "all",
     ignore_install = {
       "luap",
+      "comment",
     },
     highlight = {
       -- false will disable the whole extension
@@ -27,6 +40,7 @@ return function()
           "cpp",
           "latex",
           "comment",
+          "haxe",
         }, lang)
       end,
     },

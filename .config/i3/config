@@ -259,6 +259,7 @@ exec --no-startup-id clipster -d
 exec --no-startup-id insync start
 exec --no-startup-id redshift -l 59.89:10.75
 exec --no-startup-id wal -sntR; /$HOME/.config/polybar/launch.sh
+exec --no-startup-id thunar --daemon
 
 # Theme colors
 set_from_resource $background     background

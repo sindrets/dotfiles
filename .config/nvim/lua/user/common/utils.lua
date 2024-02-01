@@ -471,9 +471,11 @@ end
 
 ---Set a value in a table, creating all missing intermediate tables in the
 ---table path.
+---@generic T
 ---@param t table
 ---@param table_path string|string[] Either a `.` separated string of table keys, or a list.
----@param value any
+---@param value T
+---@return T value
 function M.tbl_set(t, table_path, value)
   local keys = type(table_path) == "table"
       and table_path ---@cast table_path string
@@ -492,6 +494,8 @@ function M.tbl_set(t, table_path, value)
   end
 
   cur[keys[#keys]] = value
+
+  return value
 end
 
 ---Ensure that the table path is a table in `t`.
@@ -502,9 +506,17 @@ function M.tbl_ensure(t, table_path)
       and table_path ---@cast table_path string
       or vim.split(table_path, ".", { plain = true })
 
-  if not M.tbl_access(t, keys) then
-    M.tbl_set(t, keys, {})
+  local ret = M.tbl_access(t, keys)
+  assert(
+    ret == nil or type(ret) == "table",
+    "TypeError :: The table path exists and is of a non-table type!"
+  )
+
+  if not ret then
+    ret = M.tbl_set(t, keys, {})
   end
+
+  return ret
 end
 
 ---Create a shallow copy of a portion of a vector. Negative numbers indexes

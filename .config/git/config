@@ -51,16 +51,8 @@
 [alias]
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %C(bold blue)<%an> %Cgreen(%cr)%Creset' --abbrev-commit
 	wt = "!f() { source $HOME/.config/git/lib.sh && git_wt $@; }; f"
-	pr-checkout = "!f() { \
-		pr-fetch \"$1\" && \
-		git checkout \"pr/$1\"; \
-	}; f"
-	pr-wt = "!f() { \
-		local common_dir=\"$(git rev-parse --path-format=absolute --git-common-dir)\"; \
-		local bname=\"pr/$1\"; \
-		pr-fetch \"$1\" && \
-		git worktree add \"$common_dir/trees/$bname\" \"$bname\"; \
-	}; f"
+	pr-checkout = "!f() { source $HOME/.config/git/lib.sh && git_pr_checkout $@; }; f"
+	pr-wt = "!f() { source $HOME/.config/git/lib.sh && git_pr_wt $@; }; f"
 	stash-keep = !git stash store $(git stash create)
 [credential "https://github.com"]
 	helper = !/usr/bin/gh auth git-credential

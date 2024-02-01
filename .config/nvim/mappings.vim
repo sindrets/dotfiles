@@ -84,10 +84,10 @@ inoremap <M-p> <Cmd>set paste <bar> exe 'norm! "+p' <bar> set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste <bar> exe 'norm! "+P' <bar> set nopaste<CR><RIGHT>
 
 " Yank path
-nnoremap yp <CMD>let @+ = expand("%")<CR>
-nnoremap yP <CMD>let @+ = expand("%:p")<CR>
-nnoremap yl <CMD>let @+ = printf("%s:%d", expand("%"), getcurpos()[1])<CR>
-nnoremap yL <CMD>let @+ = printf("%s:%d", expand("%:p"), getcurpos()[1])<CR>
+nnoremap gyp <CMD>let @+ = expand("%") \| let @0 = @+<CR>
+nnoremap gyP <CMD>let @+ = expand("%:p") \| let @0 = @+<CR>
+nnoremap gyl <CMD>let @+ = printf("%s:%d", expand("%"), getcurpos()[1]) \| let @0 = @+<CR>
+nnoremap gyL <CMD>let @+ = printf("%s:%d", expand("%:p"), getcurpos()[1]) \| let @0 = @+<CR>
 
 " File explorer
 nnoremap - <Cmd>LirExplore<CR>
@@ -108,6 +108,9 @@ nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 nnoremap X <Cmd>bd<CR>
 
 " Navigate tabs
+nnoremap <M-[> <Cmd>tabp<CR>
+nnoremap <M-]> <Cmd>tabn<CR>
+nnoremap <leader>x <Cmd>tabc<CR>
 nnoremap <silent> <Leader><Tab> g<Tab>
 nnoremap <leader>1 <Cmd>1tabn<CR>
 nnoremap <leader>2 <Cmd>2tabn<CR>
@@ -118,7 +121,6 @@ nnoremap <leader>6 <Cmd>6tabn<CR>
 nnoremap <leader>7 <Cmd>7tabn<CR>
 nnoremap <leader>8 <Cmd>8tabn<CR>
 nnoremap <leader>9 <Cmd>9tabn<CR>
-nnoremap <leader>x <Cmd>tabc<CR>
 
 " Navigate windows
 tnoremap <A-h> <C-\><C-N><C-w>h

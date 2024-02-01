@@ -66,6 +66,16 @@ return function ()
         color = "#41535b",
         name = "Patch",
       },
+      hx = {
+        icon = "",
+        color = "#e37933",
+        name = "Haxe",
+      },
+      hxml = {
+        icon = "",
+        color = "#6d8086",
+        name = "HaxeBuildConfig",
+      },
     },
     default = false
   })

@@ -1,3 +1,9 @@
+local mason = prequire("mason")
+local mason_lspconfig = prequire("mason-lspconfig")
+
+if mason then mason.setup() end
+if mason_lspconfig then mason_lspconfig.setup() end
+
 require("neodev").setup({
   library = {
     vimruntime = false, -- runtime path
@@ -140,6 +146,21 @@ lspconfig.gopls.setup(M.create_config())
 
 -- Scheme, Racket
 lspconfig.racket_langserver.setup(M.create_config())
+
+-- Haxe
+lspconfig.haxe_language_server.setup(M.create_config({
+  -- NOTE: Doesn't work with xargs here. Something about the tty?
+  cmd = {
+    "sh",
+    "-c",
+    [=[haxe-language-server $(find . -maxdepth 6 -type f -name 'build.hxml')]=],
+  },
+  root_dir = lspconfig.util.root_pattern('build.hxml', 'Makefile', '.git'),
+  init_options = {
+    displayArguments = { 'build.hxml' },
+  },
+}))
+
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {

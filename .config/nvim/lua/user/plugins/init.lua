@@ -160,6 +160,11 @@ require("lazy").setup({
     event = "VeryLazy",
   },
   use_local { "folke/neodev.nvim" },
+  {
+    "williamboman/mason.nvim",
+    dependencies = { { "williamboman/mason-lspconfig.nvim", config = false } },
+    config = false,
+  },
   { "neovim/nvim-lspconfig" },
   {
     "jose-elias-alvarez/null-ls.nvim",

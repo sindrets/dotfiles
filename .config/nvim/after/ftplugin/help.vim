@@ -1,6 +1,6 @@
 setl comments+=n:•
 setl formatoptions=tnqro
-" setl iskeyword=!-~,^*,^\|,^",192-255
+setl iskeyword=!-~,^*,^\|,^",192-255
 
 " Send all helptags to loclist
 nnoremap <buffer> <M-o> <Cmd>lvimgrep /\v.*\*\S+\*$/j % <bar> lopen<CR>
@@ -13,3 +13,7 @@ function! s:format_helptags() abort
 endfunction
 
 nnoremap <buffer> <leader>ff <Cmd>call <sid>format_helptags()<CR>
+
+if &readonly
+  nnoremap <buffer> q <Cmd>bd<CR>
+endif
