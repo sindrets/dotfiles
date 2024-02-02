@@ -27,12 +27,14 @@ syntax match gitDiffAdded /\v^\d+\ze\t/ contained
 
 highlight default link gitStat diffFile
 highlight default link gitNonText NonText
+highlight default link gitBlobSize Number
 
-syntax region gitStat start=/\v^ \S.* \| +(Bin )?\d+/ end=/$/ oneline keepend contains=gitDiffAdded,gitDiffRemoved,Number,gitNonText
+syntax region gitStat start=/\v^ \S.* \| +(\d+|Bin)/ end=/$/ oneline keepend contains=gitDiffAdded,gitDiffRemoved,Number,gitBlobSize,gitNonText
 
 syntax match gitDiffRemoved /\v-+$/ contained
 syntax match gitDiffAdded /\v\++\ze-*$/ contained
-syntax match gitNonText /\v\|\ze +(Bin )?\d+/ contained nextgroup=Number
+syntax match gitNonText /\v\|\ze +(\d+|Bin)/ contained nextgroup=Number,gitBlobSize
+syntax match gitBlobSize /\vBin( \d+)?/ contained
 syntax match Number /\v \zs\d+/ contained
 
 " log --shortstat

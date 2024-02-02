@@ -38,7 +38,7 @@ bindsym $mod+F4 exec $terminal $EDITOR -c 'cd ~/.config/nvim' ~/.config/nvim/ini
 bindsym $mod+Shift+q kill
 
 # Close all unfocused windows
-bindsym $mod+Shift+o exec ~/.config/i3/scripts/close-other-wins
+bindsym $mod+Shift+o exec --no-startup-id ~/.config/i3/scripts/close-other-wins
 
 # start program launcher
 bindsym $mod+space exec --no-startup-id "~/.config/rofi/applets/launchers-git/launcher.sh"

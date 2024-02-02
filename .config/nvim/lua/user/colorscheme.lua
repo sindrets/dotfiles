@@ -806,6 +806,7 @@ function M.apply_tweaks()
     hi("@lsp.type.class", { fg = green, explicit = true })
 
     hi("Search", { fg = white, bg = search, explicit = true })
+    hi("QuickFixLine", { bg = Color.from_hex(search):blend(bg_normal, 0.7):to_css(), explicit = true })
     hi_link("IncSearch", "Search", { clear = true })
     hi("CurSearch", { fg = blue, bg = hl.get_fg("LineNr"), style = "bold", explicit = true })
 
