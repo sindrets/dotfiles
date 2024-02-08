@@ -37,7 +37,7 @@ syn keyword haxeFunction function __dollar__new new
 syn match haxeFunction "\<__[^_]\+__\>"
 syn keyword haxeKeyword untyped cast continue break return trace var
 syn match haxeKeyword "\$type"
-syn keyword haxeKeyword await
+syn keyword haxeKeyword await defer
 
 syn match haxeError "\<#\@<!elseif\>"
 
