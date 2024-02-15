@@ -793,6 +793,8 @@ function M.apply_tweaks()
     hi("Operator", { fg = blue, explicit = true })
     hi("NormalFloat", { bg = bg_normal:highlight(0.03):to_css() })
     hi("NonText", { fg = bg_normal:mod_value(0.2):to_css(), explicit = true })
+    hi_link("helpSpecial", "Function")
+    hi_link("helpHyperTextJump", "Special")
 
     hi("@field", { fg = yellow, explicit = true })
     hi("@keyword.operator", { fg = orange, explicit = true })

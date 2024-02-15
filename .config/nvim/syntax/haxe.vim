@@ -95,7 +95,7 @@ syn region haxeSString start=+'+ end=+'+ contains=haxeSpecialCharacter,haxeError
 " int/float/bool literal
 " ----------------------
 syn match haxeInt "\v<(\d%(_?\d+)*|0x[0-9a-fA-F]+)>"
-syn match haxeFloat "\v([-+]?%(\d%(_?\d+)*)?\.%(\d%(_?\d+)+)?%([eE][-+]?\d%(_?\d+))?)>"
+syn match haxeFloat "\v(%(%(\d%(_?\d+)*)?\.)?%(\d%(_?\d+)*)%([eE][-+]?\d%(_?\d+)*)?)>"
 syn keyword haxeBool true false
 
 " comments
