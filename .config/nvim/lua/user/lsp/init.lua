@@ -202,7 +202,7 @@ vim.diagnostic.handlers.signs = {
   end,
 }
 
-local pop_opts = { border = "single", max_width = 80 }
+local pop_opts = { border = "single", max_width = 84 }
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, pop_opts)
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
   vim.lsp.handlers.signature_help, pop_opts
