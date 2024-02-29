@@ -30,6 +30,23 @@ function chpwd() {
 
 function update_kitty_tab_title() {
     if [ "$cur_term" = "kitty" ]; then
+        branch="$(git branch --show-current 2>/dev/null)"
+
+        if [ ! -z "$branch" ]; then
+            repo_name="$(basename -s .git "$(git remote get-url origin 2>/dev/null)" 2>/dev/null)"
+
+            if [ -z "$repo_name" ]; then
+                if [ "$(git config --local core.bare)" = "true" ]; then
+                    repo_name="$(basename -s .git "$(git rev-parse --path-format=absolute --git-common-dir)")"
+                else
+                    repo_name="$(basename -s .git "$(git rev-parse --path-format=absolute --show-toplevel)")"
+                fi
+            fi
+
+            kitty @ set-tab-title "$repo_name($branch)"
+            return
+        fi
+
         kitty @ set-tab-title `basename "$(pwd)"`
     fi
 }
