@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "rasmus"
+M.DEFAULT_DARK = "kanagawa-dragon"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -670,11 +670,19 @@ function M.apply_tweaks()
 
   elseif colors_name == "kanagawa" then
     hi("WinSeparator", { bg = "NONE", fg = "#444444" })
+    hi(
+      { "CursorLine", "ColorColumn" },
+      { bg = bg_normal:highlight(0.06):to_css(), explicit = true }
+    )
+    hi("diffAdded", { fg = Color.from_hl("diffAdded", "fg"):mod_value(0.1):to_css() })
+    hi("diffRemoved", { fg = Color.from_hl("diffRemoved", "fg"):mod_saturation(-0.1):to_css() })
     hi("diffChanged", { fg = "#7E9CD8" })
     hi("Whitespace", { fg = bg_normal:highlight(0.18):to_css() })
     hi("BufferLineIndicatorSelected", { fg = "#7E9CD8" })
+    hi_link("@lsp.type.comment", "Comment", { clear = true })
 
-    vim.g.terminal_color_8 = "#393836"
+    vim.g.terminal_color_0 = bg_normal:mod_value(0.15):to_css()
+    vim.g.terminal_color_8 = bg_normal:mod_value(0.15):to_css()
 
   elseif colors_name == "oxocarbon-lua" then
     if bg == "dark" then

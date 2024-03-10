@@ -11,6 +11,9 @@
 [submodule]
 	recurse = false
 
+[push]
+	autoSetupRemote = true
+
 [pull]
 	rebase = true
 

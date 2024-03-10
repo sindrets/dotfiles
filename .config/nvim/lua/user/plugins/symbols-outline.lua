@@ -8,6 +8,8 @@ return function ()
     position = 'right',
     relative_width = false,
     width = 50,
+    autofold_depth = 0,
+    auto_unfold_hover = false,
     keymaps = {
       close = "q",
       goto_location = "<Cr>",
