@@ -679,6 +679,7 @@ function M.apply_tweaks()
     hi("diffChanged", { fg = "#7E9CD8" })
     hi("Whitespace", { fg = bg_normal:highlight(0.18):to_css() })
     hi("BufferLineIndicatorSelected", { fg = "#7E9CD8" })
+    hi_link("CurSearch", "IncSearch", { clear = true })
     hi_link("@lsp.type.comment", "Comment", { clear = true })
 
     vim.g.terminal_color_0 = bg_normal:mod_value(0.15):to_css()

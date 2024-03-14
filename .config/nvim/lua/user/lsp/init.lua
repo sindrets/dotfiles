@@ -161,6 +161,9 @@ lspconfig.haxe_language_server.setup(M.create_config({
   },
 }))
 
+-- Rust
+lspconfig.rust_analyzer.setup(M.create_config())
+
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {
