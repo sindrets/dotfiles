@@ -14,6 +14,7 @@ local utils = Config.common.utils
 local notify = Config.common.notify
 local api = vim.api
 local command = api.nvim_create_user_command
+local inspect = vim.inspect
 
 local function get_range(c)
   return { c.range, c.line1, c.line2 }
@@ -280,3 +281,69 @@ command("UnloadMod", function(c)
     end
   end
 end, { nargs = "+", bar = true })
+
+command("CloseFloats", function (c)
+  local force = c.bang
+  local pattern = c.fargs[1] or ".*"
+
+  for _, id in ipairs(api.nvim_list_wins()) do
+    if not utils.win_is_float(id) then goto continue end
+
+    local bufnr = api.nvim_win_get_buf(id)
+    if api.nvim_buf_get_name(bufnr):match(pattern) then
+      api.nvim_win_close(id, force)
+    end
+
+    ::continue::
+  end
+end, { nargs = "?", bar = true, bang = true })
+
+command("ReadMode", function ()
+  if not vim.b.read_mode then
+    vim.b.read_mode = true
+    vim.opt_local.list = false
+    vim.opt_local.nu = false
+    vim.opt_local.rnu = false
+    vim.opt_local.colorcolumn = ""
+  else
+    vim.b.read_mode = nil
+    vim.opt_local.list = nil
+    vim.opt_local.nu = nil
+    vim.opt_local.rnu = nil
+    vim.opt_local.colorcolumn = nil
+  end
+end, { bang = true })
+
+command("SetIndent", function(c)
+  local new_size = assert(
+    tonumber(c.fargs[1]),
+    fmt("IllegalArgument :: Expected number, got %s!", inspect(c.fargs[1]))
+  )
+
+  vim.opt_local.sw = new_size
+  vim.opt_local.ts = new_size
+  vim.opt_local.sts = new_size
+end, { bar = true, nargs = 1 })
+
+command("Reindent", function(c)
+  local new_size = assert(
+    tonumber(c.fargs[1]),
+    fmt("IllegalArgument :: Expected number, got %s!", inspect(c.fargs[1]))
+  )
+  local cur_size = vim.opt_local.sw:get()
+
+  local range = utils.vec_sort({ c.line1, c.line2 })
+  local save_et = vim.opt_local.et:get()
+
+  vim.opt_local.ts = cur_size
+  vim.opt_local.sts = cur_size
+
+  vim.opt_local.et = false
+  vim.cmd(fmt("%d,%d retab!", range[1], range[2]))
+
+  vim.opt_local.et = save_et
+  vim.opt_local.sw = new_size
+  vim.opt_local.ts = new_size
+  vim.opt_local.sts = new_size
+  vim.cmd(fmt("%d,%d retab!", range[1], range[2]))
+end, { bar = true, nargs = 1, range = "%" })

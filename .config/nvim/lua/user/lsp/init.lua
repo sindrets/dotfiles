@@ -127,13 +127,7 @@ require("user.lsp.lua")
 lspconfig.bashls.setup(M.create_config())
 
 -- C#
-lspconfig.omnisharp.setup(M.create_config({
-  cmd = { "/usr/bin/omnisharp", "--languageserver" , "--hostPID", tostring(vim.fn.getpid()) },
-  filetypes = { "cs", "vb" },
-  init_options = {},
-  -- root_dir = lspconfig.util.root_pattern(".csproj", ".sln"),
-  -- root_dir = vim.fn.getcwd
-}))
+require("user.lsp.csharp")
 
 -- C, C++
 lspconfig.clangd.setup(M.create_config())
@@ -251,12 +245,11 @@ function M.define_diagnostic_signs(opts)
 
   for _, g in ipairs(group) do
     vim.fn.sign_define(g.highlight, {
-        text = g.sign,
-        texthl = g.highlight,
-        linehl = '',
-        numhl = '',
-      }
-    )
+      text = g.sign,
+      texthl = g.highlight,
+      linehl = '',
+      numhl = '',
+    })
   end
 end
 
@@ -264,7 +257,7 @@ end
 
 function M.highlight_cursor_symbol()
   if vim.lsp.buf.server_ready() then
-    if vim.fn.mode() ~= "i" then
+    if vim.api.nvim_get_mode().mode ~= "i" then
       vim.lsp.buf.document_highlight()
     end
   end
@@ -281,7 +274,7 @@ end
 local last_diagnostics_word = nil
 function M.show_position_diagnostics()
   -- NOTE: `cmp.visible()` is very slow (at least 10ms) !
-  if cmp and (cmp.core.view:visible() or vim.fn.pumvisible() == 1) then return end
+  if (cmp and cmp.core.view:visible() or vim.fn.pumvisible() == 1) then return end
 
   local cword = vim.fn.expand("<cword>")
   local cline = vim.api.nvim_win_get_cursor(0)[1]

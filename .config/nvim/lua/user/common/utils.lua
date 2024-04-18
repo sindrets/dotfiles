@@ -705,6 +705,16 @@ function M.vec_remove(t, v)
   return false
 end
 
+--- @generic T
+--- @param t T[]
+--- @param comparator? fun(a: T, b: T): boolean
+function M.vec_sort(t, comparator)
+  local ret = M.vec_slice(t)
+  table.sort(ret, comparator)
+
+  return ret
+end
+
 ---@class utils.job.Opt
 ---@field cwd string Working directory of the job.
 ---@field writer string|string[] Something that will write to the stdin of this job.

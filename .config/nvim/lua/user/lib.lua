@@ -425,6 +425,7 @@ function M.new_scratch_buf(filetype)
   scratch_counter = scratch_counter + 1
   api.nvim_buf_set_name(bufid, name)
   api.nvim_win_set_buf(0, bufid)
+  vim.bo[bufid].buftype = "nowrite"
 
   if filetype then
     vim.bo[bufid].filetype = filetype

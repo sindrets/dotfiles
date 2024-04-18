@@ -1,5 +1,6 @@
 require("typescript-tools").setup(
   Config.lsp.create_config({
+    single_file_support = true,
     settings = {
       -- spawn additional tsserver instance to calculate diagnostics on it
       separate_diagnostic_server = true,

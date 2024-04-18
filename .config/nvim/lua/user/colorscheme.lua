@@ -669,6 +669,10 @@ function M.apply_tweaks()
     M.unstyle_telescope()
 
   elseif colors_name == "kanagawa" then
+    hi(
+      { "NormalFloat", "StatusLine", "StatusLineNC", "TablineSel", "MsgArea" },
+      { fg = fg_normal:to_css() }
+    )
     hi("WinSeparator", { bg = "NONE", fg = "#444444" })
     hi(
       { "CursorLine", "ColorColumn" },

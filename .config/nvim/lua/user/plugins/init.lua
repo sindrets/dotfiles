@@ -191,6 +191,10 @@ require("lazy").setup({
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
   },
   {
+    "Hoffs/omnisharp-extended-lsp.nvim",
+    dependencies = { "neovim/nvim-lspconfig" },
+  },
+  {
     "anuvyklack/pretty-fold.nvim",
     config = conf("pretty-fold"),
   },
@@ -301,7 +305,11 @@ require("lazy").setup({
   use_local { "sindrets/diffview.nvim", config = conf("diffview") },
   -- { "~/Documents/misc/diffview-api-test" },
   use_local { "sindrets/winshift.nvim", config = conf("winshift"), cmd = "WinShift" },
-  use_local { "sindrets/view-tween.nvim", config = conf("view-tween") },
+  use_local {
+    "sindrets/view-tween.nvim",
+    config = conf("view-tween"),
+    cond = not vim.g.neovide,
+  },
   use_local { "sindrets/scratchpad.nvim" },
   { "will133/vim-dirdiff" },
   {
