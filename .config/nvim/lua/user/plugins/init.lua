@@ -324,6 +324,10 @@ require("lazy").setup({
   },
   use_local {
     "sindrets/vim-fugitive",
+    config = conf("fugitive"),
+    init = function()
+      vim.g.github_enterprise_urls = { "https://github.schibsted.io" }
+    end,
     dependencies = {
       "tpope/vim-rhubarb",
       {
@@ -336,7 +340,6 @@ require("lazy").setup({
         end,
       },
     },
-    config = conf("fugitive"),
   },
   { "goolord/alpha-nvim", config = conf("alpha"), event = "VimEnter" },
   { "ryanoasis/vim-devicons" },

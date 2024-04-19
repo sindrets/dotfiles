@@ -76,6 +76,11 @@ return function ()
         color = "#6d8086",
         name = "HaxeBuildConfig",
       },
+      [".nvmrc"] = {
+        icon = "󰎙",
+        color = "#57A645",
+        name = "NvmRC",
+      },
     },
     default = false
   })
