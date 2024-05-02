@@ -90,12 +90,12 @@ nnoremap gyl <CMD>let @+ = printf("%s:%d", expand("%"), getcurpos()[1]) \| let @
 nnoremap gyL <CMD>let @+ = printf("%s:%d", expand("%:p"), getcurpos()[1]) \| let @0 = @+<CR>
 
 " File explorer
-nnoremap - <Cmd>LirExplore<CR>
+nnoremap - <Cmd>Oil<CR>
 nnoremap _ <Cmd>exe 'e ' . getcwd()<CR>
-nnoremap <leader>es <Cmd>sp <bar> LirExplore<CR>
-nnoremap <leader>ev <Cmd>vsp <bar> LirExplore<CR>
-nnoremap <leader>ee <Cmd>call v:lua.Config.plugin.lir.toggle_float()<CR>
-nnoremap <leader>E <Cmd>call v:lua.Config.plugin.lir.toggle_float(getcwd())<CR>
+nnoremap <leader>es <Cmd>sp <bar> Oil<CR>
+nnoremap <leader>ev <Cmd>vsp <bar> Oil<CR>
+nnoremap <leader>ee <Cmd>exe 'Float' <bar> Oil<CR>
+nnoremap <leader>E <Cmd>exe 'Float' <bar> exe 'Oil ' . fnameescape(getcwd())<CR>
 
 " Navigate buffers
 nnoremap  <silent>   <tab> :bn<CR>

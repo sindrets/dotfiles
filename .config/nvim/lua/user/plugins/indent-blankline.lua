@@ -59,6 +59,7 @@ return function ()
         "lspinfo",
         "fugitive",
         "norg",
+        "oil",
       },
     },
   })

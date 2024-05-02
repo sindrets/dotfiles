@@ -135,7 +135,7 @@ require("lazy").setup({
   { "nvim-lua/popup.nvim" },
   { "nvim-lua/plenary.nvim", lazy = true },
   {
-    "kyazdani42/nvim-web-devicons",
+    "nvim-tree/nvim-web-devicons",
     name = "nvim-web-devicons",
     config = conf("nvim-web-devicons"),
     lazy = true,
@@ -213,10 +213,10 @@ require("lazy").setup({
     },
     config = conf("nvim-cmp"),
   },
-  use_local {
-    "tamago324/lir.nvim",
-    dependencies = { use_local("tamago324/lir-git-status.nvim"), "nvim-web-devicons" },
-    config = conf("lir"),
+  {
+    "stevearc/oil.nvim",
+    config = conf("oil"),
+    dependencies = { "nvim-tree/nvim-web-devicons" },
   },
   {
     url = "https://gitlab.com/yorickpeterse/nvim-pqf.git",
