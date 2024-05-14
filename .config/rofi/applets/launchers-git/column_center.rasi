@@ -25,7 +25,7 @@ configuration {
 window {
     location:       center;
     anchor:         north;
-    width:          480;
+    width:          20em;
     y-offset:       -20%;
     border-radius:  8px;
 
@@ -33,18 +33,18 @@ window {
 }
 
 mainbox {
-    padding:    12px;
+    padding:    0.75em;
 }
 
 inputbar {
     background-color:   @bg1;
     border-color:       @bg3;
 
-    border:         2px;
+    border:         0.1em;
     border-radius:  16px;
 
-    padding:    8px 16px;
-    spacing:    8px;
+    padding:    0.5em 1em;
+    spacing:    0.5em;
     children:   [ prompt, entry ];
 }
 
@@ -58,20 +58,20 @@ entry {
 }
 
 message {
-    margin:             12px 0 0;
+    margin:             1em 0 0;
     border-radius:      16px;
     border-color:       @bg2;
     background-color:   @bg2;
 }
 
 textbox {
-    padding:    8px 24px;
+    padding:    0.5em 1.2em;
 }
 
 listview {
     background-color:   transparent;
 
-    margin:     12px 0 0;
+    margin:     1em 0 0;
     lines:      8;
     columns:    1;
 
@@ -79,8 +79,8 @@ listview {
 }
 
 element {
-    padding:        8px 16px;
-    spacing:        8px;
+    padding:        0.5em 1em;
+    spacing:        0.75em;
     border-radius:  16px;
 }
 
@@ -93,7 +93,7 @@ element selected normal, element selected active {
 }
 
 element-icon {
-    size:           24px;
+    size:           1.2em;
     vertical-align: 0.5;
 }
 

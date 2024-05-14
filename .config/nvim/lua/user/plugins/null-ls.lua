@@ -7,6 +7,7 @@ return function()
       builtins.formatting.raco_fmt.with({
         filetypes = { "racket", "scheme" },
       }),
+      builtins.formatting.prettier,
     },
   })
 end
