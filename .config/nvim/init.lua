@@ -74,39 +74,49 @@ alias("dp", "diffput")
 
 -- FUNCTIONS
 
-Config.fn.toggle_quickfix = lib.create_buf_toggler(
-  function()
+Config.fn.toggle_quickfix = lib.create_buf_toggler({
+  find = function()
     return utils.list_bufs({
       options = { buftype = "quickfix" },
       no_hidden = true,
       tabpage = 0,
     })[1]
   end,
-  function()
+  open = function()
     if #vim.fn.getloclist(0) > 0 then
       vim.cmd("belowright lope")
     else
-      vim.cmd("100 wincmd j | belowright cope")
+      vim.cmd("belowright cope | wincmd J")
     end
   end,
-  function()
+  close = function()
     if vim.fn.win_gettype() == "quickfix" then
       vim.cmd("ccl")
     else
       vim.cmd("lcl")
     end
   end,
-  { focus = true, remember_height = true }
-)
+  focus = true,
+  remember_height = true,
+})
 
-Config.fn.toggle_outline = lib.create_buf_toggler(
-  function() return utils.list_bufs({ pattern = "OUTLINE" })[1] end,
-  function() vim.cmd("SymbolsOutlineOpen") end,
-  function()
-    vim.cmd("SymbolsOutlineClose")
+Config.fn.toggle_outline = lib.create_buf_toggler({
+  find = function() return utils.list_bufs({ pattern = "OUTLINE" })[1] end,
+  open = function()
+    vim.api.nvim_create_autocmd("BufWinEnter", {
+      callback = function()
+        vim.schedule(function() vim.cmd("wincmd =") end)
+        return true
+      end,
+    })
+
+    vim.cmd("Outline")
+  end,
+  close = function()
+    vim.cmd("OutlineClose")
     vim.cmd("wincmd =")
-  end
-)
+  end,
+})
 
 ---@return string[]
 local function get_messages()

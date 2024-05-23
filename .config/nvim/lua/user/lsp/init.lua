@@ -268,13 +268,18 @@ function M.highlight_cursor_clear()
     vim.lsp.buf.clear_references()
   end
 end
+
 ---------------------------------
 
 -- Only show diagnostics if current word + line is not the same as last call.
 local last_diagnostics_word = nil
 function M.show_position_diagnostics()
-  -- NOTE: `cmp.visible()` is very slow (at least 10ms) !
-  if (cmp and cmp.core.view:visible() or vim.fn.pumvisible() == 1) then return end
+  if not vim.diagnostic.is_enabled({ bufnr = 0 })
+    -- NOTE: `cmp.visible()` is very slow (at least 10ms) ! Avoid.
+    or (cmp and cmp.core.view:visible() or vim.fn.pumvisible() == 1)
+  then
+    return
+  end
 
   local cword = vim.fn.expand("<cword>")
   local cline = vim.api.nvim_win_get_cursor(0)[1]
@@ -301,6 +306,17 @@ M.define_diagnostic_signs({
 -- LSP auto commands
 Config.common.au.declare_group("lsp_init", {}, {
   { "CursorHold", callback = M.show_position_diagnostics, },
+  {
+    "LspAttach",
+    callback = function(state)
+      local client = vim.lsp.get_client_by_id(state.data.client_id)
+
+      if client and client.server_capabilities.inlayHintProvider then
+        -- Enable inlay hints:
+        vim.lsp.inlay_hint.enable(true, { bufnr = 0 })
+      end
+    end,
+  }
 })
 
 return M

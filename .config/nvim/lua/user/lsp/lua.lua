@@ -11,10 +11,16 @@ end
 
 local lua_lib = {}
 
+--- @param lib string|string[]
 local function lua_add_lib(lib)
-  for _, p in pairs(vim.fn.expand(lib, false, true)) do
-    p = assert(vim.loop.fs_realpath(p))
-    lua_lib[p] = true
+  --- @type string[]
+  local libs = type(lib) == "table" and lib or { lib }
+
+  for _, pattern in ipairs(libs) do
+    for _, p in pairs(vim.fn.expand(pattern, false, true) --[[@as string[] ]]) do
+      p = assert(vim.loop.fs_realpath(p))
+      lua_lib[p] = true
+    end
   end
 end
 
@@ -25,6 +31,7 @@ end
 -- lua_add_lib("$VIMRUNTIME")
 -- lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
 -- lua_add_lib(vim.fn.stdpath("data") .. "/lazy/plenary.nvim/lua")
+lua_add_lib(require("neodev.config").types())
 
 -- "$schema" = "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json"
 
@@ -53,6 +60,19 @@ require("lspconfig").lua_ls.setup(
           checkThirdParty = false,
           maxPreload = 2000,
           preloadFileSize = 50000
+        },
+        hover = {
+          enable = true,
+          expandAlias = false,
+        },
+        hint = {
+          enable = true,
+          await = true,
+          arrayIndex = "Disable",
+          paramName = "Disable",
+          paramType = false,
+          semiColon = "Disable",
+          setType = false,
         },
         telemetry = {
           enable = false,

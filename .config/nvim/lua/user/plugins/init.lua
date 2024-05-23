@@ -144,7 +144,6 @@ require("lazy").setup({
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = conf("treesitter"),
-    commit = "82c948653909d8c1582f28313aa1cf9d68d66fe8",
   },
   { "nvim-treesitter/playground", dependencies = "nvim-treesitter/nvim-treesitter" },
   {
@@ -197,6 +196,10 @@ require("lazy").setup({
   {
     "anuvyklack/pretty-fold.nvim",
     config = conf("pretty-fold"),
+    cond = function()
+      -- NOTE: seems like some FFI stuff has broken here
+      return vim.fn.has("nvim-0.10") ~= 1
+    end
   },
   { "mfussenegger/nvim-jdtls" },
   {
@@ -313,9 +316,9 @@ require("lazy").setup({
   use_local { "sindrets/scratchpad.nvim" },
   { "will133/vim-dirdiff" },
   {
-    "simrat39/symbols-outline.nvim",
-    config = conf("symbols-outline"),
-    cmd = { "SymbolsOutline", "SymbolsOutlineClose", "SymbolsOutlineOpen" },
+    "hedyhli/outline.nvim",
+    config = conf("outline"),
+    cmd = { "Outline", "OutlineClose", "OutlineOpen" },
   },
   {
     "HiPhish/rainbow-delimiters.nvim",

@@ -9,6 +9,7 @@ local M = {}
 ---@field match string Expanded value of `<amatch>`
 ---@field buf integer Expanded value of `<abuf>`.
 ---@field file string Expand value of `<afile>`.
+---@field data table
 
 ---@class AucmdSpec
 ---@field [1] string|string[]

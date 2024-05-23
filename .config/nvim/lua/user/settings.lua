@@ -40,6 +40,11 @@ opt.foldexpr = "nvim_treesitter#foldexpr()"
 -- opt.foldlevelstart = 99
 opt.foldlevel = 99 -- 'foldlevelstart' isn't working correctly?
 opt.scrolloff = 3
+
+if vim.fn.has("nvim-0.10") == 1 then
+  opt.smoothscroll = true
+end
+
 opt.completeopt = list { "menuone", "noselect" }
 opt.virtualedit = list { "block" }
 opt.signcolumn = "yes:2"

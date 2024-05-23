@@ -36,20 +36,17 @@ return function ()
     use_lsp_diagnostic_signs = false -- enabling this will use the signs defined in your lsp client
   }
 
-  Config.fn.toggle_diagnostics = lib.create_buf_toggler(
-    function ()
+  Config.fn.toggle_diagnostics = lib.create_buf_toggler({
+    find = function ()
       return utils.list_bufs({
         options = { filetype = "Trouble" },
         no_hidden = true,
         tabpage = 0
       })[1]
     end,
-    function ()
-      vim.cmd("Trouble")
-    end,
-    function ()
-      vim.cmd("wincmd p | TroubleClose")
-    end,
-    { focus = true, remember_height = true }
-  )
+    open = function () vim.cmd("Trouble") end,
+    close = function () vim.cmd("wincmd p | TroubleClose") end,
+    focus = true,
+    remember_height = true,
+  })
 end

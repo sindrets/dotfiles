@@ -555,7 +555,7 @@ function M.apply_tweaks()
     hi("Accent", { fg = hl.get_fg("Constant") })
     hi_link("ColorColumn", "CursorLine")
     hi("CursorLine", { style = "NONE", bg = bg_normal:highlight(0.07):to_css() })
-    hi({ "TsNumber", "TsFloat" }, { style = "NONE" })
+    hi("WinSeparator", { fg = hl.get_fg("VertSplit"), explicit = true })
     hi("Visual", {
       style = "NONE",
       bg = Color.from_hl("Directory", "fg")
@@ -849,6 +849,8 @@ function M.apply_tweaks()
   hi({ "WinBar", "WinBarNC" }, { style = "bold", explicit = true })
 
   -- Treesitter
+  hi_link({ "@conditional", "@repeat" }, "Keyword", { clear = true })
+  hi_link("@method", "Function", { default = true, clear = true })
   hi("@text.emphasis", { style = "italic" })
   hi("@text.uri", { style = "underline" })
   hi_link("@variable.builtin", "Special", { clear = true })
@@ -957,6 +959,12 @@ function M.apply_tweaks()
 
   hi("LspReferenceText", {
     bg = Color.from_hl("CursorLine", "bg"):highlight(0.08):to_css(),
+    link = -1,
+    explicit = true,
+  })
+  hi("LspInlayHint", {
+    fg = bg_normal:highlight(0.3):to_css(),
+    style = "italic",
     link = -1,
     explicit = true,
   })

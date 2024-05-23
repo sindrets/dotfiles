@@ -31,10 +31,20 @@ function BufToggleEntry.new(opts)
   return self
 end
 
----@class lib.create_buf_toggler.Opt
----@field focus boolean Focus the window if it exists and is unfocused.
----@field height integer
----@field remember_height boolean Remember the height of the window when it was closed, and restore it the next time its opened.
+--- @class lib.create_buf_toggler.Opt
+--- A function that should return the buffer id of the wanted buffer if it
+--- exists, otherwise nil.
+--- @field find fun(): integer?
+--- A function that opens the window.
+--- @field open fun()
+--- A function that closes the window.
+--- @field close fun()
+--- Focus the window if it exists and is unfocused.
+--- @field focus? boolean
+--- Adjust the height of the window after opening.
+--- @field height? integer
+--- Remember the height of the window when it was closed, and restore it the next time its opened.
+--- @field remember_height? boolean
 
 ---Create a function that toggles a window with an identifiable buffer of some
 ---kind. The toggle logic works as follows:
@@ -46,19 +56,15 @@ end
 ---   - The buffer is active in the current window.
 --- • Focus if (only if the `focus` option is enabled):
 ---   - The buffer exists, the window exists, but the window is not active.
----@param buf_finder function A function that should return the buffer id of
----       the wanted buffer if it exists, otherwise nil.
----@param cb_open function Callback when the window should open.
----@param cb_close function Callback when the window should close.
 ---@param opts? lib.create_buf_toggler.Opt
 ---@return function
-function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
+function M.create_buf_toggler(opts)
   opts = opts or {}
   local toggler_entry = BufToggleEntry.new({ height = opts.height })
 
   local function open()
     toggler_entry.last_winid = api.nvim_get_current_win()
-    local ok, err = pcall(cb_open)
+    local ok, err = pcall(opts.open)
     if ok then
       if toggler_entry.height then
         vim.cmd("res " .. toggler_entry.height)
@@ -72,7 +78,7 @@ function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
     if opts.remember_height then
       toggler_entry.height = api.nvim_win_get_height(0)
     end
-    local ok, err = pcall(cb_close)
+    local ok, err = pcall(opts.close)
     if not ok then
       utils.err("[BufToggler] Close callback failed: " .. err)
     end
@@ -84,7 +90,7 @@ function M.create_buf_toggler(buf_finder, cb_open, cb_close, opts)
   end
 
   return function()
-    local target_bufid = buf_finder()
+    local target_bufid = opts.find()
 
     if not target_bufid then
       open()
