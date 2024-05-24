@@ -51,6 +51,17 @@ function update_kitty_tab_title() {
     fi
 }
 
+# Append to PATH
+function appendpath() {
+    case ":$PATH:" in
+        *:"$1":*)
+            ;;
+        *)
+            PATH="${PATH:+$PATH:}$1"
+            export PATH
+    esac
+}
+
 # Resolve and print path
 function rpath () {
     local RELATIVE_PATH="${@: -1}"

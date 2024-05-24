@@ -85,6 +85,10 @@ require("lazy").setup({
     url = "https://codeberg.org/ldesousa/vim-turtle-syntax.git",
     build = "mkdir -p syntax && cp turtle.vim syntax",
   },
+  {
+    "pld-linux/vim-syntax-vcl",
+    build = "mkdir -p syntax ftdetect && mv vcl.vim syntax/vcl.vim && mv ftdetect.vim ftdetect/vcl.vim",
+  },
   { "lifepillar/pgsql.vim" },
   {
     "lervag/vimtex",
@@ -373,15 +377,25 @@ require("lazy").setup({
     init = conf("firenvim"),
   },
   { "honza/vim-snippets" },
+  {
+    "vhyrro/luarocks.nvim",
+    priority = 1000,
+    config = true,
+  },
   use_local {
     "nvim-neorg/neorg",
+    lazy = true,
+    version = "*",
     config = conf("neorg"),
-    build = ":Neorg sync-parsers",
+    -- build = ":Neorg sync-parsers",
+    ft = "norg",
+    cmd = { "Neorg" },
     dependencies = {
       "nvim-treesitter",
       "telescope.nvim",
       "nvim-lua/plenary.nvim",
-      "nvim-neorg/neorg-telescope"
+      "nvim-neorg/neorg-telescope",
+      "luarocks.nvim",
     },
     cond = vim.fn.has("nvim-0.8") == 1,
   },
