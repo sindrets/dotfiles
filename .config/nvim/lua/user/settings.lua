@@ -19,6 +19,7 @@ opt.mouse = "a"
 opt.mousemoveevent = true
 opt.hidden = true
 opt.cursorline = true
+opt.cursorlineopt = list { "screenline", "number" }
 opt.guicursor = list {
   "n-v-c-sm:block-Cursor/lCursor",
   "i-ci-ve:ver25-Cursor/lCursor",

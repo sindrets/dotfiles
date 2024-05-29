@@ -304,8 +304,8 @@ require("lazy").setup({
   use_local { "lewis6991/gitsigns.nvim", config = conf("gitsigns") },
   { "lukas-reineke/indent-blankline.nvim", config = conf("indent-blankline"), event = "VimEnter" },
   {
-    "folke/lsp-trouble.nvim",
-    config = conf("lsp-trouble"),
+    "folke/trouble.nvim",
+    config = conf("trouble"),
     dependencies = "nvim-web-devicons",
     lazy = true,
   },

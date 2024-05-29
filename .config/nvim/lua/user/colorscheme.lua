@@ -550,12 +550,12 @@ function M.apply_tweaks()
       vim.opt.pumblend = 0
     end
 
-  elseif colors_name == "catppuccin" then
+  elseif colors_name:match("^catppuccin") then
     hi("Primary", { fg = hl.get_fg("Function") })
     hi("Accent", { fg = hl.get_fg("Constant") })
     hi_link("ColorColumn", "CursorLine")
     hi("CursorLine", { style = "NONE", bg = bg_normal:highlight(0.07):to_css() })
-    hi("WinSeparator", { fg = hl.get_fg("VertSplit"), explicit = true })
+    hi("WinSeparator", { fg = "#11111b", explicit = true })
     hi("Visual", {
       style = "NONE",
       bg = Color.from_hl("Directory", "fg")
@@ -566,7 +566,6 @@ function M.apply_tweaks()
     hi("TablineSel", { bg = "NONE" })
     hi("BufferLineCloseButtonSelected", { fg = fg_normal:blend(bg_normal, 0.3):to_css() })
     hi("BufferLineIndicatorSelected", { fg = hl.get_fg("Accent") })
-    hi("TelescopeBorder", { fg = hl.get_fg("FloatBorder") })
 
     if bg == "dark" then
       hi({ "NormalFloat", "StatusLine" }, { bg = bg_normal:mod_value(-0.025):to_css() })
@@ -580,6 +579,8 @@ function M.apply_tweaks()
       hi({ "NormalFloat", "StatusLine" }, { bg = bg_normal:mod_value(-0.05):to_css() })
       hi("VertSplit", { fg = bg_normal:mod_value(-0.25):to_css() })
     end
+
+    M.unstyle_telescope()
 
     -- Remove bg for diagnostics.
     for _, name in ipairs(diagnostic_kinds) do

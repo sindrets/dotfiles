@@ -21,6 +21,7 @@ return function ()
     view = {
       default = {
         -- layout = "diff1_inline",
+        disable_diagnostics = false,
         winbar_info = false,
       },
       merge_tool = {
@@ -30,6 +31,7 @@ return function ()
       },
       file_history = {
         -- layout = "diff1_inline",
+        disable_diagnostics = false,
         winbar_info = false,
       },
     },

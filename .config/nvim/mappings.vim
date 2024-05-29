@@ -362,6 +362,14 @@ nnoremap <silent> <leader>ld <Cmd>lua vim.diagnostic.open_float({ scope = "line"
 
 " Misc: {{{
 
+" Toggle conceal
+nnoremap <leader>oc <Cmd>
+            \ lua if vim.opt.conceallevel:get() > 0 then
+            \   vim.opt.conceallevel = 0; Config.common.notify.info("Conceal disabled.");
+            \ else
+            \   vim.opt.conceallevel = 3; Config.common.notify.info("Conceal enabled.");
+            \ end<CR>
+
 xnoremap @ :<C-u>lua Config.lib.execute_macro_over_visual_range()<CR>
 inoremap <Tab> <Cmd>lua Config.lib.full_indent()<CR>
 inoremap <M-Space> <Esc>
