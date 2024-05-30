@@ -118,6 +118,24 @@ Config.fn.toggle_outline = lib.create_buf_toggler({
   end,
 })
 
+Config.fn.toggle_diagnostics = lib.create_buf_toggler({
+  find = function ()
+    return utils.list_bufs({
+      options = { filetype = "trouble" },
+      no_hidden = true,
+      tabpage = 0,
+    })[1]
+  end,
+  open = function() vim.cmd("Trouble diagnostics") end,
+  close = function()
+    local winid = vim.api.nvim_get_current_win()
+    vim.cmd("wincmd p")
+    vim.api.nvim_win_close(winid, false)
+  end,
+  focus = true,
+  remember_height = true,
+})
+
 ---@return string[]
 local function get_messages()
   local ret = api.nvim_exec2("messages", { output = true })

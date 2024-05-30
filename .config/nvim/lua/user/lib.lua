@@ -62,15 +62,45 @@ function M.create_buf_toggler(opts)
   opts = opts or {}
   local toggler_entry = BufToggleEntry.new({ height = opts.height })
 
+  --- @return { winid: integer, bufnr: integer }? target
+  local function find_win()
+    local target_bufnr = opts.find()
+
+    if target_bufnr then
+      local win_ids = vim.fn.win_findbuf(target_bufnr)
+
+      if next(win_ids) then
+        return {
+          winid = win_ids[1],
+          bufnr = target_bufnr,
+        }
+      end
+    end
+  end
+
   local function open()
     toggler_entry.last_winid = api.nvim_get_current_win()
     local ok, err = pcall(opts.open)
-    if ok then
-      if toggler_entry.height then
-        vim.cmd("res " .. toggler_entry.height)
+
+    if not ok then
+      return utils.err("[BufToggler] Open callback failed: " .. err)
+    end
+
+    if toggler_entry.height then
+      local target = find_win()
+
+      if target then
+        api.nvim_win_set_height(target.winid, toggler_entry.height)
+      else
+        -- The window didn't immediately open. Create an autocommand waiting
+        -- for the window to appear.
+        vim.api.nvim_create_autocmd("BufWinEnter", {
+          callback = function()
+            api.nvim_win_set_height(0, toggler_entry.height)
+            return true
+          end,
+        })
       end
-    else
-      utils.err("[BufToggler] Open callback failed: " .. err)
     end
   end
 
@@ -78,10 +108,13 @@ function M.create_buf_toggler(opts)
     if opts.remember_height then
       toggler_entry.height = api.nvim_win_get_height(0)
     end
+
     local ok, err = pcall(opts.close)
+
     if not ok then
-      utils.err("[BufToggler] Close callback failed: " .. err)
+      return utils.err("[BufToggler] Close callback failed: " .. err)
     end
+
     if api.nvim_win_is_valid(toggler_entry.last_winid or -1) then
       api.nvim_set_current_win(toggler_entry.last_winid)
     else
@@ -90,18 +123,12 @@ function M.create_buf_toggler(opts)
   end
 
   return function()
-    local target_bufid = opts.find()
+    local target = find_win()
 
-    if not target_bufid then
-      open()
-      return
-    end
-
-    local win_ids = vim.fn.win_findbuf(target_bufid)
-    if vim.tbl_isempty(win_ids) then
+    if not target then
       open()
     else
-      if target_bufid == api.nvim_get_current_buf() then
+      if target.bufnr == api.nvim_get_current_buf() then
         -- It's the current window: close it.
         close()
         return
@@ -110,9 +137,9 @@ function M.create_buf_toggler(opts)
       if opts.focus then
         -- The window exists, but is not active: focus it.
         toggler_entry.last_winid = api.nvim_get_current_win()
-        api.nvim_set_current_win(win_ids[1])
+        api.nvim_set_current_win(target.winid)
       else
-        close()
+        api.nvim_win_call(target.winid, close)
       end
     end
   end

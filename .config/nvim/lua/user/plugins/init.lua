@@ -307,7 +307,7 @@ require("lazy").setup({
     "folke/trouble.nvim",
     config = conf("trouble"),
     dependencies = "nvim-web-devicons",
-    lazy = true,
+    cmd = { "Trouble" },
   },
   use_local { "sindrets/diffview.nvim", config = conf("diffview") },
   -- { "~/Documents/misc/diffview-api-test" },
