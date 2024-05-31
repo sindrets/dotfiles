@@ -572,7 +572,7 @@ function M.apply_tweaks()
       hi("diffAdded", { fg = "#B3E1A3" })
       hi("diffChanged", { fg = "#A4B9EF" })
       hi("ModeMsg", { fg = "#98BBF5" })
-      hi("IndentBlanklineContextChar", { fg = "#B5E8E0" })
+      hi("@ibl.scope.char.1", { fg = "#B5E8E0" })
       hi("BufferLineFill", { bg = bg_normal:highlight(-0.07):to_css() })
       hi("TelescopePromptPrefix", { fg = "#F08FA9" })
     else

@@ -730,7 +730,8 @@ end
 ---filetype, defaults to vimscript). If no selection range is provided, the last
 ---selection is used instead.
 ---@param range? integer[]
-function cmd.exec_selection(range)
+--- @param bin? string
+function cmd.exec_selection(range, bin)
   local ft = vim.bo.ft == "lua" and "lua" or "vim"
   local lines
   ---@cast range integer[]
@@ -740,6 +741,19 @@ function cmd.exec_selection(range)
     lines = api.nvim_buf_get_lines(0, r[1] - 1, r[2], false)
   else
     lines = M.get_visual_selection()
+  end
+
+  if bin and bin ~= "" then
+    Config.state.term.term_split:open(true)
+    Config.term.send(
+      utils.vec_join(
+        bin .. " <<<$(cat << ___EOF___",
+        lines,
+        "___EOF___",
+        ")"
+      )
+    )
+    return
   end
 
   local ok, out

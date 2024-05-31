@@ -165,8 +165,8 @@ command("HiShow", function()
 end, { bar = true })
 
 command("ExecuteSelection", function(c)
-  Config.lib.cmd.exec_selection(get_range(c))
-end, { bar = true, range = true })
+  Config.lib.cmd.exec_selection(get_range(c), c.fargs[1])
+end, { bar = true, range = true, nargs = "?", complete = "shellcmd" })
 
 command("CompareDir", function(c)
   vim.cmd("tabnew")
@@ -347,3 +347,7 @@ command("Reindent", function(c)
   vim.opt_local.sts = new_size
   vim.cmd(fmt("%d,%d retab!", range[1], range[2]))
 end, { bar = true, nargs = 1, range = "%" })
+
+command("Browse", function(c)
+  vim.ui.open(c.fargs[1])
+end, { nargs = 1, bar = true })
