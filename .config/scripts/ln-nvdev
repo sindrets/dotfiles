@@ -81,7 +81,7 @@ function create_link() {
 
   link_name="$(get_link_name "$1")"
 
-  if [ -e "$link_name" ]; then
+  if ls -d "$link_name" > /dev/null; then
     echo "• Deleting existing link."
     rm "$link_name"
   fi

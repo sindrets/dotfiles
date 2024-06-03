@@ -299,7 +299,7 @@ end
 M.define_diagnostic_signs({
   error = "",
   warn = "",
-  hint = "",
+  hint = "",
   info = ""
 })
 
