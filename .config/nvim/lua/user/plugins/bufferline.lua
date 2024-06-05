@@ -1,12 +1,16 @@
 return function()
+  local lz = require("user.lazy")
+
   local hi = Config.common.hl.hi
 
-  local symbol_map = {
-    error = "",
-    warning = "",
-    info = "",
-    hint = "",
-  }
+  local symbol_map = lz.wrap({}, function()
+    return {
+      error = vim.fn.sign_getdefined("DiagnosticSignError")[1].text,
+      warning = vim.fn.sign_getdefined("DiagnosticSignWarn")[1].text,
+      info = vim.fn.sign_getdefined("DiagnosticSignInfo")[1].text,
+      hint = vim.fn.sign_getdefined("DiagnosticSignHint")[1].text,
+    }
+  end)
 
   require('bufferline').setup({
     options = {
