@@ -6,13 +6,13 @@
   "lazy_require": {
     "prefix": "lazyrequire",
     "body": [
-      "local ${1:module} = lazy.require(\"${2:module_path}\") ---@module \"${2}\""
+      "local ${1:module} = lz.require(\"${2}\") ---@module \"${2:module_path}\""
     ]
   },
   "lazy_access": {
     "prefix": "lazyaccess",
     "body": [
-      "local ${1:module} = lazy.access(\"${2:module_path}\", \"${1}\") ---@type ${1}|LazyModule"
+      "local ${1:module} = lz.access(\"${2:module_path}\", \"${1}\") ---@type ${1}|LazyModule"
     ]
   },
   "diffview_class": {

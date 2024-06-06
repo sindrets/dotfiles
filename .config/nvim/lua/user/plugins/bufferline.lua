@@ -29,7 +29,7 @@ return function()
       diagnostics_indicator = function(total_count, level, diagnostics_dict)
         local s = ""
         for kind, count in pairs(diagnostics_dict) do
-          s = string.format("%s %s %d", s, symbol_map[kind], count)
+          s = string.format("%s %s%d", s, symbol_map[kind], count)
         end
         return s
       end,
