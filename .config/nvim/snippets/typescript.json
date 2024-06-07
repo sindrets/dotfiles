@@ -1,0 +1,14 @@
+{
+  "Doc Comment": {
+    "prefix": "/**",
+    "body": [
+      "/**",
+      " * ${1}",
+      " */"
+    ]
+  },
+  "Doc Comment 1-line": {
+    "prefix": "/c/",
+    "body": "/** ${1} */"
+  }
+}
