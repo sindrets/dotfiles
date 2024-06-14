@@ -74,7 +74,7 @@ alias("dp", "diffput")
 
 -- FUNCTIONS
 
-Config.fn.toggle_quickfix = lib.create_buf_toggler({
+Config.fn.toggle_quickfix = lib.create_view_toggler({
   find = function()
     return utils.list_bufs({
       options = { buftype = "quickfix" },
@@ -100,7 +100,7 @@ Config.fn.toggle_quickfix = lib.create_buf_toggler({
   remember_height = true,
 })
 
-Config.fn.toggle_outline = lib.create_buf_toggler({
+Config.fn.toggle_outline = lib.create_view_toggler({
   find = function() return utils.list_bufs({ pattern = "OUTLINE" })[1] end,
   open = function()
     vim.api.nvim_create_autocmd("BufWinEnter", {
@@ -116,9 +116,10 @@ Config.fn.toggle_outline = lib.create_buf_toggler({
     vim.cmd("OutlineClose")
     vim.cmd("wincmd =")
   end,
+  focus = true,
 })
 
-Config.fn.toggle_diagnostics = lib.create_buf_toggler({
+Config.fn.toggle_diagnostics = lib.create_view_toggler({
   find = function ()
     return utils.list_bufs({
       options = { filetype = "trouble" },

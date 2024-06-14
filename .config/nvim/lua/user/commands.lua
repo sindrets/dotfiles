@@ -351,3 +351,5 @@ end, { bar = true, nargs = 1, range = "%" })
 command("Browse", function(c)
   vim.ui.open(c.fargs[1])
 end, { nargs = 1, bar = true })
+
+command("Nodiff", "windo set nodiff noscrollbind nocursorbind", { bar = true })

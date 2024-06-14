@@ -7,8 +7,8 @@ end
 opt.number = true
 opt.relativenumber = true
 opt.autoindent = true
-opt.shiftwidth = 4
-opt.tabstop = 4
+opt.shiftwidth = 2
+opt.tabstop = 2
 opt.softtabstop = -1
 opt.expandtab = true
 opt.ignorecase = true

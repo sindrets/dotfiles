@@ -31,7 +31,7 @@ function BufToggleEntry.new(opts)
   return self
 end
 
---- @class lib.create_buf_toggler.Opt
+--- @class lib.create_view_toggler.Opt
 --- A function that should return the buffer id of the wanted buffer if it
 --- exists, otherwise nil.
 --- @field find fun(): integer?
@@ -46,19 +46,19 @@ end
 --- Remember the height of the window when it was closed, and restore it the next time its opened.
 --- @field remember_height? boolean
 
----Create a function that toggles a window with an identifiable buffer of some
----kind. The toggle logic works as follows:
+--- Create a function that toggles a window with an identifiable buffer of some
+--- kind. The toggle logic works as follows:
 ---
---- • Open if:
+--- - Open if:
 ---   - The buffer is not found
 ---   - No window with the buffer is found
---- • Close if:
+--- - Close if:
 ---   - The buffer is active in the current window.
---- • Focus if (only if the `focus` option is enabled):
+--- - Focus if (only if the `focus` option is enabled):
 ---   - The buffer exists, the window exists, but the window is not active.
----@param opts? lib.create_buf_toggler.Opt
+---@param opts? lib.create_view_toggler.Opt
 ---@return function
-function M.create_buf_toggler(opts)
+function M.create_view_toggler(opts)
   opts = opts or {}
   local toggler_entry = BufToggleEntry.new({ height = opts.height })
 
@@ -94,10 +94,14 @@ function M.create_buf_toggler(opts)
       else
         -- The window didn't immediately open. Create an autocommand waiting
         -- for the window to appear.
-        vim.api.nvim_create_autocmd("BufWinEnter", {
-          callback = function()
-            api.nvim_win_set_height(0, toggler_entry.height)
-            return true
+        vim.api.nvim_create_autocmd({ "BufWinEnter", "BufEnter" }, {
+          callback = function(e)
+            target = find_win()
+
+            if target and e.buf == target.bufnr then
+              api.nvim_win_set_height(target.winid, toggler_entry.height)
+              return true
+            end
           end,
         })
       end
