@@ -134,6 +134,8 @@ return function ()
         },
       },
       file_history_panel = {
+        { "n", "[n", actions.select_prev_commit },
+        { "n", "]n", actions.select_next_commit },
         { "n", "<cr>", actions.focus_entry, { desc = "Focus the selected entry" } },
       },
     }

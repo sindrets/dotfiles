@@ -16,6 +16,9 @@ return function ()
     win = {
       type = "split",
       size = 10,
+      wo = {
+        cc = "",
+      },
     },
     -- Window options for the preview window. Can be a split, floating window,
     -- or `main` to show the preview in the main editor window.

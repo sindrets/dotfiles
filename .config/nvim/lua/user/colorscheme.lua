@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "kanagawa-dragon"
+M.DEFAULT_DARK = "catppuccin"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -858,6 +858,7 @@ function M.apply_tweaks()
   hi_link("@lsp.mod.defaultLibrary", "Special", { clear = true })
   hi_link("@lsp.type.variable.lua", "@lsp", { clear = true })
   hi("TreesitterContext", { bg = bg_normal:highlight(0.08):to_css() })
+  hi("TreesitterContextBottom", { style = "underline", sp = bg_normal:highlight(0.37):to_css() })
   hi_link("@neorg.markup.verbatim", "@text.literal")
 
   hi({ "@neorg.tags.ranged_verbatim.code_block", "Folded" }, {

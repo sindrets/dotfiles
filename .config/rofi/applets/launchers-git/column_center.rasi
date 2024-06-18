@@ -12,14 +12,14 @@ configuration {
     margin:     0px;
     padding:    0px;
     spacing:    0px;
-    bg0:    #212121F2;
+    bg0:    #21212199;
     bg1:    #2A2A2A;
     bg2:    #3D3D3D80;
     bg3:    #1A73E8F2;
     fg0:    #E6E6E6;
     fg1:    #FFFFFF;
     fg2:    #969696;
-    fg3:    #3D3D3D;
+    fg3:    #4C4C4C;
 }
 
 window {

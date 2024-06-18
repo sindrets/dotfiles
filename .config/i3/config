@@ -9,6 +9,8 @@ new_float pixel 1
 
 hide_edge_borders none
 
+default_border pixel 1
+
 bindsym $mod+u border none
 bindsym $mod+y border pixel 1
 bindsym $mod+n border normal 1

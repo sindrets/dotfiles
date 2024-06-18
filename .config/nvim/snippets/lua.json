@@ -3,6 +3,10 @@
     "prefix": "as",
     "body": "--[[@as ${1:type} ]]"
   },
+  "inline_type": {
+    "prefix": "type",
+    "body": "--[[@type ${1:type} ]]"
+  },
   "lazy_require": {
     "prefix": "lazyrequire",
     "body": [
