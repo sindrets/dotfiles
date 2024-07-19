@@ -352,8 +352,8 @@ nmap <silent> gi <Cmd>lua vim.lsp.buf.implementation()<CR>
 nmap <silent> gr <Cmd>Telescope lsp_references<CR>
 nmap <silent> <leader>rn <Cmd>lua vim.lsp.buf.rename()<CR>
 nmap <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap <silent> <leader>ff <Cmd>lua vim.lsp.buf.format({ async = true })<CR>
-xnoremap <silent> <leader>ff <Esc><Cmd>lua vim.lsp.buf.format({ range = {} })<CR>
+nnoremap <silent> <leader>ff <Cmd>lua require("conform").format({ async = true, lsp_format = "fallback" })<CR>
+xnoremap <silent> <leader>ff <Cmd>lua require("conform").format({ async = true, lsp_format = "fallback" })<CR>
 nnoremap <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>. <Cmd>lua vim.lsp.buf.code_action()<CR>
 vnoremap <leader>. <Cmd>lua vim.lsp.buf.range_code_action()<CR>

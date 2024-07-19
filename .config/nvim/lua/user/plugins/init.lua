@@ -170,8 +170,8 @@ require("lazy").setup({
   },
   { "neovim/nvim-lspconfig" },
   {
-    "jose-elias-alvarez/null-ls.nvim",
-    config = conf("null-ls"),
+    "stevearc/conform.nvim",
+    config = conf("conform"),
     lazy = true,
   },
   {
