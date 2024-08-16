@@ -351,6 +351,29 @@ require("lazy").setup({
   { "goolord/alpha-nvim", config = conf("alpha"), event = "VimEnter" },
   { "ryanoasis/vim-devicons" },
   {
+    "OXY2DEV/markview.nvim",
+    ft = "markdown",
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons"
+    },
+    opts = {
+      modes = { "n", "i", "no", "c" },
+      hybrid_modes = { "i" },
+      code_blocks = {
+        pad_amount = 0,
+      },
+      callbacks = {
+        on_enable = function (_, win)
+          vim.api.nvim_win_call(win, function ()
+            vim.opt_local.conceallevel = 2
+            vim.opt_local.concealcursor = "nc"
+          end)
+        end,
+      },
+    },
+  },
+  {
     "iamcco/markdown-preview.nvim",
     build = "cd app && yarn install",
     ft = { "markdown" },

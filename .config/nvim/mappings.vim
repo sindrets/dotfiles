@@ -352,13 +352,24 @@ nmap <silent> gi <Cmd>lua vim.lsp.buf.implementation()<CR>
 nmap <silent> gr <Cmd>Telescope lsp_references<CR>
 nmap <silent> <leader>rn <Cmd>lua vim.lsp.buf.rename()<CR>
 nmap <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
-nnoremap <silent> <leader>ff <Cmd>lua require("conform").format({ async = true, lsp_format = "fallback" })<CR>
-xnoremap <silent> <leader>ff <Cmd>lua require("conform").format({ async = true, lsp_format = "fallback" })<CR>
+" noremap <silent> <leader>ff <Cmd>lua require("conform").format({ async = true, lsp_format = "fallback" })<CR>
 nnoremap <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
 nnoremap <leader>. <Cmd>lua vim.lsp.buf.code_action()<CR>
 vnoremap <leader>. <Cmd>lua vim.lsp.buf.range_code_action()<CR>
 nnoremap <silent> <leader>ld <Cmd>lua vim.diagnostic.open_float({ scope = "line", border = "single" })<CR>
 " nnoremap <M-O> <Cmd>lua vim.lsp.buf.organize_imports()<CR>
+lua <<EOF
+vim.keymap.set("", "<leader>f", function()
+  require("conform").format({ async = true }, function(err)
+    if not err then
+      local mode = vim.api.nvim_get_mode().mode
+      if vim.startswith(string.lower(mode), "v") then
+        vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+      end
+    end
+  end)
+end, { desc = "Format code" })
+EOF
 
 " Misc: {{{
 
