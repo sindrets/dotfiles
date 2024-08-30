@@ -359,7 +359,7 @@ vnoremap <leader>. <Cmd>lua vim.lsp.buf.range_code_action()<CR>
 nnoremap <silent> <leader>ld <Cmd>lua vim.diagnostic.open_float({ scope = "line", border = "single" })<CR>
 " nnoremap <M-O> <Cmd>lua vim.lsp.buf.organize_imports()<CR>
 lua <<EOF
-vim.keymap.set("", "<leader>f", function()
+vim.keymap.set("", "<leader>ff", function()
   require("conform").format({ async = true }, function(err)
     if not err then
       local mode = vim.api.nvim_get_mode().mode

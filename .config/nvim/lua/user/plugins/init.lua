@@ -172,7 +172,7 @@ require("lazy").setup({
   {
     "stevearc/conform.nvim",
     config = conf("conform"),
-    lazy = true,
+    event = "VeryLazy",
   },
   {
     "ray-x/lsp_signature.nvim",
@@ -432,6 +432,7 @@ require("lazy").setup({
     },
   },
   { "lambdalisue/suda.vim" },
+  { "rest-nvim/rest.nvim" },
 
   -- COLOR SCHEMES
   { "rktjmp/lush.nvim", lazy = true },

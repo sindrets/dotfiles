@@ -18,8 +18,11 @@ return function()
       sass = utils.vec_join({}, { prettier }),
       html = utils.vec_join({}, { prettier }),
       markdown = utils.vec_join({}, { prettier }),
+      json = { "jq" },
     },
   })
+
+  vim.opt.formatexpr = "v:lua.require'conform'.formatexpr()"
 
   Config.common.au.declare_group("user.conform.nvim", {}, {
     {
