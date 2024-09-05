@@ -84,7 +84,7 @@ inoremap <M-p> <Cmd>set paste <bar> exe 'norm! "+p' <bar> set nopaste<CR><RIGHT>
 inoremap <M-P> <Cmd>set paste <bar> exe 'norm! "+P' <bar> set nopaste<CR><RIGHT>
 
 " Yank path
-nnoremap <leader>yp <CMD>let @+ = expand("%") \| let @0 = @+<CR>
+nnoremap <leader>yp <CMD>let @+ = expand("%:.") \| let @0 = @+<CR>
 nnoremap <leader>yP <CMD>let @+ = expand("%:p") \| let @0 = @+<CR>
 nnoremap <leader>yl <CMD>let @+ = printf("%s:%d", expand("%"), getcurpos()[1]) \| let @0 = @+<CR>
 nnoremap <leader>yL <CMD>let @+ = printf("%s:%d", expand("%:p"), getcurpos()[1]) \| let @0 = @+<CR>
