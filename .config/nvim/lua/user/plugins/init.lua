@@ -344,6 +344,8 @@ require("lazy").setup({
           vim.g.flog_override_default_mappings = {}
           vim.g.flog_jumplist_default_mappings = {}
           vim.g.flog_use_internal_lua = true
+          vim.g.flog_enable_extended_chars = true
+          vim.g.flog_enable_dynamic_commit_hl = true
         end,
       },
     },
@@ -458,6 +460,7 @@ require("lazy").setup({
   },
   { "Mofiqul/vscode.nvim" },
   { "kvrohit/rasmus.nvim" },
+  { "ferdinandrau/lavish.nvim" },
 }, {
   ui = {
     border = "single",

@@ -19,7 +19,7 @@ configuration {
     fg0:    #E6E6E6;
     fg1:    #FFFFFF;
     fg2:    #969696;
-    fg3:    #4C4C4C;
+    fg3:    #3D3D3D;
 }
 
 window {

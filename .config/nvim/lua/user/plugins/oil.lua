@@ -9,7 +9,7 @@ return function()
       "icon",
       { "permissions", highlight = "Special" },
       { "size", highlight = "Number" },
-      { "mtime", highlight = "Constant" },
+      { "mtime", highlight = "Keyword" },
     },
     -- Buffer-local options to use for oil buffers
     buf_options = {

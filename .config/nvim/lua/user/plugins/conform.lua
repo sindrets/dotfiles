@@ -19,6 +19,7 @@ return function()
       html = utils.vec_join({}, { prettier }),
       markdown = utils.vec_join({}, { prettier }),
       json = { "jq" },
+      rust = { "rustfmt" }
     },
   })
 

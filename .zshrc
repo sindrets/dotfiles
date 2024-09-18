@@ -206,7 +206,7 @@ export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
 export NODE_PATH=/usr/lib/node_modules
 export GIT_WORKSPACE="$HOME/Documents/git"
 export MANWIDTH=80 # text width in man pages
-export MANPAGER="$(which nvim) -nc 'setl nolist scl=yes:1 | lua Config.lib.set_center_cursor(true)' +Man! -"
+export MANPAGER="$(which nvim) -nc 'setl nolist scl=yes:1' +Man! -"
 
 if [ ! "$cur_term" = "nvim" ]; then
     export VISUAL=nvim

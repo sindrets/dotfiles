@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "catppuccin"
+M.DEFAULT_DARK = "lavish"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -82,26 +82,29 @@ end
 
 function M.apply_terminal_defaults()
   -- black
-  vim.g.terminal_color_0  = "#15161E"
-  vim.g.terminal_color_8  = "#414868"
+  -- vim.g.terminal_color_0  = "#15161E"
+  -- vim.g.terminal_color_8  = "#414868"
+  vim.g.terminal_color_0 = Color.from_hl("Normal", "bg"):highlight(0.1):to_css()
+  vim.g.terminal_color_8 = Color.from_hl("Normal", "bg"):highlight(0.2):to_css()
+
   -- red
   vim.g.terminal_color_1  = "#f7768e"
-  vim.g.terminal_color_9  = "#f7768e"
+  vim.g.terminal_color_9  = Color.from_hex(vim.g.terminal_color_1):mod_value(0.15):to_css()
   -- green
   vim.g.terminal_color_2  = "#9ece6a"
-  vim.g.terminal_color_10 = "#9ece6a"
+  vim.g.terminal_color_10  = Color.from_hex(vim.g.terminal_color_2):mod_value(0.15):to_css()
   -- yellow
   vim.g.terminal_color_3  = "#e0af68"
-  vim.g.terminal_color_11 = "#e0af68"
+  vim.g.terminal_color_11  = Color.from_hex(vim.g.terminal_color_3):mod_value(0.15):to_css()
   -- blue
   vim.g.terminal_color_4  = "#7aa2f7"
-  vim.g.terminal_color_12 = "#7aa2f7"
+  vim.g.terminal_color_12  = Color.from_hex(vim.g.terminal_color_4):mod_value(0.15):to_css()
   -- magenta
   vim.g.terminal_color_5  = "#bb9af7"
-  vim.g.terminal_color_13 = "#bb9af7"
+  vim.g.terminal_color_13  = Color.from_hex(vim.g.terminal_color_5):mod_value(0.15):to_css()
   -- cyan
   vim.g.terminal_color_6  = "#7dcfff"
-  vim.g.terminal_color_14 = "#7dcfff"
+  vim.g.terminal_color_14  = Color.from_hex(vim.g.terminal_color_6):mod_value(0.15):to_css()
   -- white
   vim.g.terminal_color_7  = "#a9b1d6"
   vim.g.terminal_color_15 = "#c0caf5"
@@ -176,9 +179,9 @@ function M.generate_diff_colors(opt)
 
   local base_colors = {}
   if not opt.no_derive.all then
-    base_colors.add = not opt.no_derive.add and Color.from_hl("diffAdded", "fg") or nil
-    base_colors.del = not opt.no_derive.del and Color.from_hl("diffRemoved", "fg") or nil
-    base_colors.mod = not opt.no_derive.mod and Color.from_hl("diffChanged", "fg") or nil
+    base_colors.add = not opt.no_derive.add and Color.from_hl({ "@diff.plus", "diffAdded" }, "fg") or nil
+    base_colors.del = not opt.no_derive.del and Color.from_hl({ "@diff.minus", "diffRemoved" }, "fg") or nil
+    base_colors.mod = not opt.no_derive.mod and Color.from_hl({ "@diff.delta", "diffChanged" }, "fg") or nil
   end
 
   if bright then
@@ -842,6 +845,48 @@ function M.apply_tweaks()
     hi_link("DiffviewReflogSelector", "Special", { clear = true })
 
     M.unstyle_telescope()
+
+  elseif colors_name == "lavish" then
+    local blue = assert(hl.get_fg("Function"))
+
+    hi("NormalFloat", { bg = bg_normal:highlight(-0.015):to_css() })
+    hi("FloatBorder", {
+      fg = bg_normal:mod_value(0.1):to_css(),
+      bg = hl.get_bg("NormalFloat"),
+    })
+    hi({ "WinSeparator" }, { fg = bg_normal:highlight(0.2):to_css() })
+    hi("NonText", { fg = bg_normal:highlight(0.1):to_css(), explicit = true })
+    hi("Whitespace", { fg = bg_normal:highlight(0.15):to_css() })
+    hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:highlight(0.03):to_css() })
+    hi("Search", {
+      bg = Color.from_hl("Type", "fg"):blend(bg_normal, 0.7):to_css(),
+      fg = fg_normal:to_css(),
+    })
+    hi_link("IncSearch", "Search")
+    hi("CurSearch", {
+      bg = Color.from_hl("Type", "fg"):to_css(),
+      fg = "#000000",
+    })
+    hi("Visual", {
+      bg = Color.from_hex(blue):blend(bg_normal, 0.85):to_css(),
+      style = "NONE",
+      explicit = true,
+    })
+    hi_link("Constant", "Number")
+    hi("DiagnosticUnnecessary", { fg = fg_normal:blend(bg_normal, 0.7):to_css() })
+    hi("QuickFixLine", {
+      bg = Color.from_hl("Visual", "bg")
+        :mod_saturation(0.4)
+        :to_css(),
+      explicit = true,
+    })
+
+    hi_link("TelescopePromptPrefix", "Keyword")
+    hi_link({ "fugitiveHash", "DiffviewHash", "DiffviewSecondary" }, "Type", { clear = true })
+    hi_link("gitStat", "Directory", { clear = true })
+
+    M.apply_terminal_defaults()
+
   end
 
   M.generate_base_colors()
@@ -1036,6 +1081,11 @@ function M.apply_tweaks()
   if Config.plugin.feline then
     Config.plugin.feline.reload()
   end
+end
+
+function M.reload()
+  package.loaded["user.colorscheme"] = nil
+  require("user.colorscheme").apply()
 end
 
 function M.apply()

@@ -30,7 +30,7 @@ return function ()
       show_start = false,
     },
     exclude = {
-      bufttypes = {
+      buftypes = {
         "terminal",
         "nofile",
       },
