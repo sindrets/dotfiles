@@ -855,7 +855,8 @@ function M.apply_tweaks()
       bg = hl.get_bg("NormalFloat"),
     })
     hi({ "WinSeparator" }, { fg = bg_normal:highlight(0.2):to_css() })
-    hi("NonText", { fg = bg_normal:highlight(0.1):to_css(), explicit = true })
+    hi("NonText", { fg = bg_normal:highlight(0.15):to_css(), explicit = true })
+    hi("IblScope", { fg = bg_normal:highlight(0.3):to_css(), explicit = true })
     hi("Whitespace", { fg = bg_normal:highlight(0.15):to_css() })
     hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:highlight(0.03):to_css() })
     hi("Search", {
