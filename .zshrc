@@ -306,7 +306,6 @@ alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save \
 alias mdv="mdvless"
 alias nvminit="source /usr/share/nvm/init-nvm.sh"
 alias diff='diff -tW $(tput cols) --color=always'
-alias ts-node='/bin/ts-node --project "$HOME/.config/ts-node/tsconfig.json"'
 alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/storage.json" \
     | fzf --height 10` && [ ! -z "$code_dir" ] && code --folder-uri $code_dir'
 alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compiling for {}...\" \

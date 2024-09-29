@@ -103,7 +103,7 @@ nnoremap  <silent> <s-tab> :bp<CR>
 nnoremap <leader><leader> <Cmd>buffer #<CR>
 nnoremap ~ <Cmd>buffer #<CR>
 nnoremap <silent> <leader>w <Cmd>lua require'user.lib'.remove_buffer()<CR>
-nnoremap <leader>W <Cmd>bd<CR>
+nnoremap <silent> <leader>W <Cmd>lua require'user.lib'.remove_buffer(true)<CR>
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
 nnoremap X <Cmd>bd<CR>
 
@@ -335,9 +335,11 @@ nnoremap <expr> ]r v:lua.Config.lib.expr.next_reference()
 
 nmap ø [
 nmap æ ]
+nmap <M-ø> <M-[>
+nmap <M-æ> <M-]>
 
-nnoremap n <Cmd>set hlsearch <bar> call <SID>LazyNorm("nzz")<CR>
-nnoremap N <Cmd>set hlsearch <bar> call <SID>LazyNorm("Nzz")<CR>
+nnoremap n <Cmd>set hlsearch <bar> call <SID>LazyNorm(v:searchforward ? "nzz" : "Nzz")<CR>
+nnoremap N <Cmd>set hlsearch <bar> call <SID>LazyNorm(v:searchforward ? "Nzz" : "nzz")<CR>
 
 " Center jumplist jumps and remap jump forward
 nnoremap <C-o> <C-o>zz

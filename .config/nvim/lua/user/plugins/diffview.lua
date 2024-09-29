@@ -99,6 +99,7 @@ return function ()
     keymaps = {
       view = {
         { "n", "-", actions.toggle_stage_entry, { desc = "Stage / unstage the selected entry" } },
+        { "n", "gd", function () actions.goto_file_edit(); vim.lsp.buf.definition() end },
       },
       file_panel = {
         { "n", "<cr>", actions.focus_entry, { desc = "Focus the selected entry" } },
