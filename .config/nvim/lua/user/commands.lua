@@ -353,3 +353,12 @@ command("Browse", function(c)
 end, { nargs = 1, bar = true })
 
 command("Nodiff", "windo set nodiff noscrollbind nocursorbind", { bar = true })
+
+command("Pager", function()
+  local cur_buf = api.nvim_get_current_buf()
+  local term_buf = api.nvim_create_buf(false, true)
+  api.nvim_win_set_buf(0, term_buf)
+  local chan = api.nvim_open_term(term_buf, {})
+  api.nvim_chan_send(chan, table.concat(api.nvim_buf_get_lines(cur_buf, 0, -1, false), "\n"))
+  api.nvim_buf_delete(cur_buf, { force = true })
+end, {})
