@@ -111,7 +111,8 @@ function install_dependencies() {
   fi
 
   sudo true
-  yay --sudoloop -S --needed --norebuild --noredownload --nocleanmenu --nodiffmenu --noremovemake - \
+  yay --sudoloop -S --needed --norebuild --noredownload --noremovemake \
+    --answerclean None --answerdiff None --answeredit None - \
     < "$pkg_list"
 }
 
