@@ -1,0 +1,13 @@
+#!/usr/bin/node
+
+import { readFileSync } from "fs";
+
+let data;
+
+if (process.argv.length > 2) {
+  data = process.argv[2];
+} else {
+  data = readFileSync(process.stdin.fd, "utf-8");
+}
+
+console.log(decodeURIComponent(data));
