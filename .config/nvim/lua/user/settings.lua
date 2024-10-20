@@ -27,6 +27,7 @@ opt.guicursor = list {
 }
 opt.splitbelow = true
 opt.splitright = true
+opt.splitkeep = "screen"
 opt.wrap = true
 opt.linebreak = true
 opt.breakindent = true

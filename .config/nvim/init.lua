@@ -4,9 +4,7 @@ _G.prequire = function(modname)
 end
 
 ---Pretty print. Alias for `vim.inspect()`.
-_G.pp = function(a, opt)
-  print(vim.inspect(a, opt))
-end
+_G.pp = function(a, opt) print(vim.inspect(a, opt)) end
 
 ---LibUV
 _G.uv = vim.loop
@@ -41,9 +39,7 @@ local utils = Config.common.utils
 
 require("user")
 api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    require("user.modules.winbar").init()
-  end,
+  callback = function() require("user.modules.winbar").init() end,
 })
 
 -- COMMAND ALIASES
@@ -120,7 +116,7 @@ Config.fn.toggle_outline = lib.create_view_toggler({
 })
 
 Config.fn.toggle_diagnostics = lib.create_view_toggler({
-  find = function ()
+  find = function()
     return utils.list_bufs({
       options = { filetype = "trouble" },
       no_hidden = true,
@@ -141,9 +137,7 @@ Config.fn.toggle_diagnostics = lib.create_view_toggler({
 local function get_messages()
   local ret = api.nvim_exec2("messages", { output = true })
   -- Filter out empty lines.
-  return vim.tbl_filter(function(v)
-    return v ~= ""
-  end, vim.split(ret.output, "\n"))
+  return vim.tbl_filter(function(v) return v ~= "" end, vim.split(ret.output, "\n"))
 end
 
 local function open_messages_win()

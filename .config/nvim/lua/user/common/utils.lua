@@ -356,7 +356,7 @@ function M.tbl_pack(...)
 end
 
 function M.tbl_unpack(t, i, j)
-  return unpack(t, i or 1, j or t.n or #t)
+  return unpack(t, i or 1, j or t.n)
 end
 
 function M.tbl_clear(t)
@@ -1254,6 +1254,31 @@ function M.detect_win_pos(winid)
   end
 
   return "unknown"
+end
+
+--- Call a function in protected mode. If the function raises an error, include
+--- a traceback in the error.
+---
+--- @param func function # The function to call.
+--- @param ... any # Args to apply to `func`.
+--- @return boolean ok
+--- @return unknown|string ret # Either the first returned value from `func`, or an error if it failed.
+--- @return any ... # Any subsequent values returned from `func`.
+function M.trace_pcall(func, ...)
+  local err
+  local ret = M.tbl_pack(
+    xpcall(
+      func,
+      function (err_msg)
+        err = debug.traceback(err_msg, 2)
+      end,
+      ...
+    )
+  )
+
+  if not ret[1] then return false, err end
+
+  return M.tbl_unpack(ret)
 end
 
 return M

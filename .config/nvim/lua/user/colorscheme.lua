@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "lavish"
+M.DEFAULT_DARK = "catppuccin"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -235,6 +235,9 @@ function M.generate_diff_colors(opt)
   hi("DiffInlineDelete", { bg = bg_del:to_css(), fg = base_del:to_css(), explicit = true })
   hi("DiffInlineChange", { bg = bg_mod:to_css(), fg = base_mod:to_css(), explicit = true })
 
+  hi_link("Added", "@diff.plus", { clear = true })
+  hi_link("Removed", "@diff.minus", { clear = true })
+  hi_link("Changed", "@diff.delta", { clear = true })
   hi_link("@text.diff.add", "DiffInlineAdd")
   hi_link("@text.diff.delete", "DiffInlineDelete")
 end
@@ -572,8 +575,8 @@ function M.apply_tweaks()
 
     if bg == "dark" then
       hi({ "NormalFloat", "StatusLine" }, { bg = bg_normal:mod_value(-0.025):to_css() })
-      hi("diffAdded", { fg = "#B3E1A3" })
-      hi("diffChanged", { fg = "#A4B9EF" })
+      hi({ "diffAdded", "@diff.plus" }, { fg = "#B3E1A3", explicit = true })
+      hi({ "diffChanged", "@diff.delta" }, { fg = "#A4B9EF", explicit = true })
       hi("ModeMsg", { fg = "#98BBF5" })
       hi("@ibl.scope.char.1", { fg = "#B5E8E0" })
       hi("BufferLineFill", { bg = bg_normal:highlight(-0.07):to_css() })

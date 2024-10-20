@@ -5,8 +5,10 @@ M.lsp_config = {
     Lua = {
       workspace = {
         library = {
-          -- pl:realpath(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim"),
-          pl:realpath(pl:expand("$HOME/Documents/dev/nvim/plugins/diffview.nvim/lua")),
+          (function(diffview_dev_path)
+            return pl:readable(diffview_dev_path) and diffview_dev_path
+              or pl:absolute("$HOME/.local/share/nvim/lazy/diffview.nvim/lua")
+          end)(pl:absolute("$HOME/Documents/dev/nvim/plugins/diffview.nvim/lua")),
         },
       },
     },

@@ -35,7 +35,7 @@ function M.source_project_config()
           local code_chunk = loadfile(file)
 
           if code_chunk then
-            local ok, out = pcall(code_chunk)
+            local ok, out = utils.trace_pcall(code_chunk)
 
             if not ok then
               notify.config.error(utils.vec_join(

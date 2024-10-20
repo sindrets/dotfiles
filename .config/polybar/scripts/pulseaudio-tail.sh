@@ -67,17 +67,17 @@ listen() {
     local mLast=$muted
     local sLast=$sink
     pactl subscribe | while read -r event; do
-    if echo "$event" | grep -Pq "('change' on sink)|('new' on source-output)"; then
-        update_sink
-        update_volume
-        if [ "$volume" != "$vLast" ] || [ "$muted" != "$mLast"  ] || [ "$sink" != "$sLast" ]; then 
-            vLast=$volume
-            mLast=$muted
-            sLast=$sink
-            volume_print
+        if echo "$event" | grep -Pq "('change' on sink)|('new' on source-output)"; then
+            update_sink
+            update_volume
+            if [ "$volume" != "$vLast" ] || [ "$muted" != "$mLast"  ] || [ "$sink" != "$sLast" ]; then 
+                vLast=$volume
+                mLast=$muted
+                sLast=$sink
+                volume_print
+            fi
         fi
-    fi
-done
+    done
 }
 
 case "$1" in
