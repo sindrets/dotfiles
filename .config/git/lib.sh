@@ -4,6 +4,7 @@
 # the branch if it doesn't exist. Otherwise the new worktree is checked out to
 # the existing branch.
 function git_wt() {
+    set -e
     local common_dir="$(git rev-parse --git-common-dir)"
     local tree_path="$common_dir/trees/$1"
 
@@ -29,4 +30,27 @@ function git_pr_wt() {
     local common_dir="$(git rev-parse --path-format=absolute --git-common-dir)";
     local bname="pr/$1";
     pr-fetch "$1" && git worktree add "$common_dir/trees/$bname" "$bname";
+}
+
+function git_clone_bare() {
+    set -e
+    git clone --bare $@
+
+    if [ ! -z "$2" ]; then
+        local repo_dir="$2";
+    else
+        local repo_dir="$(echo "$1" | awk -F/ '{print $NF}')"
+    fi
+
+    cd "$repo_dir"
+    git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+    git remote update
+    git remote set-head -a origin
+
+    local main_branch="$(\
+        git rev-parse --symbolic-full-name origin/HEAD \
+        | awk -F'/remotes/origin/' '{print $NF}' \
+    )"
+
+    git wt "$main_branch"
 }
