@@ -49,8 +49,12 @@ sunmap w
 sunmap b
 sunmap e
 sunmap ge
-inoremap <C-w> <C-\><C-o>d<Plug>CamelCaseMotion_b
-inoremap <C-BS> <C-\><C-o>d<Plug>CamelCaseMotion_b
+
+" Do camel-case-delete-word-backwards, *unless* the text left of the cursor is
+" only whitespace, in which case: do the normal <C-w>.
+inoremap <expr> <C-w> match(getline(".")[0:max([col(".")-2, 0])], "^\\s*$") > -1
+            \ ? '<C-w>'
+            \ : '<C-\><C-o>d<Plug>CamelCaseMotion_b'
 
 " Navigate snippet placeholders
 imap <expr> <C-f> vsnip#jumpable(1) ? '<Plug>(vsnip-jump-next)' : ''
