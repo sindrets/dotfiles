@@ -217,7 +217,7 @@ function M.generate()
     end
   end
 
-  local abs_path = pl:absolute(api.nvim_buf_get_name(win_ctx.bufnr), win_ctx.cwd)
+  local abs_path = pl:absolute(vim.fn.bufname(win_ctx.bufnr), win_ctx.cwd)
   local path = no_empty(condense_path(abs_path))
   local is_uri = path and pl:is_uri(path)
   local path_exists = win_ctx.bufname ~= "" and not is_uri and pl:readable(abs_path)

@@ -58,6 +58,7 @@
 	pr-wt = "!f() { source $HOME/.config/git/lib.sh && git_pr_wt $@; }; f"
 	cb = "!f() { source $HOME/.config/git/lib.sh && git_clone_bare $@; }; f"
 	stash-keep = !git stash store $(git stash create)
+	changed-files = "!f() { source $HOME/.config/git/lib.sh && git_changed_files $@; }; f"
 [credential "https://github.com"]
 	helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]

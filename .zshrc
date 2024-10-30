@@ -57,7 +57,7 @@ function appendpath() {
         *:"$1":*)
             ;;
         *)
-            PATH="${PATH:+$PATH:}$1"
+            PATH="${PATH:+$PATH:}$(realpath -sm "$1")"
             export PATH
     esac
 }

@@ -54,3 +54,20 @@ function git_clone_bare() {
 
     git wt "$main_branch"
 }
+
+function git_changed_files() {
+    set -e
+
+    if [ ! -z "$1" ]; then
+        base_rev="$1"
+    else
+        base_rev="$(git merge-base origin/HEAD HEAD || echo "HEAD")"
+    fi
+
+    changed_files="$(git diff --name-only $base_rev)"
+    untracked_files="$(git ls-files --others --exclude-standard)"
+
+    for file in "$changed_files $untracked_files"; do
+        echo "$file"
+    done
+}

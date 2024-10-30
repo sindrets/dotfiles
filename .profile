@@ -18,7 +18,7 @@ appendpath () {
         *:"$1":*)
             ;;
         *)
-            PATH="${PATH:+$PATH:}$1"
+            PATH="${PATH:+$PATH:}$(realpath -sm "$1")"
     esac
 }
 
@@ -30,6 +30,7 @@ appendpath "$HOME/.local/sbin"
 appendpath "$HOME/.config/scripts"
 appendpath "$HOME/.config/emacs/bin"
 appendpath "$(ruby -e 'puts Gem.user_dir')/bin"
+appendpath "$HOME/.cargo/bin"
 unset appendpath
 
 export PATH

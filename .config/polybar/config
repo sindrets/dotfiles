@@ -1,12 +1,15 @@
 [color]
-bg = #aa130e19
-fg = #efefef
+bg = #bb1e1e2e
+fg = #cdd6f4
 
-c1 = #002038
-c2 = #15b097
-c3 = #1fc294
-c4 = #67e191
-c5 = #afd26d
+primary = #89b4fa
+secondary = #cba6f7
+accent = #fab387
+
+block-bg = #1e1e2e
+block-bg-hl = #2B2B42
+block-light-bg = #64649a
+block-light-fg = #000000
 
 [bar/main]
 monitor = ${env:monitor_primary}
@@ -35,7 +38,8 @@ font-1 = "Noto Color Emoji:scale=10"
 font-2 = "Material Design Icons:size=12;1"
 font-3 = "Source Han Sans:size=10;1"
 font-4 = "Font Awesome 5 Brands:size=10;1"
-font-5 = "Rounded M+ 1p:style=heavy:size=10;1"
+font-5 = "Symbols Nerd Font:size=12;1"
+font-6 = "Rounded M+ 1p:style=heavy:size=10;1"
 #font-5 = "IBM Plex Sans:style=SemiBold:size=10;1"
 #font-5 = "Roboto:style=medium:weight=500:size=10;1"
 
@@ -66,36 +70,38 @@ strip-wsnumbers = true
 ; Default: false
 fuzzy-match = true
 
-label-mode-background = ${color.c3}
-label-mode-foreground = ${color.c1}
+label-mode-background = ${color.block-bg-hl}
+label-mode-foreground = ${color.fg}
 label-mode-padding = 2
 
 label-focused = %icon%%name%
-label-focused-background = ${color.c3}
+label-focused-background = ${color.block-bg}
 label-focused-foreground = ${color.fg}
-label-focused-padding = 2
-
-label-unfocused = %icon%%name%
-label-unfocused-background = ${color.c3}
-label-unfocused-foreground = ${color.c1}
-label-unfocused-padding = 2
+label-focused-underline = ${color.secondary}
+label-focused-padding = 1
 
 label-visible = %icon%%name%
-label-visible-background = ${color.c3}
-label-visible-foreground = ${color.c1}
-label-visible-padding = 2
+label-visible-background = ${color.block-bg}
+label-visible-foreground = ${color.fg}
+label-visible-underline = ${color.secondary}
+label-visible-padding = 1
+
+label-unfocused = %icon%%name%
+label-unfocused-background = ${color.bg}
+label-unfocused-foreground = ${color.fg}
+label-unfocused-padding = 1
 
 label-urgent = %icon%%name%
-label-urgent-background = ${color.c5}
-label-urgent-foreground = ${color.c1}
-label-urgent-padding = 2
+label-urgent-background = ${color.block-light-bg}
+label-urgent-foreground = ${color.fg}
+label-urgent-padding = 1
 
 ws-icon-0 = ssh;
 
 [module/player]
 type = custom/script
 exec = "~/.config/i3/scripts/playerctl-utils.sh --follow"
-label-font = 6
+label-font = 7
 tail = true
 click-left = ~/.config/i3/scripts/playerctl-utils.sh --use-active play-pause
 click-right = pkill -USR1 -f "playerctl-utils.sh --follow"
@@ -106,8 +112,8 @@ interface = ${env:WLAN}
 interval = 3.0
 
 format-connected = <ramp-signal> <label-connected>
-format-connected-foreground = ${color.c1}
-format-connected-background = ${color.c4}
+format-connected-foreground = ${color.fg}
+format-connected-background = ${color.block-bg-hl}
 format-connected-padding = 2
 label-connected = %{A1:kitty --class kitty_FLOAT sudo wifi-menu:}%essid%%{A}
 
@@ -118,7 +124,7 @@ ramp-signal-1 = 󰤟
 ramp-signal-2 = 󰤢
 ramp-signal-3 = 󰤥
 ramp-signal-4 = 󰤨
-ramp-signal-foreground = ${color.c1}
+ramp-signal-foreground = ${color.fg}
 
 [module/eth]
 type = internal/network
@@ -126,10 +132,10 @@ interface = ${env:ETH}
 interval = 3.0
 
 format-connected-padding = 2
-format-connected-foreground = ${color.c1}
-format-connected-background = ${color.c4}
+format-connected-foreground = ${color.fg}
+format-connected-background = ${color.block-bg-hl}
 format-connected-prefix = "󰈁 "
-format-connected-prefix-foreground = ${color.c1}
+format-connected-prefix-foreground = ${color.fg}
 label-connected = %local_ip%
 
 format-disconnected =
@@ -145,8 +151,8 @@ time = %H:%M
 time-alt = %H:%M:%S
 
 format-prefix = 󰥔
-format-foreground = ${color.c1}
-format-background = ${color.c2}
+format-foreground = ${color.fg}
+format-background = ${color.block-bg-hl}
 format-padding = 2
 
 label = %date% %time%
@@ -159,11 +165,11 @@ expand-right = true
 format-spacing = 1
 
 label-open = 󰐥
-label-open-foreground = ${color.c4}
+label-open-foreground = ${color.primary}
 label-close = 󰅗 cancel
-label-close-foreground = ${color.c4}
+label-close-foreground = ${color.primary}
 label-separator = |
-label-separator-foreground = ${color.c4}
+label-separator-foreground = ${color.primary}
 
 menu-0-0 = reboot
 menu-0-0-exec = menu-open-1
@@ -250,9 +256,9 @@ type = custom/script
 exec = ~/.config/polybar/scripts/cpu-temp.sh
 format-prefix = "󰔏 "
 format-padding = 2
-format-foreground = ${color.c1}
-format-background = ${color.c4}
-format-prefix-foreground = ${color.c1}
+format-foreground = ${color.fg}
+format-background = ${color.block-bg-hl}
+format-prefix-foreground = ${color.fg}
 interval = 5
 
 [settings]

@@ -461,6 +461,7 @@ require("lazy").setup({
   { "Mofiqul/vscode.nvim" },
   { "kvrohit/rasmus.nvim" },
   { "ferdinandrau/lavish.nvim" },
+  { "mellow-theme/mellow.nvim" },
 }, {
   ui = {
     border = "single",
