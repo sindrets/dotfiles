@@ -17,6 +17,7 @@ function git_wt() {
         fi
     else
         git worktree add "$tree_path" -b "$1"
+        git branch -u origin/"$1" "$1"
     fi
 }
 

@@ -1,9 +1,8 @@
 #!/usr/bin/env sh
-set -eu
 
 pkill polybar || true
 
-sleep 1;
+sleep 1
 
 randr_out="$(xrandr --current)"
 
@@ -51,10 +50,14 @@ fi
 export ETH="`ip route | gawk '{ match($0, /^default .*? dev (en\w+)/, a); print a[1] }' | head -n1`"
 export WLAN="`ip route | gawk '{ match($0, /^default .*? dev (wl\w+)/, a); print a[1] }' | head -n1`"
 
-echo "primary monitor: $monitor_primary, pos: $monitor_primary_pos"
-echo "secondary monitor: $monitor_secondary, pos: $monitor_secondary_pos"
-echo "ETH: $ETH"
-echo "WLAN: $WLAN"
+[ ! -z "$monitor_primary" ] \
+    && echo "primary monitor: $monitor_primary, pos: $monitor_primary_pos"
+[ ! -z "$monitor_secondary" ] \
+    && echo "secondary monitor: $monitor_secondary, pos: $monitor_secondary_pos"
+[ ! -z "$ETH" ] \
+    && echo "ETH: $ETH"
+[ ! -z "$WLAN" ] \
+    && echo "WLAN: $WLAN"
 
 custom_path="$HOME/.config/polybar/custom.ini"
 [ ! -e "$custom_path" ] && touch "$custom_path"

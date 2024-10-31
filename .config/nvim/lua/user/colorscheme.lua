@@ -1092,6 +1092,18 @@ function M.reload()
   require("user.colorscheme").apply()
 end
 
+function M.toggle_theme()
+  if vim.o.background == "dark" then
+    M.name = M.DEFAULT_LIGHT
+    M.bg = "light"
+  else
+    M.name = M.DEFAULT_DARK
+    M.bg = "dark"
+  end
+
+  M.apply()
+end
+
 function M.apply()
   hi_link("LspReferenceText", "Visual", { default = true })
   hi_link({ "LspReferenceRead", "LspReferenceWrite" }, "LspReferenceText", { default = true })
