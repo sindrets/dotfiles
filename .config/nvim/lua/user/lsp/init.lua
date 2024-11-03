@@ -164,6 +164,12 @@ lspconfig.cssls.setup(M.create_config())
 -- Luau
 lspconfig.luau_lsp.setup(M.create_config())
 
+-- Json
+lspconfig.jsonls.setup(M.create_config())
+
+-- Toml
+lspconfig.taplo.setup(M.create_config())
+
 
 vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
   vim.lsp.diagnostic.on_publish_diagnostics, {

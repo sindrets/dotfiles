@@ -109,6 +109,7 @@ python2
 qbittorrent
 qt5-styleplugins
 qt5ct
+qt6ct
 ranger
 redshift
 reiserfsprogs
@@ -119,6 +120,7 @@ scrot
 sed
 shadow
 spotify
+starship
 sudo
 sxiv
 sysfsutils

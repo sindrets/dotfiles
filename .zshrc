@@ -223,7 +223,6 @@ antigen bundle zsh-users/zsh-autosuggestions
 antigen bundle softmoth/zsh-vim-mode@main
 antigen bundle zsh-vi-more/evil-registers
 antigen bundle mafredri/zsh-async@main
-antigen bundle sindresorhus/pure@main
 
 antigen apply
 # ---------------
@@ -297,10 +296,7 @@ alias bash-conf="$EDITOR ~/.bashrc"
 alias zsh-conf="$EDITOR ~/.zshrc"
 alias kitty-conf="$EDITOR ~/.config/kitty/kitty.conf"
 alias rmorphans='yay -Rs $(yay -Qqdt)'
-alias npmls="cat package.json | jq .scripts"
-alias pls="sudo "
-alias daddy="systemctl"
-alias kys="systemctl poweroff"
+alias npmls="jq .scripts package.json"
 alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save \
     /etc/pacman.d/mirrorlist"
 alias mdv="mdvless"
@@ -348,13 +344,12 @@ if [ -x "$(whence -p mise)" ]; then
     eval "$(mise activate zsh)"
 fi
 
-# init pure prompt
-autoload -U promptinit; promptinit
-zstyle :prompt:pure:git:stash show yes
-zstyle :prompt:pure:prompt:success color green
-export PURE_PROMPT_SYMBOL="ᐅ"
-export PURE_PROMPT_VICMD_SYMBOL="⟐"
-prompt pure
+# init prompt
+if [ -x "$(whence -p starship)" ]; then
+    eval "$(starship init zsh)"
+else
+    echo "WARN: starship prompt not installed!" > /dev/stderr
+fi
 
 read -rd '' aperture_logo <<'EOF'
 \e[1;33m              .,-:;//;:=,

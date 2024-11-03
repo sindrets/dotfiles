@@ -52,7 +52,7 @@ sunmap ge
 
 " Do camel-case-delete-word-backwards, *unless* the text left of the cursor is
 " only whitespace, in which case: do the normal <C-w>.
-inoremap <expr> <C-w> match(getline(".")[0:max([col(".")-2, 0])], "^\\s*$") > -1
+inoremap <expr> <C-w> col(".") == 1 \|\| getline(".")[0:max([col(".")-2, 0])] =~# "^\\s*$"
             \ ? '<C-w>'
             \ : '<C-\><C-o>d<Plug>CamelCaseMotion_b'
 

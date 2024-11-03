@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+# Shell escape the given args
+
+for arg in "$@"; do
+  printf "%q " "$arg"
+done
