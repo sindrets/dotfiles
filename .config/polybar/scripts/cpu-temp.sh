@@ -2,25 +2,23 @@
 
 sensors_output="$(sensors 2> /dev/null)"
 
-intel_core="$( \
+intel_core_temp="$(
   echo "$sensors_output" \
-    | gawk '{
-      match($0, /^Package id [0-9]+:\s*[+-]([0-9]+)(\.[0-9]+)?/, a);
-      if (a[1]) { print a[1] };
-    }' \
+    | perl -n -e '/^Package id \d+:\s*[+-](\d+(\.\d+)?°[CF])/ && print ($1 =~ s/\+//rg)'
 )"
 
-if [ ! -z "$intel_core" ]; then
-  echo "$intel_core°C"
+if [ ! -z "$intel_core_temp" ]; then
+  echo "$intel_core_temp"
   exit 0
 fi
 
-amd_core="$(echo "$sensors_output" | grep Tctl)"
+amd_core_temp="$(
+  echo "$sensors_output" \
+    | perl -n -e '/^Tctl:\s*([+-]\d+(\.\d+)?°[CF])/ && print ($1 =~ s/\+//rg)'
+)"
 
-if [ ! -z "$amd_core" ]; then
-  echo "$amd_core" \
-    | awk '{sub("+", "", $2); print $2}'
-
+if [ ! -z "$amd_core_temp" ]; then
+  echo "$amd_core_temp"
   exit 0
 fi
 
