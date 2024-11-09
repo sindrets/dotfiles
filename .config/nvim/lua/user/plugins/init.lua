@@ -462,6 +462,7 @@ require("lazy").setup({
   { "kvrohit/rasmus.nvim" },
   { "ferdinandrau/lavish.nvim" },
   { "mellow-theme/mellow.nvim" },
+  { "wtfox/jellybeans.nvim" },
 }, {
   ui = {
     border = "single",

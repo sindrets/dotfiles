@@ -27,6 +27,7 @@
   "i3config.vim": { "branch": "master", "commit": "5c753c56c033d3b17e5005a67cdb9653bbb88ba7" },
   "indent-blankline.nvim": { "branch": "master", "commit": "db926997af951da38e5004ec7b9fbdc480b48f5d" },
   "indent-o-matic": { "branch": "master", "commit": "bf37c6e4ccd17197d32dee69cffab4f5bbe4cbf2" },
+  "jellybeans.nvim": { "branch": "main", "commit": "9874ce7072460b08acd4e8ae7ec93baa9c731416" },
   "kanagawa.nvim": { "branch": "master", "commit": "1749cea392acb7d1548a946fcee1e6f1304cd3cb" },
   "lavish.nvim": { "branch": "main", "commit": "9167412431305e9683b9492e9d89ae082b5fb186" },
   "lazy.nvim": { "branch": "main", "commit": "077102c5bfc578693f12377846d427f49bc50076" },
