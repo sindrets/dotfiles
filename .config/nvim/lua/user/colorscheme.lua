@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "catppuccin"
+M.DEFAULT_DARK = "jellybeans"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -378,6 +378,11 @@ function M.apply_tweaks()
   hi("CursorLine", { sp = fg_normal:to_css() })
   hi("Primary", { fg = base_colors.primary:to_css() })
   hi("Accent", { fg = base_colors.accent:to_css() })
+
+  local identifier_sat = (Color.from_hl("Identifier", "fg") or {}).saturation --[[@as number? ]]
+  if not identifier_sat or identifier_sat < 0.1 then
+    hi_link({ "fugitiveHash", "DiffviewHash", "DiffviewSecondary" }, "Primary", { clear = true })
+  end
 
   ---Controls whether or not diff hl is generated.
   local do_diff_gen = true
@@ -891,6 +896,31 @@ function M.apply_tweaks()
 
     M.apply_terminal_defaults()
 
+  elseif colors_name == "jellybeans" then
+    hi({ "WinSeparator" }, { fg = bg_normal:highlight(0.2):to_css() })
+    hi("FloatBorder", {
+      fg = bg_normal:highlight(0.2):to_css(),
+      bg = hl.get_bg("NormalFloat"),
+      explicit = true,
+    })
+    hi("CursorLine", { bg = bg_normal:highlight(0.08):to_css(), explicit = true })
+    hi_link("ColorColumn", "CursorLine", { clear = true })
+    hi({ "diffChanged", "@diff.delta" }, { fg = hl.get_fg("Statement"), explicit = true })
+    hi("Search", {
+      bg = Color.from_hl("Type", "fg"):blend(bg_normal, 0.7):to_css(),
+      fg = fg_normal:to_css(),
+    })
+    hi_link("IncSearch", "Search")
+    hi("CurSearch", {
+      bg = Color.from_hl("Type", "fg"):to_css(),
+      fg = "#000000",
+    })
+    hi({ "StatusLine", "StatusLineNC" }, { bg = bg_normal:highlight(0.05):to_css() })
+
+    hi("@lsp.type.property", { fg = "#CEDAE3" , explicit = true})
+    hi_link("@variable", "Identifier", { clear = true })
+
+    M.unstyle_telescope()
   end
 
   M.generate_base_colors()
