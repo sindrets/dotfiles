@@ -18,6 +18,8 @@ function git_wt() {
     else
         git worktree add "$tree_path" -b "$1"
         git branch -u origin/"$1" "$1"
+        cd "$tree_path"
+        git reset --hard @{upstream}
     fi
 }
 

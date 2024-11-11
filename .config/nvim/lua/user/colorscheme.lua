@@ -920,6 +920,9 @@ function M.apply_tweaks()
     hi("@lsp.type.property", { fg = "#CEDAE3" , explicit = true})
     hi_link("@variable", "Identifier", { clear = true })
 
+    hi("NonText", { fg = bg_normal:highlight(0.15):to_css(), explicit = true })
+    hi("IblScope", { fg = bg_normal:highlight(0.3):to_css(), explicit = true })
+
     M.unstyle_telescope()
   end
 
