@@ -903,9 +903,7 @@ function M.apply_tweaks()
       bg = hl.get_bg("NormalFloat"),
       explicit = true,
     })
-    hi("CursorLine", { bg = bg_normal:highlight(0.08):to_css(), explicit = true })
-    hi_link("ColorColumn", "CursorLine", { clear = true })
-    hi({ "diffChanged", "@diff.delta" }, { fg = hl.get_fg("Statement"), explicit = true })
+    hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:highlight(0.08):to_css(), explicit = true })
     hi("Search", {
       bg = Color.from_hl("Type", "fg"):blend(bg_normal, 0.7):to_css(),
       fg = fg_normal:to_css(),
@@ -916,6 +914,7 @@ function M.apply_tweaks()
       fg = "#000000",
     })
     hi({ "StatusLine", "StatusLineNC" }, { bg = bg_normal:highlight(0.05):to_css() })
+    hi_link("Title", "Special")
 
     hi("@lsp.type.property", { fg = "#CEDAE3" , explicit = true})
     hi_link("@variable", "Identifier", { clear = true })
@@ -923,7 +922,21 @@ function M.apply_tweaks()
     hi("NonText", { fg = bg_normal:highlight(0.15):to_css(), explicit = true })
     hi("IblScope", { fg = bg_normal:highlight(0.3):to_css(), explicit = true })
 
+    hi("Pmenu", { bg = bg_normal:mod_value(-0.05):to_css() })
+    hi("PmenuSbar", { bg = Color.from_hl("Pmenu", "bg"):mod_value(0.05):to_css() })
+    hi("PmenuThumb", { bg = Color.from_hl("PmenuSbar", "bg"):mod_value(0.15):to_css(), fg = "NONE" })
+
+    hi("@diff.plus", { fg = "#91BC7F", explicit = true })
+    hi("@diff.minus", { fg = "#EC6969", explicit = true })
+    hi("@diff.delta", { fg = "#b0d0f0", explicit = true })
+
+    hi("DiagnosticInfo", { fg = hl.get_fg("Special") })
+    hi("DiagnosticHint", { fg = hl.get_fg("Statement") })
+    hi("DiagnosticWarn", { fg = hl.get_fg("Type") })
+    hi("DiagnosticError", { fg = hl.get_fg("@diff.minus") })
+
     M.unstyle_telescope()
+    M.apply_terminal_defaults()
   end
 
   M.generate_base_colors()

@@ -224,6 +224,31 @@ antigen bundle softmoth/zsh-vim-mode@main
 antigen bundle zsh-vi-more/evil-registers
 antigen bundle mafredri/zsh-async@main
 
+# fzf-tab {{{
+antigen bundle Aloxaf/fzf-tab
+
+# disable sort when completing `git checkout`
+zstyle ':completion:*:git-checkout:*' sort false
+# set descriptions format to enable group support
+# NOTE: don't use escape sequences (like '%F{red}%d%f') here, fzf-tab will ignore them
+zstyle ':completion:*:descriptions' format '[%d]'
+# set list-colors to enable filename colorizing
+zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
+# force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
+zstyle ':completion:*' menu no
+# preview directory's content with eza when completing cd
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --group-directories-first --color=always $realpath'
+# custom fzf flags
+# NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
+zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
+# To make fzf-tab follow FZF_DEFAULT_OPTS.
+# NOTE: This may lead to unexpected behavior since some flags break this plugin. See Aloxaf/fzf-tab#455.
+zstyle ':fzf-tab:*' use-fzf-default-opts yes
+# switch group using `<` and `>`
+zstyle ':fzf-tab:*' switch-group '<' '>'
+
+# }}}
+
 antigen apply
 # ---------------
 
@@ -316,11 +341,21 @@ FD_OPTIONS="--hidden --follow --exclude .git --exclude node_modules"
 export FZF_DEFAULT_COMMAND="git ls-files --cached --others --exclude-standard | fd --type f --type l $FD_OPTIONS"
 export FZF_CTRL_T_COMMAND="fd $FD_OPTIONS"
 export FZF_ALT_C_COMMAND="fd --type d $FD_OPTIONS"
-export FZF_DEFAULT_OPTS="-1 --reverse --multi --color=16 --preview='[[ \$(file --mime {}) =~ binary ]] && \
-echo {} is a binary file || (bat -n --color=always {} || cat {}) 2> /dev/null | head -300' \
---preview-window='right:hidden:wrap' --bind='\
-f3:execute(bat -n {} || less -f {}),\
-f2:toggle-preview,ctrl-d:half-page-down,ctrl-u:half-page-up'"
+export FZF_DEFAULT_OPTS=" \
+    -1 \
+    --reverse \
+    --multi \
+    --color=16 \
+    --preview='
+        if [[ \$(file --mime {}) =~ binary ]]; then
+            echo {} is a binary file
+        else
+            (bat -n --color=always {} || cat {}) 2> /dev/null | head -300
+        fi
+    ' \
+    --preview-window='right:hidden:wrap' \
+    --bind='f3:execute(bat -n {} || less -f {}),f2:toggle-preview,ctrl-d:half-page-down,ctrl-u:half-page-up' \
+"
 
 _fzf_compgen_path() {
     fd --hidden --follow --exclude ".git" . "$1"
@@ -405,9 +440,8 @@ then
     eval neofetch
 fi
 
-# vim: sw=4
-
-
 # BEGIN_KITTY_SHELL_INTEGRATION
 if test -e "/usr/lib/kitty/shell-integration/kitty.zsh"; then source "/usr/lib/kitty/shell-integration/kitty.zsh"; fi
 # END_KITTY_SHELL_INTEGRATION
+
+# vim: sw=4 foldmethod=marker
