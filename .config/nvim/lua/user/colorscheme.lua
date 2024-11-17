@@ -930,8 +930,8 @@ function M.apply_tweaks()
     hi("@diff.minus", { fg = "#EC6969", explicit = true })
     hi("@diff.delta", { fg = "#b0d0f0", explicit = true })
 
-    hi("DiagnosticInfo", { fg = hl.get_fg("Special") })
-    hi("DiagnosticHint", { fg = hl.get_fg("Statement") })
+    hi("DiagnosticInfo", { fg = hl.get_fg("Statement") })
+    hi("DiagnosticHint", { fg = hl.get_fg("Special") })
     hi("DiagnosticWarn", { fg = hl.get_fg("Type") })
     hi("DiagnosticError", { fg = hl.get_fg("@diff.minus") })
 
