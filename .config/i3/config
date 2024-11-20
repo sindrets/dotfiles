@@ -198,6 +198,7 @@ for_window [class="steam" title="Friends List"] floating enable
 for_window [class="steam" title="Steam - News"] floating enable
 for_window [class="Colorgrab"] floating enable border normal
 for_window [class="Gpick"] floating enable border normal
+for_window [class="dev.zed.Zed"] floating disable
 
 # switch to workspace with urgent window automatically
 for_window [urgent=latest] focus

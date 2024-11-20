@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # From: https://github.com/yankeexe/git-worktree-switcher
 
-set -e
+set -eo pipefail
 
 # Switch between git worktrees with speed.
 
@@ -14,6 +14,7 @@ RELEASE_URL="https://github.com/yankeexe/git-worktree-switcher/releases/latest"
 RELEASE_API_URL="https://api.github.com/repos/yankeexe/git-worktree-switcher/releases/latest"
 
 out() { printf "$1 $2\n" "${@:3}"; }
+info() { echo "$@"; } >&2
 error() { out "==> ERROR:" "$@"; } >&2
 die() { error "$@"; exit 1; }
 
@@ -21,7 +22,7 @@ resolve() {
 	if [ $eval_mode -eq 1 ]; then
 		echo "$@"
 	else
-		eval "${@}"
+		cd "${@}"
 		exec $SHELL
 	fi
 }
@@ -39,18 +40,6 @@ help_message() {
 	echo -e "\twt update: update to the latest release of worktree switcher."
 	echo -e "\twt version: show the CLI version."
 	echo -e "\twt help: shows this help message."
-}
-
-goto_main_worktree() {
-	main_worktree=$(git worktree list --porcelain | awk '{print $0; exit}' | grep -oP '(?<=worktree ).*')
-
-	if [ -z "$main_worktree" ]; then
-		:
-	else
-		local ret="$(printf "echo %q && " "Changing to worktree at: $main_worktree")"
-		ret="${ret} $(printf "cd %q" "$main_worktree")"
-		resolve "${ret}"
-	fi
 }
 
 download_latest_update() {
@@ -89,6 +78,23 @@ update() {
 	fi
 }
 
+goto_main_worktree() {
+	main_worktree=$(git worktree list --porcelain | awk '{print $0; exit}' | grep -oP '(?<=worktree ).*')
+
+	if [ -z "$main_worktree" ]; then
+		:
+	else
+		info "Changing to worktree at: $main_worktree"
+		resolve "$main_worktree"
+	fi
+}
+
+# Change worktree based on user argument.
+change_worktree() {
+	info "Changing to worktree at: $directory"
+	resolve "$directory"
+}
+
 if [ -z "${1}" ]; then
 	help_message
 	exit 0
@@ -111,37 +117,32 @@ args=("$@")
 arg=$(echo "${args[0]}" | sed 's/\//\\\//g')
 
 case "${args[0]}" in
-list)
-	worktree_list
-	;;
-update)
-	update
-	;;
-help)
-	help_message
-	;;
-version)
-	echo Version: $VERSION
-	;;
--)
-	goto_main_worktree
-	;;
-*)
-	directory="$(git worktree list --porcelain | perl -ne "if (m/worktree (.*\/$arg)\$/) { print \$1 }")"
-	;;
+	list)
+		worktree_list
+		;;
+	update)
+		update
+		;;
+	help)
+		help_message
+		;;
+	version)
+		echo Version: $VERSION
+		;;
+	-)
+		goto_main_worktree
+		;;
+	*)
+		directory="$(
+			git worktree list --porcelain \
+				| perl -ne "if (m/worktree (.*\/$arg)\$/) { print \$1 }" \
+		)"
+
+		# If directory variable is not empty then change worktree
+		if [ ! -d "$directory" ]; then
+			die "No matching worktree for '$arg'!"
+		else
+			change_worktree
+		fi
+		;;
 esac
-
-# Change worktree based on user argument.
-change_worktree() {
-	local ret="$(printf "echo %q && " "Changing to worktree at: $directory")"
-	ret="${ret} $(printf "cd %q\n" "$directory")"
-
-	resolve "${ret}"
-}
-
-# If directory variable is not empty then change worktree
-if [ -z "$directory" ]; then
-	:
-else
-	change_worktree
-fi

@@ -106,13 +106,14 @@ function wt () {
     if [[ "$1" =~ ^(list|version|update|help)$ ]]; then
         eval "$(whence -p wt)" $@
     else
-        local s="$("$(whence -p wt)" -e $@)"
-        local code=$?
+        local target_dir; # declare variable before assignment to be able to get the status below
+        target_dir="$("$(whence -p wt)" -e $@)"
+        local exit_status=$?
 
-        if [ $code -eq 0 ]; then
-            eval "$s"
+        if [ $exit_status -eq 0 ]; then
+            eval "cd $(printf "%q" "$target_dir")"
         else
-            exit $code
+            return $exit_status
         fi
     fi
 }
