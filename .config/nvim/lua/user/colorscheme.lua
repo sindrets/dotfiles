@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "jellybeans"
+M.DEFAULT_DARK = "vscode"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -768,24 +768,67 @@ function M.apply_tweaks()
     M.unstyle_telescope()
 
   elseif colors_name == "vscode" then
+    local search = "#613315";
+
     hi("Special", { fg = hl.get_fg("Function"), explicit = true })
     hi({ "Comment", "@comment" }, { fg = fg_normal:blend(bg_normal, 0.5):to_css() })
+    hi("NormalFloat", { bg = bg_normal:highlight(-0.02):to_css() })
+    hi(
+      { "WinSeparator", "VertSplit" },
+      { fg = bg_normal:highlight(0.2):to_css(), explicit = true, link = -1 }
+    )
+    hi("FloatBorder", {
+      fg = bg_normal:highlight(0.2):to_css(),
+      bg = hl.get_bg("NormalFloat"),
+      explicit = true,
+    })
+    hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:highlight(0.08):to_css(), explicit = true })
+    hi("Search", {
+      bg = search,
+      fg = fg_normal:to_css(),
+    })
+    hi_link("IncSearch", "Search")
+    hi("CurSearch", {
+      bg = Color.from_hex(search):blend(bg_normal, 0.6):highlight(0.5):to_css(),
+      fg = "#000000",
+    })
+
+    hi("@diff.plus", {
+      fg = Color.from_hex("#2EA043")
+        :mod_saturation(-0.3)
+        :mod_value(0.15)
+        :to_css(),
+      explicit = true,
+    })
+    hi("@diff.minus", {
+      fg = Color.from_hex("#F85149")
+        :mod_saturation(-0.2)
+        :mod_value(0.15)
+        :to_css(),
+      explicit = true,
+    })
+    hi("@diff.delta", {
+      fg = Color.from_hex("#0078D4")
+        :mod_saturation(-0.3)
+        :mod_value(0.15)
+        :to_css(),
+      explicit = true,
+    })
+
+    hi("IblScope", { fg = bg_normal:highlight(0.3):to_css(), explicit = true })
+
     hi("WarningMsg", { fg = "#FFCC00" })
     hi("DiagnosticHint", { fg = hl.get_fg("Structure") })
-    hi({ "CursorLine", "ColorColumn" }, { bg = bg_normal:highlight(0.03):to_css() })
-    hi_link("CurSearch", "IncSearch")
     hi_link("@text.literal", "@constructor")
-    hi_link("@lsp.mod.defaultLibrary", "@variable")
-    hi("IndentBlanklineContextChar", { gui = "" })
+    -- hi_link("@lsp.mod.defaultLibrary", "@variable")
     hi("DiffviewFilePanelSelected", { fg = hl.get_fg("Function"), explicit = true })
     hi_link("DiffviewReference", "@keyword")
     hi_link("TelescopePromptPrefix", "Accent")
 
     if bg == "dark" then
-      hi("Primary", { fg = hl.get_fg("@boolean") })
+      hi("Primary", { fg = hl.get_fg("Type") })
       hi("Accent", { fg = hl.get_fg("Statement") })
       hi("@text.uri", { fg = "#40A6FF" })
-      hi("diffChanged", { fg = hl.get_fg("@boolean"), explicit = true })
       hi(
         { "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" },
         { fg = hl.get_fg("@boolean") }
@@ -794,12 +837,13 @@ function M.apply_tweaks()
       hi("Primary", { fg = hl.get_fg("@variable") })
       hi("Accent", { fg = hl.get_fg("Structure") })
       hi("@text.uri", { fg = hl.get_fg("@constant") })
-      hi("diffChanged", { fg = hl.get_fg("@label"), explicit = true })
       hi(
         { "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" },
         { fg = hl.get_fg("@variable") }
       )
     end
+
+    M.apply_terminal_defaults()
 
   elseif colors_name == "rasmus" then
     local white = hl.get_fg("Normal")

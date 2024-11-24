@@ -178,7 +178,7 @@ vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
     signs = {
       priority = 100,
     },
-    update_in_insert = true
+    update_in_insert = false,
   }
 )
 
@@ -319,7 +319,7 @@ M.define_diagnostic_signs({
 
 -- LSP auto commands
 Config.common.au.declare_group("lsp_init", {}, {
-  { "CursorHold", callback = M.show_position_diagnostics, },
+  { "CursorHold", callback = M.show_position_diagnostics },
   {
     "LspAttach",
     callback = function(state)
@@ -330,7 +330,21 @@ Config.common.au.declare_group("lsp_init", {}, {
         vim.lsp.inlay_hint.enable(true, { bufnr = 0 })
       end
     end,
-  }
+  },
+  {
+    "ModeChanged",
+    pattern = "*:i*",
+    callback = function(state)
+      vim.diagnostic.enable(false, { bufnr = state.buf })
+    end,
+  },
+  {
+    "ModeChanged",
+    pattern = "i*:*",
+    callback = function(state)
+      vim.diagnostic.enable(true, { bufnr = state.buf })
+    end,
+  },
 })
 
 return M

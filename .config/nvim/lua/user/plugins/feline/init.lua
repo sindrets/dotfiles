@@ -40,8 +40,8 @@ local icons = {
   diagnostic = {
     err = "",
     warn = "",
+    hint = "",
     info = "",
-    hint = "",
   },
 }
 
