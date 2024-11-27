@@ -258,11 +258,11 @@ nnoremap <Esc> <Cmd>noh<CR>
 nnoremap <expr> * v:lua.Config.lib.expr.comfy_star()
 
 " Toggle comments
-nnoremap <silent> <C-\> <Cmd>call nerdcommenter#Comment(0, "toggle")<CR>
-inoremap <silent> <C-\> <Esc>:call nerdcommenter#Comment(0, "toggle")<CR>a
-vnoremap <silent> <C-\> :call nerdcommenter#Comment(0, "toggle")<CR>gv
-nnoremap <silent> <leader>' <Cmd>call nerdcommenter#Comment(0, "toggle")<CR>
-vnoremap <silent> <leader>' :call nerdcommenter#Comment(0, "toggle")<CR>gv
+nmap <silent> <C-\> gcc
+imap <silent> <C-\> <Esc>mcgcc`cllla
+vmap <silent> <C-\> gcgv
+nmap <silent> <leader>' gcc
+vmap <silent> <leader>' gcgv
 
 " Telescope
 nnoremap <C-P> <Cmd>lua require('user.lib').workspace_files()<CR>
@@ -352,7 +352,7 @@ nnoremap <C-s> <C-i>zz
 " LSP
 nmap <silent> gd <Cmd>lua vim.lsp.buf.definition()<CR>
 nmap <silent> gV <C-W>v<Cmd>lua vim.lsp.buf.definition()<CR>
-nmap <silent> gs <C-W>s<Cmd>lua vim.lsp.buf.definition()<CR>
+nmap <silent> <C-w>gd <C-W>s<Cmd>lua vim.lsp.buf.definition()<CR>
 nmap <silent> gy <Cmd>lua vim.lsp.buf.type_definition()<CR>
 nmap <silent> gi <Cmd>lua vim.lsp.buf.implementation()<CR>
 nmap <silent> gr <Cmd>Telescope lsp_references<CR>
