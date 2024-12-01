@@ -828,7 +828,8 @@ function M.apply_tweaks()
     if bg == "dark" then
       hi("Primary", { fg = hl.get_fg("Type") })
       hi("Accent", { fg = hl.get_fg("Statement") })
-      hi("@text.uri", { fg = "#40A6FF" })
+      hi("@text.uri", { fg = "#40A6FF", link = -1 })
+      hi_link("@markup.link.url", "@text.uri")
       hi(
         { "BufferLineModified", "BufferLineModifiedVisible", "BufferLineModifiedSelected" },
         { fg = hl.get_fg("@boolean") }

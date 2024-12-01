@@ -81,6 +81,8 @@ augroup NvimConfig
                 \ |     endif
                 \ | endif
 
+    au CmdwinEnter * setl ft=vim
+
     " Execute command from cmdline window while keeping it open.
     au CmdwinEnter * nnoremap <buffer> <C-x> <CR>q:
 augroup END
