@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=SXCS
+GenericName=Color picker and screen magnifier
+Comment=Color picker and screen magnifier
+Exec=sxcs-oneshot
+Icon=display
+Terminal=false
+Type=Application
+Categories=Utility;

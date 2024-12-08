@@ -469,6 +469,7 @@ require("lazy").setup({
   { "ferdinandrau/lavish.nvim" },
   { "mellow-theme/mellow.nvim" },
   { "wtfox/jellybeans.nvim" },
+  { "cpwrs/americano.nvim" },
 }, {
   ui = {
     border = "single",

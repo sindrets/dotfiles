@@ -1,0 +1,3 @@
+#!/usr/bin/bash
+
+sxcs -o --keyboard | awk '{printf "%s",$2}' | xclip -selection c

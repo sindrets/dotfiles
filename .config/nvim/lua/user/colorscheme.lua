@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "vscode"
+M.DEFAULT_DARK = "americano"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -80,34 +80,59 @@ function M.clear_terminal_colors()
   end
 end
 
-function M.apply_terminal_defaults()
-  -- black
-  -- vim.g.terminal_color_0  = "#15161E"
-  -- vim.g.terminal_color_8  = "#414868"
-  vim.g.terminal_color_0 = Color.from_hl("Normal", "bg"):highlight(0.1):to_css()
-  vim.g.terminal_color_8 = Color.from_hl("Normal", "bg"):highlight(0.2):to_css()
+--- @class Config.colorscheme.generate_terminal_colors.Opts
+--- @field gen_normals? boolean
+--- @field gen_alts? boolean
+--- @field fixed_ansi8? boolean
 
-  -- red
-  vim.g.terminal_color_1  = "#f7768e"
-  vim.g.terminal_color_9  = Color.from_hex(vim.g.terminal_color_1):mod_value(0.15):to_css()
-  -- green
-  vim.g.terminal_color_2  = "#9ece6a"
-  vim.g.terminal_color_10  = Color.from_hex(vim.g.terminal_color_2):mod_value(0.15):to_css()
-  -- yellow
-  vim.g.terminal_color_3  = "#e0af68"
-  vim.g.terminal_color_11  = Color.from_hex(vim.g.terminal_color_3):mod_value(0.15):to_css()
-  -- blue
-  vim.g.terminal_color_4  = "#7aa2f7"
-  vim.g.terminal_color_12  = Color.from_hex(vim.g.terminal_color_4):mod_value(0.15):to_css()
-  -- magenta
-  vim.g.terminal_color_5  = "#bb9af7"
-  vim.g.terminal_color_13  = Color.from_hex(vim.g.terminal_color_5):mod_value(0.15):to_css()
-  -- cyan
-  vim.g.terminal_color_6  = "#7dcfff"
-  vim.g.terminal_color_14  = Color.from_hex(vim.g.terminal_color_6):mod_value(0.15):to_css()
-  -- white
-  vim.g.terminal_color_7  = "#a9b1d6"
-  vim.g.terminal_color_15 = "#c0caf5"
+--- @param opts? Config.colorscheme.generate_terminal_colors.Opts
+function M.generate_terminal_colors(opts)
+  opts = vim.tbl_extend("keep", opts or {}, {
+    gen_normals = true,
+    gen_alts = true,
+    fixed_ansi8 = false,
+  } --[[@as Config.colorscheme.generate_terminal_colors.Opts ]])
+
+  if opts.gen_normals then
+    -- black
+    -- vim.g.terminal_color_0  = "#15161E"
+    -- vim.g.terminal_color_8  = "#414868"
+    vim.g.terminal_color_0 = Color.from_hl("Normal", "bg"):highlight(0.1):to_css()
+    vim.g.terminal_color_8 = Color.from_hl("Normal", "bg"):highlight(0.2):to_css()
+  end
+
+  if opts.fixed_ansi8 then
+    -- red
+    vim.g.terminal_color_1  = "#f7768e"
+    -- green
+    vim.g.terminal_color_2  = "#9ece6a"
+    -- yellow
+    vim.g.terminal_color_3  = "#e0af68"
+    -- blue
+    vim.g.terminal_color_4  = "#7aa2f7"
+    -- magenta
+    vim.g.terminal_color_5  = "#bb9af7"
+    -- cyan
+    vim.g.terminal_color_6  = "#7dcfff"
+    -- white
+    vim.g.terminal_color_7  = "#a9b1d6"
+    vim.g.terminal_color_15 = "#c0caf5"
+  end
+
+  if opts.gen_alts then
+    -- red
+    vim.g.terminal_color_9  = Color.from_hex(vim.g.terminal_color_1):mod_value(0.15):to_css()
+    -- green
+    vim.g.terminal_color_10  = Color.from_hex(vim.g.terminal_color_2):mod_value(0.15):to_css()
+    -- yellow
+    vim.g.terminal_color_11  = Color.from_hex(vim.g.terminal_color_3):mod_value(0.15):to_css()
+    -- blue
+    vim.g.terminal_color_12  = Color.from_hex(vim.g.terminal_color_4):mod_value(0.15):to_css()
+    -- magenta
+    vim.g.terminal_color_13  = Color.from_hex(vim.g.terminal_color_5):mod_value(0.15):to_css()
+    -- cyan
+    vim.g.terminal_color_14  = Color.from_hex(vim.g.terminal_color_6):mod_value(0.15):to_css()
+  end
 end
 
 ---[Graph](https://www.desmos.com/calculator/tmiqlckphe)
@@ -158,11 +183,11 @@ function M.generate_base_colors()
   end
 end
 
----@class GenerateDiffColorsSpec
----@field no_override boolean
----@field no_derive boolean|{ add: boolean, del: boolean, mod: boolean, all: boolean }
+--- @class Config.colorscheme.generate_diff_colors.Opts
+--- @field no_override boolean
+--- @field no_derive boolean|{ add: boolean, del: boolean, mod: boolean, all: boolean }
 
----@param opt? GenerateDiffColorsSpec
+---@param opt? Config.colorscheme.generate_diff_colors.Opts
 function M.generate_diff_colors(opt)
   opt = opt or {}
   local bg = vim.o.bg
@@ -386,8 +411,12 @@ function M.apply_tweaks()
 
   ---Controls whether or not diff hl is generated.
   local do_diff_gen = true
-  ---@type GenerateDiffColorsSpec
-  local diff_gen_opt
+  local diff_gen_opt ---@type Config.colorscheme.generate_diff_colors.Opts?
+  local terminal_gen_opt = {
+    gen_normals = true,
+    gen_alts = true,
+    fixed_ansi8 = false,
+  } --[[@as Config.colorscheme.generate_terminal_colors.Opts ]]
   ---@type FelineThemeName
   local feline_theme = "duo"
 
@@ -677,7 +706,6 @@ function M.apply_tweaks()
       fg = hl.get_fg("Directory"),
     })
     diff_gen_opt = { no_derive = { mod = true } }
-    M.apply_terminal_defaults()
     M.unstyle_telescope()
 
   elseif colors_name == "kanagawa" then
@@ -844,8 +872,6 @@ function M.apply_tweaks()
       )
     end
 
-    M.apply_terminal_defaults()
-
   elseif colors_name == "rasmus" then
     local white = hl.get_fg("Normal")
     local yellow = hl.get_fg("Tag")
@@ -939,8 +965,6 @@ function M.apply_tweaks()
     hi_link({ "fugitiveHash", "DiffviewHash", "DiffviewSecondary" }, "Type", { clear = true })
     hi_link("gitStat", "Directory", { clear = true })
 
-    M.apply_terminal_defaults()
-
   elseif colors_name == "jellybeans" then
     hi({ "WinSeparator" }, { fg = bg_normal:highlight(0.2):to_css() })
     hi("FloatBorder", {
@@ -981,7 +1005,33 @@ function M.apply_tweaks()
     hi("DiagnosticError", { fg = hl.get_fg("@diff.minus") })
 
     M.unstyle_telescope()
-    M.apply_terminal_defaults()
+
+  elseif colors_name == "americano" then
+    hi("Search", {
+      bg = Color.from_hl("Type", "fg"):blend(bg_normal, 0.7):to_css(),
+      fg = fg_normal:to_css(),
+    })
+    hi_link("IncSearch", "Search")
+    hi("CurSearch", {
+      bg = Color.from_hl("Type", "fg"):to_css(),
+      fg = "#000000",
+    })
+
+    hi("NonText", { fg = bg_normal:highlight(0.15):to_css(), explicit = true })
+    hi("IblScope", { fg = bg_normal:highlight(0.3):to_css(), explicit = true })
+
+    hi("NormalFloat", { bg = bg_normal:highlight(-0.015):to_css() })
+    hi("FloatBorder", {
+      fg = bg_normal:mod_value(0.1):to_css(),
+      bg = hl.get_bg("NormalFloat"),
+    })
+
+    hi("Directory", { fg = hl.get_fg("Function") })
+
+    hi("@diff.minus", { fg = hl.get_fg("Number"), explicit = true, link = -1 })
+
+    M.unstyle_telescope()
+
   end
 
   M.generate_base_colors()
@@ -1026,6 +1076,9 @@ function M.apply_tweaks()
   if do_diff_gen then
     M.generate_diff_colors(diff_gen_opt)
   end
+
+  -- Generate terminal hls
+  M.generate_terminal_colors(terminal_gen_opt)
 
   -- Update feline theme
   if Config.plugin.feline then
