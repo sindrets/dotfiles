@@ -1030,6 +1030,8 @@ function M.apply_tweaks()
 
     hi("@diff.minus", { fg = hl.get_fg("Number"), explicit = true, link = -1 })
 
+    hi("DiagnosticUnnecessary", { explicit = true, fg = bg_normal:highlight(0.3):to_css() })
+
     M.unstyle_telescope()
 
   end

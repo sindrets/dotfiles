@@ -4,7 +4,7 @@ return function()
   local utils = Config.common.utils
 
   local lsp_kinds = {
-    Method = "  ",
+    Method = "  ",
     Function = " ƒ ",
     Variable = "  ",
     Field = "  ",
