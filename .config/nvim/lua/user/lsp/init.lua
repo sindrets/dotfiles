@@ -34,12 +34,16 @@ require("lspconfig.ui.windows").default_options.border = "single"
 ---@diagnostic disable-next-line: unused-local
 function M.common_on_attach(client, bufnr)
   -- require("illuminate").on_attach(client)
-  require("lsp_signature").on_attach({
-    bind = true, -- This is mandatory, otherwise border config won't get registered.
-    handler_opts = {
-      border = "single",
-    },
-  }, bufnr)
+
+  local lsp_signature = prequire("lsp_signature")
+  if lsp_signature then
+    lsp_signature.on_attach({
+      bind = true, -- This is mandatory, otherwise border config won't get registered.
+      handler_opts = {
+        border = "single",
+      },
+    }, bufnr)
+  end
 end
 
 M.base_config = {

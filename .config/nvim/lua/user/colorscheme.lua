@@ -1227,6 +1227,20 @@ function M.apply_tweaks()
     { "CmpItemKindFile", "CmpItemKindFolder" },
     { fg = hl.get_fg("@text.uri"), explicit = true }
   )
+  hi(
+    {
+      "BlinkCmpLabelDeprecated",
+      "BlinkCmpLabelDetail",
+      "BlinkCmpLabelDescription",
+      "BlinkCmpSource",
+    },
+    {
+      fg = Color.from_hl({ "BlinkCmpMenu", "Pmenu", "Normal" }, "bg")
+        :highlight(0.25)
+        :to_css(),
+      explicit = true,
+    }
+  )
 
   if Config.plugin.feline then
     Config.plugin.feline.reload()

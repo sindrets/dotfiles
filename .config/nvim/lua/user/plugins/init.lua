@@ -174,21 +174,21 @@ require("lazy").setup({
     config = conf("conform"),
     event = "VeryLazy",
   },
-  {
-    "ray-x/lsp_signature.nvim",
-    config = function()
-      require("lsp_signature").setup({
-        hint_enable = false,
-        hint_prefix = "● ",
-        max_width = 80,
-        max_height = 12,
-        handler_opts = {
-          border = "single"
-        },
-        timer_interval = 200,
-      })
-    end,
-  },
+  -- {
+  --   "ray-x/lsp_signature.nvim",
+  --   config = function()
+  --     require("lsp_signature").setup({
+  --       hint_enable = false,
+  --       hint_prefix = "● ",
+  --       max_width = 80,
+  --       max_height = 12,
+  --       handler_opts = {
+  --         border = "single"
+  --       },
+  --       timer_interval = 200,
+  --     })
+  --   end,
+  -- },
   {
     "pmizio/typescript-tools.nvim",
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
@@ -206,19 +206,31 @@ require("lazy").setup({
     end
   },
   { "mfussenegger/nvim-jdtls" },
-  {
-    "hrsh7th/nvim-cmp",
+  use_local {
+    "sindrets/blink.cmp",
     dependencies = {
-      { "hrsh7th/cmp-nvim-lsp" },
-      { "hrsh7th/cmp-path" },
-      { "hrsh7th/cmp-buffer" },
-      { "hrsh7th/cmp-vsnip", commit = "1ae05c6c867d9ad44bce811056e861e0d5c531cb" },
-      { "hrsh7th/cmp-cmdline" },
-      { "f3fora/cmp-spell" },
-      { "petertriho/cmp-git" },
-      "nvim-autopairs",
+      {
+        "saghen/blink.compat",
+        lazy = true,
+        opts = {
+          impersonate_nvim_cmp = true,
+        },
+        version = "*",
+      },
+      "rafamadriz/friendly-snippets",
+      "ribru17/blink-cmp-spell",
     },
-    config = conf("nvim-cmp"),
+
+    -- use a release tag to download pre-built binaries
+    -- version = "v0.*",
+    -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
+    build = "cargo build --release",
+
+    config = conf("blink-cmp"),
+
+    -- allows extending the providers array elsewhere in your config
+    -- without having to redefine it
+    opts_extend = { "sources.default", "sources.providers" }
   },
   {
     "stevearc/oil.nvim",
