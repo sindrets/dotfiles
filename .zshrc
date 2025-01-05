@@ -417,15 +417,9 @@ case $cur_term in
     "konsole") ;;
 
     "kitty") 
-        # Enable blurred transparency for Kitty
-        if [[ $(ps --no-header -p $PPID -o comm | grep -Ev '^(yakuake|konsole)$' ) ]]; then
-            for wid in $(xdotool search --pid $PPID); do
-                xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -id $wid; done
-        fi
-
         # Change neofetch img backend and source
         if [[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]]; then
-            alias neofetch='printf %$(tput lines)s | tr " " "\n"; /usr/bin/neofetch --backend kitty --source "$NEOFETCH_IMG" && printf "\e[2A"'
+            alias fastfetch=fastfetch-img
         fi
         ;;
 
@@ -438,7 +432,7 @@ if  [ ! $UID = 0 ] &&
     [ ! $cur_term = "code" ] &&   # vscode
     [ ! $cur_term = "nvim" ];
 then
-    eval neofetch
+    eval fastfetch
 fi
 
 # BEGIN_KITTY_SHELL_INTEGRATION

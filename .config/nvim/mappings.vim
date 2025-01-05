@@ -215,9 +215,9 @@ vnoremap <C-A> <ESC>ggVG
 " @see [GNU readline command docs](https://www.gnu.org/software/bash/manual/html_node/Readline-Interaction.html#Readline-Interaction)
 
 " beginning-of-line
-inoremap <C-a> <C-o>^
+inoremap <C-a> <Home>
 " end-of-line
-inoremap <C-e> <C-o>$
+inoremap <C-e> <End>
 " backward-word
 inoremap <M-b> <C-o>b
 " forward-word

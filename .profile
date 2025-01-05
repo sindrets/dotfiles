@@ -1,4 +1,4 @@
-#/bin/sh
+#!/usr/bin/sh
 
 # Set our umask
 umask 022
@@ -11,6 +11,17 @@ export TERMINAL=kitty
 export GREP_COLORS='ms=01;33:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36'
 export npm_config_prefix="$HOME/.local"
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+
+appendenv () {
+    local var_name="$1"
+    local value="$(eval "echo \${$var_name}")"
+
+    if [ ! -z "$value" ]; then
+        eval "$(printf '%q' "$1"="$value:$2")"
+    else
+        eval "$(printf '%q' "$1"="$2")"
+    fi
+}
 
 # Append our default paths
 appendpath () {
@@ -34,6 +45,12 @@ appendpath "$HOME/.cargo/bin"
 unset appendpath
 
 export PATH
+
+appendenv XCURSOR_PATH "$(realpath -m /usr/share/icons)"
+appendenv XCURSOR_PATH "$(realpath -m ~/.local/share/icons)"
+export XCURSOR_PATH
+
+export XCURSOR_THEME="Vimix-cursors"
 
 # Load profiles from /etc/profile.d
 if test -d /etc/profile.d/; then

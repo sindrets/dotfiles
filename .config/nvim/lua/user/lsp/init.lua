@@ -17,6 +17,7 @@ require("neodev").setup({
 
 local cmp = prequire("cmp")
 local cmp_lsp = prequire("cmp_nvim_lsp")
+local blink = prequire("blink.cmp")
 local lspconfig = prequire("lspconfig")
 
 if not lspconfig then return end
@@ -50,7 +51,8 @@ M.base_config = {
   on_attach = M.common_on_attach,
   capabilities = utils.tbl_union_extend(
     vim.lsp.protocol.make_client_capabilities(),
-    cmp_lsp and cmp_lsp.default_capabilities() or nil
+    blink and blink.get_lsp_capabilities({}) or {},
+    cmp_lsp and cmp_lsp.default_capabilities() or {}
   ),
 }
 

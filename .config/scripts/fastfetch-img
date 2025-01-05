@@ -1,0 +1,15 @@
+#!/usr/bin/bash
+
+set -e
+
+src_img="$(find $NEOFETCH_IMG -regex '.*\.\(jpg\|png\)$' | shuf -n1)"
+out_img_cache="$HOME/.cache/fastfetch/cropped_images/$(basename "$src_img")"
+
+if [ ! -e "$out_img_cache" ]; then
+  mkdir -p "$(dirname "$out_img_cache")"
+  magick "$src_img" -gravity center -crop 1:1 +repage "$out_img_cache"
+fi
+
+printf "%$(tput lines)s" | tr " " "\n"
+printf "\e[9999A"
+/usr/bin/fastfetch --kitty "$out_img_cache" --logo-width 50 --logo-padding-top 0 $@

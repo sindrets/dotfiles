@@ -61,7 +61,7 @@ set +e
   sed -e 's/\(.*\S\)$/\1 /' \
     -e "$( printf '%s%s%s' 's/^\s*$/' "$(printf %150s)" '/' )" \
     "$IN_NAME" > "$TMP_PATH" && \
-  neorg-pandoc-linux86 "$TMP_PATH" | pandoc -f json $PANDOC_OPT -o "$OUT_NAME"
+  neorg-pandoc-linux86 -f "$TMP_PATH" | pandoc -f json $PANDOC_OPT -o "$OUT_NAME"
 )
 STATUS=$?
 set -e

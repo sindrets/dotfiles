@@ -1,0 +1,107 @@
+$bg: rgba(#111, 0.9);
+$bg-bright: #323232;
+$text: #ffffff;
+$text-dim: #888888;
+$primary: #285577;
+
+* {
+  font-family: "JetBrainsMono Nerd Font";
+  font-size: 14px;
+}
+
+window#waybar {
+  background-color: $bg;
+  color: $text;
+}
+
+.modules-left {
+  padding: 0;
+}
+
+.modules-right {
+  background-color: $bg-bright;
+  padding: 0;
+
+  & > * > * {
+    // border: solid 1px red;
+    padding: 0 10px;
+  }
+}
+
+#custom-scratch {
+  background-color: $bg-bright;
+  color: #b8b8b8;
+  padding: 0px 9px;
+}
+
+#workspaces {
+  button {
+    $btn-padding: 8px;
+
+    background-color: $bg-bright;
+    padding: 0px $btn-padding;
+    min-width: 1px;
+    color: $text-dim;
+    border-radius: 0;
+
+    &.focused {
+      background-color: $primary;
+      color: $text;
+    }
+  }
+}
+
+#mode {
+  background-color: $primary;
+  color: $text;
+  margin: 0 10px;
+  padding: 0px 8px;
+  border: 1px solid #2f343a;
+}
+
+#window {
+  color: $text;
+  padding: 0px 10px 0px 10px;
+}
+
+// window#waybar.empty #window {
+//   background-color: transparent;
+//   color: transparent;
+// }
+
+// window#waybar.empty {
+//   background-color: $bg-bright;
+// }
+
+// #network,
+// #temperature,
+// #backlight,
+// #pulseudio,
+// #battery {
+//   padding: 0px 15px 0px 15px;
+// }
+//
+// #clock {
+//   margin: 0px 15px 0px 15px;
+// }
+
+#tray {
+  padding: 0 5px;
+  margin: 0;
+  min-width: 0;
+
+  & > * > * {
+    // border: solid 1px green;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+#battery.critical {
+  color: #ff5555;
+}
+
+// #network.disconnected {
+//   color: #ff5555;
+// }

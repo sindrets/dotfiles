@@ -159,9 +159,9 @@ api.nvim_create_user_command(
     local subcmd = argo.args[1]
 
     if subcmd then
-      if subcmd == "enable" then
+      if subcmd == "enable" or subcmd == "on" then
         M.enable()
-      elseif subcmd == "disable" then
+      elseif subcmd == "disable" or subcmd == "off" then
         M.disable()
       elseif subcmd == "toggle" then
         if M.is_running() then M.disable() else M.enable() end
@@ -172,14 +172,14 @@ api.nvim_create_user_command(
   end,
   {
     nargs = 1,
-    complete = function(arg_lead, cmd_line, cur_pos)
+    complete = function(_, cmd_line, cur_pos)
       local arg_parser = require("diffview.arg_parser")
       local ctx = arg_parser.scan(cmd_line, { allow_quoted = false, cur_pos = cur_pos })
 
       local candidates = {}
 
       if ctx.argidx == 2 then
-        candidates = { "enable", "disable", "toggle", "status" }
+        candidates = { "on", "off", "enable", "disable", "toggle", "status" }
       end
 
       return arg_parser.process_candidates(candidates, ctx)

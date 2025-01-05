@@ -63,6 +63,8 @@ function M.apply_sp_underline()
     end
   end
 
+  hi("Underlined", { style = "underline" })
+
   -- Normalize diagnostic underlines
   for _, name in ipairs(diagnostic_kinds) do
     hi_clear("DiagnosticUnderline" .. name)
@@ -83,14 +85,14 @@ end
 --- @class Config.colorscheme.generate_terminal_colors.Opts
 --- @field gen_normals? boolean
 --- @field gen_alts? boolean
---- @field fixed_ansi8? boolean
+--- @field static_ansi8? boolean
 
 --- @param opts? Config.colorscheme.generate_terminal_colors.Opts
 function M.generate_terminal_colors(opts)
   opts = vim.tbl_extend("keep", opts or {}, {
     gen_normals = true,
     gen_alts = true,
-    fixed_ansi8 = false,
+    static_ansi8 = false,
   } --[[@as Config.colorscheme.generate_terminal_colors.Opts ]])
 
   if opts.gen_normals then
@@ -101,7 +103,7 @@ function M.generate_terminal_colors(opts)
     vim.g.terminal_color_8 = Color.from_hl("Normal", "bg"):highlight(0.2):to_css()
   end
 
-  if opts.fixed_ansi8 then
+  if opts.static_ansi8 then
     -- red
     vim.g.terminal_color_1  = "#f7768e"
     -- green
@@ -415,7 +417,7 @@ function M.apply_tweaks()
   local terminal_gen_opt = {
     gen_normals = true,
     gen_alts = true,
-    fixed_ansi8 = false,
+    static_ansi8 = false,
   } --[[@as Config.colorscheme.generate_terminal_colors.Opts ]]
   ---@type FelineThemeName
   local feline_theme = "duo"

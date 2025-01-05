@@ -51,7 +51,12 @@ rofi.columns: 2
 rofi.padding: 5
 rofi.fixed-num-lines: true
 rofi.hide-scrollbar: true
+! rofi.dpi: 168
 
 xterm*faceName: Hack
 xterm*faceSize: 11
 xterm*renderFont: true
+
+! *dpi: 168
+! Xft.dpi: 168
+! Xcursor.size: 32

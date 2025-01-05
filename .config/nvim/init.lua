@@ -32,41 +32,51 @@ Config.state.git = {
   rev_name_cache = Cache(),
 }
 
-local alias = require("user.modules.cmd_alias").alias
 local api = vim.api
 local lib = Config.lib
 local utils = Config.common.utils
 
 require("user")
 api.nvim_create_autocmd("VimEnter", {
-  callback = function() require("user.modules.winbar").init() end,
+  callback = function()
+    require("user.modules.winbar").init()
+  end,
 })
 
--- COMMAND ALIASES
+api.nvim_create_autocmd("CmdlineEnter", {
+  once = true,
+  callback = function()
+    -- COMMAND ALIASES
 
-alias("brm", "BRemove")
-alias("sch", "Scratch")
-alias("wins", "Windows")
-alias("hh", "HelpHere")
-alias("mh", "ManHere")
-alias("gh", "Git ++curwin")
-alias("T", "Telescope")
-alias("gs", "Telescope git_status")
-alias("gb", "Telescope git_branches")
-alias({ "gd", "DO" }, "DiffviewOpen")
-alias("gl", "DiffviewFileHistory")
-alias("Q", "q")
-alias({ "Qa", "QA", "QA!" }, "qa")
-alias({ "WQA", "WQa", "Wqa" }, "wqa")
-alias("we", "w | e")
-alias("ws", "w | so %")
-alias("ftd", "filetype detect")
-alias("N", "Neorg")
-alias("nim", "Neorg inject-metadata")
--- Toggle conceallevel:
-alias("tcl", "exe 'setl conceallevel=' . (&conceallevel == 0 ? 2 : 0)")
-alias("do", "diffget")
-alias("dp", "diffput")
+    local cmd_alias = require("user.modules.cmd_alias")
+    local alias, ialias = cmd_alias.alias, cmd_alias.ialias
+
+    alias("brm", "BRemove")
+    alias("sch", "Scratch")
+    alias("wins", "Windows")
+    alias("hh", "HelpHere")
+    alias("mh", "ManHere")
+    alias("gh", "Git ++curwin")
+    alias("T", "Telescope")
+    alias("gs", "Telescope git_status")
+    alias("gb", "Telescope git_branches")
+    alias({ "gd", "DO" }, "DiffviewOpen")
+    alias("gl", "DiffviewFileHistory")
+    alias("Q", "q")
+    ialias("qa", "qa")
+    ialias("wq", "wq")
+    ialias("wqa", "wqa")
+    alias("we", "w | e")
+    alias("ws", "w | so %")
+    alias("ftd", "filetype detect")
+    alias("N", "Neorg")
+    alias("nim", "Neorg inject-metadata")
+    -- Toggle conceallevel:
+    alias("tcl", "exe 'setl conceallevel=' . (&conceallevel == 0 ? 2 : 0)")
+    alias("do", "diffget")
+    alias("dp", "diffput")
+  end,
+})
 
 -- FUNCTIONS
 

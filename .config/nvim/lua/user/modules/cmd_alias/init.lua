@@ -1,9 +1,9 @@
+local cl = require("imminent.commonlib")
 local lazy = require("user.lazy")
 
----@module "diffview.arg_parser"
-local arg_parser = lazy.require("diffview.arg_parser")
+local arg_parser = lazy.require("diffview.arg_parser") ---@module "diffview.arg_parser"
 
-local utils = Config.common.utils
+local Iter = cl.Iter
 
 local store = {}
 
@@ -44,9 +44,59 @@ function M.alias(alias, substitute)
 
     vim.cmd(
       ("cnoreabbrev <expr> %s v:lua.require('user.modules.cmd_alias').expand('%s')")
-      :format(name, utils.pick(1, name:gsub("'", "\\'")))
+      :format(name, cl.pick(1, name:gsub("'", "\\'")))
     )
   end
+end
+
+--- @param chars string[]
+--- @return string[] variants
+local function istr_recurse(chars)
+  local c = chars[1]
+
+  if #chars == 1 then
+    if c:match("%a") then
+      return { c:lower(), c:upper() }
+    else
+      return { c }
+    end
+  end
+
+  return Iter
+    .new(istr_recurse(cl.slice(chars, 2)))
+    :flat_map(function(variant)
+      if c:match("%a") then
+        return { c:lower() .. variant, c:upper() .. variant }
+      else
+        return c .. variant
+      end
+    end)
+    :totable()
+end
+
+--- Get all case variations of a given string.
+---
+--- @param s string
+--- @return string[] variants
+local function istr(s)
+  return istr_recurse(cl.split(s, "."))
+end
+
+--- Case-insensitive alias.
+---
+--- @param ialias string|string[]
+--- @param substitute string
+function M.ialias(ialias, substitute)
+  if type(ialias) ~= "table" then ialias = { ialias } end
+
+  local alias_variants = Iter.new(ialias)
+    :flat_map(function(name)
+      return istr(name)
+    end)
+    :unique()
+    :totable()
+
+  M.alias(alias_variants, substitute)
 end
 
 ---Remove an alias.
@@ -54,6 +104,15 @@ end
 function M.unalias(alias)
   store[alias] = nil
   vim.cmd(("silent! cunabbrev %s"):format(alias))
+end
+
+--- Case-insensitive unalias.
+---
+--- @param ialias string
+function M.iunalias(ialias)
+  for _, variant in ipairs(istr(ialias)) do
+    M.unalias(variant)
+  end
 end
 
 return M
