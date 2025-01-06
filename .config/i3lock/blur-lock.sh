@@ -7,7 +7,7 @@ darken_amount=5
 ind_radius=150
 
 # take a screenshot
-if [ "$XDG_SESSION_TYPE" = "X11" ]; then
+if [ "$XDG_SESSION_TYPE" = "x11" ]; then
   scrot -o "$tmpbg" --quality 100
 else
   grim -t jpeg -q 100 "$tmpbg"
@@ -32,7 +32,7 @@ height="$(echo $resPos | perl -lne 'print $& if /(?<=x)[0-9]*/')"
 offsetX="$(echo $resPos | perl -lne 'print $& if /(?<=\+)[0-9]*/')"
 offsetY="$(echo $resPos | perl -lne 'print $& if /(?<=\+)[0-9]*$/')"
 
-if [ ! "$XDG_SESSION_TYPE" == "X11" ]; then
+if [ ! "$XDG_SESSION_TYPE" == "x11" ]; then
   scaling_factor="$(swaymsg --raw -t get_outputs | jq -r '.[0] | "\(.scale)"')"
 
   width="$(perl -e "print(int($width * $scaling_factor))")"
@@ -55,7 +55,7 @@ COLOR=$( \
 # screenshot
 if [ "$COLOR" -gt "$VALUE" ]; then #light background, use dark icon
   icon="$darkicon"
-  if [ "$XDG_SESSION_TYPE" = "X11" ]; then
+  if [ "$XDG_SESSION_TYPE" = "x11" ]; then
     PARAM=(
       --greeter-color=333333ff \
       --time-color=333333ff \
@@ -94,7 +94,7 @@ if [ "$COLOR" -gt "$VALUE" ]; then #light background, use dark icon
 
 else # dark background so use the light icon
   icon="$lighticon"
-  if [ "$XDG_SESSION_TYPE" = "X11" ]; then
+  if [ "$XDG_SESSION_TYPE" = "x11" ]; then
     PARAM=( 
       --greeter-color=edededff \
       --time-color=edededff \
@@ -155,7 +155,7 @@ time_size=64
 date_size=16
 
 # lock the screen with the color parameters
-if [ "$XDG_SESSION_TYPE" = "X11" ]; then
+if [ "$XDG_SESSION_TYPE" = "x11" ]; then
   i3lock "${PARAM[@]}" \
     --indicator \
     --radius $ind_radius \
