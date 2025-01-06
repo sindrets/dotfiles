@@ -406,6 +406,6 @@ bindsym --release Print exec --no-startup-id "$HOME/.config/scripts/screenshot-u
 bindsym --release Mod4+Shift+Print exec --no-startup-id "$HOME/.config/scripts/screenshot-utils.sh -a"
 
 
-include ~/.config/i3/config.d/*.conf
+include ~/.config/sway/config.d/*.conf
 
 # vim: ft=swayconfig

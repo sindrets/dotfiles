@@ -12,7 +12,7 @@
   "modules-center": [],
   "modules-right": [
     "network",
-    "temperature",
+    "custom/cpu-temp",
     // "backlight",
     "pulseaudio",
     "battery",
@@ -42,7 +42,7 @@
 
   "tray": {
     "icon-size": 18,
-    "spacing": 15
+    "spacing": 10
   },
 
   "clock": {
@@ -57,7 +57,7 @@
       "good": 98,
       "normal": 98,
       "warning": 20,
-      "critical": 20
+      "critical": 10
     },
 
     "format": "{icon}  {capacity}%",
@@ -78,10 +78,16 @@
   },
 
   "temperature": {
-    "thermal-zone": 0,
+    // "thermal-zone": 0,
     "format": "{icon} {temperatureC}°C",
     "format-icons": [""],
     "interval": 30
+  },
+
+  "custom/cpu-temp": {
+    "exec": "~/.config/polybar/scripts/cpu-temp.sh",
+    "format": "󰔏 {}",
+    "interval": 5
   },
 
   "backlight": {
@@ -92,7 +98,7 @@
   },
 
   "pulseaudio": {
-    "format": "{icon} {volume}%",
+    "format": "{icon}  {volume}%",
     "format-bluetooth": " {volume}%",
     "format-muted": "婢 Mute",
     "interval": 60,
