@@ -23,6 +23,17 @@ appendenv () {
     fi
 }
 
+prependenv () {
+    local var_name="$1"
+    local value="$(eval "echo \${$var_name}")"
+
+    if [ ! -z "$value" ]; then
+        eval "$(printf '%q' "$1"="$2:$value")"
+    else
+        eval "$(printf '%q' "$1"="$2")"
+    fi
+}
+
 # Append our default paths
 appendpath () {
     case ":$PATH:" in
@@ -33,22 +44,32 @@ appendpath () {
     esac
 }
 
+prependpath () {
+    case ":$PATH:" in
+        *:"$1":*)
+            ;;
+        *)
+            PATH="$(realpath -sm "$1")${PATH:+:$PATH}"
+    esac
+}
+
+prependpath "$HOME/.local/sbin"
+prependpath "$HOME/.local/bin"
+prependpath "$HOME/.config/scripts"
 appendpath '/usr/local/sbin'
 appendpath '/usr/local/bin'
 appendpath '/usr/bin'
-appendpath "$HOME/.local/bin"
-appendpath "$HOME/.local/sbin"
-appendpath "$HOME/.config/scripts"
 appendpath "$HOME/.config/emacs/bin"
 appendpath "$(ruby -e 'puts Gem.user_dir')/bin"
 appendpath "$HOME/.cargo/bin"
-unset appendpath
 
 export PATH
 
 appendenv XCURSOR_PATH "$(realpath -m /usr/share/icons)"
 appendenv XCURSOR_PATH "$(realpath -m ~/.local/share/icons)"
 export XCURSOR_PATH
+
+unset appendenv prependenv appendpath prependpath
 
 export XCURSOR_THEME="Vimix-cursors"
 

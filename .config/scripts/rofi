@@ -1,0 +1,13 @@
+#!/usr/bin/bash
+
+if [ ! "$XDG_SESSION_TYPE" == "x11" ]; then
+  # Fix for sway to make rofi launch on the focused monitor
+
+  focused_monitor="$(
+    swaymsg -t get_outputs | jq -c '.[] | select(.focused) | select(.id)' | jq -r '.name'
+  )"
+
+  /usr/bin/rofi -m "$focused_monitor" $@
+else
+  /usr/bin/rofi $@
+fi

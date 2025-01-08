@@ -207,13 +207,14 @@ for_window {
     [app_id="SpeedCrunch"] $float
     [title="None"] $float
     [title="^$"] $float
-    [app_id="steam"] border pixel 1
-    [app_id="steam" title="Friends List"] $float
-    [app_id="steam" title="Steam - News"] $float
+    [class="steam"] border pixel 1
+    [class="steam" title="Friends List"] $float
+    [class="steam" title="Steam - News"] $float
     [app_id="Colorgrab"] $float
     [app_id="Gpick"] $float
     [app_id="dev.zed.Zed"] floating disable
     [app_id="azote"] $float_title
+		[app_id="Firefox Beta" title="Picture-in-Picture"] $float
     # switch to workspace with urgent window automatically
     [urgent=latest] focus
 }

@@ -1,6 +1,9 @@
 return function()
+  local lz = require("user.lazy")
   local blink = require("blink.cmp")
   local utils = Config.common.utils
+
+  local fzy_sort = lz.require("blink.cmp.fuzzy.sort") --- @module "blink.cmp.fuzzy.sort"
 
   blink.setup({
     keymap = {
@@ -32,7 +35,12 @@ return function()
       },
 
       -- Insert completion item on selection, don"t select by default
-      list = { selection = "manual" },
+      list = {
+        selection = {
+          preselect = false,
+          auto_insert = false,
+        },
+      },
 
       menu = {
         enabled = true,
@@ -110,6 +118,7 @@ return function()
         "lsp",
         "snippets",
         "path",
+        "spell",
         "buffer",
       },
       -- Disable cmdline completions
@@ -137,6 +146,26 @@ return function()
             end,
           },
         },
+        spell = {
+          name = "Spell",
+          module = "blink-cmp-spell",
+          opts = {
+            max_entries = 20,
+          },
+        },
+      },
+    },
+
+    fuzzy = {
+      sorts = {
+        function(a, b)
+          if a.source_id == "spell" and b.source_id == "spell" then
+            -- use the label sorter as the primary sorter for the "spell" source
+            return fzy_sort.label(a, b)
+          end
+        end,
+        "score",
+        "sort_text",
       },
     },
 
