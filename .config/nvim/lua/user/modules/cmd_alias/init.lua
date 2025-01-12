@@ -1,9 +1,9 @@
-local cl = require("imminent.commonlib")
+local pb = require("imminent.pebbles")
 local lazy = require("user.lazy")
 
 local arg_parser = lazy.require("diffview.arg_parser") ---@module "diffview.arg_parser"
 
-local Iter = cl.Iter
+local Iter = pb.Iter
 
 local store = {}
 
@@ -44,7 +44,7 @@ function M.alias(alias, substitute)
 
     vim.cmd(
       ("cnoreabbrev <expr> %s v:lua.require('user.modules.cmd_alias').expand('%s')")
-      :format(name, cl.pick(1, name:gsub("'", "\\'")))
+      :format(name, pb.pick(1, name:gsub("'", "\\'")))
     )
   end
 end
@@ -63,7 +63,7 @@ local function istr_recurse(chars)
   end
 
   return Iter
-    .new(istr_recurse(cl.slice(chars, 2)))
+    .new(istr_recurse(pb.slice(chars, 2)))
     :flat_map(function(variant)
       if c:match("%a") then
         return { c:lower() .. variant, c:upper() .. variant }
@@ -79,7 +79,7 @@ end
 --- @param s string
 --- @return string[] variants
 local function istr(s)
-  return istr_recurse(cl.split(s, "."))
+  return istr_recurse(pb.split(s, "."))
 end
 
 --- Case-insensitive alias.
@@ -89,10 +89,9 @@ end
 function M.ialias(ialias, substitute)
   if type(ialias) ~= "table" then ialias = { ialias } end
 
-  local alias_variants = Iter.new(ialias)
-    :flat_map(function(name)
-      return istr(name)
-    end)
+  local alias_variants = Iter
+    .new(ialias)
+    :flat_map(function(name) return istr(name) end)
     :unique()
     :totable()
 

@@ -17,9 +17,8 @@ local function conf(config_name)
   return require(string.format("user.plugins.%s", config_name))
 end
 
----Use local development version if it exists.
----NOTE: Remember to run `:PackerClean :PackerInstall` to update symlinks.
----@param spec table|string
+--- Use local development version if it exists.
+--- @param spec table|string
 local function use_local(spec)
   local name
 
@@ -72,6 +71,8 @@ vim.g.markdown_fenced_languages = {
 
 ---@diagnostic disable-next-line: different-requires
 require("lazy").setup({
+  use_local { "sindrets/imminent.nvim" },
+
   -- SYNTAX & FILETYPE PLUGINS
   { "MTDL9/vim-log-highlighting" },
   { "kevinoid/vim-jsonc" },
@@ -320,7 +321,11 @@ require("lazy").setup({
   },
 
   -- MISC
-  { "feline-nvim/feline.nvim", config = conf("feline"), event = "VeryLazy" },
+  {
+    "feline-nvim/feline.nvim",
+    config = conf("feline"),
+    event = "VeryLazy",
+  },
   use_local { "lewis6991/gitsigns.nvim", config = conf("gitsigns") },
   { "lukas-reineke/indent-blankline.nvim", config = conf("indent-blankline"), event = "VimEnter" },
   {

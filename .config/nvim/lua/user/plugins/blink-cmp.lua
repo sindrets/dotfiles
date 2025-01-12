@@ -210,7 +210,7 @@ return function()
         Keyword = "",
         File = "",
         Folder = "󰝰",
-        Color = "",
+        Color = "",
         Unit = "󰑭",
         Snippet = "",
         Text = "",
