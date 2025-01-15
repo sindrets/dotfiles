@@ -8,15 +8,15 @@
     "body": "--[[@type ${1:type} ]]"
   },
   "lazy_require": {
-    "prefix": "lazyrequire",
+    "prefix": "lzrequire",
     "body": [
       "local ${1:module} = lz.require(\"${2}\") ---@module \"${2:module_path}\""
     ]
   },
-  "lazy_access": {
-    "prefix": "lazyaccess",
+  "lazy_get": {
+    "prefix": "lzget",
     "body": [
-      "local ${1:module} = lz.access(\"${2:module_path}\", \"${1}\") ---@type ${1}|LazyModule"
+      "local ${1:module} = lz.get(\"${2:module_path}\", \"${1}\") ---@type ${1}|LazyModule"
     ]
   },
   "diffview_class": {

@@ -2,7 +2,7 @@ local lz = require("user.lazy")
 
 local Job = lz.require("imminent.Job") ---@module "imminent.Job"
 local StatusComponent = lz.require("user.plugins.feline.status_component") ---@type StatusComponent|LazyModule
-local pb = lz.require("imminent.pebbles") ---@module "imminent.pebbles"
+local async = lz.require("imminent") ---@module "imminent"
 local fs = lz.require("imminent.fs") ---@module "imminent.fs"
 local feline = lz.require("feline") ---@module "feline"
 local lsp = lz.require("feline.providers.lsp") ---@module "feline.providers.lsp"
@@ -10,6 +10,7 @@ local styles = lz.require("user.plugins.feline.styles") ---@module "user.plugins
 local devicons = lz.require("nvim-web-devicons") ---@module "nvim-web-devicons"
 
 local utils = Config.common.utils
+local pb = Config.common.pb
 local pl = utils.pl
 local hl = Config.common.hl
 local api = vim.api
@@ -454,58 +455,36 @@ M.components = {
           end
 
           local rebasing
-          rev, rebasing = utils.str_match(rev, { "(.*)(%(rebasing%))", "(.*)" })
+          rev, rebasing = pb.match_any(rev, { "(.*)(%(rebasing%))", "(.*)" })
 
           local desc = rebasing and ":(rebasing)" or ""
           local cache = Config.state.git.rev_name_cache
           local key = path .. "#" .. rev
 
-          if cache:get(key) then
+          if cache:has(key) then
             return cache:get(key) .. desc
           elseif (rev == "HEAD" or rev:match("^%x+$")) then
             -- Problem: Gitsigns shows the current HEAD as a commit SHA if it's
             -- anything other than the HEAD of a branch.
             -- Solution: Use git-name-rev to get more meaningful names.
 
-            -- Check reflog to find the last checkout
-            local name = ""
-            local dir_path = fs.path:from(dir):unwrap()
-            local cwd = dir_path:readable():await()
-              and dir_path
-              or fs.path:from("."):unwrap():absolute()
+            local name = rev
 
-            local reflog = Job.new({
-              cmd = {
-                "git",
-                "reflog",
-                "--pretty=format:%gs",
-                "-E",
-                "--grep-reflog=^checkout: |^rebase \\((start|finish)\\): (checkout|returning) ",
-                "-n1",
-              },
-              cwd = cwd,
-              success_cond =
-                Job.SUCCESS_CONDITIONS.zero_exit *
-                Job.SUCCESS_CONDITIONS.non_empty_stdout,
-            })
+            async.spawn(function()
+              -- Check reflog to find the last checkout
+              local dir_path = fs.path:from(dir):unwrap()
+              local cwd = dir_path:readable():await()
+                and dir_path
+                or fs.path:from("."):unwrap():absolute()
 
-            reflog:wait():await()
-
-            if reflog:result():is_ok() then
-              name = pb.match_any(pb.line(reflog.stdout:unwrap(), 1) or "", {
-                "^checkout: moving from %S+ to (%S+)$",
-                "^rebase %(start%): checkout (%S+)",
-                "^rebase %(finish%): returning to (%S+)",
-              })
-
-              local name_rev = Job.new({
+              local reflog = Job.new({
                 cmd = {
                   "git",
-                  "name-rev",
-                  "--name-only",
-                  "--no-undefined",
-                  "--always",
-                  name,
+                  "reflog",
+                  "--pretty=format:%gs",
+                  "-E",
+                  "--grep-reflog=^checkout: |^rebase \\((start|finish)\\): (checkout|returning) ",
+                  "-n1",
                 },
                 cwd = cwd,
                 success_cond =
@@ -513,15 +492,40 @@ M.components = {
                   Job.SUCCESS_CONDITIONS.non_empty_stdout,
               })
 
-              name_rev:wait():await()
+              reflog:wait():await()
 
-              if name_rev:result():is_ok() then
-                name = pb.match_any(
-                  pb.line(name_rev.stdout:unwrap(), 1) or "",
-                  { "(.*)%^0", "(.*)" }
-                )
+              if reflog:result():is_ok() then
+                name = pb.match_any(pb.line(reflog.stdout:unwrap(), 1) or "", {
+                  "^checkout: moving from %S+ to (%S+)$",
+                  "^rebase %(start%): checkout (%S+)",
+                  "^rebase %(finish%): returning to (%S+)",
+                })
+
+                local name_rev = Job.new({
+                  cmd = {
+                    "git",
+                    "name-rev",
+                    "--name-only",
+                    "--no-undefined",
+                    "--always",
+                    name,
+                  },
+                  cwd = cwd,
+                  success_cond =
+                    Job.SUCCESS_CONDITIONS.zero_exit *
+                    Job.SUCCESS_CONDITIONS.non_empty_stdout,
+                })
+
+                name_rev:wait():await()
+
+                if name_rev:result():is_ok() then
+                  name = pb.match_any(
+                    pb.line(name_rev.stdout:unwrap(), 1) or "",
+                    { "(.*)%^0", "(.*)" }
+                  )
+                end
               end
-            end
+            end):block_on()
 
             cache:put(key, name, { lifetime = 60 * 1000 })
 

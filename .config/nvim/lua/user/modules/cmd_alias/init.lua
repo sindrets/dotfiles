@@ -1,8 +1,8 @@
-local pb = require("imminent.pebbles")
-local lazy = require("user.lazy")
+local lz = require("user.lazy")
 
-local arg_parser = lazy.require("diffview.arg_parser") ---@module "diffview.arg_parser"
+local arg_parser = lz.require("diffview.arg_parser") ---@module "diffview.arg_parser"
 
+local pb = Config.common.pb
 local Iter = pb.Iter
 
 local store = {}

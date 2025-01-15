@@ -1180,6 +1180,7 @@ function M.apply_tweaks()
     sp = hl.get_fg("DiagnosticWarn"),
     style = "underline,bold",
   })
+  hi_link("LazyCommitIssue", "NONE", { clear = true })
 
   -- Adjust ts-rainbow colors depending on brightness
   if bg_normal.lightness >= 0.5 then

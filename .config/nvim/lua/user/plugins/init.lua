@@ -216,7 +216,7 @@ require("lazy").setup({
         "saghen/blink.compat",
         lazy = true,
         opts = {
-          impersonate_nvim_cmp = true,
+          impersonate_nvim_cmp = false,
         },
         version = "*",
       },
@@ -379,6 +379,7 @@ require("lazy").setup({
   { "ryanoasis/vim-devicons" },
   {
     "OXY2DEV/markview.nvim",
+    branch = "dev",
     ft = "markdown",
     dependencies = {
       "nvim-treesitter/nvim-treesitter",

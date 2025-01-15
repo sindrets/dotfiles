@@ -8,7 +8,7 @@ error_symbol = "[ᐅ](red)"
 vimcmd_symbol = "[⟐](green)"
 
 [lua]
-symbol = "[](#51A0CF) "
+symbol = " "
 
 [aws]
 symbol = "  "

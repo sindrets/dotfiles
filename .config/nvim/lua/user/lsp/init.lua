@@ -323,34 +323,42 @@ M.define_diagnostic_signs({
   info = ""
 })
 
--- LSP auto commands
-Config.common.au.declare_group("lsp_init", {}, {
-  { "CursorHold", callback = M.show_position_diagnostics },
-  {
-    "LspAttach",
-    callback = function(state)
-      local client = vim.lsp.get_client_by_id(state.data.client_id)
+do
+  -- LSP auto commands
+  Config.common.au.declare_group("lsp_init", {}, {
+    { "CursorHold", callback = M.show_position_diagnostics },
+    {
+      "LspAttach",
+      callback = function(state)
+        local client = vim.lsp.get_client_by_id(state.data.client_id)
 
-      if client and client.server_capabilities.inlayHintProvider then
-        -- Enable inlay hints:
-        vim.lsp.inlay_hint.enable(true, { bufnr = 0 })
-      end
-    end,
-  },
-  {
-    "ModeChanged",
-    pattern = "*:i*",
-    callback = function(state)
-      vim.diagnostic.enable(false, { bufnr = state.buf })
-    end,
-  },
-  {
-    "ModeChanged",
-    pattern = "i*:*",
-    callback = function(state)
-      vim.diagnostic.enable(true, { bufnr = state.buf })
-    end,
-  },
-})
+        if client and client.server_capabilities.inlayHintProvider then
+          -- Enable inlay hints:
+          vim.lsp.inlay_hint.enable(true, { bufnr = 0 })
+        end
+      end,
+    },
+    {
+      "ModeChanged",
+      pattern = "*:i*",
+      callback = function(state)
+        if vim.diagnostic.is_enabled() then
+          vim.b.diagnotic_was_toggled = true
+          vim.diagnostic.enable(false, { bufnr = state.buf })
+        end
+      end,
+    },
+    {
+      "ModeChanged",
+      pattern = "i*:*",
+      callback = function(state)
+        if vim.b.diagnotic_was_toggled then
+          vim.b.diagnotic_was_toggled = false
+          vim.diagnostic.enable(true, { bufnr = state.buf })
+        end
+      end,
+    },
+  })
+end
 
 return M

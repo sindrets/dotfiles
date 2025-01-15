@@ -1,4 +1,5 @@
 local utils = Config.common.utils
+local pb = Config.common.pb
 local pl = utils.pl
 
 local api = vim.api
@@ -551,6 +552,36 @@ function M.regex_to_pattern(exp)
     exp = exp:gsub(sub[1], sub[2])
   end
   return "\\v" .. exp
+end
+
+--- Filter the items in the quickfix list either by a given pattern, or the
+--- pattern in the `/` register.
+---
+--- @param invert boolean # Invert the predicate. Filter _out_ anything that matches.
+--- @param pattern? string
+function M.filter_qf(invert, pattern)
+  if not pattern then
+    pattern = vim.fn.getreg("/")
+    if pattern == "" then
+      utils.err("No filter pattern provided, and no pattern in the '/' register!")
+      return
+    end
+  end
+
+  local pat = assert(vim.regex(pattern), fmt("Invalid vim regex: %s", pattern))
+
+  vim.fn.setqflist(
+    pb.Iter
+      .new(vim.fn.getqflist())
+      :filter(function(item)
+        local filename = api.nvim_buf_get_name(item.bufnr)
+        local matches = not not (pat:match_str(item.text) or pat:match_str(filename))
+        if invert then return not matches end
+
+        return matches
+      end)
+      :totable()
+  )
 end
 
 ---When enabled: always keep the cursor centered in the current window while

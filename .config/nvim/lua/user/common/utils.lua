@@ -1,10 +1,10 @@
 ---@diagnostic disable: duplicate-doc-field
 local async = require("user.async")
 local ffi = require("user.ffi")
-local lazy = require("user.lazy")
+local lz = require("user.lazy")
 
-local Job = lazy.access("diffview.job", "Job") ---@type diffview.Job|LazyModule
-local winshift_lib = lazy.require("winshift.lib") ---@module "winshift.lib"
+local Job = lz.get("diffview.job", "Job") ---@type diffview.Job|LazyModule
+local winshift_lib = lz.require("winshift.lib") ---@module "winshift.lib"
 
 local await = async.await
 local api = vim.api
@@ -17,7 +17,7 @@ local path_sep = package.config:sub(1, 1)
 
 ---Path lib
 ---@type PathLib
-M.pl = lazy.require("diffview.path", function(m)
+M.pl = lz.require("diffview.path", function(m)
   return m.PathLib({ separator = "/" })
 end)
 

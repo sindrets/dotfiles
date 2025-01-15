@@ -6,10 +6,10 @@ return function()
     -- Id is automatically added at the beginning, and name at the end
     -- See :help oil-columns
     columns = {
-      "icon",
       { "permissions", highlight = "Special" },
       { "size", highlight = "Number" },
       { "mtime", highlight = "Keyword" },
+      "icon",
     },
     -- Buffer-local options to use for oil buffers
     buf_options = {

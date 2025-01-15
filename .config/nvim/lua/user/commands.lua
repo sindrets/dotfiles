@@ -330,6 +330,7 @@ command("Reindent", function(c)
     tonumber(c.fargs[1]),
     fmt("IllegalArgument :: Expected number, got %s!", inspect(c.fargs[1]))
   )
+  ---@diagnostic disable-next-line: param-type-mismatch
   local cur_size = vim.opt_local.sw:get()
 
   local range = utils.vec_sort({ c.line1, c.line2 })
@@ -362,3 +363,7 @@ command("Pager", function()
   api.nvim_chan_send(chan, table.concat(api.nvim_buf_get_lines(cur_buf, 0, -1, false), "\n"))
   api.nvim_buf_delete(cur_buf, { force = true })
 end, {})
+
+command("FilterQf", function(c)
+  Config.lib.filter_qf(c.bang, c.fargs[1])
+end, { nargs = "?", bang = true })

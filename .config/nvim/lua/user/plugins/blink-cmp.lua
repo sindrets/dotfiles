@@ -1,7 +1,9 @@
 return function()
   local lz = require("user.lazy")
   local blink = require("blink.cmp")
+
   local utils = Config.common.utils
+  local pb = Config.common.pb
 
   local fzy_sort = lz.require("blink.cmp.fuzzy.sort") --- @module "blink.cmp.fuzzy.sort"
 
@@ -127,30 +129,39 @@ return function()
       providers = {
         lsp = {
           name = "LSP",
+          score_offset = 500,
           module = "blink.cmp.sources.lsp",
           fallbacks = {},
+        },
+        snippets = {
+          score_offset = 400,
+        },
+        path = {
+          score_offset = 300,
+        },
+        spell = {
+          name = "Spell",
+          score_offset = 200,
+          module = "blink-cmp-spell",
+          opts = {
+            max_entries = 20,
+          },
         },
         buffer = {
           name = "Buffer",
           module = "blink.cmp.sources.buffer",
+          score_offset = 100,
           opts = {
             max_items = 20,
             get_bufnrs = function()
-              return vim.tbl_filter(
-                function(bufnr) return utils.buf_get_size(bufnr) < 1024 end,
-                utils.vec_union(
+              return pb.filter(
+                pb.unique(
                   utils.list_bufs({ listed = true }),
                   utils.list_bufs({ no_hidden = true })
-                )
+                ),
+                function(bufnr) return utils.buf_get_size(bufnr) < 1024 end
               )
             end,
-          },
-        },
-        spell = {
-          name = "Spell",
-          module = "blink-cmp-spell",
-          opts = {
-            max_entries = 20,
           },
         },
       },

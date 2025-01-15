@@ -1,7 +1,7 @@
-local lazy = require("user.lazy")
+local lz = require("user.lazy")
 
 ---@type FelineConfig|LazyModule
-local c = lazy.access(_G, "Config.plugin.feline")
+local c = lz.get(_G, "Config.plugin.feline")
 
 local hl = Config.common.hl
 

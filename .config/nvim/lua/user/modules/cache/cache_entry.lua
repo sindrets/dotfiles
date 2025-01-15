@@ -1,19 +1,19 @@
 local oop = require("user.oop")
 
----@class user.CacheEntry
----@operator call : user.CacheEntry
----@field data any
----@field valid boolean
----@field timestamp integer
----@field expires integer
+--- @class user.CacheEntry
+--- @field data any
+--- @field valid boolean
+--- @field timestamp integer
+--- @field expires integer
+--- @overload fun(data: any, opts?: user.CacheEntry.Opts): user.CacheEntry
 local CacheEntry = oop.create_class("CacheEntry")
 
----@class user.CacheEntry.opts
----@field lifetime integer # (ms)
----@field expires integer # (ns)
+--- @class user.CacheEntry.Opts
+--- @field lifetime integer # (ms)
+--- @field expires integer # (ns)
 
----@param data any
----@param opts? user.CacheEntry.opts
+--- @param data any
+--- @param opts? user.CacheEntry.Opts
 function CacheEntry:init(data, opts)
   opts = opts or {}
   self.data = data
