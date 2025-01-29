@@ -294,7 +294,7 @@ function M.remove_buffer(force, bufnr)
       if alt_bufnr ~= -1 and api.nvim_buf_is_loaded(alt_bufnr) then
         api.nvim_set_current_buf(alt_bufnr)
       else
-        local listed = utils.list_bufs({ listed = true })
+        local listed = utils.list_bufs({ no_unlisted = true })
         if #listed > (vim.bo[bufnr].buflisted and 1 or 0) then
           vim.cmd("silent! bp")
         else

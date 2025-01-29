@@ -379,25 +379,27 @@ require("lazy").setup({
   { "ryanoasis/vim-devicons" },
   {
     "OXY2DEV/markview.nvim",
-    branch = "dev",
+    branch = "main",
     ft = "markdown",
     dependencies = {
       "nvim-treesitter/nvim-treesitter",
       "nvim-tree/nvim-web-devicons"
     },
     opts = {
-      modes = { "n", "i", "no", "c" },
-      hybrid_modes = { "i" },
       code_blocks = {
         pad_amount = 0,
       },
-      callbacks = {
-        on_enable = function (_, win)
-          vim.api.nvim_win_call(win, function ()
-            vim.opt_local.conceallevel = 2
-            vim.opt_local.concealcursor = "nc"
-          end)
-        end,
+      preview = {
+        modes = { "n", "i", "no", "c" },
+        hybrid_modes = { "i" },
+        callbacks = {
+          on_enable = function (_, win)
+            vim.api.nvim_win_call(win, function ()
+              vim.opt_local.conceallevel = 2
+              vim.opt_local.concealcursor = "nc"
+            end)
+          end,
+        },
       },
     },
   },
@@ -492,6 +494,7 @@ require("lazy").setup({
   { "mellow-theme/mellow.nvim" },
   { "wtfox/jellybeans.nvim" },
   { "cpwrs/americano.nvim" },
+  { "dgox16/oldworld.nvim" },
 }, {
   ui = {
     border = "single",

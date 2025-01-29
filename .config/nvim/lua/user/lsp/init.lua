@@ -126,6 +126,17 @@ lspconfig.pyright.setup(M.create_config())
 -- Lua
 require("user.lsp.lua")
 
+-- server_configs.emmylua_ls = {
+--   default_config = {
+--     cmd = { 'emmylua_ls' },
+--     filetypes = { 'lua' },
+--     root_dir = require("lspconfig.configs.lua_ls").default_config.root_dir,
+--     single_file_support = true,
+--     log_level = vim.lsp.protocol.MessageType.Warning,
+--   }
+-- }
+-- lspconfig.emmylua_ls.setup(M.create_config())
+
 -- Teal
 -- require("user.lsp.teal")
 
@@ -219,7 +230,7 @@ vim.diagnostic.handlers.signs = {
   end,
 }
 
-local pop_opts = { border = "single", max_width = 84 }
+local pop_opts = { border = "single", max_width = 100 }
 vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, pop_opts)
 vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
   vim.lsp.handlers.signature_help, pop_opts
@@ -342,7 +353,7 @@ do
       "ModeChanged",
       pattern = "*:i*",
       callback = function(state)
-        if vim.diagnostic.is_enabled() then
+        if vim.diagnostic.is_enabled({ bufnr = 0 }) then
           vim.b.diagnotic_was_toggled = true
           vim.diagnostic.enable(false, { bufnr = state.buf })
         end

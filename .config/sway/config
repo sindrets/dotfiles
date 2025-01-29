@@ -198,6 +198,7 @@ for_window {
     [app_id="Nitrogen"] $float_title
     [app_id="pavucontrol-qt"] $float_title
     [app_id="insync"] $float_title
+    [class="Insync"] $float_title
     [app_id="kitty_FLOAT"] $float
     [app_id="Headset" title="Headset"] $float
     [app_id="Headset" title="Headset - Player"] move container to workspace $wsTrash
@@ -284,9 +285,7 @@ exec --no-startup-id dunst
 #       set wallpaper
 exec --no-startup-id [ -x ~/.azotebg ] && ~/.azotebg
 exec --no-startup-id udiskie
-exec --no-startup-id clipster -d
-exec --no-startup-id insync start
-exec --no-startup-id redshift -l 59.89:10.75
+exec --no-startup-id env QT_QPA_PLATFORM=xcb insync start
 exec --no-startup-id thunar --daemon
 
 # bar swaybar_command swaybar

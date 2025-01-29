@@ -1,13 +1,13 @@
----Define the default colorscheme.
+--- Define the default colorscheme.
 ---
----Format is `"{name} [bg]"`, where `{name}` is the name of the colorscheme,
----and `[bg]` is the optionally defined value for 'background'. `{name}` may
----also be replaced with one of the special values "default_dark" or
----"default_light" which will apply a predefined default dark or light color
----scheme.
+--- Format is `"{name} [bg]"`, where `{name}` is the name of the colorscheme,
+--- and `[bg]` is the optionally defined value for 'background'. `{name}` may
+--- also be replaced with one of the special values "default_dark" or
+--- "default_light" which will apply a predefined default dark or light color
+--- scheme.
 ---
----Override the default colorscheme by defining the environment variable
----`NVIM_COLORSCHEME` using the same format.
+--- Override the default colorscheme by defining the environment variable
+--- `NVIM_COLORSCHEME` using the same format.
 local DEFAULT_COLORSCHEME = "default_dark"
 
 local Color = Config.common.color.Color
@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "americano"
+M.DEFAULT_DARK = "oldworld"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -29,11 +29,11 @@ do
     end
   end
 
-  ---Name of the currently configured colorscheme.
-  ---@type string
+  --- Name of the currently configured colorscheme.
+  --- @type string
   M.name = name
-  ---Configured value for 'background'.
-  ---@type string?
+  --- Configured value for 'background'.
+  --- @type string?
   M.bg = bg
 
   if name == "default_dark" then
@@ -137,8 +137,8 @@ function M.generate_terminal_colors(opts)
   end
 end
 
----[Graph](https://www.desmos.com/calculator/tmiqlckphe)
----@param k number # Slope
+--- [Graph](https://www.desmos.com/calculator/tmiqlckphe)
+--- @param k number # Slope
 function M.parametric_ease_out(k)
   ---@param x number # [0,1]
   ---@return number # Progression
@@ -189,7 +189,7 @@ end
 --- @field no_override boolean
 --- @field no_derive boolean|{ add: boolean, del: boolean, mod: boolean, all: boolean }
 
----@param opt? Config.colorscheme.generate_diff_colors.Opts
+--- @param opt? Config.colorscheme.generate_diff_colors.Opts
 function M.generate_diff_colors(opt)
   opt = opt or {}
   local bg = vim.o.bg
@@ -238,6 +238,10 @@ function M.generate_diff_colors(opt)
 
   -- Builtin groups
 
+  hi("@diff.plus", { fg = base_add:to_css(), link = -1, explicit = true })
+  hi("@diff.minus", { fg = base_del:to_css(), link = -1, explicit = true })
+  hi("@diff.delta", { fg = base_mod:to_css(), link = -1, explicit = true })
+
   if not opt.no_override then
     hi("DiffAdd", { bg = bg_add:to_css(), explicit = true })
     hi("DiffDelete", { bg = bg_del:to_css(), explicit = true })
@@ -265,11 +269,11 @@ function M.generate_diff_colors(opt)
   hi_link("Added", "@diff.plus", { clear = true })
   hi_link("Removed", "@diff.minus", { clear = true })
   hi_link("Changed", "@diff.delta", { clear = true })
-  hi_link("@text.diff.add", "DiffInlineAdd")
-  hi_link("@text.diff.delete", "DiffInlineDelete")
+  hi_link({ "@text.diff.add", "@diff.plus.diff" }, "DiffInlineAdd")
+  hi_link({ "@text.diff.delete", "@diff.minus.diff" }, "DiffInlineDelete")
 end
 
----Give Telescope its default appearance.
+--- Give Telescope its default appearance.
 function M.unstyle_telescope()
   hi_link("TelescopeNormal", "NormalFloat", { clear = true })
   hi_link("TelescopeBorder", "FloatBorder", { clear = true })
@@ -316,8 +320,8 @@ function M.find_base_colors()
   }
 end
 
----Configure the colorscheme before it's loaded.
----@param colors_name string The name of the new colorscheme.
+--- Configure the colorscheme before it's loaded.
+--- @param colors_name string The name of the new colorscheme.
 function M.setup_colorscheme(colors_name)
   M.clear_terminal_colors()
 
@@ -373,7 +377,7 @@ function M.setup_colorscheme(colors_name)
   end
 end
 
----Tweaks applied after loading a colorscheme.
+--- Tweaks applied after loading a colorscheme.
 function M.apply_tweaks()
   if not vim.o.termguicolors then
     Config.common.utils.warn(
@@ -411,7 +415,7 @@ function M.apply_tweaks()
     hi_link({ "fugitiveHash", "DiffviewHash", "DiffviewSecondary" }, "Primary", { clear = true })
   end
 
-  ---Controls whether or not diff hl is generated.
+  --- Controls whether or not diff hl is generated.
   local do_diff_gen = true
   local diff_gen_opt ---@type Config.colorscheme.generate_diff_colors.Opts?
   local terminal_gen_opt = {
@@ -419,7 +423,7 @@ function M.apply_tweaks()
     gen_alts = true,
     static_ansi8 = false,
   } --[[@as Config.colorscheme.generate_terminal_colors.Opts ]]
-  ---@type FelineThemeName
+  --- @type FelineThemeName
   local feline_theme = "duo"
 
   if colors_name == "codedark" then
@@ -1033,6 +1037,30 @@ function M.apply_tweaks()
     hi("@diff.minus", { fg = hl.get_fg("Number"), explicit = true, link = -1 })
 
     hi("DiagnosticUnnecessary", { explicit = true, fg = bg_normal:highlight(0.3):to_css() })
+
+    M.unstyle_telescope()
+
+  elseif colors_name == "oldworld" then
+    hi("Primary", { fg = hl.get_fg("Keyword"), explicit = true })
+    hi("Accent", { fg = hl.get_fg("Character"), explicit = true })
+
+    hi_link("NormalNC", "Normal", { clear = true })
+
+    hi("@diff.delta", { fg = hl.get_fg("Conditional"), explicit = true })
+
+    hi("NonText", { fg = bg_normal:highlight(0.15):to_css(), explicit = true })
+    hi("IblScope", { fg = bg_normal:highlight(0.3):to_css(), explicit = true })
+
+    hi(
+      { "CursorLine", "ColorColumn" },
+      { bg = bg_normal:highlight(0.04):to_css(), explicit = true }
+    )
+
+    hi({ "StatusLine", "StatusLineNC" }, { bg = bg_normal:highlight(-0.03):to_css() })
+
+    hi("PmenuThumb", { bg = Color.from_hl("PmenuSbar", "bg"):highlight(0.1):to_css() })
+    hi({ "BlinkCmpMenu" }, { bg = bg_normal:highlight(-0.03):to_css() })
+    hi({ "BlinkCmpMenuSelection" }, { bg = bg_normal:highlight(0.04):to_css() })
 
     M.unstyle_telescope()
 

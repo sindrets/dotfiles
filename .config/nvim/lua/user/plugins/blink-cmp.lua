@@ -23,6 +23,7 @@ return function()
 
       ["<Tab>"] = {},
       ["<S-Tab>"] = {},
+      ["<C-k>"] = {},
     },
     completion = {
       -- "prefix" will fuzzy match on the text before the cursor
@@ -156,7 +157,7 @@ return function()
             get_bufnrs = function()
               return pb.filter(
                 pb.unique(
-                  utils.list_bufs({ listed = true }),
+                  utils.list_bufs({ no_unlisted = true }),
                   utils.list_bufs({ no_hidden = true })
                 ),
                 function(bufnr) return utils.buf_get_size(bufnr) < 1024 end

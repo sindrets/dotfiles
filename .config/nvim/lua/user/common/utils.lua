@@ -766,11 +766,11 @@ function M.job(cmd, cwd_or_opt)
 end
 
 ---@class ListBufsSpec
----@field loaded boolean Filter out buffers that aren't loaded.
----@field listed boolean Filter out buffers that aren't listed.
+---@field no_unloaded boolean Filter out buffers that aren't loaded.
+---@field no_unlisted boolean Filter out buffers that aren't listed.
 ---@field no_hidden boolean Filter out buffers that are hidden.
 ---@field tabpage integer Filter out buffers that are not displayed in a given tabpage.
----@field pattern string Filter out buffers whose name does not match a given lua pattern.
+---@field pattern string Filter out buffers whose name doesn't match a given lua pattern.
 ---@field options table<string, any> Filter out buffers that don't match a given map of options.
 ---@field vars table<string, any> Filter out buffers that don't match a given map of variables.
 
@@ -796,22 +796,22 @@ function M.list_bufs(opt)
     bufs = api.nvim_list_bufs()
   end
 
-  return vim.tbl_filter(function(v)
-    if opt.loaded and not api.nvim_buf_is_loaded(v) then
+  return vim.tbl_filter(function(bufnr)
+    if opt.no_unloaded and not api.nvim_buf_is_loaded(bufnr) then
       return false
     end
 
-    if opt.listed and not vim.bo[v].buflisted then
+    if opt.no_unlisted and not vim.bo[bufnr].buflisted then
       return false
     end
 
-    if opt.pattern and not vim.fn.bufname(v):match(opt.pattern) then
+    if opt.pattern and not vim.fn.bufname(bufnr):match(opt.pattern) then
       return false
     end
 
     if opt.options then
       for name, value in pairs(opt.options) do
-        if vim.bo[v][name] ~= value then
+        if vim.bo[bufnr][name] ~= value then
           return false
         end
       end
@@ -819,7 +819,7 @@ function M.list_bufs(opt)
 
     if opt.vars then
       for name, value in pairs(opt.vars) do
-        if vim.b[v][name] ~= value then
+        if vim.b[bufnr][name] ~= value then
           return false
         end
       end
@@ -859,7 +859,7 @@ function M.get_unique_file_bufname(filename)
 
   local collisions = vim.tbl_map(function(bufnr)
     return api.nvim_buf_get_name(bufnr)
-  end, M.vec_union(M.list_bufs({ listed = true }), M.list_bufs({ no_hidden = true })))
+  end, M.vec_union(M.list_bufs({ no_unlisted = true }), M.list_bufs({ no_hidden = true })))
 
   collisions = vim.tbl_filter(function(name)
     return name ~= filename and vim.fn.fnamemodify(name, ":t") == basename
