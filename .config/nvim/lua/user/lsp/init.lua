@@ -19,6 +19,7 @@ local cmp = prequire("cmp")
 local cmp_lsp = prequire("cmp_nvim_lsp")
 local blink = prequire("blink.cmp")
 local lspconfig = prequire("lspconfig")
+local server_configs = prequire("lspconfig.configs") or {}
 
 if not lspconfig then return end
 
@@ -118,24 +119,27 @@ require("user.lsp.java")
 
 -- Typescript
 -- lspconfig.tsserver.setup(M.create_config())
-require("user.lsp.typescript");
+require("user.lsp.typescript")
 
 -- Python
 lspconfig.pyright.setup(M.create_config())
 
 -- Lua
-require("user.lsp.lua")
+server_configs.emmylua_ls = {
+  default_config = {
+    cmd = { 'emmylua_ls' },
+    filetypes = { 'lua' },
+    root_dir = require("lspconfig.configs.lua_ls").default_config.root_dir,
+    single_file_support = true,
+    log_level = vim.lsp.protocol.MessageType.Warning,
+  }
+}
 
--- server_configs.emmylua_ls = {
---   default_config = {
---     cmd = { 'emmylua_ls' },
---     filetypes = { 'lua' },
---     root_dir = require("lspconfig.configs.lua_ls").default_config.root_dir,
---     single_file_support = true,
---     log_level = vim.lsp.protocol.MessageType.Warning,
---   }
--- }
+require("user.lsp.lua")
 -- lspconfig.emmylua_ls.setup(M.create_config())
+
+-- Luau
+lspconfig.luau_lsp.setup(M.create_config())
 
 -- Teal
 -- require("user.lsp.teal")
@@ -177,9 +181,6 @@ lspconfig.rust_analyzer.setup(M.create_config())
 
 -- CSS
 lspconfig.cssls.setup(M.create_config())
-
--- Luau
-lspconfig.luau_lsp.setup(M.create_config())
 
 -- Json
 lspconfig.jsonls.setup(M.create_config())

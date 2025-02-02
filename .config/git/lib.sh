@@ -16,10 +16,10 @@ function git_wt() {
             echo "Worktree already exists!"
         fi
     else
-        git worktree add "$tree_path" -b "$1"
+        git worktree add "$tree_path" -b "$1" --no-checkout
         git branch -u origin/"$1" "$1"
         cd "$tree_path"
-        git reset --hard @{upstream}
+        env --unset=GIT_DIR git reset --hard @{upstream}
     fi
 }
 

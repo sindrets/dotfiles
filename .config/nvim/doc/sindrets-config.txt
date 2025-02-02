@@ -63,8 +63,8 @@ COMMANDS                                        *sindrets-commands*
                 splits using the contents of the `"/` register as [pattern].
                 When [!] is included: don't format the split lines.
 
-                                                *:BRemove*
-:BRemove[!] [N]
+                                                *:BufRemove*
+:BufRemove[!] [N]
                 Delete buffer [N] (default: current buffer) while also
                 preserving the window layout. When [!] is included: ignore
                 unsaved changes.

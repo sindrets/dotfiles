@@ -73,9 +73,9 @@ function M.source_project_session()
   end
 end
 
----Open a file at a specific line + column.
----Example location: `foo/bar/baz:128:17`
----@param location string
+--- Open a file at a specific line + column.
+--- Example location: `foo/bar/baz:128:17`
+--- @param location string
 function M.open_file_location(location)
   local bufnr = vim.fn.expand("<abuf>")
   if bufnr == "" then
@@ -90,11 +90,12 @@ function M.open_file_location(location)
 
   if pl:readable(file) then
     vim.cmd("keepalt edit " .. vim.fn.fnameescape(file))
+
     if line then
       api.nvim_exec_autocmds("BufRead", {})
       utils.set_cursor(0, line, col - 1)
       pcall(api.nvim_buf_delete, bufnr, {})
-      pcall(api.nvim_exec, "argd " .. vim.fn.fnameescape(l), false)
+      pcall(api.nvim_exec2, "argd " .. vim.fn.fnameescape(l), { output = false })
     end
   end
 end

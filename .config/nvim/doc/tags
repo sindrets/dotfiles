@@ -1,4 +1,4 @@
-:BRemove	sindrets-config.txt	/*:BRemove*
+:BufRemove	sindrets-config.txt	/*:BufRemove*
 :CompareDir	sindrets-config.txt	/*:CompareDir*
 :DiffSaved	sindrets-config.txt	/*:DiffSaved*
 :ExecuteSelection	sindrets-config.txt	/*:ExecuteSelection*

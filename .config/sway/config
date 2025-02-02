@@ -33,8 +33,8 @@ bindsym $mod+z exec --no-startup-id sxcs-oneshot
 bindsym $mod+p exec wdisplays
 
 # Config shortcuts
-bindsym $mod+F1 exec $terminal $EDITOR ~/.config/i3/config
-bindsym $mod+F2 exec $terminal $EDITOR ~/.config/polybar/config
+bindsym $mod+F1 exec $terminal $EDITOR ~/.config/sway/config
+bindsym $mod+F2 exec $terminal $EDITOR ~/.config/waybar/config
 bindsym $mod+F3 exec $terminal $EDITOR ~/.config/kitty/kitty.conf
 bindsym $mod+F4 exec $terminal $EDITOR -c 'cd ~/.config/nvim' ~/.config/nvim/init.lua
 
@@ -212,7 +212,7 @@ for_window {
     [class="steam" title="Friends List"] $float
     [class="steam" title="Steam - News"] $float
     [app_id="Colorgrab"] $float
-    [app_id="Gpick"] $float
+    [app_id="gpick"] $float_title
     [app_id="dev.zed.Zed"] floating disable
     [app_id="azote"] $float_title
 		[app_id="Firefox Beta" title="Picture-in-Picture"] $float

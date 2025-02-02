@@ -16,9 +16,9 @@
     // "backlight",
     "pulseaudio",
     "battery",
-    "sway/language",
     "tray",
-    "clock"
+    "clock",
+    "sway/language"
   ],
 
   "sway/workspaces": {

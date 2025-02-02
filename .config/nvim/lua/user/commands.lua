@@ -115,7 +115,7 @@ command("SplitOn", function(c)
   Config.lib.split_on_pattern(c.args, get_range(c), c.bang)
 end, { bar = true, range = true, bang = true, nargs = "?" })
 
-command("BRemove", function(c)
+command("BufRemove", function(c)
   Config.lib.remove_buffer(c.bang, tonumber(c.fargs[1]))
 end, { bar = true, bang = true })
 

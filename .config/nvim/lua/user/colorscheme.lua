@@ -1059,8 +1059,14 @@ function M.apply_tweaks()
     hi({ "StatusLine", "StatusLineNC" }, { bg = bg_normal:highlight(-0.03):to_css() })
 
     hi("PmenuThumb", { bg = Color.from_hl("PmenuSbar", "bg"):highlight(0.1):to_css() })
-    hi({ "BlinkCmpMenu" }, { bg = bg_normal:highlight(-0.03):to_css() })
-    hi({ "BlinkCmpMenuSelection" }, { bg = bg_normal:highlight(0.04):to_css() })
+    hi({ "Pmenu" }, {
+      fg = fg_normal:to_css(),
+      bg = bg_normal:highlight(-0.03):to_css(),
+      explicit = true,
+    })
+    hi({ "PmenuSel" }, { bg = bg_normal:highlight(0.06):to_css() })
+    hi_link({ "BlinkCmpMenu" }, "Pmenu")
+    hi_link({ "BlinkCmpMenuSelection" }, "PmenuSel")
 
     M.unstyle_telescope()
 
