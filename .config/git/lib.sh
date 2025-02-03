@@ -17,9 +17,15 @@ function git_wt() {
         fi
     else
         git worktree add "$tree_path" -b "$1" --no-checkout
-        git branch -u origin/"$1" "$1"
         cd "$tree_path"
-        env --unset=GIT_DIR git reset --hard @{upstream}
+        (
+            unset GIT_DIR;
+            if git branch -u origin/"$1" "$1"; then
+                git reset --hard @{upstream}
+            else
+                git checkout
+            fi
+        )
     fi
 }
 
