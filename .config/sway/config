@@ -215,7 +215,8 @@ for_window {
     [app_id="gpick"] $float_title
     [app_id="dev.zed.Zed"] floating disable
     [app_id="azote"] $float_title
-		[app_id="Firefox Beta" title="Picture-in-Picture"] $float
+    [app_id="Firefox Beta" title="Picture-in-Picture"] $float
+    [app_id="flameshot"] border pixel 0, floating enable, fullscreen disable, move absolute position 0 0
     # switch to workspace with urgent window automatically
     [urgent=latest] focus
 }
@@ -277,6 +278,11 @@ mode "resize" {
     bindsym Return mode "default"
     bindsym Escape mode "default"
 }
+
+exec systemctl --user set-environment XDG_CURRENT_DESKTOP=sway
+exec systemctl --user import-environment DISPLAY WAYLAND_DISPLAY SWAYSOCK
+exec hash dbus-update-activation-environment 2>/dev/null && \
+     dbus-update-activation-environment --systemd DISPLAY WAYLAND_DISPLAY SWAYSOCK
 
 # Autostart applications
 exec --no-startup-id $HOME/.config/sway/scripts/import-gsettings
