@@ -298,27 +298,27 @@ exec --no-startup-id thunar --daemon
 bar swaybar_command waybar
 
 # Theme colors
-set $background     #0d1317
-set $foreground     #cccccc
-set $cursorColor    #cccccc
-set $black          #0d1317
-set $blackBright    #0f182d
-set $red            #101d42
-set $redBright      #251573
-set $green          #3a0ca3
-set $greenBright    #5038bf
-set $yellow         #6564db
-set $yellowBright   #779bdc
-set $blue           #80b7dc
-set $blueBright     #89d2dc
-set $magenta        #068d9d
-set $magentaBright  #2d739c
-set $cyan           #53599a
-set $cyanBright     #4b518c
-set $white          #cccccc
-set $whiteBright    #E8E8E8
-set               $borderActive   #569cd6
-set               $borderInactive #333333
+set $background      #101112
+set $foreground      #eceff1
+set $cursorColor     #eceff1
+set $black           #222222
+set $blackBright     #666666
+set $red             #e84f4f
+set $redBright       #d23d3d
+set $green           #b7ce42
+set $greenBright     #bde077
+set $yellow          #fea63c
+set $yellowBright    #ffe863
+set $blue            #66a9b9
+set $blueBright      #aaccbb
+set $magenta         #b7416e
+set $magentaBright   #e16a98
+set $cyan            #6dc1b6
+set $cyanBright      #42717b
+set $white           #cccccc
+set $whiteBright     #ffffff
+set $borderActive    #569cd6
+set $borderInactive  #333333
 
 #class                  border          backgr.     text   indicator       child_border
 client.focused          $borderActive   $background $white $borderActive   $borderActive

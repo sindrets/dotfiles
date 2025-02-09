@@ -71,7 +71,7 @@ vim.g.markdown_fenced_languages = {
 
 ---@diagnostic disable-next-line: different-requires
 require("lazy").setup({
-  use_local { "sindrets/imminent.nvim" },
+  use_local { "sindrets/imminent.nvim", lazy = false },
 
   -- SYNTAX & FILETYPE PLUGINS
   { "MTDL9/vim-log-highlighting" },

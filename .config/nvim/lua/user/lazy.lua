@@ -1,19 +1,57 @@
----@diagnostic disable: duplicate-doc-field
+--- @doc.ctx skipfile
+
 local fmt = string.format
+
+--- @return pebbles.Packed<any>
+local function pack(...)
+  return { n = select("#", ...), ... }
+end
 
 local lazy = {}
 
----@class LazyModule : { [string] : unknown }
----@field __get fun(): unknown Load the module if needed, and return it.
----@field __loaded boolean Indicates that the module has been loaded.
+--- @class LazyModule : any
+--- @field __get fun(): unknown Load the module if needed, and return it.
+--- @field __loaded boolean Indicates that the module has been loaded.
+--- @field [string] any
 
----Create a table the triggers a given handler every time it's accessed or
----called, until the handler returns a table. Once the handler has returned a
----table, any subsequent accessing of the wrapper will instead access the table
----returned from the handler.
----@param t any
----@param handler fun(t: any): table?
----@return LazyModule
+--- @param spec string|function
+--- @param wrap_values? boolean
+--- @param on_load? fun(loaded)
+local function create_loader(spec, wrap_values, on_load)
+  local handler
+
+  if on_load then
+    handler = function(loaded)
+      on_load(loaded)
+      return loaded
+    end
+  end
+
+  return function()
+    if type(spec) == "string" then
+      if wrap_values then
+        return lazy.require(spec, handler)
+      else
+        return require(spec)
+      end
+    elseif type(spec) == "function" then
+      if wrap_values then
+        return lazy.wrap({}, handler)
+      else
+        return spec()
+      end
+    end
+  end
+end
+
+--- Create a table the triggers a given handler every time it's accessed or
+--- called, until the handler returns a table. Once the handler has returned a
+--- table, any subsequent accessing of the wrapper will instead access the table
+--- returned from the handler.
+---
+--- @param t any
+--- @param handler fun(t: any): table?
+--- @return LazyModule
 function lazy.wrap(t, handler)
   local export
 
@@ -49,15 +87,15 @@ function lazy.wrap(t, handler)
   })
 end
 
----Will only require the module after first either indexing, or calling it.
+--- Will only require the module after first either indexing, or calling it.
 ---
----You can pass a handler function to process the module in some way before
----returning it. This is useful i.e. if you're trying to require the result of
----an exported function.
+--- You can pass a handler function to process the module in some way before
+--- returning it. This is useful i.e. if you're trying to require the result of
+--- an exported function.
 ---
----Example:
+--- Example:
 ---
----```lua
+--- ```lua
 --- local foo = require("bar")
 --- local foo = lazy.require("bar")
 ---
@@ -65,10 +103,10 @@ end
 --- local foo = lazy.require("bar", function(module)
 ---    return module.baz({ qux = true })
 --- end)
----```
----@param require_path string
----@param handler? fun(module: any): any
----@return LazyModule
+--- ```
+--- @param require_path string
+--- @param handler? fun(module: any): any
+--- @return LazyModule
 function lazy.require(require_path, handler)
   local use_handler = type(handler) == "function"
 
@@ -81,25 +119,25 @@ function lazy.require(require_path, handler)
   end)
 end
 
----Lazily access a table value. If `x` is a string, it's treated as a lazy
----require.
+--- Lazily access a table value. If `x` is a string, it's treated as a lazy
+--- require.
 ---
----Example:
+--- Example:
 ---
----```lua
+--- ```lua
 --- -- table:
 --- local foo = bar.baz.qux.quux
---- local foo = lazy.access(bar, "baz.qux.quux")
---- local foo = lazy.access(bar, { "baz", "qux", "quux" })
+--- local foo = lazy.get(bar, "baz.qux.quux")
+--- local foo = lazy.get(bar, { "baz", "qux", "quux" })
 ---
 --- -- require:
 --- local foo = require("bar").baz.qux.quux
---- local foo = lazy.access("bar", "baz.qux.quux")
---- local foo = lazy.access("bar", { "baz", "qux", "quux" })
----```
----@param x table|string Either the table to be accessed, or a module require path.
----@param access_path string|string[] Either a `.` separated string of table keys, or a list.
----@return LazyModule
+--- local foo = lazy.get("bar", "baz.qux.quux")
+--- local foo = lazy.get("bar", { "baz", "qux", "quux" })
+--- ```
+--- @param x table|string Either the table to be accessed, or a module require path.
+--- @param access_path string|string[] Either a `.` separated string of table keys, or a list.
+--- @return LazyModule
 function lazy.get(x, access_path)
   local keys = type(access_path) == "table"
       and access_path
@@ -120,6 +158,136 @@ function lazy.get(x, access_path)
     return lazy.require(x, handler)
   else
     return lazy.wrap(x, handler)
+  end
+end
+
+--- @param t any
+--- @param key any
+--- @param spec string|function
+function lazy.put(t, key, spec)
+  local wrapped = lazy.wrap(
+    {},
+    create_loader(spec, false, function(loaded)
+      rawset(t, key, loaded)
+    end)
+  )
+
+  rawset(t, key, wrapped)
+
+  return wrapped
+end
+
+--- Create a module with lazily resolved members, that aren't resolved before
+--- the first time it's key is accessed.
+---
+--- The lazy members can be declared through the `declarations: table<any,
+--- string|function>` table, where the values can either be a require path
+--- string, or a loader function that should return the loaded value once
+--- called.
+---
+--- If `wrap_values=true` then the values will be loaded using either
+--- `lazy.require()` or `lazy.wrap()` based on whether the declaration is
+--- either a `string` or `function` respectively. This effectively further
+--- defers the actual loading until the lazy members are accessed themselves.
+---
+--- ## Example
+---
+--- ```lua
+--- -- With `wrap_values=false`:
+---
+--- local M = lz.module({ ---@diagnostic disable: assign-type-mismatch
+---   foo = "some.require.path", ---@module "some.require.path"
+---   bar = (function()
+---     return require("some.require.path").bar
+---   end) --[[@as Bar ]],
+--- }) ---@diagnostic enable: assign-type-mismatch
+---
+--- M.foo
+--- -- ^ will load the `foo` module
+---
+--- -- With `wrap_values=true`:
+---
+--- local M = lz.module({ --[[ ... ]] }, true)
+---
+--- M.foo
+--- -- ^ still won't load `foo`
+--- M.foo.quh
+--- --   ^ will load the `foo` module
+--- ```
+---
+--- @generic T : table
+--- @param declarations T
+--- @param wrap_values? boolean
+--- @return T
+function lazy.module(declarations, wrap_values)
+  local module = {}
+
+  return setmetatable(module, {
+    __index = function(_, key)
+      local spec = declarations[key]
+      if spec == nil then return end
+      local ret
+
+      declarations[key] = nil
+
+      if type(spec) == "string" then
+        if wrap_values then
+          ret = lazy.require(spec, function(loaded)
+            module[key] = loaded
+            return loaded
+          end)
+        else
+          ret = require(spec)
+        end
+
+        module[key] = ret
+      elseif type(spec) == "function" then
+        if wrap_values then
+          ret = lazy.wrap({}, function()
+            local loaded = spec()
+            module[key] = loaded
+            return loaded
+          end)
+        else
+          ret = spec()
+        end
+
+        module[key] = ret
+      end
+
+      return ret
+    end
+  })
+end
+
+local NilKey = {}
+
+--- @generic F : function
+--- @param func F
+--- @return F memoized
+function lazy.memo(func)
+  local state = { arg = {} }
+
+  return function(...)
+    local args = pack(...)
+    local cur_state = state
+
+    for i = 1, args.n do
+      local key = args[i]
+      if key == nil then key = NilKey end
+
+      if not cur_state.arg[key] then
+        cur_state.arg[key] = { arg = {} }
+      end
+
+      cur_state = cur_state.arg[key]
+    end
+
+    if not cur_state.values then
+      cur_state.values = pack(func(...))
+    end
+
+    return unpack(cur_state.values, 1, cur_state.values.n)
   end
 end
 

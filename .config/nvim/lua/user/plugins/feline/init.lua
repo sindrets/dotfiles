@@ -492,9 +492,7 @@ M.components = {
                   Job.SUCCESS_CONDITIONS.non_empty_stdout,
               })
 
-              reflog:wait():await()
-
-              if reflog:result():is_ok() then
+              if reflog:wait():await():is_ok() then
                 name = pb.match_any(pb.line(reflog.stdout:unwrap(), 1) or "", {
                   "^checkout: moving from %S+ to (%S+)$",
                   "^rebase %(start%): checkout (%S+)",
@@ -516,9 +514,7 @@ M.components = {
                     Job.SUCCESS_CONDITIONS.non_empty_stdout,
                 })
 
-                name_rev:wait():await()
-
-                if name_rev:result():is_ok() then
+                if name_rev:wait():await():is_ok() then
                   name = pb.match_any(
                     pb.line(name_rev.stdout:unwrap(), 1) or "",
                     { "(.*)%^0", "(.*)" }

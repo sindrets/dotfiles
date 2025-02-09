@@ -45,6 +45,24 @@ do
   end
 end
 
+local base = {
+  diff = {
+    add = "#97BE65",
+    del = "#FF6C69",
+    mod = "#51afef",
+  },
+  terminal = {
+    red = "#f7768e",
+    green = "#9ece6a",
+    yellow = "#e0af68",
+    blue = "#7aa2f7",
+    magenta = "#bb9af7",
+    cyan = "#7dcfff",
+    white = "#a9b1d6",
+    whiteBright = "#c0caf5",
+  },
+}
+
 local diagnostic_kinds = { "Error", "Warn", "Info", "Hint", "Ok" }
 
 function M.supports_sp_underline()
@@ -104,21 +122,23 @@ function M.generate_terminal_colors(opts)
   end
 
   if opts.static_ansi8 then
-    -- red
-    vim.g.terminal_color_1  = "#f7768e"
-    -- green
-    vim.g.terminal_color_2  = "#9ece6a"
-    -- yellow
-    vim.g.terminal_color_3  = "#e0af68"
-    -- blue
-    vim.g.terminal_color_4  = "#7aa2f7"
-    -- magenta
-    vim.g.terminal_color_5  = "#bb9af7"
-    -- cyan
-    vim.g.terminal_color_6  = "#7dcfff"
-    -- white
-    vim.g.terminal_color_7  = "#a9b1d6"
-    vim.g.terminal_color_15 = "#c0caf5"
+    vim.g.terminal_color_1  = base.terminal.red
+    vim.g.terminal_color_2  = base.terminal.green
+    vim.g.terminal_color_3  = base.terminal.yellow
+    vim.g.terminal_color_4  = base.terminal.blue
+    vim.g.terminal_color_5  = base.terminal.magenta
+    vim.g.terminal_color_6  = base.terminal.cyan
+    vim.g.terminal_color_7  = base.terminal.white
+    vim.g.terminal_color_15 = base.terminal.whiteBright
+  else
+    vim.g.terminal_color_1  = vim.g.terminal_color_1 or base.terminal.red
+    vim.g.terminal_color_2  = vim.g.terminal_color_2 or base.terminal.green
+    vim.g.terminal_color_3  = vim.g.terminal_color_3 or base.terminal.yellow
+    vim.g.terminal_color_4  = vim.g.terminal_color_4 or base.terminal.blue
+    vim.g.terminal_color_5  = vim.g.terminal_color_5 or base.terminal.magenta
+    vim.g.terminal_color_6  = vim.g.terminal_color_6 or base.terminal.cyan
+    vim.g.terminal_color_7  = vim.g.terminal_color_7 or base.terminal.white
+    vim.g.terminal_color_15 = vim.g.terminal_color_15 or base.terminal.whiteBright
   end
 
   if opts.gen_alts then
@@ -213,15 +233,15 @@ function M.generate_diff_colors(opt)
 
   if bright then
     base_colors = vim.tbl_extend("keep", base_colors, {
-      add = Color.from_hex("#97BE65"):mod_lightness(-0.2),
-      del = Color.from_hex("#FF6C69"):mod_lightness(-0.1),
-      mod = Color.from_hex("#51afef"):mod_lightness(-0.1):mod_value(-0.15),
+      add = Color.from_hex(base.diff.add):mod_lightness(-0.2),
+      del = Color.from_hex(base.diff.del):mod_lightness(-0.1),
+      mod = Color.from_hex(base.diff.mod):mod_lightness(-0.1):mod_value(-0.15),
     }) --[[@as table ]]
   else
     base_colors = vim.tbl_extend("keep", base_colors, {
-      add = Color.from_hex("#97BE65"),
-      del = Color.from_hex("#FF6C69"),
-      mod = Color.from_hex("#51afef"),
+      add = Color.from_hex(base.diff.add),
+      del = Color.from_hex(base.diff.del),
+      mod = Color.from_hex(base.diff.mod),
     }) --[[@as table ]]
   end
 

@@ -19,6 +19,20 @@
       "local ${1:module} = lz.get(\"${2:module_path}\", \"${1}\") ---@type ${1}|LazyModule"
     ]
   },
+  "lazy_module": {
+    "prefix": "lzmodule",
+    "body": [
+      "local ${1:I} = lz.module({ ---@diagnostic disable: assign-type-mismatch",
+      "  ${2:member} = \"${3:module_path}\", ---@module \"${3}\"",
+      "}) ---@diagnostic enable: assign-type-mismatch"
+    ]
+  },
+  "lazy_member": {
+    "prefix": "lzmember",
+    "body": [
+      "${1:member} = \"${2:module_path}\", ---@module \"${2}\""
+    ]
+  },
   "diffview_class": {
     "prefix": "dclass",
     "body": [
