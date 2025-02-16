@@ -15,8 +15,8 @@ return function()
 
       ["<Up>"] = { "select_prev", "fallback" },
       ["<Down>"] = { "select_next", "fallback" },
-      ["<C-p>"] = { "select_prev_insert", "show", "fallback" },
-      ["<C-n>"] = { "select_next_insert", "show", "fallback" },
+      ["<C-p>"] = { pb.bind(blink.select_prev, { auto_insert = true }), "show", "fallback" },
+      ["<C-n>"] = { pb.bind(blink.select_next, { auto_insert = true }), "show", "fallback" },
 
       ["<C-b>"] = { "snippet_backward", "scroll_documentation_up", "fallback" },
       ["<C-f>"] = { "snippet_forward", "scroll_documentation_down", "fallback" },
@@ -119,13 +119,11 @@ return function()
       -- Remove "buffer" if you don"t want text completions, by default it"s only enabled when LSP returns no items
       default = {
         "lsp",
-        "snippets",
         "path",
+        "snippets",
         "spell",
         "buffer",
       },
-      -- Disable cmdline completions
-      cmdline = {},
 
       providers = {
         lsp = {
@@ -134,10 +132,10 @@ return function()
           module = "blink.cmp.sources.lsp",
           fallbacks = {},
         },
-        snippets = {
+        path = {
           score_offset = 400,
         },
-        path = {
+        snippets = {
           score_offset = 300,
         },
         spell = {
@@ -155,17 +153,21 @@ return function()
           opts = {
             max_items = 20,
             get_bufnrs = function()
-              return pb.filter(
-                pb.unique(
-                  utils.list_bufs({ no_unlisted = true }),
-                  utils.list_bufs({ no_hidden = true })
-                ),
-                function(bufnr) return utils.buf_get_size(bufnr) < 1024 end
-              )
+              return pb
+                .iter(utils.list_bufs({ no_unlisted = true }))
+                :chain(utils.list_bufs({ no_hidden = true }))
+                :unique()
+                :filter(function(bufnr) return utils.buf_get_size(bufnr) < 1024 end)
+                :totable()
             end,
           },
         },
       },
+    },
+
+    cmdline = {
+      -- Disable cmdline completions
+      sources = {},
     },
 
     fuzzy = {
@@ -203,6 +205,11 @@ return function()
     },
 
     appearance = {
+      -- Sets the fallback highlight groups to nvim-cmp's highlight groups
+      -- Useful for when your theme doesn't support blink.cmp
+      -- Will be removed in a future release
+      use_nvim_cmp_as_default = true,
+      nerd_font_variant = 'normal',
       kind_icons = {
         Method = "",
         Function = "ƒ",

@@ -437,6 +437,36 @@ require("lazy").setup({
     priority = 1000,
     config = true,
   },
+  {
+    "zk-org/zk-nvim",
+    cmd = { "ZkNotes", "ZkNew", "ZkIndex" },
+    config = function()
+      local async = require("imminent")
+      local path = require("imminent.fs").path
+      local pb = require("imminent.pebbles")
+
+      async
+        .job({ "tomlq", "-r", ".notebook.dir", vim.env.HOME .. "/.config/zk/config.toml" })
+        :await()
+        :map(function(stdout)
+          vim.env.ZK_NOTEBOOK_DIR = path
+            :from(pb.line(stdout, 1) or "")
+            :unwrap()
+            :absolute()
+            :tostring()
+        end)
+        :map_err(function(stderr)
+          Config.common.notify.error(
+            string.format("Failed to get notebook dir:\n\n%s", stderr),
+            { title = "zk" }
+          )
+        end)
+
+      require("zk").setup({
+        picker = "telescope",
+      })
+    end,
+  },
   use_local {
     "nvim-neorg/neorg",
     lazy = true,

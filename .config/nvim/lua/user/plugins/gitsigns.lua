@@ -10,6 +10,13 @@ return function ()
       changedelete = { text = "▍" },
       topdelete = { text = "‾" },
     },
+    signs_staged = {
+      add = { text = "▍" },
+      change = { text = "▍" },
+      delete = { text = "▍" },
+      changedelete = { text = "▍" },
+      topdelete = { text = "‾" },
+    },
     numhl = false,
     linehl = false,
     watch_gitdir = {

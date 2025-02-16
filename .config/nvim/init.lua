@@ -74,6 +74,7 @@ api.nvim_create_autocmd("CmdlineEnter", {
     alias("nim", "Neorg inject-metadata")
     alias("do", "diffget")
     alias("dp", "diffput")
+    alias("notes", "ZkNotes")
   end,
 })
 
