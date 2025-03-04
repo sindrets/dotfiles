@@ -1,13 +1,13 @@
 " Temporarily set 'lazyredraw' and execute {cmd}.
 function! s:LazyCmd(cmd) abort
     let l:save_lazyredraw = &lazyredraw
+    let l:err = v:null
+
     try
         set lazyredraw
         call execute(a:cmd)
     catch /.*/
-        echohl ErrorMsg
-        echom v:exception
-        echohl NONE
+        echoerr v:exception
     finally
         if !l:save_lazyredraw
             set nolazyredraw
@@ -412,9 +412,9 @@ nnoremap / /\v
 nnoremap ? ?\v
 
 " Use 'lazyredraw' when replaying macro
-nnoremap @ <Cmd>call <SID>LazyNorm("@" . getcharstr())<CR>
-nnoremap @@ <Cmd>call <SID>LazyNorm("@@")<CR>
-nnoremap Q <Cmd>call <SID>LazyNorm("@@")<CR>
+nnoremap @ <Cmd>call <SID>LazyNorm(v:count1 . "@" . getcharstr())<CR>
+nnoremap @@ <Cmd>call <SID>LazyNorm(v:count1 . "@@")<CR>
+nnoremap Q <Cmd>call <SID>LazyNorm(v:count1 . "@@")<CR>
 
 " }}}
 

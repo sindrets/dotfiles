@@ -69,6 +69,8 @@ appendenv XCURSOR_PATH "$(realpath -m /usr/share/icons)"
 appendenv XCURSOR_PATH "$(realpath -m ~/.local/share/icons)"
 export XCURSOR_PATH
 
+eval "$(luarocks path)"
+
 unset appendenv prependenv appendpath prependpath
 
 export XCURSOR_THEME="Vimix-cursors"

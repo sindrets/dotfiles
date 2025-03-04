@@ -1066,6 +1066,16 @@ function M.apply_tweaks()
 
     hi_link("NormalNC", "Normal", { clear = true })
 
+    hi("Search", {
+      bg = bg_normal:highlight(0.15):to_css(),
+      fg = hl.get_fg("Type"),
+    })
+    hi_link("IncSearch", "Search")
+    hi("CurSearch", {
+      bg = Color.from_hl("Type", "fg"):to_css(),
+      fg = "#000000",
+    })
+
     hi("@diff.delta", { fg = hl.get_fg("Conditional"), explicit = true })
 
     hi("NonText", { fg = bg_normal:highlight(0.15):to_css(), explicit = true })

@@ -367,3 +367,7 @@ end, {})
 command("FilterQf", function(c)
   Config.lib.filter_qf(c.bang, c.fargs[1])
 end, { nargs = "?", bang = true })
+
+command("ThemeToggle", function()
+  Config.colorscheme.toggle_theme()
+end, { bar = true })
