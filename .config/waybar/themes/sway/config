@@ -6,8 +6,9 @@
   "modules-left": [
     "sway/workspaces",
     // "custom/scratch",
-    "sway/mode"
+    "sway/mode",
     // "sway/window"
+    "custom/player"
   ],
   "modules-center": [],
   "modules-right": [
@@ -88,6 +89,13 @@
     "exec": "~/.config/polybar/scripts/cpu-temp.sh",
     "format": "󰔏 {}",
     "interval": 5
+  },
+
+  "custom/player": {
+    "exec": "~/.config/i3/scripts/playerctl-utils.sh --follow",
+    "format": "{}",
+    "on-click": "~/.config/i3/scripts/playerctl-utils.sh --use-active play-pause",
+    "on-click-right": "pkill -USR1 -f 'playerctl-utils.sh --follow'"
   },
 
   "backlight": {

@@ -472,10 +472,8 @@ M.components = {
 
             async.spawn(function()
               -- Check reflog to find the last checkout
-              local dir_path = fs.path:from(dir):unwrap()
-              local cwd = dir_path:readable():await()
-                and dir_path
-                or fs.path:from("."):unwrap():absolute()
+              local dir_path = fs.Path.from(dir):unwrap()
+              local cwd = dir_path:readable():await() and dir_path or fs.Path.cwd()
 
               local reflog = Job.new({
                 cmd = {

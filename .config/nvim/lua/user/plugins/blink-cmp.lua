@@ -131,6 +131,9 @@ return function()
           score_offset = 500,
           module = "blink.cmp.sources.lsp",
           fallbacks = {},
+          opts = {
+            tailwind_color_icon = "",
+          }
         },
         path = {
           score_offset = 400,
@@ -167,6 +170,7 @@ return function()
 
     cmdline = {
       -- Disable cmdline completions
+      enabled = false,
       sources = {},
     },
 

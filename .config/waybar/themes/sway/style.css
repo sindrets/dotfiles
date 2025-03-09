@@ -20,6 +20,9 @@ window#waybar {
   color: #b8b8b8;
   padding: 0px 9px; }
 
+#custom-player {
+  margin-left: 16px; }
+
 #workspaces button {
   background-color: #323232;
   padding: 0px 8px;

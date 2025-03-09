@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
 # --- CONFIGURABLE VARS: ---
-icon_playing="󰏦"                            # Will replace the status token when music is playing
-icon_paused="󰐍"                             # Will replace the status token when music is paused
-icon_stopped="󰙧"                            # Will replace the status token when music is stopped
+icon_playing=""                            # Will replace the status token when music is playing
+icon_paused=""                             # Will replace the status token when music is paused
+icon_stopped=""                            # Will replace the status token when music is stopped
 interval_rate="medium"                      # {low/medium/high} Controls how often information is polled during --follow
 path_last_player="/tmp/PU_LAST_PLAYER"      # A file that will be used to keep track of the last used player
 title_max_length=25                         # The max length of the title string. If longer will be shortened with ellipsis
@@ -65,7 +65,7 @@ update_player () {
     fi
 
     player=`echo "$all_players" | grep -m 1 -i playing | awk '{print $1}'`
-    
+
     if [ -z "$player" ]; then 
         if [ -e "$path_last_player" ] && [ -n "`cat "$path_last_player"`" ]; then
             player=`cat "$path_last_player"`
@@ -104,8 +104,8 @@ shorten_string () {
     local result="$1"
 
     if (( ${#result} > $2 )); then
-        local length="$[ $2 - 3 ]"
-        result="${result:0:$length}..."
+        local length="$[ $2 - 1 ]"
+        result="${result:0:$length}…"
     fi
 
     echo $result

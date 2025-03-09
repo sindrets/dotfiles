@@ -442,15 +442,15 @@ require("lazy").setup({
     cmd = { "ZkNotes", "ZkNew", "ZkIndex" },
     config = function()
       local async = require("imminent")
-      local path = require("imminent.fs").path
+      local Path = require("imminent.fs.Path")
       local pb = require("imminent.pebbles")
 
       async
         .job({ "tomlq", "-r", ".notebook.dir", vim.env.HOME .. "/.config/zk/config.toml" })
         :await()
         :map(function(stdout)
-          vim.env.ZK_NOTEBOOK_DIR = path
-            :from(pb.line(stdout, 1) or "")
+          vim.env.ZK_NOTEBOOK_DIR = Path
+            .from(pb.line(stdout, 1) or "")
             :unwrap()
             :absolute()
             :tostring()
