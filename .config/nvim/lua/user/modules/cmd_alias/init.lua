@@ -79,7 +79,7 @@ end
 --- @param s string
 --- @return string[] variants
 local function istr(s)
-  return istr_recurse(pb.split(s, "."))
+  return istr_recurse(pb.split(s, ""))
 end
 
 --- Case-insensitive alias.

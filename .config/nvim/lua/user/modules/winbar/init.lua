@@ -112,6 +112,7 @@ local ELLIPSIS_ITEM_WIDTH = strwidth(M.ELLIPSIS_ITEM:get_content())
 ---@param show_repo boolean
 local function truncate_path(segments, max_width, show_repo)
   local total_width = 0
+  max_width = max_width - SEP_ITEM_WIDTH
 
   local widths = vim.tbl_map(function(v)
     local w = strwidth(v:get_content()) + SEP_ITEM_WIDTH
