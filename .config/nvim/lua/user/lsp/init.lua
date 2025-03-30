@@ -31,8 +31,6 @@ local config_store = {}
 local M = {}
 _G.Config.lsp = M
 
-require("lspconfig.ui.windows").default_options.border = "single"
-
 ---@diagnostic disable-next-line: unused-local
 function M.common_on_attach(client, bufnr)
   -- require("illuminate").on_attach(client)
@@ -189,16 +187,20 @@ lspconfig.jsonls.setup(M.create_config())
 lspconfig.taplo.setup(M.create_config())
 
 
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = false,
-    underline = true,
-    signs = {
-      priority = 100,
-    },
-    update_in_insert = false,
-  }
-)
+vim.diagnostic.config({
+  virtual_text = false,
+  underline = true,
+  signs = {
+    priority = 100,
+    text = {
+      [vim.diagnostic.severity.ERROR] = "",
+      [vim.diagnostic.severity.WARN] = "",
+      [vim.diagnostic.severity.HINT] = "",
+      [vim.diagnostic.severity.INFO] = ""
+    }
+  },
+  update_in_insert = false,
+})
 
 -- DIAGNOSTICS: Only show the sign with the highest priority per line
 -- From: `:h diagnostic-handlers-example`
@@ -231,32 +233,12 @@ vim.diagnostic.handlers.signs = {
   end,
 }
 
-local pop_opts = { border = "single", max_width = 100 }
-vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, pop_opts)
-vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
-  vim.lsp.handlers.signature_help, pop_opts
-)
+local preview_opts = { border = "single", max_width = 100 }
+function M.buf_hover() vim.lsp.buf.hover(preview_opts) end
+function M.buf_signature_help() vim.lsp.buf.signature_help(preview_opts) end
 
 function M.define_diagnostic_signs(opts)
   local group = {
-    -- version 0.5
-    {
-      highlight = 'LspDiagnosticsSignError',
-      sign = opts.error
-    },
-    {
-      highlight = 'LspDiagnosticsSignWarning',
-      sign = opts.warn
-    },
-    {
-      highlight = 'LspDiagnosticsSignHint',
-      sign = opts.hint
-    },
-    {
-      highlight = 'LspDiagnosticsSignInformation',
-      sign = opts.info
-    },
-    -- version >=0.6
     {
       highlight = 'DiagnosticSignError',
       sign = opts.error

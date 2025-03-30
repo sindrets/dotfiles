@@ -264,18 +264,12 @@ require("lazy").setup({
   },
   { "hrsh7th/vim-vsnip-integ" },
   {
-    "scrooloose/nerdcommenter",
-    init = function ()
-      vim.g.NERDSpaceDelims = 1
-      vim.g.NERDDefaultAlign = "left"
-    end,
-  },
-  {
     "folke/ts-comments.nvim",
     opts = {},
     event = "VeryLazy",
     enabled = vim.fn.has("nvim-0.10.0") == 1,
   },
+  { "folke/snacks.nvim", config = conf("snacks") },
   { "nvim-telescope/telescope.nvim", config = conf("telescope"), dependencies = "nvim-web-devicons" },
   { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
   { "nvim-telescope/telescope-media-files.nvim" },

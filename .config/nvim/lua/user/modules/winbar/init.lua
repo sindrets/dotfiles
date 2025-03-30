@@ -25,6 +25,9 @@ M.config = {
   },
   ---@param ctx WindowContext
   ignore = function(ctx)
+    -- ignore floating Snacks windows
+    if ctx.float and vim.w[ctx.winid].snacks_win then return true end
+
     if ctx.bufname == "" then
       if vim.wo[ctx.winid].diff then return false end
       return true

@@ -1,11 +1,11 @@
 -- Automatically delete listed buffers that have been untouched for 10 minutes.
 
-local async = require("user.async")
+local async = require("imminent")
+local time = require("imminent.time")
 
-local await = async.await
+local Future = async.Future
 local api = vim.api
 local fmt = string.format
-local loop = Config.common.loop
 local notify = Config.common.notify
 
 local M = {}
@@ -62,6 +62,55 @@ function M.is_running()
   return not not M._interval_handle
 end
 
+--- @return Fut<nil>
+--- @nodiscard
+function M.run()
+  return Future.from(function()
+    async.nvim_locks():await()
+
+    local bufs = vim.tbl_filter(function(bufnr)
+      return vim.bo[bufnr].buflisted
+    end, api.nvim_list_bufs()) --[[@as integer[] ]]
+
+    ---@type table<integer, integer>
+    local win_buf_map = {}
+
+    for _, winid in ipairs(api.nvim_list_wins()) do
+      win_buf_map[api.nvim_win_get_buf(winid)] = winid
+    end
+
+    local now = uv.hrtime() / 1000000
+
+    for _, bufnr in ipairs(bufs) do
+      local buf_state = M.state_map[bufnr]
+
+      if not buf_state then
+        -- This is a new buffer: save its state and continue
+        M.state_map[bufnr] = new_buf_state(bufnr, { timestamp = now })
+      else
+        local changetick = api.nvim_buf_get_changedtick(bufnr)
+
+        if changetick > buf_state.changetick then
+          -- changetick has been incremented: update state
+          M.state_map[bufnr] = new_buf_state(bufnr, { changetick = changetick, timestamp = now })
+        elseif should_delete(bufnr, now, buf_state, win_buf_map) then
+          -- Buffer has expired: delete
+          local ok, err = pcall(function()
+            api.nvim_buf_delete(bufnr, { unload = true })
+            vim.bo[bufnr].buflisted = false
+          end)
+
+          if not ok and err then
+            api.nvim_err_writeln(err)
+          else
+            M.state_map[bufnr] = nil
+          end
+        end
+      end
+    end
+  end)
+end
+
 ---@param silent? boolean
 function M.enable(silent)
   if M.is_running() then
@@ -84,51 +133,8 @@ function M.enable(silent)
     end,
   })
 
-  M._interval_handle = loop.set_interval(
-    async.new(function()
-      await(async.scheduler())
-
-      local bufs = vim.tbl_filter(function(bufnr)
-        return vim.bo[bufnr].buflisted
-      end, api.nvim_list_bufs()) --[[@as integer[] ]]
-
-      ---@type table<integer, integer>
-      local win_buf_map = {}
-
-      for _, winid in ipairs(api.nvim_list_wins()) do
-        win_buf_map[api.nvim_win_get_buf(winid)] = winid
-      end
-
-      local now = uv.hrtime() / 1000000
-
-      for _, bufnr in ipairs(bufs) do
-        local buf_state = M.state_map[bufnr]
-
-        if not buf_state then
-          -- This is a new buffer: save its state and continue
-          M.state_map[bufnr] = new_buf_state(bufnr, { timestamp = now })
-        else
-          local changetick = api.nvim_buf_get_changedtick(bufnr)
-
-          if changetick > buf_state.changetick then
-            -- changetick has been incremented: update state
-            M.state_map[bufnr] = new_buf_state(bufnr, { changetick = changetick, timestamp = now })
-          elseif should_delete(bufnr, now, buf_state, win_buf_map) then
-            -- Buffer has expired: delete
-            local ok, err = pcall(function()
-              api.nvim_buf_delete(bufnr, { unload = true })
-              vim.bo[bufnr].buflisted = false
-            end)
-
-            if not ok and err then
-              api.nvim_err_writeln(err)
-            else
-              M.state_map[bufnr] = nil
-            end
-          end
-        end
-      end
-    end),
+  M._interval_handle = time.set_interval(
+    function() async.spawn(M.run()) end,
     M.CLEANUP_INTERVAL
   )
 

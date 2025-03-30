@@ -5,5 +5,6 @@
         "assign-type-mismatch",
         "missing-fields"
     ],
+    "diagnostics.globals": ["Snacks"],
     "workspace.checkThirdParty": false
 }

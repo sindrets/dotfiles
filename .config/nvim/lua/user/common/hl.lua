@@ -1,5 +1,6 @@
 ---@diagnostic disable: duplicate-doc-alias, duplicate-doc-field
 local api = vim.api
+local pb = Config.common.pb
 
 local M = {}
 
@@ -108,8 +109,8 @@ if HAS_NVIM_0_8 then
   }
 end
 
-vim.tbl_add_reverse_lookup(M.HlAttribute)
-vim.tbl_add_reverse_lookup(style_attrs)
+pb.add_rlookup(M.HlAttribute)
+pb.add_rlookup(style_attrs)
 local hlattr = M.HlAttribute
 
 ---@param name string Syntax group name.
@@ -122,6 +123,7 @@ function M.get_hl(name, no_trans)
     if HAS_NVIM_0_9 then
       hl = api.nvim_get_hl(0, { name = name, link = true })
     else
+      ---@diagnostic disable-next-line: undefined-field
       hl = api.nvim__get_hl_defs(0)[name]
     end
   else
@@ -131,6 +133,7 @@ function M.get_hl(name, no_trans)
       if HAS_NVIM_0_9 then
         hl = api.nvim_get_hl(0, { id = id, link = false })
       else
+        ---@diagnostic disable-next-line: deprecated
         hl = api.nvim_get_hl_by_id(id, true)
       end
     end
@@ -236,7 +239,7 @@ function M.hi_spec_to_def_map(spec)
   end
 
   if spec.style then
-    local spec_attrs = vim.tbl_add_reverse_lookup(vim.split(spec.style, ","))
+    local spec_attrs = pb.add_rlookup(pb.split(spec.style, ",", { plain = true }))
 
     for _, attr in ipairs(style_attrs) do
       res[attr] = spec_attrs[attr] ~= nil

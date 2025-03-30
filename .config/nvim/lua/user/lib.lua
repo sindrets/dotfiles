@@ -221,32 +221,22 @@ end
 
 function M.workspace_files(opt)
   opt = opt or {}
-  local builtin = require("telescope.builtin")
 
   if opt.all then
-    builtin.find_files({
+    Snacks.picker.files({
       hidden = true,
-      find_command = { "fd", "--type", "f", "-uu", "--strip-cwd-prefix" },
+      cmd = "fd",
+      args = { "--type", "f", "-uu", "--strip-cwd-prefix" },
     })
   elseif vim.env.GIT_DIR or pl:readable("./.git") then
-    local cwd = uv.cwd()
-    builtin.git_files({
-      git_command = {
-        "git",
-        "-C",
-        cwd,
-        "ls-files",
-        "--exclude-standard",
-        "--others",
-        "--cached",
-        "--",
-        cwd,
-      },
+    Snacks.picker.git_files({
+      untracked = true,
     })
   else
-    builtin.find_files({
+    Snacks.picker.files({
       hidden = true,
-      find_command = { "fd", "--type", "f", "--strip-cwd-prefix" },
+      cmd = "fd",
+      args = { "--type", "f", "--strip-cwd-prefix" },
     })
   end
 end

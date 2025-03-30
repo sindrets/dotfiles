@@ -46,6 +46,9 @@ opt.scrolloff = 3
 if vim.fn.has("nvim-0.10") == 1 then
   opt.smoothscroll = true
 end
+if vim.fn.has("nvim-0.11") == 1 then
+  opt.winborder = "single"
+end
 
 opt.completeopt = list { "menuone", "noselect" }
 opt.virtualedit = list { "block" }

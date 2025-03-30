@@ -744,16 +744,26 @@ function M.apply_tweaks()
       { "CursorLine", "ColorColumn" },
       { bg = bg_normal:highlight(0.06):to_css(), explicit = true }
     )
-    hi("diffAdded", { fg = Color.from_hl("diffAdded", "fg"):mod_value(0.1):to_css() })
-    hi("diffRemoved", { fg = Color.from_hl("diffRemoved", "fg"):mod_saturation(-0.1):to_css() })
-    hi("diffChanged", { fg = "#7E9CD8" })
+
+    hi("@diff.plus", {
+      fg = Color.from_hl("diffAdded", "fg")
+        :mod_value(0.2)
+        :to_css(),
+      explicit = true
+    })
+    hi("@diff.minus", {
+      fg = Color.from_hl("diffRemoved", "fg")
+        :mod_saturation(-0.25)
+        :mod_value(0.2)
+        :to_css(),
+      explicit = true
+    })
+    hi("@diff.delta", { fg = "#7E9CD8", explicit = true })
+
     hi("Whitespace", { fg = bg_normal:highlight(0.18):to_css() })
     hi("BufferLineIndicatorSelected", { fg = "#7E9CD8" })
     hi_link("CurSearch", "IncSearch", { clear = true })
     hi_link("@lsp.type.comment", "Comment", { clear = true })
-
-    vim.g.terminal_color_0 = bg_normal:mod_value(0.15):to_css()
-    vim.g.terminal_color_8 = bg_normal:mod_value(0.15):to_css()
 
   elseif colors_name == "oxocarbon-lua" then
     if bg == "dark" then
@@ -1210,6 +1220,9 @@ function M.apply_tweaks()
 
   hi("BufferLineModified", { bg = hl.get_bg("BufferLineBuffer") })
   hi("BufferLineModifiedVisible", { bg = hl.get_bg("BufferLineBufferVisible") })
+  vim.schedule(function()
+    hi("BufferLineIndicatorSelected", { bg = hl.get_bg("BufferLineBufferSelected") })
+  end)
 
   for _, kind in ipairs({ "Error", "Warn", "Info", "Debug", "Trace" }) do
     local s = "Notify" .. kind:upper()
@@ -1219,6 +1232,8 @@ function M.apply_tweaks()
   hi_link("BqfSign", "DiagnosticSignInfo")
 
   hi("TroubleText", { bg = "NONE", fg = hl.get_fg("TroubleNormal") })
+  hi_link({ "SnacksPickerDir" }, "NormalDim300", { clear = true })
+  hi_link({ "SnacksPickerRow", "SnacksPickerCol" }, "Number", { clear = true })
 
   hi("LspReferenceText", {
     bg = Color.from_hl("CursorLine", "bg"):highlight(0.08):to_css(),
@@ -1238,12 +1253,6 @@ function M.apply_tweaks()
     { clear = true }
   )
 
-  -- Make breaking changes stand out more
-  hi("packerBreakingChange", {
-    fg = hl.get_fg("DiagnosticError"),
-    sp = hl.get_fg("DiagnosticWarn"),
-    style = "underline,bold",
-  })
   hi_link("LazyCommitIssue", "NONE", { clear = true })
 
   -- Adjust ts-rainbow colors depending on brightness

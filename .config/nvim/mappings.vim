@@ -264,18 +264,18 @@ vmap <silent> <C-\> gcgv
 nmap <silent> <leader>' gcc
 vmap <silent> <leader>' gcgv
 
-" Telescope
+" Picker
 nnoremap <C-P> <Cmd>lua require('user.lib').workspace_files()<CR>
 nnoremap <leader>p <Cmd>lua require('user.lib').workspace_files({ all = true })<CR>
-nnoremap <C-M-P> <Cmd>Telescope git_status<CR>
-nnoremap <M-b> <Cmd>Telescope buffers<CR>
-nnoremap <M-f> <Cmd>Telescope live_grep<CR>
-nnoremap <M-O> <Cmd>Telescope lsp_dynamic_workspace_symbols<CR>
-nnoremap <M-o> <Cmd>Telescope lsp_document_symbols<CR>
-nnoremap <M-d> <Cmd>Telescope lsp_document_diagnostics<CR>
-nnoremap z= <Cmd>Telescope spell_suggest theme=get_cursor<CR>
-nnoremap <leader>fl <Cmd>Telescope current_buffer_fuzzy_find<CR>
-nnoremap ;; <Cmd>Telescope resume<CR>
+nnoremap <C-M-P> <Cmd>lua Snacks.picker.git_status()<CR>
+nnoremap <M-b> <Cmd>lua Snacks.picker.buffers({ sort_lastused = true })<CR>
+nnoremap <M-f> <Cmd>lua Snacks.picker.grep()<CR>
+nnoremap <M-O> <Cmd>lua Snacks.picker.lsp_workspace_symbols()<CR>
+nnoremap <M-o> <Cmd>lua Snacks.picker.lsp_symbols()<CR>
+nnoremap <M-d> <Cmd>lua Snacks.picker.diagnostics_buffer()<CR>
+nnoremap z= <Cmd>lua Snacks.picker.spelling({ layout = { preset = "select", layout = { relative = "cursor", row = 1, max_width = 45, max_height = 10 } } })<CR>
+nnoremap <leader>fl <Cmd>lua Snacks.picker.lines({ layout = { preset = "ivy", preview = "" } })<CR>
+nnoremap ;; <Cmd>lua Snacks.picker.resume()<CR>
 
 " Git
 nnoremap <leader>G <Cmd>lua Config.plugin.fugitive.status_open("tab", { use_last = true })<CR>
@@ -355,11 +355,11 @@ nmap <silent> gV <C-W>v<Cmd>lua vim.lsp.buf.definition()<CR>
 nmap <silent> <C-w>gd <C-W>s<Cmd>lua vim.lsp.buf.definition()<CR>
 nmap <silent> gy <Cmd>lua vim.lsp.buf.type_definition()<CR>
 nmap <silent> gi <Cmd>lua vim.lsp.buf.implementation()<CR>
-nmap <silent> gr <Cmd>Telescope lsp_references<CR>
+nmap <silent> gr <Cmd>lua Snacks.picker.lsp_references()<CR>
 nmap <silent> <leader>rn <Cmd>lua vim.lsp.buf.rename()<CR>
 nmap <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
 " noremap <silent> <leader>ff <Cmd>lua require("conform").format({ async = true, lsp_format = "fallback" })<CR>
-nnoremap <silent> K <Cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> K <Cmd>lua Config.lsp.buf_hover()<CR>
 nnoremap <leader>. <Cmd>lua vim.lsp.buf.code_action()<CR>
 vnoremap <leader>. <Cmd>lua vim.lsp.buf.range_code_action()<CR>
 nnoremap <silent> <leader>ld <Cmd>lua vim.diagnostic.open_float({ scope = "line", border = "single" })<CR>
