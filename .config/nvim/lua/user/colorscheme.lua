@@ -1274,6 +1274,15 @@ function M.apply_tweaks()
     hi("TSRainbowViolet", { fg = "#b48ead" })
   end
 
+  hi_link({ "flogBranch0", "flogBranch1" }, "TSRainbowRed", { clear = true })
+  hi_link("flogBranch2", "TSRainbowOrange", { clear = true })
+  hi_link("flogBranch3", "TSRainbowYellow", { clear = true })
+  hi_link("flogBranch4", "TSRainbowGreen", { clear = true })
+  hi_link("flogBranch5", "TSRainbowCyan", { clear = true })
+  hi_link("flogBranch6", "TSRainbowBlue", { clear = true })
+  hi_link("flogBranch7", "TSRainbowViolet", { clear = true })
+  hi_link("flogBranch8", "TSRainbowOrange", { clear = true })
+
   hi("LirFloatCursorLine", {
     bg = Color.from_hl("NormalFloat", "bg"):highlight(0.06):to_css(),
     link = -1,

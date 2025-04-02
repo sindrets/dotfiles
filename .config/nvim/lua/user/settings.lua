@@ -15,6 +15,7 @@ opt.ignorecase = true
 opt.smartcase = true
 opt.wildignorecase = true
 opt.showcmd = true
+opt.showmode = false
 opt.mouse = "a"
 opt.mousemoveevent = true
 opt.hidden = true
