@@ -36,8 +36,8 @@ return function()
           -- "vim",
           -- "help",
           -- "markdown", -- NOTE: Parser seems immature. Revisit later.
-          "c", -- NOTE: Performance is abysmal in files of any notable length.
-          "cpp",
+          -- "c", -- NOTE: Performance is abysmal in files of any notable length.
+          -- "cpp",
           "latex",
           "comment",
           "haxe",
