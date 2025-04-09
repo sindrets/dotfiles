@@ -380,8 +380,14 @@ require("lazy").setup({
       "nvim-tree/nvim-web-devicons"
     },
     opts = {
-      code_blocks = {
-        pad_amount = 0,
+      markdown = {
+        code_blocks = {
+          pad_amount = 0,
+        },
+        list_items = {
+          indent_size = 2,
+          shift_width = 2,
+        },
       },
       preview = {
         modes = { "n", "i", "no", "c" },
