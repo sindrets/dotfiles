@@ -15,6 +15,13 @@ return function()
           truncate = math.huge,
         },
       },
+      jump = {
+        jumplist = true, -- save the current position in the jumplist
+        tagstack = false, -- save the current position in the tagstack
+        reuse_win = false, -- reuse an existing window if the buffer is already open
+        close = true, -- close the picker when jumping/editing to a location (defaults to true)
+        match = false, -- jump to the first match position. (useful for `lines`)
+      },
       layouts = {
         select = {
           layout = {
@@ -36,6 +43,4 @@ return function()
     statuscolumn = { enabled = false },
     words = { enabled = false },
   })
-
-  vim.ui.select = Snacks.picker.select
 end

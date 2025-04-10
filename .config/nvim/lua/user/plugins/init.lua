@@ -269,7 +269,7 @@ require("lazy").setup({
     event = "VeryLazy",
     enabled = vim.fn.has("nvim-0.10.0") == 1,
   },
-  { "folke/snacks.nvim", config = conf("snacks") },
+  { "folke/snacks.nvim", priority = 1000, config = conf("snacks") },
   { "nvim-telescope/telescope.nvim", config = conf("telescope"), dependencies = "nvim-web-devicons" },
   { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
   { "nvim-telescope/telescope-media-files.nvim" },
@@ -520,7 +520,8 @@ require("lazy").setup({
   },
   { "Mofiqul/vscode.nvim" },
   { "kvrohit/rasmus.nvim" },
-  { "ferdinandrau/lavish.nvim" },
+  -- Repo removed
+  -- { "ferdinandrau/lavish.nvim" },
   { "mellow-theme/mellow.nvim" },
   { "wtfox/jellybeans.nvim" },
   { "cpwrs/americano.nvim" },
