@@ -2,7 +2,12 @@
 
 set -e
 
-src_img="$(find $NEOFETCH_IMG -regex '.*\.\(jpg\|png\)$' | shuf -n1)"
+if [ -n "$IMG" ]; then
+  src_img="$(realpath $IMG)"
+else
+  src_img="$(find $NEOFETCH_IMG -regex '.*\.\(jpg\|png\)$' | shuf -n1)"
+fi
+
 out_img_cache="$HOME/.cache/fastfetch/cropped_images/$(basename "$src_img")"
 
 if [ ! -e "$out_img_cache" ]; then

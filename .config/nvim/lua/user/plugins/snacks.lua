@@ -22,6 +22,11 @@ return function()
         close = true, -- close the picker when jumping/editing to a location (defaults to true)
         match = false, -- jump to the first match position. (useful for `lines`)
       },
+      main = {
+        float = true, -- main window can be a floating window (defaults to false)
+        file = false, -- main window should be a file (defaults to true)
+        current = true, -- main window should be the current window (defaults to false)
+      },
       layouts = {
         select = {
           layout = {
