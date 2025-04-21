@@ -1,0 +1,10 @@
+# Identify the touchpad with `swaymsg -t get_inputs`
+
+input "1739:0:Synaptics_TM3625-010" {
+  dwt enabled
+  tap enabled
+  natural_scroll enabled
+  middle_emulation enabled
+}
+
+# vim: ft=swayconfig

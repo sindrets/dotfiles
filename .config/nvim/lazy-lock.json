@@ -33,7 +33,7 @@
   "luarocks.nvim": { "branch": "main", "commit": "1db9093915eb16ba2473cfb8d343ace5ee04130a" },
   "lush.nvim": { "branch": "main", "commit": "a8f0f7b9f837887f13a61d67b40ae26188fe4d62" },
   "markdown-preview.nvim": { "branch": "master", "commit": "02cc3874738bc0f86e4b91f09b8a0ac88aef8e96" },
-  "markview.nvim": { "branch": "main", "commit": "7a7d3ed0d276b32e121d791f73d850aae6d61b42" },
+  "markview.nvim": { "branch": "main", "commit": "3cc0a687bfddf50eac2370c194f8d7ad14344db2" },
   "mason-lspconfig.nvim": { "branch": "main", "commit": "97d9f1d3ad205dece6bcafd1d71cf1507608f3c7" },
   "mason.nvim": { "branch": "main", "commit": "e2f7f9044ec30067bc11800a9e266664b88cda22" },
   "material.nvim": { "branch": "main", "commit": "ff29710e759c826bce07103ff67d0c387d1a74d3" },
@@ -52,8 +52,8 @@
   "nvim-nio": { "branch": "master", "commit": "a428f309119086dc78dd4b19306d2d67be884eee" },
   "nvim-notify": { "branch": "master", "commit": "d333b6f167900f6d9d42a59005d82919830626bf" },
   "nvim-pqf": { "branch": "main", "commit": "d15582d3d0c09280f371fa5f21537cf4530ed330" },
-  "nvim-treesitter": { "branch": "master", "commit": "a3315b8c7f0f1ddaa30b24bcc0af0d31024dfb6a" },
-  "nvim-treesitter-context": { "branch": "master", "commit": "93b29a32d5f4be10e39226c6b796f28d68a8b483" },
+  "nvim-treesitter": { "branch": "master", "commit": "684eeac91ed8e297685a97ef70031d19ac1de25a" },
+  "nvim-treesitter-context": { "branch": "master", "commit": "6daca3ad780f045550b820f262002f35175a6c04" },
   "nvim-web-devicons": { "branch": "master", "commit": "313d9e7193354c5de7cdb1724f9e2d3f442780b0" },
   "oil.nvim": { "branch": "master", "commit": "7c26a59ac0061b199bf9f44b19d45cfadd9b14f5" },
   "oldworld.nvim": { "branch": "main", "commit": "2b488ab0baa7b5964cac3548a762c2219f456ae8" },
@@ -110,6 +110,6 @@
   "vscode.nvim": { "branch": "main", "commit": "18097b7aa47538afa780c821309c8b992972d726" },
   "winshift.nvim": { "branch": "main", "commit": "37468ed6f385dfb50402368669766504c0e15583" },
   "zenbones.nvim": { "branch": "main", "commit": "bc74669c7f1b35984efdfa0d531dd802b968cf2e" },
-  "zk-nvim": { "branch": "main", "commit": "01769fb74653588a6185a24ab99419c223bd2a8b" },
+  "zk-nvim": { "branch": "main", "commit": "d0bac443233635d18968affde4701db2cf2435b5" },
   "zoomwintab.vim": { "branch": "master", "commit": "7a354f3f0aa7807d822c03c8c24dc6c1cced9d3c" }
 }

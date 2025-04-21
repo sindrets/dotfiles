@@ -463,7 +463,7 @@ require("lazy").setup({
         end)
 
       require("zk").setup({
-        picker = "telescope",
+        picker = "snacks_picker",
       })
     end,
   },
