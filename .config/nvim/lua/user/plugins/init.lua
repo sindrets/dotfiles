@@ -395,7 +395,7 @@ require("lazy").setup({
         callbacks = {
           on_enable = function (_, win)
             vim.api.nvim_win_call(win, function ()
-              vim.opt_local.conceallevel = 2
+              vim.opt_local.conceallevel = 3
               vim.opt_local.concealcursor = "nc"
             end)
           end,
@@ -450,7 +450,7 @@ require("lazy").setup({
         :await()
         :map(function(stdout)
           vim.env.ZK_NOTEBOOK_DIR = Path
-            .from(pb.line(stdout, 1) or "")
+            .from_str(pb.line(stdout, 1) or "")
             :unwrap()
             :absolute()
             :tostring()

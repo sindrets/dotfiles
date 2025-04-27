@@ -1,13 +1,13 @@
 local lz = require("user.lazy")
 
 local Job = lz.require("imminent.Job") ---@module "imminent.Job"
+local Path = lz.require("imminent.fs.Path") ---@module "imminent.fs.Path"
 local StatusComponent = lz.require("user.plugins.feline.status_component") ---@type StatusComponent|LazyModule
 local async = lz.require("imminent") ---@module "imminent"
-local fs = lz.require("imminent.fs") ---@module "imminent.fs"
+local devicons = lz.require("nvim-web-devicons") ---@module "nvim-web-devicons"
 local feline = lz.require("feline") ---@module "feline"
 local lsp = lz.require("feline.providers.lsp") ---@module "feline.providers.lsp"
 local styles = lz.require("user.plugins.feline.styles") ---@module "user.plugins.feline.styles"
-local devicons = lz.require("nvim-web-devicons") ---@module "nvim-web-devicons"
 
 local utils = Config.common.utils
 local pb = Config.common.pb
@@ -442,11 +442,11 @@ M.components = {
 
           if vim.b[0].gitsigns_head then
             rev = vim.b[0].gitsigns_head
-            path = api.nvim_buf_get_name(0)
-            dir = pl:parent(path) or "."
+            path = Path.from(api.nvim_buf_get_name(0))
+            dir = path:parent():unwrap_or_else(Path.cwd)
           else
             rev = vim.g.gitsigns_head or ""
-            path = assert(uv.cwd())
+            path = Path.cwd()
             dir = path
           end
 
@@ -459,7 +459,7 @@ M.components = {
 
           local desc = rebasing and ":(rebasing)" or ""
           local cache = Config.state.git.rev_name_cache
-          local key = path .. "#" .. rev
+          local key = path:tostring() .. "#" .. rev
 
           if cache:has(key) then
             return cache:get(key) .. desc
@@ -472,8 +472,7 @@ M.components = {
 
             async.spawn(function()
               -- Check reflog to find the last checkout
-              local dir_path = fs.Path.from(dir):unwrap()
-              local cwd = dir_path:readable():await() and dir_path or fs.Path.cwd()
+              local cwd = dir:is_readable():await() and dir or Path.cwd()
 
               local reflog = Job.new({
                 cmd = {

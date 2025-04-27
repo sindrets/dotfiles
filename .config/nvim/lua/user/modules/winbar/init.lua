@@ -1,8 +1,11 @@
 local Cache = require("user.modules.cache")
 local StatusItem = require("user.modules.winbar.status_item")
+local lz = require("user.lazy")
+
+local Path = lz.require("imminent.fs.Path") ---@module "imminent.fs.Path"
 
 local utils = Config.common.utils
-local pl = Config.common.utils.pl
+local pb = Config.common.pb
 local au = Config.common.au
 local api = vim.api
 local fmt = string.format
@@ -75,36 +78,48 @@ local function no_empty(s)
   return s
 end
 
-local function condense_path(path, no_relative)
-  local scheme, p = "", path
-  local is_pathlike = false
+--- @param pathlike string|imminent.fs.Path
+--- @param cwd? imminent.fs.Path
+--- @param no_relative? boolean
+--- @return imminent.fs.Path?
+local function condense_path(pathlike, cwd, no_relative)
+  local scheme = nil
+  local path
 
-  if pl:is_uri(path) then
-    scheme, p = path:match("^(%w+://)(.*)")
-    is_pathlike = pl:is_abs(p)
+  if type(pathlike) == "string" then
+    local r_path = Path.from_str(pathlike)
+    if r_path:is_err() then return nil end
+    path = r_path:unwrap()
+  else
+    path = pathlike:clone()
+  end
+
+  local uri_is_pathlike = false
+
+  if path:is_uri() then
+    scheme = assert(path.uri_scheme)
+    path:set_uri_scheme(nil):unwrap()
+    uri_is_pathlike = path:is_absolute()
   end
 
   if not no_relative then
-    p = pl:relative(p, ".")
+    if not scheme or uri_is_pathlike then
+      path = path:relative(cwd)
+      local abs = path:absolute(cwd)
 
-    if scheme ~= "" and is_pathlike and not pl:is_abs(p) then
-      -- Given cwd: /home/john/foo
-      -- `uri_scheme:///home/john/foo/bar/baz` -> `uri_scheme://./bar/baz`
-      -- `uri_scheme://home/john/foo/bar/baz` would remain the same, as it doesn't look
-      -- like an absolute path without the uri scheme.
-      if p == "" then
-        p = "."
-      else
-        p = "./" .. p
+      if #path:explode() >= #abs:explode() then
+        path = abs
       end
     end
   end
 
-  if vim.startswith(p, HOME_DIR) then
-    p = pl:join("~", pl:relative(p, HOME_DIR))
+  if pb.startswith(path:tostring(), HOME_DIR) then
+    path = Path.concat("~", path:diff(Path.from(HOME_DIR))):unwrap():normalize()
   end
 
-  return scheme .. p
+  path:set_uri_scheme(scheme):unwrap()
+
+  return path
 end
 
 local SEP_ITEM_WIDTH = strwidth(M.SEP_ITEM:get_content())
@@ -221,20 +236,26 @@ function M.generate()
     end
   end
 
-  local abs_path = pl:absolute(vim.fn.bufname(win_ctx.bufnr), win_ctx.cwd)
-  local path = no_empty(condense_path(abs_path))
-  local is_uri = path and pl:is_uri(path)
-  local path_exists = win_ctx.bufname ~= "" and not is_uri and pl:readable(abs_path)
+  local win_cwd = Path.from(win_ctx.cwd)
+  local abs_path = Path
+    .from_str(vim.fn.bufname(win_ctx.bufnr))
+    :map(function(p) return p:absolute(win_cwd) end)
+    :unwrap_or(win_cwd)
+  local path = condense_path(abs_path, win_cwd)
+  local is_uri = path and path:is_uri()
+  local path_exists = win_ctx.bufname ~= "" and not is_uri and abs_path:is_readable():block_on()
 
   local basename, parent_path
 
   if not path_exists then
-    local condese_bufname = condense_path(win_ctx.bufname)
-    basename = no_empty(pl:basename(condese_bufname))
-    parent_path = pl:parent(condese_bufname)
+    local dense_bufname = condense_path(win_ctx.bufname, win_cwd)
+    if dense_bufname then
+      basename = no_empty(dense_bufname:basename())
+      parent_path = dense_bufname:parent():unwrap_or(nil)
+    end
   elseif path then
-    basename = no_empty(pl:basename(path))
-    parent_path = pl:parent(path)
+    basename = no_empty(path:basename())
+    parent_path = path:parent():unwrap_or(nil)
   end
 
   ---@type user.winbar.StatusItem[]
@@ -243,20 +264,20 @@ function M.generate()
 
   -- Repo / cwd
 
-  if (not path or vim.startswith(abs_path, win_ctx.cwd)) then
+  if (not path or pb.startswith(abs_path:tostring(), win_ctx.cwd)) then
     show_repo = true
-    local condense_cwd = condense_path(win_ctx.cwd, true)
+    local dense_cwd = assert(condense_path(win_cwd, win_cwd, true))
 
     winbar:add_child(StatusItem({
       StatusItem(M.config.symbols.repo .. " ", "Directory"),
-      StatusItem(truncate_path_segment(pl:basename(condense_cwd)), "WinBar"),
+      StatusItem(truncate_path_segment(dense_cwd:basename()), "WinBar"),
     }))
   end
 
   -- Parent path
 
   if parent_path then
-    for _, part in ipairs(pl:explode(parent_path)) do
+    for _, part in ipairs(parent_path:explode()) do
       table.insert(path_segments, StatusItem(truncate_path_segment(part), "Comment"))
     end
   end
@@ -313,9 +334,10 @@ function M.update(winid)
   end
 end
 
----Debounce multiple updates to the same windows until the next time the editor
----is ready to redraw.
----@param winid integer
+--- Debounce multiple updates to the same windows until the next time the
+--- editor is ready to redraw.
+---
+--- @param winid integer
 function M.request_update(winid)
   if queued[winid] == nil then
     -- This window has not been queued before: update immediately
@@ -340,6 +362,14 @@ function M.request_update(winid)
     -- vim.cmd.redrawstatus()
     update_queued = false
   end)
+end
+
+--- Request an update for all windows.
+---
+function M.request_update_all()
+  for _, winid in ipairs(api.nvim_list_wins()) do
+    M.request_update(winid)
+  end
 end
 
 function M.attach(winid)
@@ -392,7 +422,15 @@ function M.is_attached(winid)
 end
 
 function M.init()
-  local events = { "WinEnter", "WinLeave", "BufWinEnter", "BufModifiedSet", "BufWritePost" }
+  local events = {
+    "WinEnter",
+    "WinLeave",
+    "BufWinEnter",
+    "BufModifiedSet",
+    "BufWritePost",
+    "DirChanged",
+    "FocusGained",
+  }
 
   if vim.fn.has("nvim-0.9") == 1 then
     table.insert(events, "WinResized")
@@ -423,6 +461,8 @@ function M.init()
               M.request_update(winid)
             end
           end
+        else
+          M.request_update_all()
         end
       end,
     },
