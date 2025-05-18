@@ -119,6 +119,9 @@ require("user.lsp.java")
 -- lspconfig.tsserver.setup(M.create_config())
 require("user.lsp.typescript")
 
+-- Deno
+-- lspconfig.denols.setup(M.create_config())
+
 -- Python
 lspconfig.pyright.setup(M.create_config())
 

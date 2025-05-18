@@ -14,11 +14,21 @@ case "$1" in
         ;;
     -a)
         if [ "$XDG_SESSION_TYPE" = "x11" ]; then
-            maim -i $(xdotool getactivewindow) | convert - \
-                \( +clone -background black -shadow 94x12+0+6 \) \
-                +swap -background none -layers merge +repage "$target"
+            maim -i $(xdotool getactivewindow) \
+                | convert - \
+                    \( +clone -background black -shadow 94x12+0+6 \) \
+                    +swap -background none -layers merge +repage "$target"
         else
-            dunstify "Screenshot" "Not implemented for Wayland"
+            if [ "$XDG_CURRENT_DESKTOP" == "sway" ]; then
+                swaymsg -t get_tree \
+                    | jq -r '.. | select(.focused?) | .rect | "\(.x),\(.y) \(.width)x\(.height)"' \
+                    | grim -g - - \
+                    | convert - \
+                        \( +clone -background black -shadow 94x12+0+6 \) \
+                        +swap -background none -layers merge +repage "$target"
+            else
+                dunstify "Screenshot" "Not implemented for the current environment"
+            fi
         fi
         ;;
 esac
