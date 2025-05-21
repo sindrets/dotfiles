@@ -37,8 +37,8 @@ bindsym $mod+F1 exec $terminal $EDITOR ~/.config/sway/config
 bindsym $mod+F2 exec $terminal $EDITOR ~/.config/waybar/config
 bindsym $mod+F3 exec $terminal $EDITOR ~/.config/kitty/kitty.conf
 bindsym $mod+F4 exec $terminal env GIT_DIR=$HOME/.dotfiles nvim \
-	--cmd 'cd ~/.config/nvim' \
-	-c 'args %' ~/.config/nvim/init.lua ~/.config/nvim/lua/user/plugins/init.lua
+    --cmd 'cd ~/.config/nvim' \
+    -c 'args %' ~/.config/nvim/init.lua ~/.config/nvim/lua/user/plugins/init.lua
 
 # Window kill command
 bindsym $mod+Shift+q kill
@@ -179,14 +179,14 @@ bindsym $mod+Shift+KP_Subtract move container to workspace $wsTrash; workspace $
 # Window rules
 
 set {
-	$ii inhibit_idle focus
-	$game inhibit_idle focus; floating enable; border none; fullscreen enable; shadows disable
-	$popup floating enable; border pixel 1; sticky enable; shadows enable
-	$float floating enable; border pixel 1; shadows enable
-	$float_title floating enable; border normal 1; shadows enable
-	$video inhibit_idle fullscreen; border none; max_render_time off
-	$important inhibit_idle open; floating enable; border pixel 1
-	$max inhibit_idle visible; floating enable; sticky enable; border pixel 1
+    $ii inhibit_idle focus
+    $game inhibit_idle focus; floating enable; border none; fullscreen enable; shadows disable
+    $popup floating enable; border pixel 1; sticky enable; shadows enable
+    $float floating enable; border pixel 1; shadows enable
+    $float_title floating enable; border normal 1; shadows enable
+    $video inhibit_idle fullscreen; border none; max_render_time off
+    $important inhibit_idle open; floating enable; border pixel 1
+    $max inhibit_idle visible; floating enable; sticky enable; border pixel 1
 }
 
 for_window {
@@ -219,8 +219,8 @@ for_window {
     [app_id="azote"] $float_title
     [app_id="Firefox Beta" title="Picture-in-Picture"] $float
     [app_id="flameshot"] border pixel 0, floating enable, fullscreen disable, move absolute position 0 0
-		[app_id="thunar" title="File Operation Progress"] $float_title
-		[app_id="thunar" title="Confirm to replace files"] $float_title
+    [app_id="thunar" title="File Operation Progress"] $float_title
+    [app_id="thunar" title="Confirm to replace files"] $float_title
     # switch to workspace with urgent window automatically
     [urgent=latest] focus
 }
@@ -290,9 +290,9 @@ exec hash dbus-update-activation-environment 2>/dev/null && \
 
 # Autostart applications
 exec --no-startup-id $HOME/.config/sway/scripts/import-gsettings
-#		notification manager
+#   notification manager
 exec --no-startup-id dunst
-#       set wallpaper
+#   set wallpaper
 exec --no-startup-id [ -x ~/.azotebg ] && ~/.azotebg
 exec --no-startup-id udiskie
 exec --no-startup-id env QT_QPA_PLATFORM=xcb insync start
@@ -417,4 +417,4 @@ bindsym --release Mod4+Shift+Print exec --no-startup-id "$HOME/.config/scripts/s
 
 include ~/.config/sway/config.d/*.conf
 
-# vim: ft=swayconfig
+# vim: ft=swayconfig et sw=4

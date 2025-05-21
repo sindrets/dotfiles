@@ -7,12 +7,18 @@ function! s:LazyCmd(cmd) abort
         set lazyredraw
         call execute(a:cmd)
     catch /.*/
-        echoerr v:exception
+        let l:err = v:exception
     finally
         if !l:save_lazyredraw
             set nolazyredraw
         endif
     endtry
+
+    if l:err != v:null
+        echohl ErrorMsg
+        echom l:err
+        echohl NONE
+    endif
 endfunction
 
 " Temporarily set 'lazyredraw' and execute normal mode commands {cmd}.
