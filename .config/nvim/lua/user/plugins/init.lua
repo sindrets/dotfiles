@@ -352,7 +352,10 @@ require("lazy").setup({
     "sindrets/vim-fugitive",
     config = conf("fugitive"),
     init = function()
-      vim.g.github_enterprise_urls = { "https://github.schibsted.io" }
+      vim.g.github_enterprise_urls = {
+        "https://github.schibsted.io",
+        "https://schibsted.ghe.com",
+      }
     end,
     dependencies = {
       "tpope/vim-rhubarb",

@@ -189,6 +189,12 @@ lspconfig.jsonls.setup(M.create_config())
 -- Toml
 lspconfig.taplo.setup(M.create_config())
 
+-- PHP, Blade
+-- lspconfig.stimulus_ls.setup(M.create_config())
+
+-- Astro
+lspconfig.astro.setup(M.create_config())
+
 
 vim.diagnostic.config({
   virtual_text = false,
