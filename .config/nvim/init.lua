@@ -3,10 +3,10 @@ _G.prequire = function(modname)
   if ok then return mod end
 end
 
----Pretty print. Alias for `vim.inspect()`.
+--- Pretty print. Alias for `vim.inspect()`.
 _G.pp = function(a, opt) print(vim.inspect(a, opt)) end
 
----LibUV
+--- LibUV
 _G.uv = vim.loop
 
 _G.Config = {
@@ -17,7 +17,7 @@ _G.Config = {
 
 Config.common = require("user.common")
 
----Path library.
+--- Path library.
 _G.pl = Config.common.utils.pl
 
 Config.lib = require("user.lib")
@@ -142,7 +142,7 @@ Config.fn.toggle_diagnostics = lib.create_view_toggler({
   remember_height = true,
 })
 
----@return string[]
+--- @return string[]
 local function get_messages()
   local ret = api.nvim_exec2("messages", { output = true })
   -- Filter out empty lines.

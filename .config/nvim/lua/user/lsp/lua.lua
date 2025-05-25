@@ -53,7 +53,7 @@ require("lspconfig").lua_ls.setup(
           unicodeName = true
         },
         diagnostics = {
-          globals = { "vim", "jit", "bit", "Config" }
+          globals = { "vim", "jit", "bit" },
         },
         workspace = {
           library = get_lib(),
