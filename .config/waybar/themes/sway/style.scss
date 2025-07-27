@@ -48,14 +48,14 @@ window#waybar {
     color: $text-dim;
     border-radius: 0;
 
-    &.focused {
+    &.focused, &.active {
       background-color: $primary;
       color: $text;
     }
   }
 }
 
-#mode {
+#mode, #submap {
   background-color: $primary;
   color: $text;
   margin: 0 10px;

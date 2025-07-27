@@ -1,0 +1,17 @@
+#!/usr/bin/bash
+
+activeWindow="$(hyprctl -j activewindow | jq -r '.address')"
+
+if [ -z $activeWindow ]; then
+  exit 0
+fi
+
+current_special="$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .specialWorkspace.name')"
+
+if [ "$current_special" == "special:magic" ]; then
+  hyprctl dispatch movetoworkspace e+0
+  hyprctl dispatch settiled
+else
+  hyprctl dispatch movetoworkspace special:magic
+  hyprctl dispatch setfloating
+fi

@@ -29,11 +29,11 @@ window#waybar {
   min-width: 1px;
   color: #888888;
   border-radius: 0; }
-  #workspaces button.focused {
+  #workspaces button.focused, #workspaces button.active {
     background-color: #285577;
     color: #ffffff; }
 
-#mode {
+#mode, #submap {
   background-color: #285577;
   color: #ffffff;
   margin: 0 10px;

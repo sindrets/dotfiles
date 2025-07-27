@@ -1,0 +1,27 @@
+{
+  "modules-left": [
+    "hyprland/workspaces",
+    // "custom/scratch",
+    "hyprland/submap",
+    // "sway/window"
+    "custom/player"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "network",
+    "custom/cpu-temp",
+    // "backlight",
+    "pulseaudio",
+    "battery",
+    "tray",
+    "clock",
+    "hyprland/language"
+  ],
+  "hyprland/language": {
+    "format": "{}",
+    "format-en": "us",
+    "format-no": "no"
+  }
+}
+
+// vim: ft=jsonc

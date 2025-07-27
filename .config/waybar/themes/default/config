@@ -1,0 +1,7 @@
+{
+  "include": [
+    "~/.config/waybar/themes/sway/config"
+  ]
+}
+
+// vim: ft=jsonc

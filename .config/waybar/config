@@ -1,6 +1,15 @@
 {
+  // https://github.com/Alexays/Waybar/wiki/Configuration
+  //
+  // "In case of duplicate options, the first defined value takes precedence,
+  // i.e. including file -> first included file -> etc. Nested includes are
+  // permitted, but make sure to avoid circular imports.
+  //
+  // For a multi-bar config, the include directive affects only current bar
+  // configuration object."
   "include": [
-    "~/.config/waybar/themes/sway/config"
+    "~/.config/waybar/themes/overrides/config",
+    "~/.config/waybar/themes/default/config"
   ],
   "reload_style_on_change": true
 }
