@@ -1,4 +1,6 @@
 #!/bin/bash
+set -eo pipefail
+
 target_dir="$HOME/Pictures/screenshots/"
 target="$target_dir/`date +'%Y-%m-%d-%H%M%S'`_screen.png"
 
@@ -26,8 +28,22 @@ case "$1" in
                     | convert - \
                         \( +clone -background black -shadow 94x12+0+6 \) \
                         +swap -background none -layers merge +repage "$target"
+            elif [[ "$XDG_CURRENT_DESKTOP" == "Hyprland" ]]; then
+                active_window="$(hyprctl -j activewindow)"
+
+                if [ ${#active_window} -le 2 ]; then
+                    # No window selected `{}`
+                    exit 0
+                fi
+
+                jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"' <<<"$active_window" \
+                    | grim -g - - \
+                    | convert - \
+                        \( +clone -background black -shadow 94x12+0+6 \) \
+                        +swap -background none -layers merge +repage "$target"
             else
                 dunstify "Screenshot" "Not implemented for the current environment"
+                $?=1
             fi
         fi
         ;;
