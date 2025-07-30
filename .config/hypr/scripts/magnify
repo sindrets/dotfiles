@@ -1,0 +1,50 @@
+#!/usr/bin/luajit
+--[[
+  Usage:
+    magnify <zoom_factor>
+    magnify <+|-><zoom_mod_factor> [min] [max]
+]]
+
+local function eprint(...)
+  local args = { n = select("#", ...), ... }
+  for i = 1, args.n do args[i] = tostring(args[i]) end
+  io.stderr:write(table.concat(args, "\t", 1, args.n), "\n")
+end
+
+local function exec(cmd)
+  local handle = assert(io.popen(cmd))
+  local result = handle:read("*a")
+  handle:close()
+
+  return result
+end
+
+local function clamp(v, min, max)
+  if v < min then return min end
+  if v > max then return max end
+  return v
+end
+
+local sign, mod_factor = (arg[1] or ""):match("([+-]?)([%d%.]+)")
+mod_factor = tonumber(mod_factor) or 1.5
+local min_factor = tonumber(arg[2]) or 1.0
+local max_factor = tonumber(arg[3]) or math.huge
+
+local current_zoom = tonumber(exec("hyprctl getoption cursor:zoom_factor"):match("float: ([%d%.]+)"))
+
+local new_value
+
+if sign == "+" then
+  new_value = clamp(current_zoom * (1 + mod_factor), min_factor, max_factor)
+elseif sign == "-" then
+  new_value = current_zoom / math.abs(1 + mod_factor)
+else
+  new_value = mod_factor
+end
+
+eprint("sign", sign)
+eprint("mod_factor", mod_factor)
+eprint("current_zoom", current_zoom)
+eprint("new_value", new_value)
+
+exec("hyprctl keyword cursor:zoom_factor " .. clamp(new_value, 1, math.huge))

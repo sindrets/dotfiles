@@ -1,5 +1,15 @@
-monitor = DP-6, 2560x1440@143.856Hz, 0x0, 1
-monitor = DP-5, 1920x1080@144.001Hz, 2560x0, 1
+$primary = DP-6
+$secondary = DP-5
 
-workspace = 1, monitor:DP-6
-workspace = 9, monitor:DP-5
+monitor = $primary, 2560x1440@143.856Hz, 0x0, 1
+monitor = $secondary, 1920x1080@144.001Hz, 2560x0, 1
+
+workspace = 1, monitor:$primary
+workspace = 9, monitor:$secondary
+
+# Set the "primary" hint used by many xorg apps
+exec = xrandr --output $primary --primary
+
+exec-once = hyprctl dispatch focusmonitor $secondary
+exec-once = hyprctl dispatch workspace 9
+exec-once = hyprctl dispatch workspace 1
