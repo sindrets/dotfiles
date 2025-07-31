@@ -1,0 +1,24 @@
+#!/usr/bin/bash
+
+# Define the menu options and shortcuts
+options=(
+    "󰗽  Logout"
+    "  Lock"
+    "  Shutdown"
+    "  Reboot"
+)
+
+# Create a string with line breaks
+menu="$(printf '%s\n' "${options[@]}")"
+
+# Show menu with Rofi
+choice=$(echo "$menu" | rofi -dmenu -i -p 'Choose' -l 4)
+
+# Perform actions based on selection
+case "$choice" in
+    *Logout*) hyprctl dispatch exit ;;
+    *Lock*) hyprlock ;;
+    *Shutdown*) systemctl poweroff ;;
+    *Reboot*) systemctl reboot ;;
+    *) exit 1 ;;
+esac
