@@ -1,5 +1,3 @@
-
 configuration {}
 
 @theme "~/.config/rofi/themes/colors-rofi-dark.rasi"
-

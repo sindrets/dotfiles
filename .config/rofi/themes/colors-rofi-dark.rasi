@@ -27,6 +27,7 @@
 
     background-color: @background;
     text-color: @foreground;
+    font: "JetBrainsMono Nerd Font 15";
 }
 
 #window {
