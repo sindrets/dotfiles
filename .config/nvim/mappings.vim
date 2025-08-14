@@ -115,7 +115,7 @@ nnoremap ~ <Cmd>buffer #<CR>
 nnoremap <silent> <leader>w <Cmd>lua require'user.lib'.remove_buffer()<CR>
 nnoremap <silent> <leader>W <Cmd>lua require'user.lib'.remove_buffer(true)<CR>
 nnoremap <silent> gb <Cmd>BufferLinePick<CR>
-nnoremap X <Cmd>bd<CR>
+nnoremap X <Cmd>lua require'user.lib'.smart_buf_delete(false)<CR>
 
 " Navigate tabs
 nnoremap <M-[> <Cmd>tabp<CR>

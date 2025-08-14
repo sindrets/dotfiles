@@ -308,6 +308,25 @@ function M.remove_buffer(force, bufnr)
   end
 end
 
+--- @param force boolean
+--- @param bufnr? number
+function M.smart_buf_delete(force, bufnr)
+  bufnr = bufnr or api.nvim_get_current_buf()
+
+  local wins = vim.tbl_filter(
+    function(win) return not utils.win_is_float(win) end,
+    api.nvim_tabpage_list_wins(0)
+  )
+
+  if #wins > 1 then
+    local cur_winid = api.nvim_get_current_win()
+    vim.cmd("wincmd p")
+    api.nvim_win_close(cur_winid, false)
+  end
+
+  pcall(M.remove_buffer, force, bufnr)
+end
+
 ---Split a line on all matches of a given pattern.
 ---@param pattern string Vim pattern.
 ---@param range integer[]

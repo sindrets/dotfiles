@@ -171,13 +171,22 @@ function nv-helptags() {
 }
 
 function soenv() {
-    [[ -z "$1" ]] && set -- ".env"
+    if ! command -v dotenvx > /dev/null; then
+        echo "'dotenvx' not executable!" > /dev/stderr
+        return 1
+    fi
 
-    for f in $@; do
+    if [[ "$#" -gt 0 ]]; then
+        for f in $@; do
+            set -a
+            eval "$(dotenvx get --format eval -f "$f")"
+            set +a
+        done
+    else
         set -a
-        source "$f"
+        eval "$(dotenvx get --format eval)"
         set +a
-    done
+    fi
 }
 
 function nvm() {
