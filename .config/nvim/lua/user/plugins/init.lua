@@ -451,14 +451,13 @@ require("lazy").setup({
       async
         .job({ "tomlq", "-r", ".notebook.dir", vim.env.HOME .. "/.config/zk/config.toml" })
         :await()
-        :map(function(stdout)
-          vim.env.ZK_NOTEBOOK_DIR = Path
-            .from_str(pb.line(stdout, 1) or "")
+        :inspect(function(stdout)
+          vim.env.ZK_NOTEBOOK_DIR = Path.from_str(pb.line(stdout, 1) or "")
             :unwrap()
             :absolute()
             :tostring()
         end)
-        :map_err(function(stderr)
+        :inspect_err(function(stderr)
           Config.common.notify.error(
             string.format("Failed to get notebook dir:\n\n%s", stderr),
             { title = "zk" }
