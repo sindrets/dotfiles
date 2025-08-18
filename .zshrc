@@ -179,12 +179,12 @@ function soenv() {
     if [[ "$#" -gt 0 ]]; then
         for f in $@; do
             set -a
-            eval "$(dotenvx get --format eval -f "$f")"
+            eval "$(dotenvx get --overload --format eval -f "$f")"
             set +a
         done
     else
         set -a
-        eval "$(dotenvx get --format eval)"
+        eval "$(dotenvx get --overload --format eval)"
         set +a
     fi
 }

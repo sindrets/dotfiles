@@ -327,7 +327,7 @@ return function()
 
         km.set("n", "q", function()
           if not vim.bo.modifiable or vim.bo.readonly then
-            return "<Cmd>wincmd q<CR>"
+            return "<Cmd>lua Config.lib.comfy_quit({ keep_last = true })<CR>"
           else
             return "q"
           end
