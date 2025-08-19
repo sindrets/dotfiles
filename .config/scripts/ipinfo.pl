@@ -15,10 +15,16 @@ sub cidrToSubmask {
 	return join(".", @mask);
 }
 
+sub trim {
+	my $s = shift;
+	$s =~ s/^\s+//;   # leading
+	$s =~ s/\s+$//;   # trailing
+	return $s;
+}
+
 while ($info =~ /(^\S.*\Wstate UP\W(?:.*\n(?!\S))*)/gm) {
-	
 	my $s = $1;
-	
+
 	my ($dev) = ( $s =~ /^\d+: ([a-zA-Z0-9]+):/ );
 	my ($inet4, $cidr4) = ( $s =~ /inet (\d{1,3}(?:.\d{1,3}){3})\/(\d+)/m );
 	my $mask4 = cidrToSubmask($cidr4);
@@ -34,8 +40,7 @@ while ($info =~ /(^\S.*\Wstate UP\W(?:.*\n(?!\S))*)/gm) {
 		print "  └── prefixlen: $cidr6", "\n";
 	}
 	print "\n";
-
 }
 
-my $publicIp = `curl --max-time 3 https://ifconfig.me 2>/dev/null`;
+my $publicIp = trim(`dig +short +timeout=3 myip.opendns.com \@resolver1.opendns.com 2>/dev/null`);
 print "Public IP: $publicIp", "\n";

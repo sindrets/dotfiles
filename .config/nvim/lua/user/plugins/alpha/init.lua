@@ -16,7 +16,7 @@ return function()
 
   local function get_banner()
     local height = api.nvim_win_get_height(0)
-    local list = { "majora", "nvim" }
+    local list = { "lain", "nvim" }
     local bg = vim.o.background
     local result
 
