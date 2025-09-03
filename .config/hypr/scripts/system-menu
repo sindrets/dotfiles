@@ -2,10 +2,10 @@
 
 # Define the menu options and shortcuts
 options=(
-    "󰗽  Logout"
-    "  Lock"
     "  Shutdown"
     "  Reboot"
+    "󰗽  Logout"
+    "  Lock"
 )
 
 # Create a string with line breaks

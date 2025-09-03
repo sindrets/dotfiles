@@ -434,7 +434,6 @@ require("lazy").setup({
     build = function() vim.fn["firenvim#install"](0) end,
     init = conf("firenvim"),
   },
-  { "honza/vim-snippets" },
   {
     "vhyrro/luarocks.nvim",
     priority = 1000,
