@@ -275,7 +275,7 @@ nnoremap <C-P> <Cmd>lua require('user.lib').workspace_files()<CR>
 nnoremap <leader>p <Cmd>lua require('user.lib').workspace_files({ all = true })<CR>
 nnoremap <C-M-P> <Cmd>lua Snacks.picker.git_status()<CR>
 nnoremap <M-b> <Cmd>lua Snacks.picker.buffers({ sort_lastused = true })<CR>
-nnoremap <M-f> <Cmd>lua Snacks.picker.grep()<CR>
+nnoremap <M-f> <Cmd>lua Snacks.picker.grep({ hidden = true })<CR>
 nnoremap <M-O> <Cmd>lua Snacks.picker.lsp_workspace_symbols()<CR>
 nnoremap <M-o> <Cmd>lua Snacks.picker.lsp_symbols()<CR>
 nnoremap <M-d> <Cmd>lua Snacks.picker.diagnostics_buffer()<CR>
