@@ -80,3 +80,23 @@ function git_changed_files() {
         echo "$file"
     done
 }
+
+function git_default_branch() {
+    set -e
+
+    local remote_head="$(
+        git symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's|refs/remotes/origin/||'
+    )"
+
+    if [[ ! -z "$remote_head" ]]; then
+        echo "$remote_head"
+    elif git rev-parse --verify main >/dev/null; then
+        echo "main"
+    elif git rev-parse --verify master >/dev/null; then
+        echo "master"
+    else
+        echo "Couldn't find default branch!" > /dev/stderr
+
+        return 1
+    fi
+}
