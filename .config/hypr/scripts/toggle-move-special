@@ -12,6 +12,6 @@ if [ "$current_special" == "special:magic" ]; then
   hyprctl dispatch movetoworkspace e+0
   hyprctl dispatch settiled
 else
-  hyprctl dispatch movetoworkspace special:magic
   hyprctl dispatch setfloating
+  hyprctl dispatch movetoworkspacesilent special:magic
 fi
