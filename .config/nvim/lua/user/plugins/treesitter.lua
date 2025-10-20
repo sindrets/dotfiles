@@ -1,15 +1,28 @@
 return function()
-  local parser_config = require("nvim-treesitter.parsers").get_parser_configs()
+  local nvim_treesitter = require("nvim-treesitter")
 
-  parser_config.haxe = {
-    install_info = {
-      url = "https://github.com/vantreeseba/tree-sitter-haxe",
-      files = { "src/parser.c" },
-      -- optional entries:
-      branch = "main",
+  local pb = Config.common.pb
+
+  local custom_parsers = {
+    haxe = {
+      install_info = {
+        url = "https://github.com/vantreeseba/tree-sitter-haxe",
+        -- optional entries:
+        branch = "main",
+      },
+      filetype = "haxe",
     },
-    filetype = "haxe",
   }
+
+  vim.api.nvim_create_autocmd('User', {
+    pattern = 'TSUpdate',
+    callback = function()
+      local parsers = require('nvim-treesitter.parsers')
+      for lang, config in pairs(custom_parsers) do
+        parsers[lang] = config
+      end
+    end,
+  })
 
   -- Map filetypes to TS parsers
   for ft, parser in pairs({
@@ -18,13 +31,8 @@ return function()
     vim.treesitter.language.register(ft, parser)
   end
 
-  require("nvim-treesitter.configs").setup({
-    ensure_installed = "all",
-    ignore_install = {
-      "luap",
-      "comment",
-    },
-    indent = { enable = true },
+  nvim_treesitter.setup({
+    -- FIXME: This isn't an option anymore
     highlight = {
       -- false will disable the whole extension
       enable = true,
@@ -45,14 +53,17 @@ return function()
         }, lang)
       end,
     },
-    -- incremental_selection = {
-    --   enable = true,
-    --   keymaps = {
-    --     init_selection = '<CR>',
-    --     scope_incremental = '<CR>',
-    --     node_incremental = '<TAB>',
-    --     node_decremental = '<S-TAB>',
-    --   },
-    -- },
   })
+
+  nvim_treesitter.install(
+    pb.iter(nvim_treesitter.get_available(2) --[[@as string[] ]])
+      :filter(function(lang)
+        return not vim.tbl_contains({
+          "luap",
+          "comment",
+        }, lang)
+      end)
+      :chain(pb.keys(custom_parsers))
+      :totable()
+  )
 end

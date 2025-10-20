@@ -147,10 +147,10 @@ require("lazy").setup({
   },
   {
     "nvim-treesitter/nvim-treesitter",
+    branch = "main",
     build = ":TSUpdate",
     config = conf("treesitter"),
   },
-  { "nvim-treesitter/playground", dependencies = "nvim-treesitter/nvim-treesitter" },
   {
     "nvim-treesitter/nvim-treesitter-context",
     config = function()
@@ -310,7 +310,25 @@ require("lazy").setup({
         max_height = 15,
         top_down = false,
       })
-      vim.notify = notify
+
+      ---@diagnostic disable-next-line: duplicate-set-field
+      vim.notify = function(msg, level, opts)
+        opts = opts or {}
+        notify(msg, level, vim.tbl_extend("force", opts, {
+          on_open = function(winid)
+            local bufid = api.nvim_win_get_buf(winid)
+            -- vim.bo[bufid].filetype = "markdown"
+            vim.wo[winid].conceallevel = 3
+            vim.wo[winid].concealcursor = "n"
+            vim.wo[winid].spell = false
+            vim.treesitter.start(bufid, "markdown")
+
+            if opts.on_open then
+              opts.on_open(winid)
+            end
+          end,
+        }))
+      end
     end,
   },
 
@@ -382,29 +400,32 @@ require("lazy").setup({
       "nvim-treesitter/nvim-treesitter",
       "nvim-tree/nvim-web-devicons"
     },
-    opts = {
-      markdown = {
-        code_blocks = {
-          pad_amount = 0,
+    config = function()
+      require("markview").setup({
+        markdown = {
+          code_blocks = {
+            pad_amount = 0,
+          },
+          list_items = {
+            indent_size = 2,
+            shift_width = 2,
+          },
         },
-        list_items = {
-          indent_size = 2,
-          shift_width = 2,
+        preview = {
+          modes = { "n", "i", "no", "c" },
+          hybrid_modes = { "i" },
+          callbacks = {
+            on_enable = function (_, win)
+              vim.api.nvim_win_call(win, function ()
+                vim.opt_local.conceallevel = 3
+                vim.opt_local.concealcursor = "nc"
+              end)
+            end,
+          },
         },
-      },
-      preview = {
-        modes = { "n", "i", "no", "c" },
-        hybrid_modes = { "i" },
-        callbacks = {
-          on_enable = function (_, win)
-            vim.api.nvim_win_call(win, function ()
-              vim.opt_local.conceallevel = 3
-              vim.opt_local.concealcursor = "nc"
-            end)
-          end,
-        },
-      },
-    },
+      })
+      require("markview.highlights").setup()
+    end,
   },
   {
     "iamcco/markdown-preview.nvim",
