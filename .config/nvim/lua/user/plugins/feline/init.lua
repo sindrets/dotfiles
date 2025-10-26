@@ -1,7 +1,6 @@
 local lz = require("user.lazy")
 
 local Job = lz.require("imminent.Job") ---@module "imminent.Job"
-local Path = lz.require("imminent.fs.Path") ---@module "imminent.fs.Path"
 local StatusComponent = lz.require("user.plugins.feline.status_component") ---@type StatusComponent|LazyModule
 local async = lz.require("imminent") ---@module "imminent"
 local devicons = lz.require("nvim-web-devicons") ---@module "nvim-web-devicons"
@@ -9,9 +8,9 @@ local feline = lz.require("feline") ---@module "feline"
 local lsp = lz.require("feline.providers.lsp") ---@module "feline.providers.lsp"
 local styles = lz.require("user.plugins.feline.styles") ---@module "user.plugins.feline.styles"
 
+local Path = Config.common.utils.Path
 local utils = Config.common.utils
 local pb = Config.common.pb
-local pl = utils.pl
 local hl = Config.common.hl
 local api = vim.api
 
@@ -281,9 +280,9 @@ M.components = {
           if vim.bo.buftype == "terminal" then
             basename = "sh"
           else
-            local path = api.nvim_buf_get_name(0)
-            basename = pl:basename(path)
-            ext = pl:extension(path)
+            local path = Path.from(api.nvim_buf_get_name(0))
+            basename = path:basename()
+            ext = path:extension()
           end
 
           local icon, _ = devicons.get_icon(basename, ext, { default = false })
@@ -300,9 +299,9 @@ M.components = {
         if vim.bo.buftype == "terminal" then
           basename = "sh"
         else
-          local path = api.nvim_buf_get_name(0)
-          basename = pl:basename(path)
-          ext = pl:extension(path)
+          local path = Path.from(api.nvim_buf_get_name(0))
+          basename = path:basename()
+          ext = path:extension()
         end
 
         local _, color = devicons.get_icon_color(basename, ext)
@@ -485,8 +484,8 @@ M.components = {
                 },
                 cwd = cwd,
                 success_cond =
-                  Job.SUCCESS_CONDITIONS.zero_exit *
-                  Job.SUCCESS_CONDITIONS.non_empty_stdout,
+                  Job.Conditions.zero_exit *
+                  Job.Conditions.non_empty_stdout,
               })
 
               if reflog:wait():await():is_ok() then
@@ -507,8 +506,8 @@ M.components = {
                   },
                   cwd = cwd,
                   success_cond =
-                    Job.SUCCESS_CONDITIONS.zero_exit *
-                    Job.SUCCESS_CONDITIONS.non_empty_stdout,
+                    Job.Conditions.zero_exit *
+                    Job.Conditions.non_empty_stdout,
                 })
 
                 if name_rev:wait():await():is_ok() then
@@ -520,7 +519,7 @@ M.components = {
               end
             end):block_on()
 
-            cache:put(key, name, { lifetime = 60 * 1000 })
+            cache:put(key, name, { ttl = 60 * 1000 })
 
             return name .. desc
           else

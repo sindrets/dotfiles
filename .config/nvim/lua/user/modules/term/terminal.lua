@@ -1,5 +1,6 @@
 local oop = require("user.oop")
 
+local Path = Config.common.utils.Path
 local utils = Config.common.utils
 local api = vim.api
 
@@ -19,7 +20,7 @@ end
 ---@field jobid integer
 ---@field bufnr integer
 ---@field name string
----@field cwd string
+---@field cwd imminent.fs.Path
 ---@field keymaps table
 local Terminal = oop.create_class("Terminal")
 
@@ -36,27 +37,30 @@ Terminal.winopts = {
 
 ---@class Terminal.init.Opt
 ---@field bufnr integer
----@field cwd string
+---@field cwd string|imminent.fs.Path
 ---@field keymaps table
 
 ---@param opt Terminal.init.Opt
 function Terminal:init(opt)
   opt = opt or {}
-  local cwd
+  local cwd --- @type imminent.fs.Path?
 
   if opt.cwd then
-    cwd = pl:vim_fnamemodify(opt.cwd, ":p")
+    cwd = (
+      type(opt.cwd) == "string"
+        and Path.from(opt.cwd --[[@as string ]])
+        or opt.cwd --[[@as imminent.fs.Path ]]
+    )
+      :absolute()
 
     assert(
-      pl:readable(cwd) and pl:is_dir(cwd),
+      cwd:is_readable():block_on() and cwd:is_dir():block_on(),
       "The terminal cwd must be a valid readable directory!"
     )
-  else
-    cwd = uv.cwd()
   end
 
   self.id = get_uid()
-  self.cwd = cwd
+  self.cwd = cwd or Path.cwd()
   self.keymaps = opt.keymaps or {}
   self.bufnr = opt.bufnr or self:create_buffer()
 end
@@ -76,7 +80,7 @@ function Terminal:spawn()
 
     self.jobid = vim.fn.termopen(cmd, {
       detach = 1,
-      cwd = pl:vim_fnamemodify(self.cwd, ":p"),
+      cwd = self.cwd:absolute():tostring(),
     })
 
     if self.name then

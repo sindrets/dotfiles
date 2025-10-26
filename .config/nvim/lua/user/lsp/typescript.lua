@@ -11,7 +11,12 @@ require("typescript-tools").setup(
       tsserver_path = nil,
       -- specify a list of plugins to load by tsserver, e.g., for support `styled-components`
       -- (see 💅 `styled-components` support section)
-      tsserver_plugins = {},
+      tsserver_plugins = {
+        -- for TypeScript v4.9+
+        "@styled/typescript-styled-plugin",
+        -- or for older TypeScript versions
+        -- "typescript-styled-plugin",
+      },
       -- this value is passed to: https://nodejs.org/api/cli.html#--max-old-space-sizesize-in-megabytes
       -- memory limit in megabytes or "auto"(basically no limit)
       tsserver_max_memory = "auto",

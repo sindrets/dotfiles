@@ -4,10 +4,10 @@ _G.prequire = function(modname)
 end
 
 --- Pretty print. Alias for `vim.inspect()`.
-_G.pp = function(a, opt) print(vim.inspect(a, opt)) end
+_G.pp = function(a, opt) print(Config.common.pb.inspect(a, opt)) end
 
 --- LibUV
-_G.uv = vim.loop
+_G.uv = vim.uv or vim.loop
 
 _G.Config = {
   fn = {},
@@ -17,8 +17,12 @@ _G.Config = {
 
 Config.common = require("user.common")
 
+local lz = require("user.lazy")
+
 --- Path library.
-_G.pl = Config.common.utils.pl
+_G.Path = Config.common.utils.Path
+
+_G.pb = lz.put(_G, "pb", "imminent.pebbles") ---@module "imminent.pebbles"
 
 Config.lib = require("user.lib")
 Config.term = require("user.modules.term")
@@ -56,7 +60,6 @@ api.nvim_create_autocmd("CmdlineEnter", {
     alias("hh", "HelpHere")
     alias("mh", "ManHere")
     alias("gh", "Git ++curwin")
-    alias("T", "Telescope")
     alias("gs", "lua Snacks.picker.git_status()")
     alias("gb", "lua Snacks.picker.git_branches()")
     alias({ "gd", "DO" }, "DiffviewOpen")

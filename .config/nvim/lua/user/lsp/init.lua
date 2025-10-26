@@ -23,9 +23,9 @@ local server_configs = prequire("lspconfig.configs") or {}
 
 if not lspconfig then return end
 
+local Path = Config.common.utils.Path
 local utils = Config.common.utils
 local notify = Config.common.notify
-local pl = utils.pl
 local config_store = {}
 
 local M = {}
@@ -74,7 +74,7 @@ function M.create_local_config(config)
       notify.config("Using LSP config from project config.")
     else
       for _, path in ipairs(M.local_config_paths) do
-        if pl:readable(path) then
+        if Path.from(path):is_readable():block_on() then
           local data = vim.secure.read(path)
 
           if data then
@@ -122,9 +122,6 @@ require("user.lsp.typescript")
 -- Deno
 -- lspconfig.denols.setup(M.create_config())
 
--- Python
-lspconfig.pyright.setup(M.create_config())
-
 -- Lua
 server_configs.emmylua_ls = {
   default_config = {
@@ -139,32 +136,11 @@ server_configs.emmylua_ls = {
 require("user.lsp.lua")
 -- lspconfig.emmylua_ls.setup(M.create_config())
 
--- Luau
-lspconfig.luau_lsp.setup(M.create_config())
-
--- Teal
--- require("user.lsp.teal")
-
--- Bash
-lspconfig.bashls.setup(M.create_config())
-
 -- C#
-require("user.lsp.csharp")
-
--- C, C++
-lspconfig.clangd.setup(M.create_config())
-
--- Vim
-lspconfig.vimls.setup(M.create_config())
-
--- Go
-lspconfig.gopls.setup(M.create_config())
-
--- Scheme, Racket
-lspconfig.racket_langserver.setup(M.create_config())
+-- require("user.lsp.csharp")
 
 -- Haxe
-lspconfig.haxe_language_server.setup(M.create_config({
+vim.lsp.config("haxe_language_server", M.create_config({
   -- NOTE: Doesn't work with xargs here. Something about the tty?
   cmd = {
     "sh",
@@ -176,26 +152,6 @@ lspconfig.haxe_language_server.setup(M.create_config({
     displayArguments = { 'build.hxml' },
   },
 }))
-
--- Rust
-lspconfig.rust_analyzer.setup(M.create_config())
-
--- CSS
-lspconfig.cssls.setup(M.create_config())
-
--- Json
-lspconfig.jsonls.setup(M.create_config())
-
--- Toml
-lspconfig.taplo.setup(M.create_config())
-
--- PHP, Blade
--- lspconfig.stimulus_ls.setup(M.create_config())
-lspconfig.phpactor.setup(M.create_config())
-
--- Astro
-lspconfig.astro.setup(M.create_config())
-
 
 vim.diagnostic.config({
   virtual_text = false,

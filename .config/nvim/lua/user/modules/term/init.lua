@@ -6,6 +6,7 @@ local Terminal = lazy.require("user.modules.term.terminal")
 ---@type TermSplit
 local TermSplit = lazy.require("user.modules.term.term_split")
 
+local Path = Config.common.utils.Path
 local api = vim.api
 
 local M = {}
@@ -56,27 +57,33 @@ function M.remove_term(term)
 end
 
 ---@class term.new.Opt
----@field cmd string|string[] One or multiple commands to run immediately in the new terminal.
----@field cwd string The initial working directory.
----@field focus boolean Bring focus to the new terminal. (default: true)
+---@field cmd? string|string[] One or multiple commands to run immediately in the new terminal.
+---@field cwd? string|imminent.fs.Path The initial working directory.
+---@field focus? boolean Bring focus to the new terminal. (default: true)
 
 ---Create a new terminal and set it as the current terminal in the TermSplit.
 ---@param opt? term.new.Opt
 ---@return Terminal?
 function M.new(opt)
   opt = vim.tbl_extend("keep", opt or {}, { focus = true }) --[[@as term.new.Opt ]]
+  local cwd --- @type imminent.fs.Path?
 
   if opt.cwd then
-    opt.cwd = pl:vim_fnamemodify(opt.cwd, ":p")
+    cwd = (
+      type(opt.cwd) == "string" and
+      Path.from(opt.cwd --[[@as string ]]) or
+      opt.cwd --[[@as imminent.fs.Path ]]
+    )
+      :absolute()
 
-    if not (pl:readable(opt.cwd) and pl:is_dir(opt.cwd)) then
+    if not (cwd:is_readable():block_on() and cwd:is_dir():block_on()) then
       utils.err("The terminal cwd must be a valid readable directory!")
       return
     end
   end
 
   local term = Terminal({
-    cwd = opt.cwd,
+    cwd = cwd,
     keymaps = {
       t = {
         ["<M-p>"] = M.prev,

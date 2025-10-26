@@ -165,10 +165,25 @@ require("lazy").setup({
   },
   use_local { "folke/neodev.nvim" },
   {
-    "williamboman/mason.nvim",
-    dependencies = { { "williamboman/mason-lspconfig.nvim", config = false } },
+    "williamboman/mason-lspconfig.nvim",
+    dependencies = {
+      {
+        "mason-org/mason.nvim",
+        opts = {
+          ui = { border = "single" },
+        }
+      },
+      "neovim/nvim-lspconfig",
+    },
     opts = {
-      ui = { border = "single" },
+      automatic_enable = {
+        exclude = {
+          "ts_ls",
+          "stylua",
+          "lua_ls",
+          "haxe_language_server",
+        },
+      },
     },
   },
   { "neovim/nvim-lspconfig" },
@@ -177,21 +192,6 @@ require("lazy").setup({
     config = conf("conform"),
     event = "VeryLazy",
   },
-  -- {
-  --   "ray-x/lsp_signature.nvim",
-  --   config = function()
-  --     require("lsp_signature").setup({
-  --       hint_enable = false,
-  --       hint_prefix = "● ",
-  --       max_width = 80,
-  --       max_height = 12,
-  --       handler_opts = {
-  --         border = "single"
-  --       },
-  --       timer_interval = 200,
-  --     })
-  --   end,
-  -- },
   {
     "pmizio/typescript-tools.nvim",
     dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
@@ -270,10 +270,6 @@ require("lazy").setup({
     enabled = vim.fn.has("nvim-0.10.0") == 1,
   },
   { "folke/snacks.nvim", priority = 1000, config = conf("snacks") },
-  { "nvim-telescope/telescope.nvim", config = conf("telescope"), dependencies = "nvim-web-devicons" },
-  { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
-  { "nvim-telescope/telescope-media-files.nvim" },
-  { "nvim-telescope/telescope-ui-select.nvim" },
   {
     "akinsho/bufferline.nvim",
     config = conf("bufferline"),
@@ -289,8 +285,8 @@ require("lazy").setup({
   { "tpope/vim-abolish" },
   {
     "alvan/vim-closetag", init = function ()
-      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md,*.hbs,*.tsx"
-      vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown,handlebars,typescriptreact"
+      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md,*.hbs,*.tsx,*.astro"
+      vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown,handlebars,typescriptreact,astro"
     end
   },
   { "Rasukarusan/nvim-block-paste" },
@@ -464,12 +460,16 @@ require("lazy").setup({
     "zk-org/zk-nvim",
     cmd = { "ZkNotes", "ZkNew", "ZkIndex" },
     config = function()
-      local async = require("imminent")
       local Path = require("imminent.fs.Path")
+      local async = require("imminent")
       local pb = require("imminent.pebbles")
 
-      async
-        .job({ "tomlq", "-r", ".notebook.dir", vim.env.HOME .. "/.config/zk/config.toml" })
+      async.job({
+        "tomlq",
+        "-r",
+        ".notebook.dir",
+        vim.env.HOME .. "/.config/zk/config.toml"
+      })
         :await()
         :inspect(function(stdout)
           vim.env.ZK_NOTEBOOK_DIR = Path.from_str(pb.line(stdout, 1) or "")
@@ -499,9 +499,7 @@ require("lazy").setup({
     cmd = { "Neorg" },
     dependencies = {
       "nvim-treesitter",
-      "telescope.nvim",
       "nvim-lua/plenary.nvim",
-      "nvim-neorg/neorg-telescope",
       "luarocks.nvim",
     },
     cond = vim.fn.has("nvim-0.8") == 1,

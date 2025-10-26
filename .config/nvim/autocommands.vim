@@ -101,4 +101,13 @@ vim.api.nvim_create_autocmd({ "BufRead" }, {
         end
     end,
 })
+
+-- Enable treesitter highlighting for all file types
+vim.api.nvim_create_autocmd({ "FileType" }, {
+    group = "NvimConfig",
+    pattern = "*",
+    callback = function()
+        pcall(vim.treesitter.start)
+    end,
+})
 EOF

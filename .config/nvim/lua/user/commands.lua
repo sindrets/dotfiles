@@ -1,14 +1,12 @@
 --[[
--- All commands documented in `:h sindrets-commands`.
---]]
+  All commands documented in `:h sindrets-commands`.
+]]
 
-local async = require("user.async")
-local lazy = require("diffview.lazy")
+local lz = require("user.lazy")
 
-local Job = lazy.access("diffview.job", "Job") ---@type diffview.Job|LazyModule
-local arg_parser = lazy.require("diffview.arg_parser") ---@module "diffview.arg_parser"
+local arg_parser = lz.require("diffview.arg_parser") ---@module "diffview.arg_parser"
+local async = lz.require("imminent") ---@module "imminent"
 
-local await = async.await
 local fmt = string.format
 local utils = Config.common.utils
 local notify = Config.common.notify
@@ -199,7 +197,7 @@ command("Windows", function(c)
   Config.lib.cmd.windows(c.bang)
 end, { bar = true, bang = true })
 
-command("NeorgExport", async.new(function(c)
+command("NeorgExport", function(c)
   for _, dep in ipairs({ "neorg-pandoc-linux86", "pandoc", "neorg-export" }) do
     if vim.fn.executable(dep) ~= 1 then
       notify.error(("'%s' is not executable!"):format(dep))
@@ -217,26 +215,22 @@ command("NeorgExport", async.new(function(c)
     out_name = vim.fn.expand(c.fargs[1])
   else
     in_name = vim.fn.expand("%:p")
-    out_name = in_name:sub(1, -math.max(#pl:extension(in_name), 1) - 2) .. ".pdf"
+    out_name = Path.from(in_name):with_extension("pdf"):tostring()
   end
 
-  local job = Job({
-    command = "neorg-export",
-    args = { in_name, out_name },
-  })
-
-  local ok = await(job)
-
-  if not ok then
-    notify.error(job.stderr, {
-      title = "Document export failed with exit code " .. job.code
-    })
-  else
-    notify.info(
-      fmt("Document exported to %s", utils.str_quote(pl:relative(out_name, ".")))
-    )
-  end
-end), { nargs = "*", complete = "file" })
+  async.job({ "neorg-export", in_name, out_name })
+    :block_on()
+    :inspect(function()
+      notify.info(
+        fmt("Document exported to %s", pb.inspect(Path.from(out_name):relative():tostring()))
+      )
+    end)
+    :inspect_err(function(stderr)
+      notify.error(stderr, {
+        title = "Document export failed!"
+      })
+    end)
+end, { nargs = "*", complete = "file" })
 
 command("Profile", function(c)
   local profile = require("plenary.profile")

@@ -9,7 +9,6 @@ return function()
         },
       },
       ["core.qol.toc"] = {},
-      ['core.integrations.telescope'] = {},
       ['core.concealer'] = {},
       ["core.export"] = {},
       ["core.ui.calendar"] = (vim.fn.has("nvim-0.10") == 1) and {} or nil,

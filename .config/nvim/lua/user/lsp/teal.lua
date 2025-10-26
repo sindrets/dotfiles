@@ -14,4 +14,4 @@ if not lspconfig.teal then
    }
 end
 
-lspconfig.teal.setup(Config.lsp.create_config())
+vim.lsp.config("teal", Config.lsp.create_config())

@@ -1,6 +1,6 @@
+local Path = Config.common.utils.Path
 local utils = Config.common.utils
 local pb = Config.common.pb
-local pl = utils.pl
 
 local api = vim.api
 local fmt = string.format
@@ -228,7 +228,7 @@ function M.workspace_files(opt)
       cmd = "fd",
       args = { "--type", "f", "-uu", "--strip-cwd-prefix" },
     })
-  elseif vim.env.GIT_DIR or pl:readable("./.git") then
+  elseif vim.env.GIT_DIR or Path.from("./.git"):is_readable():block_on() then
     Snacks.picker.git_files({
       untracked = true,
     })

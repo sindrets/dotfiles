@@ -12,7 +12,8 @@ return function()
       ui_select = true,
       formatters = {
         file = {
-          truncate = math.huge,
+          truncate = "center",
+          min_width = math.huge,
         },
       },
       jump = {

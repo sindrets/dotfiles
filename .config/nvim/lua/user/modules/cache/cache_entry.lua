@@ -9,7 +9,7 @@ local oop = require("user.oop")
 local CacheEntry = oop.create_class("CacheEntry")
 
 --- @class user.CacheEntry.Opts
---- @field lifetime integer # (ms)
+--- @field ttl integer # (ms)
 --- @field expires integer # (ns)
 
 --- @param data any
@@ -20,10 +20,10 @@ function CacheEntry:init(data, opts)
   self.valid = true
   self.timestamp = uv.hrtime()
 
-  assert(not (opts.lifetime and opts.expires), "Fields `lifetime` and `expires` are incompatible!")
+  assert(not (opts.ttl and opts.expires), "Fields `ttl` and `expires` are incompatible!")
 
-  if opts.lifetime then
-    self.expires = self.timestamp + (opts.lifetime * 1000000)
+  if opts.ttl then
+    self.expires = self.timestamp + (opts.ttl * 1000000)
   elseif opts.expires then
     self.expires = opts.expires
   end

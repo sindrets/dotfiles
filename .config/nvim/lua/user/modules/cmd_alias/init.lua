@@ -3,15 +3,14 @@ local lz = require("user.lazy")
 local arg_parser = lz.require("diffview.arg_parser") ---@module "diffview.arg_parser"
 
 local pb = Config.common.pb
-local Iter = pb.Iter
 
 local store = {}
 
 local M = {}
 
----@private
----Expand an alias if it's the first arg in the command line.
----@return string
+--- @private
+--- Expand an alias if it's the first arg in the command line.
+--- @return string
 function M.expand(alias)
   local expanded = store[alias]
   local cmd_type = vim.fn.getcmdtype()
@@ -32,10 +31,10 @@ function M.expand(alias)
   return alias
 end
 
----Create a command-line abbreviation that only expands when the alias is the
----first arg in the command line.
----@param alias string|string[]
----@param substitute string
+--- Create a command-line abbreviation that only expands when the alias is the
+--- first arg in the command line.
+--- @param alias string|string[]
+--- @param substitute string
 function M.alias(alias, substitute)
   if type(alias) ~= "table" then alias = { alias } end
 
@@ -62,8 +61,7 @@ local function istr_recurse(chars)
     end
   end
 
-  return Iter
-    .new(istr_recurse(pb.slice(chars, 2)))
+  return pb.iter(istr_recurse(pb.slice(chars, 2)))
     :flat_map(function(variant)
       if c:match("%a") then
         return { c:lower() .. variant, c:upper() .. variant }
@@ -89,8 +87,7 @@ end
 function M.ialias(ialias, substitute)
   if type(ialias) ~= "table" then ialias = { ialias } end
 
-  local alias_variants = Iter
-    .new(ialias)
+  local alias_variants = pb.iter(ialias)
     :flat_map(function(name) return istr(name) end)
     :unique()
     :totable()
@@ -98,8 +95,8 @@ function M.ialias(ialias, substitute)
   M.alias(alias_variants, substitute)
 end
 
----Remove an alias.
----@param alias any
+--- Remove an alias.
+--- @param alias any
 function M.unalias(alias)
   store[alias] = nil
   vim.cmd(("silent! cunabbrev %s"):format(alias))

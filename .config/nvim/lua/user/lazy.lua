@@ -32,13 +32,21 @@ local function create_loader(spec, wrap_values, on_load)
       if wrap_values then
         return lazy.require(spec, handler)
       else
-        return require(spec)
+        if handler then
+          return handler(require(spec))
+        else
+          return require(spec)
+        end
       end
     elseif type(spec) == "function" then
       if wrap_values then
         return lazy.wrap({}, handler)
       else
-        return spec()
+        if handler then
+          return handler(spec())
+        else
+          return spec()
+        end
       end
     end
   end
@@ -161,13 +169,17 @@ function lazy.get(x, access_path)
   end
 end
 
+--- Lazily put a value or require a module into a table.
+---
+--- @generic T
 --- @param t any
 --- @param key any
---- @param spec string|function
-function lazy.put(t, key, spec)
+--- @param loader_spec string|fun(): T
+--- @return T
+function lazy.put(t, key, loader_spec)
   local wrapped = lazy.wrap(
     {},
-    create_loader(spec, false, function(loaded)
+    create_loader(loader_spec, false, function(loaded)
       rawset(t, key, loaded)
     end)
   )
@@ -178,7 +190,7 @@ function lazy.put(t, key, spec)
 end
 
 --- Create a module with lazily resolved members, that aren't resolved before
---- the first time it's key is accessed.
+--- the first time their key is accessed.
 ---
 --- The lazy members can be declared through the `declarations: table<any,
 --- string|function>` table, where the values can either be a require path

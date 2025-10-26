@@ -1,9 +1,9 @@
 --[
 -- Auto command callbacks etc.
 --]
+local Path = Config.common.utils.Path
 local utils = Config.common.utils
 local notify = Config.common.notify
-local pl = utils.pl
 local api = vim.api
 
 local M = {}
@@ -24,11 +24,12 @@ local last_sourced_session = nil
 
 function M.source_project_config()
   for _, file in ipairs(M.project_config_paths) do
-    if utils.pl:readable(file) then
-      local project_config_path = utils.pl:realpath(file)
+    local path = Path.from_str(file):unwrap()
+    if path:is_readable():block_on() then
+      local project_config_path = path:realpath():block_on():unwrap()
 
       if last_sourced_config ~= project_config_path then
-        local ext = pl:extension(file)
+        local ext = path:extension()
         if ext == "lua" or ext == nil then
           local data = vim.secure.read(file)
           if not data then return end
@@ -64,8 +65,9 @@ function M.source_project_config()
 end
 
 function M.source_project_session()
-  if #vim.v.argv == 1 and utils.pl:readable(".vim/Session.vim") then
-    local project_config_path = utils.pl:realpath(".vim/Session.vim")
+  local session_path = Path.from(".vim/Session.vim")
+  if #vim.v.argv == 1 and session_path:is_readable():block_on() then
+    local project_config_path = session_path:realpath():block_on():unwrap()
     if last_sourced_session ~= project_config_path then
       vim.cmd("source .vim/Session.vim")
       last_sourced_session = project_config_path
@@ -87,9 +89,10 @@ function M.open_file_location(location)
   local file = utils.str_match(l, { "(.*):%d+:%d+:?$", "(.*):%d+:?$", "(.*):$" })
   local line = tonumber(utils.str_match(l, { ".*:(%d+):%d+:?$", ".*:(%d+):?$" }))
   local col = tonumber(l:match(".*:%d+:(%d+):?$")) or 1
+  local file_path = Path.from(file)
 
-  if pl:readable(file) then
-    vim.cmd("keepalt edit " .. vim.fn.fnameescape(file))
+  if file_path:is_readable():block_on() then
+    vim.cmd("keepalt edit " .. vim.fn.fnameescape(file_path:tostring()))
 
     if line then
       api.nvim_exec_autocmds("BufRead", {})

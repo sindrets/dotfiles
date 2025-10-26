@@ -1,4 +1,5 @@
 return function()
+  local Path = Config.common.utils.Path
   local au = Config.common.au
   local utils = Config.common.utils
   local api = vim.api
@@ -60,7 +61,7 @@ return function()
     local line = api.nvim_buf_get_lines(0, cursor[1] - 1, cursor[1], false)[1]
 
     return {
-      file = pl:join(state.cwd, state.blame_file),
+      file = Path.concat(state.cwd, state.blame_file):unwrap():tostring(),
       commit = line:match("^([a-f0-9]+)"),
     }
   end
@@ -367,7 +368,9 @@ return function()
                 fmt(
                   "DiffviewOpen %s^! --selected-file=%s",
                   commit,
-                  vim.fn.fnameescape(pl:join(vim.fn.FugitiveWorkTree(), path))
+                  vim.fn.fnameescape(
+                    Path.concat(vim.fn.FugitiveWorkTree(), path):unwrap():tostring()
+                  )
                 )
               )
             else
@@ -390,7 +393,9 @@ return function()
                 fmt(
                   "DiffviewFileHistory --range=%s %s",
                   commit,
-                  vim.fn.fnameescape(pl:join(vim.fn.FugitiveWorkTree(), path))
+                  vim.fn.fnameescape(
+                    Path.concat(vim.fn.FugitiveWorkTree(), path):unwrap():tostring()
+                  )
                 )
               )
             else

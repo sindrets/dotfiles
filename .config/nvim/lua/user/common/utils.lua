@@ -15,11 +15,8 @@ local M = {}
 local is_windows = jit.os == "Windows"
 local path_sep = package.config:sub(1, 1)
 
----Path lib
----@type PathLib
-M.pl = lz.require("diffview.path", function(m)
-  return m.PathLib({ separator = "/" })
-end)
+--- Path lib
+M.Path = lz.require("imminent.fs.Path") ---@module "imminent.fs.Path"
 
 -- Set up completion wrapper used by `vim.ui.input()`
 vim.cmd([[
@@ -833,7 +830,7 @@ end
 ---@param opt? ListBufsSpec
 ---@return integer? bufnr
 function M.find_file_buffer(path, opt)
-  local p = M.pl:absolute(path)
+  local p = M.Path.from(path):absolute():tostring()
   for _, id in ipairs(M.list_bufs(opt)) do
     if p == vim.api.nvim_buf_get_name(id) then
       return id
