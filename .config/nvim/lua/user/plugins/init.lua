@@ -300,7 +300,7 @@ require("lazy").setup({
     "rcarriga/nvim-notify",
     config = function()
       ---@diagnostic disable-next-line: different-requires
-      local notify = require("notify")
+      local notify = require("notify") --[[@as table ]]
       notify.setup({
         max_width = 80,
         max_height = 15,

@@ -89,6 +89,7 @@ opt.shada = list {
 opt.list = true
 opt.listchars = list {
   "tab: ──",
+  -- "space: ",
   "lead:·",
   "trail:•",
   "nbsp:␣",

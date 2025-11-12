@@ -9,7 +9,10 @@ for _, v in ipairs(vim.split(package.path, ";", {})) do
   table.insert(lua_path, v)
 end
 
-local lua_lib = {}
+local lua_lib = {
+  ["${3rd}/luv/library"] = true,
+  ["${3rd}/luassert/library"] = true,
+}
 
 --- @param lib string|string[]
 local function lua_add_lib(lib)
@@ -28,10 +31,10 @@ local function get_lib()
   return vim.tbl_keys(lua_lib)
 end
 
--- lua_add_lib("$VIMRUNTIME")
+lua_add_lib("$VIMRUNTIME")
 -- lua_add_lib(vim.fn.stdpath("data") .. "/site/pack/packer/start/diffview.nvim")
 -- lua_add_lib(vim.fn.stdpath("data") .. "/lazy/plenary.nvim/lua")
-lua_add_lib(require("neodev.config").types())
+-- lua_add_lib(require("neodev.config").types())
 
 -- "$schema" = "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json"
 
@@ -40,6 +43,9 @@ vim.lsp.config("lua_ls", Config.lsp.create_config({
     "lua-language-server"
   },
   filetypes = { "lua" },
+  -- root_dir = require("lspconfig.configs.lua_ls").default_config.root_dir,
+  single_file_support = true,
+  log_level = vim.lsp.protocol.MessageType.Warning,
   settings = {
     Lua = {
       completion = {
@@ -87,3 +93,5 @@ vim.lsp.config("lua_ls", Config.lsp.create_config({
     },
   },
 }))
+
+vim.lsp.enable("lua_ls")

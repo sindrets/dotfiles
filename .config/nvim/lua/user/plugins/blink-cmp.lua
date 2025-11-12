@@ -11,7 +11,14 @@ return function()
     keymap = {
       preset = "default",
 
-      ["<Cr>"] = { "accept", "fallback" },
+      ["<Cr>"] = {
+        function()
+          local ret = blink.accept()
+          if ret then blink.show_signature() end
+          return ret
+        end,
+        "fallback"
+      },
 
       ["<Up>"] = { "select_prev", "fallback" },
       ["<Down>"] = { "select_next", "fallback" },

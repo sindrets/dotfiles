@@ -1,6 +1,7 @@
---[
--- Auto command callbacks etc.
---]
+--[[
+  Auto command callbacks etc.
+]]
+
 local Path = Config.common.utils.Path
 local utils = Config.common.utils
 local notify = Config.common.notify
@@ -30,16 +31,17 @@ function M.source_project_config()
 
       if last_sourced_config ~= project_config_path then
         local ext = path:extension()
+
         if ext == "lua" or ext == nil then
-          local data = vim.secure.read(file)
+          local data = vim.secure.read(path:tostring())
           if not data then return end
-          local code_chunk = loadfile(file)
+          local code_chunk = loadfile(path:tostring())
 
           if code_chunk then
             local ok, out = utils.trace_pcall(code_chunk)
 
             if not ok then
-              notify.config.error(utils.vec_join(
+              notify.config.error(pb.concat(
                 ("Failed to load project config %s:"):format(utils.str_quote(file)),
                 vim.split(out, "\n")
               ))
@@ -49,8 +51,8 @@ function M.source_project_config()
             Config.state.project_config = out
           end
         else
-          local data = vim.secure.read(file)
-          if data then vim.cmd.source(file) end
+          local data = vim.secure.read(path:tostring())
+          if data then vim.cmd.source(path:tostring()) end
         end
 
         last_sourced_config = project_config_path
@@ -68,6 +70,7 @@ function M.source_project_session()
   local session_path = Path.from(".vim/Session.vim")
   if #vim.v.argv == 1 and session_path:is_readable():block_on() then
     local project_config_path = session_path:realpath():block_on():unwrap()
+
     if last_sourced_session ~= project_config_path then
       vim.cmd("source .vim/Session.vim")
       last_sourced_session = project_config_path
