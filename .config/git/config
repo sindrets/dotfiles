@@ -60,6 +60,7 @@
 	stash-keep = !git stash store $(git stash create)
 	changed-files = "!f() { source $HOME/.config/git/lib.sh && git_changed_files $@; }; f"
 	default-branch = "!f() { source $HOME/.config/git/lib.sh && git_default_branch $@; }; f"
+	ls-worktree-usage = "!f() { source $HOME/.config/git/lib.sh && git_ls_worktree_usage $@; }; f"
 [credential "https://github.com"]
 	helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]

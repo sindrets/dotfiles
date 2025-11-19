@@ -1,7 +1,12 @@
 return function()
-  local utils = Config.common.utils
+  local pb = Config.common.pb
 
-  local prettier = { "prettierd", "prettier" }
+  --- Ordered list of formatters. Pick first available.
+  local function ol(...)
+    return pb.extend(pb.concat(...), { stop_after_first = true })
+  end
+
+  local prettier = ol("prettierd", "prettier")
 
   require("conform").setup({
     formatters_by_ft = {
@@ -9,18 +14,21 @@ return function()
       -- Conform will run multiple formatters sequentially
       python = { "isort", "black" },
       -- Use a sub-list to run only the first available formatter
-      javascript = utils.vec_join({}, { prettier }),
-      javascriptreact = utils.vec_join({}, { prettier }),
-      typescript = utils.vec_join({}, { prettier }),
-      typescriptreact = utils.vec_join({}, { prettier }),
-      css = utils.vec_join({}, { prettier }),
-      scss = utils.vec_join({}, { prettier }),
-      sass = utils.vec_join({}, { prettier }),
-      html = utils.vec_join({}, { prettier }),
-      markdown = utils.vec_join({}, { prettier }),
+      javascript = prettier,
+      javascriptreact = prettier,
+      typescript = prettier,
+      typescriptreact = prettier,
+      css = prettier,
+      scss = prettier,
+      sass = prettier,
+      html = prettier,
+      markdown = prettier,
       json = { "jq" },
       jsonc = { "deno_fmt" },
-      rust = { "rustfmt" }
+      rust = { "rustfmt" },
+      bash = { "shfmt" },
+      sh = { "shfmt" },
+      zsh = { "shfmt" },
     },
   })
 
