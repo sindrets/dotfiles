@@ -119,7 +119,7 @@ function git_ls_worktree_usage() {
     (
         git worktree list --porcelain |
             awk '/^worktree / { print $2 }' |
-            grep -v "^$(git rev-parse --git-common-dir)$" |
+            grep -v "^$(git rev-parse --path-format=absolute --git-common-dir)$" |
             while read -r WT; do
                 TS=$(last_commit_ts "$WT")
                 echo "$TS $WT"

@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "oldworld"
+M.DEFAULT_DARK = "nightingale"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -394,6 +394,28 @@ function M.setup_colorscheme(colors_name)
     end
   elseif colors_name == "oxocarbon-lua" then
     vim.g.oxocarbon_lua_keep_terminal = true
+  elseif colors_name == "nightingale" then
+    local highlights_plugins = require("nightingale.highlights.plugins")
+    local save_setup = highlights_plugins.setup
+
+    -- monkey patch to remove bad bufferline highlights
+    highlights_plugins.setup = function(theme, config)
+      local highlights = save_setup(theme, config)
+
+      for k, _ in pairs(highlights) do
+        if k:match("^BufferLine") then highlights[k] = nil end
+      end
+
+      return highlights
+    end
+
+    require("nightingale").setup({
+      colors = {
+        palette = {
+          bg0 = "#1c1c1c",
+        },
+      }
+    })
   end
 end
 
@@ -1110,6 +1132,27 @@ function M.apply_tweaks()
 
     M.unstyle_telescope()
 
+  elseif colors_name == "nightingale" then
+    hi_link("IncSearch", "Search")
+    hi("CurSearch", {
+      bg = Color.from_hl("Debug", "fg"):to_css(),
+      fg = "#000000",
+    })
+
+    hi(
+      { "CursorLine", "ColorColumn" },
+      { bg = bg_normal:highlight(0.04):to_css(), explicit = true }
+    )
+
+    hi("@diff.delta", { fg = hl.get_fg("Tag"), explicit = true })
+    hi("@diff.plus", { fg = Color.from_hl("@diff.plus", "fg"):mod_value(0.3):to_css(), explicit = true })
+    hi("@diff.minus", {
+      fg = Color.from_hl("@diff.minus", "fg")
+        :mod_value(0.2)
+        :mod_saturation(-0.2)
+        :to_css(),
+      explicit = true
+    })
   end
 
   M.generate_base_colors()

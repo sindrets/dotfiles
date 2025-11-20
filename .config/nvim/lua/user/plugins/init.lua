@@ -546,6 +546,7 @@ require("lazy").setup({
   { "wtfox/jellybeans.nvim" },
   { "cpwrs/americano.nvim" },
   { "dgox16/oldworld.nvim" },
+  { "xeind/nightingale.nvim" },
 }, {
   ui = {
     border = "single",
