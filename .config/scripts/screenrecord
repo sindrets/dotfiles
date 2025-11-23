@@ -1,0 +1,114 @@
+#!/usr/bin/bash
+set -eo pipefail
+
+target_dir="$HOME/Videos/screencasts"
+target_basename="$(date +'%Y-%m-%d-%H%M%S')_screen"
+
+mkdir -p "$target_dir"
+
+temp=$(
+  getopt -o 'hsar:e:' \
+    --long 'help,select,audio,framerate,encoding' \
+    -n "screenrecord" \
+    -- "$@"
+)
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+eval set -- "$temp"
+unset temp
+
+function usage() {
+  cat <<-EOF
+		USAGE:
+		  screenrecord -s [options]
+
+		MODES:
+		  -s, --select
+		      Select a region of the screen to record.
+		
+		OPTIONS:
+		  -a, --audio
+		      Record with audio.
+		  -r, --framerate <rate>
+		      Set the video framerate.
+		  -e, --encoding
+		      Set the video encoding.
+		  -h, --help
+		      Display this help message.
+EOF
+}
+
+mode=""
+framerate=30
+encoding="mp4"
+flag_audio=""
+
+function set_mode() {
+  if [ ! -z "$mode" ]; then
+    echo "Modes $mode and $1 are exclusive!" >&2
+    exit 1
+  fi
+
+  mode="$1"
+}
+
+while true; do
+  case "$1" in
+  '-s')
+    set_mode "select"
+    shift
+    continue
+    ;;
+  '-a' | '--audio')
+    default_sink_name="$(pactl info | grep "Default Sink:" | awk '{print $3}')"
+    flag_audio="--audio=$default_sink_name.monitor"
+    shift
+    continue
+    ;;
+  '-r' | '--framerate')
+    framerate=$1
+    shift 2
+    continue
+    ;;
+  '-e' | '--encoding')
+    encoding="$2"
+    shift 2
+    continue
+    ;;
+  '-h' | '--help')
+    usage
+    exit 1
+    ;;
+  '--')
+    shift
+    break
+    ;;
+  *)
+    echo "Internal error" >&2
+    exit 1
+    ;;
+  esac
+done
+
+case "$mode" in
+'select')
+  if [ "$XDG_SESSION_TYPE" = "x11" ]; then
+    echo "Unimplemented session type" >&2
+    exit 1
+  else
+    wf-recorder -g "$(slurp)" \
+      -r "$framerate" \
+      -f "$target_dir/$target_basename.$encoding" \
+      $flag_audio
+  fi
+  ;;
+*)
+  echo "No mode selected!" >&2
+  echo ""
+  usage
+  exit 1
+  ;;
+esac

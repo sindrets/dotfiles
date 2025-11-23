@@ -413,6 +413,10 @@ function M.setup_colorscheme(colors_name)
       colors = {
         palette = {
           bg0 = "#1c1c1c",
+          bg1 = "#0f0f0f", -- editorGroupHeader.tabsBackground
+          bg2 = "#282828", -- statusBar.background
+          bg3 = "#161616", -- editorWidget.background / tab.inactiveBackground
+          border2 = "#2f2f2f",
         },
       }
     })
@@ -1153,6 +1157,12 @@ function M.apply_tweaks()
         :to_css(),
       explicit = true
     })
+
+    vim.g.terminal_color_1 = hl.get_fg("@diff.minus")
+    vim.g.terminal_color_3 = hl.get_fg("Special")
+    vim.g.terminal_color_4 = hl.get_fg("@function.method")
+    vim.g.terminal_color_5 = hl.get_fg("Conditional")
+    vim.g.terminal_color_6 = hl.get_fg("Type")
   end
 
   M.generate_base_colors()

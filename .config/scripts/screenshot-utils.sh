@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/bash
 set -eo pipefail
 
 target_dir="$HOME/Pictures/screenshots/"
