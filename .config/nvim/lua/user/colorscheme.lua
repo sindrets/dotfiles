@@ -83,14 +83,16 @@ function M.apply_sp_underline()
 
   hi("Underlined", { style = "underline" })
 
-  -- Normalize diagnostic underlines
+  -- Normalize diagnostic higlights
   for _, name in ipairs(diagnostic_kinds) do
-    hi_clear("DiagnosticUnderline" .. name)
+    local color = hl.get_fg("Diagnostic" .. name)
     hi("DiagnosticUnderline" .. name, {
       style = "underline",
-      sp = hl.get_fg("Diagnostic" .. name),
-      fg = "NONE"
+      sp = color,
+      fg = "NONE",
+      explicit = true,
     })
+    hi("DiagnosticSign" .. name, { fg = color, explicit = true })
   end
 end
 
@@ -1143,6 +1145,7 @@ function M.apply_tweaks()
       fg = "#000000",
     })
 
+    hi("Whitespace", { fg = bg_normal:highlight(0.16):to_css() })
     hi(
       { "CursorLine", "ColorColumn" },
       { bg = bg_normal:highlight(0.04):to_css(), explicit = true }
@@ -1157,6 +1160,9 @@ function M.apply_tweaks()
         :to_css(),
       explicit = true
     })
+
+    hi("DiagnosticError", { fg = hl.get_fg("@diff.minus"), explicit = true })
+    hi_link("DiagnosticFloatingError", "DiagnosticError", { clear = true })
 
     vim.g.terminal_color_1 = hl.get_fg("@diff.minus")
     vim.g.terminal_color_3 = hl.get_fg("Special")
