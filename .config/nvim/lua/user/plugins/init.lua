@@ -359,6 +359,7 @@ require("lazy").setup({
   },
   {
     "HiPhish/rainbow-delimiters.nvim",
+    submodules = false,
     dependencies = { "nvim-treesitter/nvim-treesitter" },
     config = conf("nvim-ts-rainbow"),
   },
@@ -411,8 +412,8 @@ require("lazy").setup({
           modes = { "n", "i", "no", "c" },
           hybrid_modes = { "i" },
           callbacks = {
-            on_enable = function (_, win)
-              vim.api.nvim_win_call(win, function ()
+            on_enable = function(_, win)
+              vim.api.nvim_win_call(win, function()
                 vim.opt_local.conceallevel = 3
                 vim.opt_local.concealcursor = "nc"
               end)
