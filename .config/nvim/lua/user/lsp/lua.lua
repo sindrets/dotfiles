@@ -44,7 +44,7 @@ vim.lsp.config("lua_ls", Config.lsp.create_config({
   },
   filetypes = { "lua" },
   -- root_dir = require("lspconfig.configs.lua_ls").default_config.root_dir,
-  single_file_support = true,
+  -- single_file_support = true,
   log_level = vim.lsp.protocol.MessageType.Warning,
   settings = {
     Lua = {
