@@ -284,10 +284,30 @@ require("lazy").setup({
   },
   { "tpope/vim-abolish" },
   {
-    "alvan/vim-closetag", init = function ()
-      vim.g.closetag_filenames = "*.html,*.xhtml,*.phtml,*.xml,*.md,*.hbs,*.tsx,*.astro"
-      vim.g.closetag_filetypes = "html,xhtml,phtml,xml,markdown,handlebars,typescriptreact,astro"
-    end
+    "alvan/vim-closetag",
+    init = function ()
+      vim.g.closetag_filenames = table.concat({
+        "*.html",
+        "*.xhtml",
+        "*.phtml",
+        "*.xml",
+        "*.md",
+        "*.hbs",
+        "*.tsx",
+        "*.astro",
+      }, ",")
+      vim.g.closetag_filetypes = table.concat({
+        "html",
+        "xhtml",
+        "phtml",
+        "xml",
+        "markdown",
+        "handlebars",
+        "javascriptreact",
+        "typescriptreact",
+        "astro",
+      }, ",")
+    end,
   },
   { "Rasukarusan/nvim-block-paste" },
   { "godlygeek/tabular" },

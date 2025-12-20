@@ -84,7 +84,7 @@
   "vim-colors-xcode": { "branch": "master", "commit": "fbd8c0a16e7d5e6f526a399c5387c4bd5e3aa043" },
   "vim-devicons": { "branch": "master", "commit": "71f239af28b7214eebb60d4ea5bd040291fb7e33" },
   "vim-dirdiff": { "branch": "master", "commit": "84bc8999fde4b3c2d8b228b560278ab30c7ea4c9" },
-  "vim-flog": { "branch": "master", "commit": "e7a0e9f6f26d154b1e550de94414ea71e354c563" },
+  "vim-flog": { "branch": "master", "commit": "665b16ac8915f746bc43c9572b4581a5e9047216" },
   "vim-fugitive": { "branch": "master", "commit": "901cbbc0e0994699ecad2705c24449cfe160473c" },
   "vim-illuminate": { "branch": "master", "commit": "19cb21f513fc2b02f0c66be70107741e837516a1" },
   "vim-jsonc": { "branch": "master", "commit": "0b7ca17da85b5faa813be8ead3ad497e348b2763" },

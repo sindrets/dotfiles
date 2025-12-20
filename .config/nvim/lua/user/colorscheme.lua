@@ -72,27 +72,39 @@ function M.supports_sp_underline()
   return vim.tbl_contains({ "xterm-kitty", "wezterm" }, vim.env.TERM)
 end
 
-function M.apply_sp_underline()
-  local spell_names = { "Bad", "Cap", "Rare", "Local" }
-  for _, name in ipairs(spell_names) do
-    local fg = hl.get_fg("Spell" .. name)
-    if fg then
-      hi("Spell" .. name, { style = "undercurl", sp = fg, fg = "NONE", bg = "NONE" })
+function M.normalize_diagnostic_hl()
+  local supports_underline = M.supports_sp_underline()
+
+  for _, name in ipairs(diagnostic_kinds) do
+    local color = hl.get_fg("Diagnostic" .. name)
+    hi("DiagnosticSign" .. name, { fg = color, explicit = true })
+
+    if supports_underline then
+      hi("DiagnosticUnderline" .. name, {
+        style = "underline",
+        sp = color,
+        fg = "NONE",
+        explicit = true,
+      })
     end
   end
 
-  hi("Underlined", { style = "underline" })
+  if supports_underline then
+    -- Use the diagnostic colors for "Spell..." highlights
+    local spell_map = {
+      Bad = "Error",
+      Cap = "Warn",
+      Rare = "Info",
+      Local = "Hint"
+    }
+    for spell_name, diag_name in pairs(spell_map) do
+      local fg = hl.get_fg("Diagnostic" .. diag_name)
+      if fg then
+        hi("Spell" .. spell_name, { style = "undercurl", sp = fg, fg = "NONE", bg = "NONE" })
+      end
+    end
 
-  -- Normalize diagnostic higlights
-  for _, name in ipairs(diagnostic_kinds) do
-    local color = hl.get_fg("Diagnostic" .. name)
-    hi("DiagnosticUnderline" .. name, {
-      style = "underline",
-      sp = color,
-      fg = "NONE",
-      explicit = true,
-    })
-    hi("DiagnosticSign" .. name, { fg = color, explicit = true })
+    hi("Underlined", { style = "underline" })
   end
 end
 
@@ -1235,10 +1247,7 @@ function M.apply_tweaks()
 
   hi("MatchParen", { style = "underline", sp = fg_normal:to_css() })
 
-  -- Use special underlines if supported
-  if M.supports_sp_underline() then
-    M.apply_sp_underline()
-  end
+  M.normalize_diagnostic_hl()
 
   -- Custom diff hl
   hi("DiffAddAsDelete", {

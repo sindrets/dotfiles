@@ -1,12 +1,8 @@
 ---@diagnostic disable: duplicate-doc-field
-local async = require("user.async")
-local ffi = require("user.ffi")
 local lz = require("user.lazy")
 
-local Job = lz.get("diffview.job", "Job") ---@type diffview.Job|LazyModule
 local winshift_lib = lz.require("winshift.lib") ---@module "winshift.lib"
 
-local await = async.await
 local api = vim.api
 
 local M = {}
@@ -710,56 +706,6 @@ function M.vec_sort(t, comparator)
   table.sort(ret, comparator)
 
   return ret
-end
-
----@class utils.job.Opt
----@field cwd string Working directory of the job.
----@field writer string|string[] Something that will write to the stdin of this job.
----@field silent boolean Supress log output.
----@field fail_on_empty boolean Return code 1 if stdout is empty.
----@field retry integer Number of times the job will be retried if it fails.
----@field log_opt Logger.log_job.Opt
-
----@param cmd string[]
----@param cwd_or_opt? string|utils.job.Opt
-function M.job(cmd, cwd_or_opt)
-  local opt
-
-  if type(cwd_or_opt) == "string" then
-    opt = { cwd = cwd_or_opt }
-  else
-    opt = cwd_or_opt or {}
-  end
-
-  local job = Job({
-    command = cmd[1],
-    args = M.vec_slice(cmd, 2),
-    cwd = opt.cwd,
-    retry = opt.retry,
-    fail_cond = opt.fail_on_empty and Job.FAIL_COND.on_empty or nil,
-    writer = opt.writer,
-    log_opt = vim.tbl_extend("keep", opt.log_opt or {}, {
-      silent = opt.silent,
-      debuginfo = debug.getinfo(2, "Sl"),
-    }),
-  })
-
-  local was_locked = ffi.nvim_is_locked()
-  local ok = await(job:start())
-
-  if not was_locked then
-    -- If the editor was unlocked before running the job; ensure that it's
-    -- unlocked when we leave as well.
-    await(async.scheduler())
-  end
-
-  local code = job.code
-
-  if not ok then
-    if opt.fail_on_empty then code = 1 end
-  end
-
-  return job.stdout, code, job.stderr
 end
 
 ---@class ListBufsSpec
