@@ -7,6 +7,7 @@ end
 _G.pp = function(a, opt) print(Config.common.pb.inspect(a, opt)) end
 
 --- LibUV
+---@diagnostic disable-next-line: deprecated
 _G.uv = vim.uv or vim.loop
 
 _G.Config = {
@@ -22,7 +23,7 @@ local lz = require("user.lazy")
 --- Path library.
 _G.Path = Config.common.utils.Path
 
-_G.pb = lz.put(_G, "pb", "imminent.pebbles") ---@module "imminent.pebbles"
+_G.pb = lz.put(_G, "pb", "imminent.pebbles") --- @module "imminent.pebbles"
 
 Config.lib = require("user.lib")
 Config.term = require("user.modules.term")
@@ -111,7 +112,7 @@ Config.fn.toggle_quickfix = lib.create_view_toggler({
 Config.fn.toggle_outline = lib.create_view_toggler({
   find = function() return utils.list_bufs({ pattern = "OUTLINE" })[1] end,
   open = function()
-    vim.api.nvim_create_autocmd("BufWinEnter", {
+    api.nvim_create_autocmd("BufWinEnter", {
       callback = function()
         vim.schedule(function() vim.cmd("wincmd =") end)
         return true
@@ -137,9 +138,9 @@ Config.fn.toggle_diagnostics = lib.create_view_toggler({
   end,
   open = function() vim.cmd("Trouble diagnostics") end,
   close = function()
-    local winid = vim.api.nvim_get_current_win()
+    local winid = api.nvim_get_current_win()
     vim.cmd("wincmd p")
-    vim.api.nvim_win_close(winid, false)
+    api.nvim_win_close(winid, false)
   end,
   focus = true,
   remember_height = true,
@@ -175,7 +176,7 @@ local function open_messages_win()
     bufhidden = "delete",
     filetype = "log",
     signcolumn = "no",
-    colorcolumn = {},
+    colorcolumn = {} --[[@as string[] ]],
   })
 
   vim.cmd("norm! G")
@@ -189,7 +190,7 @@ function Config.fn.update_messages_win()
   })[1]
 
   if bufnr then
-    vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, get_messages())
+    api.nvim_buf_set_lines(bufnr, 0, -1, false, get_messages())
     local winids = utils.win_find_buf(bufnr, 0)
 
     if #winids > 0 then

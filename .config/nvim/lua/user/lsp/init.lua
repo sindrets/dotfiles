@@ -6,10 +6,12 @@ if mason_lspconfig then mason_lspconfig.setup() end
 
 require("neodev").setup({
   library = {
-    vimruntime = false, -- runtime path
-    types = true, -- full signature, docs and completion of vim.api, vim.treesitter, vim.lsp and others
-    -- plugins = false, -- installed opt or start plugins in packpath
-    -- you can also specify the list of plugins to make available as a workspace library
+    -- Runtime path
+    vimruntime = false,
+    -- Full signature, docs and completion of vim.api, vim.treesitter, vim.lsp and others
+    types = true,
+    --- Installed opt or start plugins in packpath you can also specify the list
+    --- of plugins to make available as a workspace library
     plugins = false,
   },
   runtime_path = false, -- enable this to get completion in require strings. Slow!
@@ -19,7 +21,6 @@ local cmp = prequire("cmp")
 local cmp_lsp = prequire("cmp_nvim_lsp")
 local blink = prequire("blink.cmp")
 local lspconfig = prequire("lspconfig")
-local server_configs = prequire("lspconfig.configs") or {}
 
 if not lspconfig then return end
 
@@ -123,18 +124,19 @@ require("user.lsp.typescript")
 -- lspconfig.denols.setup(M.create_config())
 
 -- Lua
-server_configs.emmylua_ls = {
-  default_config = {
-    cmd = { 'emmylua_ls' },
-    filetypes = { 'lua' },
-    root_dir = require("lspconfig.configs.lua_ls").default_config.root_dir,
-    single_file_support = true,
-    log_level = vim.lsp.protocol.MessageType.Warning,
-  }
-}
-
-require("user.lsp.lua")
--- lspconfig.emmylua_ls.setup(M.create_config())
+-- require("user.lsp.lua")
+vim.lsp.config("emmylua_ls", M.create_config({
+  settings = {
+    Lua = {
+      workspace = {
+        library = {
+          "$VIMRUNTIME",
+        },
+      },
+    },
+  },
+}))
+vim.lsp.enable("emmylua_ls")
 
 -- C#
 -- require("user.lsp.csharp")
@@ -192,10 +194,10 @@ vim.diagnostic.handlers.signs = {
 
     -- Pass the filtered diagnostics (with our custom namespace) to
     -- the original handler
-    orig_signs_handler.show(ns, bufnr, vim.tbl_values(max_severity_per_line), opts)
+    assert(orig_signs_handler.show)(ns, bufnr, vim.tbl_values(max_severity_per_line), opts)
   end,
   hide = function(_, bufnr)
-    orig_signs_handler.hide(ns, bufnr)
+    assert(orig_signs_handler.hide)(ns, bufnr)
   end,
 }
 
@@ -203,6 +205,7 @@ local preview_opts = { border = "single", max_width = 100 }
 function M.buf_hover() vim.lsp.buf.hover(preview_opts) end
 function M.buf_signature_help() vim.lsp.buf.signature_help(preview_opts) end
 
+--- @param opts table<"error"|"warn"|"hint"|"info", string>
 function M.define_diagnostic_signs(opts)
   local group = {
     {
@@ -235,19 +238,19 @@ end
 
 -- Highlight references on cursor hold
 
-function M.highlight_cursor_symbol()
-  if vim.lsp.buf.server_ready() then
-    if vim.api.nvim_get_mode().mode ~= "i" then
-      vim.lsp.buf.document_highlight()
-    end
-  end
-end
-
-function M.highlight_cursor_clear()
-  if vim.lsp.buf.server_ready() then
-    vim.lsp.buf.clear_references()
-  end
-end
+-- function M.highlight_cursor_symbol()
+--   if vim.lsp.buf.server_ready() then
+--     if vim.api.nvim_get_mode().mode ~= "i" then
+--       vim.lsp.buf.document_highlight()
+--     end
+--   end
+-- end
+--
+-- function M.highlight_cursor_clear()
+--   if vim.lsp.buf.server_ready() then
+--     vim.lsp.buf.clear_references()
+--   end
+-- end
 
 ---------------------------------
 
@@ -292,7 +295,10 @@ do
       callback = function(state)
         local client = vim.lsp.get_client_by_id(state.data.client_id)
 
-        if client and client.server_capabilities.inlayHintProvider then
+        if client and
+          client.server_capabilities and
+          client.server_capabilities.inlayHintProvider
+        then
           -- Enable inlay hints:
           vim.lsp.inlay_hint.enable(true, { bufnr = 0 })
         end

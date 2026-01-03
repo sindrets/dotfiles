@@ -1,7 +1,7 @@
 local lz = require("user.lazy")
 
 local Job = lz.require("imminent.Job") ---@module "imminent.Job"
-local StatusComponent = lz.require("user.plugins.feline.status_component") ---@type StatusComponent|LazyModule
+local StatusComponent = lz.require("user.plugins.feline.status_component") ---@module "user.plugins.feline.status_component"
 local async = lz.require("imminent") ---@module "imminent"
 local devicons = lz.require("nvim-web-devicons") ---@module "nvim-web-devicons"
 local feline = lz.require("feline") ---@module "feline"

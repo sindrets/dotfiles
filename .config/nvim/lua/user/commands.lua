@@ -323,7 +323,7 @@ end, { bar = true, nargs = 1 })
 
 command("Reindent", function(c)
   local new_size = assert(
-    tonumber(c.fargs[1]),
+    tonumber(c.fargs[1]) --[[@as int ]],
     fmt("IllegalArgument :: Expected number, got %s!", inspect(c.fargs[1]))
   )
   ---@diagnostic disable-next-line: param-type-mismatch

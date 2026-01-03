@@ -294,6 +294,7 @@ end
 ---@return ... captured: The first match, or `nil` if no patterns matched.
 function M.str_match(str, patterns)
   for _, pattern in ipairs(patterns) do
+    --- @diagnostic disable-next-line: assign-type-mismatch
     local m = { str:match(pattern) }
     if #m > 0 then
       return unpack(m)
@@ -324,11 +325,14 @@ function M.mstring(str, list)
   if not lines[1]:match("^%s") then i = 2 end
   if lines[#lines]:match("^%s*$") then lines[#lines] = nil end
 
-  local indent_size = math.huge
+  local indent_size = math.huge --[[@as int ]]
 
   for j = i, math.min(#lines, 1024) do
     if lines[j] ~= "" then
-      indent_size = math.min(indent_size, lines[j]:match("^%s*()") - 1)
+      indent_size = math.min(
+        indent_size,
+        lines[j]:match("^%s*()") --[[@cast -? ]] - 1
+      ) --[[@as int ]]
     end
   end
 
@@ -708,16 +712,16 @@ function M.vec_sort(t, comparator)
   return ret
 end
 
----@class ListBufsSpec
----@field no_unloaded boolean Filter out buffers that aren't loaded.
----@field no_unlisted boolean Filter out buffers that aren't listed.
----@field no_hidden boolean Filter out buffers that are hidden.
----@field tabpage integer Filter out buffers that are not displayed in a given tabpage.
----@field pattern string Filter out buffers whose name doesn't match a given lua pattern.
----@field options table<string, any> Filter out buffers that don't match a given map of options.
----@field vars table<string, any> Filter out buffers that don't match a given map of variables.
+---@class Config.utils.ListBufsSpec
+---@field no_unloaded? boolean Filter out buffers that aren't loaded.
+---@field no_unlisted? boolean Filter out buffers that aren't listed.
+---@field no_hidden? boolean Filter out buffers that are hidden.
+---@field tabpage? integer Filter out buffers that are not displayed in a given tabpage.
+---@field pattern? string Filter out buffers whose name doesn't match a given lua pattern.
+---@field options? table<string, any> Filter out buffers that don't match a given map of options.
+---@field vars? table<string, any> Filter out buffers that don't match a given map of variables.
 
----@param opt? ListBufsSpec
+---@param opt? Config.utils.ListBufsSpec
 ---@return integer[] #Buffer numbers of matched buffers.
 function M.list_bufs(opt)
   opt = opt or {}
@@ -773,12 +777,12 @@ function M.list_bufs(opt)
 end
 
 ---@param path string
----@param opt? ListBufsSpec
+---@param opt? Config.utils.ListBufsSpec
 ---@return integer? bufnr
 function M.find_file_buffer(path, opt)
   local p = M.Path.from(path):absolute():tostring()
   for _, id in ipairs(M.list_bufs(opt)) do
-    if p == vim.api.nvim_buf_get_name(id) then
+    if p == api.nvim_buf_get_name(id) then
       return id
     end
   end
@@ -828,7 +832,7 @@ function M.get_unique_file_bufname(filename)
       end
       return 1
     end, collisions) --[[@as integer[] ]]
-    idx = math.max(unpack(delta_indices))
+    idx = math.max(unpack(delta_indices) --[[@as int... ]])
   end
 
   -- Iterate backwards (since filename is reversed) until a path sep is found
@@ -897,13 +901,14 @@ function M.input_char(prompt, opt)
     prompt_hl = nil,
   }) --[[@as InputCharSpec ]]
 
+  --- @type boolean, string?, (string|number)?
   local valid, s, raw
 
   while true do
     valid = true
 
     if prompt then
-      vim.api.nvim_echo({ { prompt, opt.prompt_hl } }, false, {})
+      api.nvim_echo({ { prompt, opt.prompt_hl } }, false, {})
     end
 
     local c
@@ -1017,21 +1022,21 @@ local list_like_options = {
   fillchars = true,
 }
 
----@class utils.set_local.Opt
----@field method "set"|"remove"|"append"|"prepend" Assignment method. (default: "set")
+--- @class Config.utils.set_local.Opt
+--- @field method "set"|"remove"|"append"|"prepend" Assignment method. (default: "set")
 
----@class utils.set_local.ListSpec : string[]
----@field opt utils.set_local.Opt
+--- @class Config.utils.set_local.ListSpec : string[]
+--- @field opt? utils.set_local.Opt
 
----@param winids number[]|number Either a list of winids, or a single winid (0 for current window).
----@param option_map WindowOptions
----@param opt? utils.set_local.Opt
+--- @param winids number[]|number Either a list of winids, or a single winid (0 for current window).
+--- @param option_map WindowOptions
+--- @param opt? Config.utils.set_local.Opt
 function M.set_local(winids, option_map, opt)
   if type(winids) ~= "table" then
     winids = { winids }
   end
 
-  opt = vim.tbl_extend("keep", opt or {}, { method = "set" }) --[[@as table ]]
+  opt = vim.tbl_extend("keep", opt or {}, { method = "set" }) --[[@as Config.utils.set_local.Opt ]]
 
   for _, id in ipairs(winids) do
     api.nvim_win_call(id, function()

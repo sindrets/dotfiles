@@ -31,7 +31,7 @@ local this = {
 ---@field [string] any
 
 ---@class Notify
----@overload fun(msg: string, opt: Notify.Opt)
+---@overload fun(msg: string, opt?: Notify.Opt)
 ---@field trace Notify
 ---@field debug Notify
 ---@field info Notify

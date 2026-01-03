@@ -9,7 +9,7 @@ end
 
 local lazy = {}
 
---- @class LazyModule : any
+--- @class Config.lazy.LazyModule : any
 --- @field __get fun(): unknown Load the module if needed, and return it.
 --- @field __loaded boolean Indicates that the module has been loaded.
 --- @field [string] any
@@ -59,7 +59,7 @@ end
 ---
 --- @param t any
 --- @param handler fun(t: any): table?
---- @return LazyModule
+--- @return Config.lazy.LazyModule
 function lazy.wrap(t, handler)
   local export
 
@@ -114,7 +114,7 @@ end
 --- ```
 --- @param require_path string
 --- @param handler? fun(module: any): any
---- @return LazyModule
+--- @return Config.lazy.LazyModule
 function lazy.require(require_path, handler)
   local use_handler = type(handler) == "function"
 
@@ -145,7 +145,7 @@ end
 --- ```
 --- @param x table|string Either the table to be accessed, or a module require path.
 --- @param access_path string|string[] Either a `.` separated string of table keys, or a list.
---- @return LazyModule
+--- @return Config.lazy.LazyModule
 function lazy.get(x, access_path)
   local keys = type(access_path) == "table"
       and access_path
@@ -171,11 +171,9 @@ end
 
 --- Lazily put a value or require a module into a table.
 ---
---- @generic T
 --- @param t any
 --- @param key any
---- @param loader_spec string|fun(): T
---- @return T
+--- @param loader_spec string|fun(): unknown
 function lazy.put(t, key, loader_spec)
   local wrapped = lazy.wrap(
     {},

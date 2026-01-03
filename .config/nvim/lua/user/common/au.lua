@@ -13,18 +13,18 @@ local M = {}
 
 --- @class AucmdSpec
 --- @field [1] (Config.common.au.VimEvent|string)|(Config.common.au.VimEvent|string)[]
---- @field group string|integer
---- @field pattern string|string[]
---- @field buffer integer
---- @field desc string
+--- @field group? string|integer
+--- @field pattern? string|string[]
+--- @field buffer? integer
+--- @field desc? string
 --- @field callback fun(ctx: AutocmdCallbackContext)
---- @field command string
---- @field once boolean
---- @field nested boolean
+--- @field command? string
+--- @field once? boolean
+--- @field nested? boolean
 
 --- Declare an autocommand group.
 --- @param name string
---- @param opts? { clear: boolean } Augroup options.
+--- @param opts? { clear?: boolean } Augroup options.
 --- @param aucmds AucmdSpec[]
 --- @return integer group_id
 function M.declare_group(name, opts, aucmds)

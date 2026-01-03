@@ -1,5 +1,5 @@
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not vim.loop.fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
     "git",
     "clone",
@@ -181,6 +181,7 @@ require("lazy").setup({
           "ts_ls",
           "stylua",
           "lua_ls",
+          "emmylua_ls",
           "haxe_language_server",
         },
       },
@@ -433,7 +434,7 @@ require("lazy").setup({
           hybrid_modes = { "i" },
           callbacks = {
             on_enable = function(_, win)
-              vim.api.nvim_win_call(win, function()
+              api.nvim_win_call(win, function()
                 vim.opt_local.conceallevel = 3
                 vim.opt_local.concealcursor = "nc"
               end)
