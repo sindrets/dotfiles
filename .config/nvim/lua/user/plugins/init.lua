@@ -69,7 +69,7 @@ vim.g.markdown_fenced_languages = {
   "log",
 }
 
----@diagnostic disable-next-line: different-requires
+--- @diagnostic disable-next-line: undefined-field
 require("lazy").setup({
   use_local { "sindrets/imminent.nvim", lazy = false },
 
@@ -526,7 +526,11 @@ require("lazy").setup({
     },
     cond = vim.fn.has("nvim-0.8") == 1,
   },
-  { "xorid/asciitree.nvim", cmd = { "AsciiTree", "AsciiTreeUndo" } },
+  {
+    "xorid/asciitree.nvim",
+    submodules = false,
+    cmd = { "AsciiTree", "AsciiTreeUndo" },
+  },
   { "echasnovski/mini.splitjoin", version = false, config = {} },
   {
     "ellisonleao/dotenv.nvim",

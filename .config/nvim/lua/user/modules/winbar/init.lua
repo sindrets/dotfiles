@@ -64,7 +64,7 @@ M.config = {
 
 M.state = {
   attached = {},
-  cache = Cache(),
+  cache = Cache.new(),
 }
 
 local symbols = M.config.symbols

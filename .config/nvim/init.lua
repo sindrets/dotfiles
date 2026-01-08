@@ -7,7 +7,7 @@ end
 _G.pp = function(a, opt) print(Config.common.pb.inspect(a, opt)) end
 
 --- LibUV
----@diagnostic disable-next-line: deprecated
+--- @diagnostic disable-next-line: deprecated
 _G.uv = vim.uv or vim.loop
 
 _G.Config = {
@@ -23,7 +23,7 @@ local lz = require("user.lazy")
 --- Path library.
 _G.Path = Config.common.utils.Path
 
-_G.pb = lz.put(_G, "pb", "imminent.pebbles") --- @module "imminent.pebbles"
+_G.pb = lz.put(_G, "pb", "imminent.pebbles") --- @as pebbles.Pebbles
 
 Config.lib = require("user.lib")
 Config.term = require("user.modules.term")
@@ -31,7 +31,7 @@ Config.term = require("user.modules.term")
 local Cache = require("user.modules.cache")
 
 Config.state.git = {
-  rev_name_cache = Cache(),
+  rev_name_cache = Cache.new(),
 }
 
 local api = vim.api

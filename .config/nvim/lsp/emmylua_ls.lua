@@ -33,6 +33,7 @@ return {
       strict = {
         typeCall = true,
         arrayIndex = false,
+        metaOverrideFileDefine = true,
       },
       diagnostics = {
         enable = true,
@@ -54,11 +55,6 @@ return {
         localHint = true,
         overrideHint = true,
         metaCallHint = true,
-      },
-      workspace = {
-        library = {
-          "$VIMRUNTIME",
-        },
       },
     },
   },

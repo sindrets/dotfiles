@@ -341,7 +341,7 @@ alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compili
     && tsc -p {}' \\;"
 alias cal="/usr/bin/cal -mw"
 alias tlmgr="tlmgr --usermode"
-alias notes="zk edit -i"
+alias notes="zk edit -i --sort=created"
 
 # init fzf
 source /usr/share/fzf/key-bindings.zsh

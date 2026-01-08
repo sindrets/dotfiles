@@ -131,6 +131,7 @@ vim.lsp.config("emmylua_ls", M.create_config({
       workspace = {
         library = {
           "$VIMRUNTIME",
+          "~/.local/share/nvim/types/luv/",
         },
       },
     },
