@@ -97,17 +97,19 @@ function Color.from_hsl(h, s, l, a)
 end
 
 ---Create a color from a hex number.
----@param c number|string Either a literal number or a css-style hex string (`#RRGGBB[AA]`).
+---@param input number|string Either a literal number or a css-style hex string (`#RRGGBB[AA]`).
 ---@return Color
-function Color.from_hex(c)
-  local n = c
+function Color.from_hex(input)
+  local n --- @type number
 
-  if type(c) == "string" then
-    local s = c:lower():match("#?([a-f0-9]+)")
-    n = tonumber(s, 16)
+  if type(input) == "string" then
+    local s = assert(input:lower():match("#?([a-f0-9]+)"), "input is a hex string")
+    n = tonumber(s, 16) --[[@as int ]]
     if #s <= 6 then
       n = bit.lshift(n, 8) + 0xff
     end
+  else
+    n = input
   end
 
   ---@cast n integer
@@ -130,6 +132,7 @@ function Color.from_hl(groups, attr)
 
   if type(groups) ~= "table" then groups = { groups } end
 
+  --- @type (int|boolean)?
   local value
 
   for _, group in ipairs(groups) do
@@ -143,6 +146,7 @@ function Color.from_hl(groups, attr)
     value = bit.lshift(value, 8) + 0xff
   end
 
+  --- @diagnostic disable-next-line: param-type-mismatch # Wrong diagnostic
   return Color.from_hex(value)
 end
 
@@ -215,8 +219,8 @@ function Color:to_hsv()
   local max = math.max(r, g, b)
   local min = math.min(r, g, b)
   local delta = max - min
-  local h = 0
-  local s = 0
+  local h = 0 --[[@as number ]]
+  local s = 0 --[[@as number ]]
   local v = max
 
   if max == min then
@@ -248,8 +252,8 @@ function Color:to_hsl()
   local max = math.max(r, g, b)
   local min = math.min(r, g, b)
   local delta = max - min
-  local h = 0
-  local s = 0
+  local h = 0 --[[@as number ]]
+  local s = 0 --[[@as number ]]
   local l = (max + min) / 2
 
   if max == min then
@@ -277,11 +281,11 @@ end
 ---@return integer
 function Color:to_hex(with_alpha)
   local n = bit.bor(
-    bit.bor((self._blue * 0xff), bit.lshift((self._green * 0xff), 8)),
-    bit.lshift((self._red * 0xff), 16)
+    bit.bor((self._blue * 0xff) --[[@as int ]], bit.lshift((self._green * 0xff) --[[@as int ]], 8)),
+    bit.lshift((self._red * 0xff) --[[@as int ]], 16)
   )
 
-  return with_alpha and bit.lshift(n, 8) + (self._alpha * 0xff) or n
+  return with_alpha and bit.lshift(n, 8) --[[@as int ]] + (self._alpha * 0xff) --[[@as int ]] or n
 end
 
 ---Convert the color to a css hex color (`#RRGGBB[AA]`).
@@ -397,12 +401,12 @@ function Color:set_from_rgba(x, g, b, a)
   return self
 end
 
----@param x HSV|number[]|number Either an HSV struct, or a vector, or the value for hue.
+---@param x HSV|[number, number, number, number?]|number Either an HSV struct, or a vector, or the value for hue.
 ---@param s? number Saturation. Float [0,1].
 ---@param v? number Value. Float [0,1].
 ---@param a? number Alpha. Float [0,1].
 ---@overload fun(self: Color, hsv: HSV)
----@overload fun(self: Color, hsv: number[])
+---@overload fun(self: Color, hsv: [number, number, number, number?])
 ---@overload fun(self: Color, h: number, s: number, v: number)
 function Color:set_from_hsv(x, s, v, a)
   local c
@@ -412,6 +416,7 @@ function Color:set_from_hsv(x, s, v, a)
     ---@cast v number
     c = Color.from_hsv(x, s, v, a or self._alpha)
   elseif #x >= 3 then
+    --- @cast x -HSV
     c = Color.from_hsv(x[1], x[2], x[3], x[4] or self._alpha)
   else
     local hsv = self:to_hsv()
@@ -426,12 +431,12 @@ function Color:set_from_hsv(x, s, v, a)
   return self:set_from_color(c)
 end
 
----@param x HSL|number[]|number Either an HSL struct, or a vector, or the value for hue.
+---@param x HSL|[number, number, number, number?]|number Either an HSL struct, or a vector, or the value for hue.
 ---@param s? number Saturation. Float [0,1].
 ---@param l? number Lightness. Float [0,1].
 ---@param a? number Alpha. Float [0,1].
 ---@overload fun(hsl: HSL)
----@overload fun(hsl: number[])
+---@overload fun(hsl: [number, number, number, number?])
 ---@overload fun(h: number, s: number, l: number)
 function Color:set_from_hsl(x, s, l, a)
   local c
@@ -441,6 +446,7 @@ function Color:set_from_hsl(x, s, l, a)
     ---@cast l number
     c = Color.from_hsl(x, s, l, a or self._alpha)
   elseif #x >= 3 then
+    --- @cast x -HSL
     c = Color.from_hsl(x[1], x[2], x[3], x[4] or self._alpha)
   else
     local hsl = self:to_hsl()

@@ -1,5 +1,8 @@
 -- Automatically delete listed buffers that have been untouched for 10 minutes.
 
+--- @using imminent
+--- @using pebbles
+
 local async = require("imminent")
 local time = require("imminent.time")
 
@@ -14,7 +17,7 @@ M.CLEANUP_INTERVAL = 1000 * 60
 M.EXPIRATION_TIME = 1000 * 60 * 15 -- 15 min
 
 ---@private
----@type Closeable?
+---@type time.Closeable?
 M._interval_handle = nil
 
 ---@private
@@ -62,7 +65,7 @@ function M.is_running()
   return not not M._interval_handle
 end
 
---- @return Fut<nil>
+--- @return Future<[]>
 --- @nodiscard
 function M.run()
   return Future.from(function()
@@ -101,7 +104,7 @@ function M.run()
           end)
 
           if not ok and err then
-            api.nvim_err_writeln(err)
+            api.nvim_echo({{ err }}, true, { err = true })
           else
             M.state_map[bufnr] = nil
           end

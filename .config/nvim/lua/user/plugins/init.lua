@@ -320,15 +320,13 @@ require("lazy").setup({
   {
     "rcarriga/nvim-notify",
     config = function()
-      ---@diagnostic disable-next-line: different-requires
-      local notify = require("notify") --[[@as table ]]
+      local notify = require("notify") --[[@as pebbles.CallableTable ]]
       notify.setup({
         max_width = 80,
         max_height = 15,
         top_down = false,
       })
 
-      ---@diagnostic disable-next-line: duplicate-set-field
       vim.notify = function(msg, level, opts)
         opts = opts or {}
         notify(msg, level, vim.tbl_extend("force", opts, {
@@ -481,6 +479,7 @@ require("lazy").setup({
   {
     "zk-org/zk-nvim",
     cmd = { "ZkNotes", "ZkNew", "ZkIndex" },
+    --- @async
     config = function()
       local Path = require("imminent.fs.Path")
       local async = require("imminent")
@@ -506,6 +505,7 @@ require("lazy").setup({
           )
         end)
 
+      async.nvim_locks():await()
       require("zk").setup({
         picker = "snacks_picker",
       })

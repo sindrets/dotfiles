@@ -82,8 +82,8 @@ M.mode_name_map = {
 }
 
 ---@class FelineApplyThemeSpec
----@field statusline table
----@field no_reload boolean
+---@field statusline? table
+---@field no_reload? boolean
 
 ---@param theme? table|string
 ---@param opt? FelineApplyThemeSpec

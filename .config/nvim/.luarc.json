@@ -3,7 +3,8 @@
     "Lua.diagnostics.disable": [
         "cast-local-type",
         "assign-type-mismatch",
-        "missing-fields"
+        "missing-fields",
+        "invert-if"
     ],
     "diagnostics.globals": ["Snacks"],
     "workspace.checkThirdParty": false

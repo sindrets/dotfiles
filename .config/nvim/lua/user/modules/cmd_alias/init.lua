@@ -1,12 +1,13 @@
+--- @using pebbles
+
 local lz = require("user.lazy")
 
 local arg_parser = lz.require("diffview.arg_parser") ---@module "diffview.arg_parser"
 
 local pb = Config.common.pb
 
-local store = {}
-
 local M = {}
+local store = {}
 
 --- @private
 --- Expand an alias if it's the first arg in the command line.
@@ -37,13 +38,14 @@ end
 --- @param substitute string
 function M.alias(alias, substitute)
   if type(alias) ~= "table" then alias = { alias } end
+  --- @cast alias string[]
 
   for _, name in ipairs(alias) do
     store[name] = substitute
 
     vim.cmd(
       ("cnoreabbrev <expr> %s v:lua.require('user.modules.cmd_alias').expand('%s')")
-      :format(name, pb.pick(1, name:gsub("'", "\\'")))
+      :format(name, (name:gsub("'", "\\'")))
     )
   end
 end
@@ -64,11 +66,11 @@ local function istr_recurse(chars)
   return pb.iter(istr_recurse(pb.slice(chars, 2)))
     :flat_map(function(variant)
       if c:match("%a") then
-        return { c:lower() .. variant, c:upper() .. variant }
-      else
-        return c .. variant
+        return { c:lower() .. variant, c:upper() .. variant } --[[@as string[] ]]
       end
-    end)
+
+      return (c .. variant) --[[@as string ]]
+    end) --[[@as Iter<string> ]]
     :totable()
 end
 
@@ -86,6 +88,7 @@ end
 --- @param substitute string
 function M.ialias(ialias, substitute)
   if type(ialias) ~= "table" then ialias = { ialias } end
+  --- @cast ialias string[]
 
   local alias_variants = pb.iter(ialias)
     :flat_map(function(name) return istr(name) end)

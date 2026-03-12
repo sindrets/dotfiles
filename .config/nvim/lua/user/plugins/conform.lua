@@ -1,4 +1,9 @@
 return function()
+  local lz = require("user.lazy")
+  local conform = require("conform")
+
+  local Path = lz.require("imminent.fs.Path") ---@module "imminent.fs.Path"
+
   local pb = Config.common.pb
 
   --- Ordered list of formatters. Pick first available.
@@ -8,7 +13,18 @@ return function()
 
   local prettier = ol("prettierd", "prettier")
 
-  require("conform").setup({
+  conform.formatters.prettier = {
+    append_args = function()
+      return {
+        "--plugin",
+        Path.from("~/.local/lib/node_modules/prettier-plugin-astro/dist/index.js")
+          :absolute()
+          :tostring(),
+      }
+    end,
+  }
+
+  conform.setup({
     formatters_by_ft = {
       lua = { "stylua" },
       -- Conform will run multiple formatters sequentially
@@ -18,6 +34,7 @@ return function()
       javascriptreact = prettier,
       typescript = prettier,
       typescriptreact = prettier,
+      astro = prettier,
       css = prettier,
       scss = prettier,
       sass = prettier,

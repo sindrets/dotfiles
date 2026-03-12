@@ -7,5 +7,6 @@ return lz.module({
   loop = "user.common.loop", ---@module "user.common.loop"
   notify = "user.common.notify", ---@module "user.common.notify"
   pb = "imminent.pebbles", ---@module "imminent.pebbles"
+  secure = "user.common.secure", ---@module "user.common.secure"
   utils = "user.common.utils", ---@module "user.common.utils"
 }, true)

@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+BIN_NAME="ln-local-bin"
+
+temp=$(
+  getopt -o 'hf' \
+    --long 'help,force' \
+    -n "$BIN_NAME" \
+    -- "$@"
+)
+
+if [ $? -ne 0 ]; then
+  exit 1
+fi
+
+eval set -- "$temp"
+unset temp
+
+function usage() {
+  cat <<-EOF
+		USAGE:
+		  $BIN_NAME [options] [...files]
+		
+		OPTIONS:
+		  -f, --force
+		      Replace any existing file in the install location.
+		  -h, --help
+		      Display this help message.
+EOF
+}
+
+force=false
+
+while true; do
+  case "$1" in
+  '-f' | '--force')
+    force=true
+    shift
+    continue
+    ;;
+  '-h' | '--help')
+    usage
+    exit 1
+    ;;
+  '--')
+    shift
+    break
+    ;;
+  *)
+    echo "Internal error" >&2
+    exit 1
+    ;;
+  esac
+done
+
+all_ok=true
+
+for file in "$@"; do
+  src_path="$(realpath "$file")"
+  dst_path="$(realpath -s -m "$HOME/.local/bin/$(basename "$src_path")")"
+
+  if [[ -e "$dst_path" && "$force" = false ]]; then
+    echo "There's already a file in the install location and '--force' wasn't specified: $dst_path" >&2
+    all_ok=false
+    continue
+  fi
+
+  ln -sf "$src_path" "$dst_path"
+  echo "Installed '$dst_path'." >&2
+done
+
+if [[ $all_ok = false ]]; then
+  echo "Not all files were installed successfully!" >&2
+  exit 1
+fi

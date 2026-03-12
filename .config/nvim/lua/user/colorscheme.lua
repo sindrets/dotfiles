@@ -11,18 +11,20 @@
 local DEFAULT_COLORSCHEME = "default_dark"
 
 local Color = Config.common.color.Color
-local utils = Config.common.utils
 local hl = Config.common.hl
 local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "nightingale"
+M.DEFAULT_DARK = "oldworld"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
   local name, bg
-  for _, source in ipairs(utils.vec_join(vim.env.NVIM_COLORSCHEME, DEFAULT_COLORSCHEME)) do
+  for _, source in ipairs(pb.concat(
+    vim.env.NVIM_COLORSCHEME --[[@as string? ]],
+    DEFAULT_COLORSCHEME
+  )) do
     name, bg = unpack(vim.split(source or "", "%s+", {}))
     if name ~= "" then
       break
@@ -220,8 +222,8 @@ function M.generate_base_colors()
 end
 
 --- @class Config.colorscheme.generate_diff_colors.Opts
---- @field no_override boolean
---- @field no_derive boolean|{ add: boolean, del: boolean, mod: boolean, all: boolean }
+--- @field no_override? boolean
+--- @field no_derive? boolean|{ add?: boolean, del?: boolean, mod?: boolean, all?: boolean }
 
 --- @param opt? Config.colorscheme.generate_diff_colors.Opts
 function M.generate_diff_colors(opt)
@@ -440,19 +442,19 @@ end
 --- Tweaks applied after loading a colorscheme.
 function M.apply_tweaks()
   if not vim.o.termguicolors then
-    Config.common.utils.warn(
+    Config.common.notify.warn(
       "'termguicolors' is not set! Color scheme tweaks might have unexpected results!"
     )
   end
 
   if not vim.g.colors_name then
-    Config.common.utils.err("'g:colors_name' is not set for the current color scheme!")
+    Config.common.notify.err("'g:colors_name' is not set for the current color scheme!")
   end
 
   local fg_normal = Color.from_hl("Normal", "fg")
 
   if not fg_normal then
-    utils.warn("Unable to get foreground color! Cannot apply colorscheme tweaks!")
+    Config.common.notify.warn("Unable to get foreground color! Cannot apply colorscheme tweaks!")
     return
   end
 

@@ -1,30 +1,31 @@
----@diagnostic disable: duplicate-doc-alias, duplicate-doc-field
+--- @namespace user.common.hl
+
 local api = vim.api
 local pb = Config.common.pb
 
 local M = {}
 
----@alias hl.HiValue<T> T|"NONE"
+---@alias HiValue<T> T|"NONE"
 
----@class hl.HiSpec
----@field fg         hl.HiValue<string>
----@field bg         hl.HiValue<string>
----@field sp         hl.HiValue<string>
----@field style      hl.HiValue<string>
----@field ctermfg    hl.HiValue<integer>
----@field ctermbg    hl.HiValue<integer>
----@field cterm      hl.HiValue<string>
----@field blend      hl.HiValue<integer>
----@field default    hl.HiValue<boolean> Only set values if the hl group is cleared.
----@field link       string|-1
----@field explicit   boolean All undefined fields will be cleared from the hl group.
+---@class HiSpec
+---@field fg?         HiValue<string>
+---@field bg?         HiValue<string>
+---@field sp?         HiValue<string>
+---@field style?      HiValue<string>
+---@field ctermfg?    HiValue<integer>
+---@field ctermbg?    HiValue<integer>
+---@field cterm?      HiValue<string>
+---@field blend?      HiValue<integer>
+---@field default?    HiValue<boolean> Only set values if the hl group is cleared.
+---@field link?       string|-1
+---@field explicit?   boolean All undefined fields will be cleared from the hl group.
 
----@class hl.HiLinkSpec
----@field force boolean
----@field default boolean
----@field clear boolean
+---@class HiLinkSpec
+---@field force? boolean
+---@field default? boolean
+---@field clear? boolean
 
----@class hl.HlData
+---@class HlData
 ---@field link string|integer
 ---@field fg integer Foreground color integer
 ---@field bg integer Background color integer
@@ -45,7 +46,7 @@ local M = {}
 ---@field blend integer
 ---@field default boolean
 
----@alias hl.HlAttrValue integer|boolean
+---@alias HlAttrValue integer|boolean
 
 local HAS_NVIM_0_8 = vim.fn.has("nvim-0.8") == 1
 local HAS_NVIM_0_9 = vim.fn.has("nvim-0.9") == 1
@@ -115,7 +116,7 @@ local hlattr = M.HlAttribute
 
 ---@param name string Syntax group name.
 ---@param no_trans? boolean Don't translate the syntax group (follow links).
----@return hl.HlData?
+---@return HlData?
 function M.get_hl(name, no_trans)
   local hl
 
@@ -158,7 +159,7 @@ end
 ---@param name string Syntax group name.
 ---@param attr HlAttribute|string Attribute kind.
 ---@param no_trans? boolean Don't translate the syntax group (follow links).
----@return hl.HlAttrValue?
+---@return HlAttrValue?
 function M.get_hl_attr(name, attr, no_trans)
   local hl = M.get_hl(name, no_trans)
 
@@ -227,10 +228,10 @@ function M.get_style(groups, no_trans)
   end
 end
 
----@param spec hl.HiSpec
----@return hl.HlData
+---@param spec HiSpec
+---@return HlData
 function M.hi_spec_to_def_map(spec)
-  ---@type hl.HlData
+  ---@type HlData
   local res = {}
   local fields = { "fg", "bg", "sp", "ctermfg", "ctermbg", "default", "link" }
 
@@ -250,7 +251,7 @@ function M.hi_spec_to_def_map(spec)
 end
 
 ---@param groups string|string[] Syntax group name or a list of group names.
----@param opt hl.HiSpec
+---@param opt HiSpec
 function M.hi(groups, opt)
   if type(groups) ~= "table" then groups = { groups } end
 
@@ -295,7 +296,7 @@ end
 
 ---@param from string|string[] Syntax group name or a list of group names.
 ---@param to? string Syntax group name. (default: `"NONE"`)
----@param opt? hl.HiLinkSpec
+---@param opt? HiLinkSpec
 function M.hi_link(from, to, opt)
   if to and tostring(to):upper() == "NONE" then
     ---@diagnostic disable-next-line: cast-local-type
@@ -304,7 +305,7 @@ function M.hi_link(from, to, opt)
 
   opt = vim.tbl_extend("keep", opt or {}, {
     force = true,
-  }) --[[@as hl.HiLinkSpec ]]
+  }) --[[@as HiLinkSpec ]]
 
   if type(from) ~= "table" then from = { from } end
 

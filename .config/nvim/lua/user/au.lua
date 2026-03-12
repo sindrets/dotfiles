@@ -31,19 +31,29 @@ function M.source_project_config()
 
       if last_sourced_config ~= project_config_path then
         local ext = path:extension()
+        local data = Config.common.secure.read(path:tostring())
+        if not data then return end
 
-        if ext == "lua" or ext == nil then
-          local data = vim.secure.read(path:tostring())
-          if not data then return end
+        last_sourced_config = project_config_path
+        notify.config(
+          "Using project config: "
+          .. utils.str_quote(vim.fn.fnamemodify(file, ":."))
+        )
+
+        if ext == "lua" then
           local code_chunk = loadfile(path:tostring())
 
           if code_chunk then
             local ok, out = utils.trace_pcall(code_chunk)
 
             if not ok then
-              notify.config.error(pb.concat(
-                ("Failed to load project config %s:"):format(utils.str_quote(file)),
-                vim.split(out, "\n")
+              --- @cast out string
+              notify.config.error(table.concat(
+                {
+                  ("Failed to load project config %s:"):format(utils.str_quote(file)),
+                  vim.split(out, "\n"),
+                },
+                "\n"
               ))
               return
             end
@@ -51,15 +61,9 @@ function M.source_project_config()
             Config.state.project_config = out
           end
         else
-          local data = vim.secure.read(path:tostring())
-          if data then vim.cmd.source(path:tostring()) end
+          vim.cmd.source(path:tostring())
         end
 
-        last_sourced_config = project_config_path
-        notify.config(
-          "Using project config: "
-          .. utils.str_quote(vim.fn.fnamemodify(file, ":."))
-        )
         break
       end
     end
@@ -82,16 +86,16 @@ end
 --- Example location: `foo/bar/baz:128:17`
 --- @param location string
 function M.open_file_location(location)
-  local bufnr = vim.fn.expand("<abuf>")
-  if bufnr == "" then
+  local bufnr_str = vim.fn.expand("<abuf>")
+  if bufnr_str == "" then
     return
   end
 
-  bufnr = tonumber(bufnr)
+  local bufnr = assert(tonumber(bufnr_str)) --[[@as int ]]
   local l = vim.trim(location)
   local file = utils.str_match(l, { "(.*):%d+:%d+:?$", "(.*):%d+:?$", "(.*):$" })
-  local line = tonumber(utils.str_match(l, { ".*:(%d+):%d+:?$", ".*:(%d+):?$" }))
-  local col = tonumber(l:match(".*:%d+:(%d+):?$")) or 1
+  local line = tonumber(utils.str_match(l, { ".*:(%d+):%d+:?$", ".*:(%d+):?$" })) --[[@as int? ]]
+  local col = (tonumber(l:match(".*:%d+:(%d+):?$")) or 1) --[[@as int ]]
   local file_path = Path.from(file)
 
   if file_path:is_readable():block_on() then

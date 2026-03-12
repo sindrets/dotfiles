@@ -1,17 +1,19 @@
-local Cache = require("user.modules.cache")
-local StatusItem = require("user.modules.winbar.status_item")
+--- @namespace user.winbar
+--- @using imminent
+
 local lz = require("user.lazy")
 
+local Cache = lz.require("user.modules.cache") ---@module "user.modules.cache"
 local Path = lz.require("imminent.fs.Path") ---@module "imminent.fs.Path"
+local StatusItem = lz.require("user.modules.winbar.status_item") ---@module "user.modules.winbar.status_item"
 
-local utils = Config.common.utils
 local pb = Config.common.pb
 local au = Config.common.au
 local api = vim.api
 local fmt = string.format
-local strwidth = vim.api.nvim_strwidth
+local strwidth = api.nvim_strwidth
 
-local HOME_DIR = assert(uv.os_homedir())
+local HOME_DIR = Path.home():tostring()
 local WINBAR_STRING = "%{%v:lua.require'user.modules.winbar'.generate()%}"
 
 local M = {}
@@ -26,7 +28,7 @@ M.config = {
     link = "",
     compare = "",
   },
-  ---@param ctx WindowContext
+  --- @param ctx WindowContext
   ignore = function(ctx)
     -- ignore floating Snacks windows
     if ctx.float and vim.w[ctx.winid].snacks_win then return true end
@@ -64,15 +66,15 @@ M.config = {
 
 M.state = {
   attached = {},
-  cache = Cache.new(),
+  cache = Cache.new() --[[@as user.modules.cache.Cache<int, string> ]],
 }
 
 local symbols = M.config.symbols
 
-M.SEP_ITEM = StatusItem(fmt(" %s ", symbols.path_separator), "Comment")
-M.ELLIPSIS_ITEM = StatusItem(symbols.ellipsis, "Comment")
+M.SEP_ITEM = StatusItem.new(fmt(" %s ", symbols.path_separator), "Comment")
+M.ELLIPSIS_ITEM = StatusItem.new(symbols.ellipsis, "Comment")
 
----@return string?
+--- @return string?
 local function no_empty(s)
   if s == "" then return nil end
   return s
@@ -125,24 +127,25 @@ end
 local SEP_ITEM_WIDTH = strwidth(M.SEP_ITEM:get_content())
 local ELLIPSIS_ITEM_WIDTH = strwidth(M.ELLIPSIS_ITEM:get_content())
 
----@param segments user.winbar.StatusItem[]
----@param max_width integer
----@param show_repo boolean
+--- @param segments StatusItem[]
+--- @param max_width integer
+--- @param show_repo boolean
 local function truncate_path(segments, max_width, show_repo)
   local total_width = 0
   max_width = max_width - SEP_ITEM_WIDTH
 
-  local widths = vim.tbl_map(function(v)
+  local widths = pb.map(segments, function(v)
     local w = strwidth(v:get_content()) + SEP_ITEM_WIDTH
     total_width = total_width + w
     return w
-  end, segments)
+  end)
 
   if total_width <= max_width then
     -- No truncation needed
     return segments
   end
 
+  --- @type StatusItem[]
   local ret = {}
   total_width = ELLIPSIS_ITEM_WIDTH
 
@@ -163,33 +166,36 @@ local function truncate_path(segments, max_width, show_repo)
     end
   end
 
-  return utils.vec_join(ret, utils.vec_slice(segments, slice_start))
+  return pb.concat(ret, pb.slice(segments, slice_start))
 end
 
+--- @param name string
+--- @return string
 local function truncate_path_segment(name)
   if strwidth(name) <= 47 then return name end
   -- Get the correct byte indices such that we don't accidentally end up
   -- dismembering a multi-byte glyph.
   local end_head = vim.str_byteindex(name, 23)
   local start_tail = vim.str_byteindex(name, #name - 22)
+
   return name:sub(1, end_head) .. symbols.ellipsis .. name:sub(start_tail)
 end
 
----@class WindowContext
----@field winid integer
----@field bufnr integer
----@field tabid integer
----@field bufname string
----@field filetype string
----@field buftype string
----@field cwd string
----@field win_config table
----@field float boolean
----@field width integer
----@field height integer
+--- @class WindowContext
+--- @field winid integer
+--- @field bufnr integer
+--- @field tabid integer
+--- @field bufname string
+--- @field filetype string
+--- @field buftype string
+--- @field cwd string
+--- @field win_config table
+--- @field float boolean
+--- @field width integer
+--- @field height integer
 
----@param winid integer
----@return WindowContext
+--- @param winid integer
+--- @return WindowContext
 function M.win_context(winid)
   if winid == 0 then winid = api.nvim_get_current_win() end
   local bufnr = api.nvim_win_get_buf(winid)
@@ -222,7 +228,7 @@ function M.generate()
   end
 
   local win_ctx = M.win_context(winid)
-  local winbar = StatusItem({ StatusItem(" ") })
+  local winbar = StatusItem.new({ StatusItem.new(" ") })
 
   local function append(...)
     local children = winbar:get_children()
@@ -237,10 +243,9 @@ function M.generate()
   end
 
   local win_cwd = Path.from(win_ctx.cwd)
-  local abs_path = Path
-    .from_str(vim.fn.bufname(win_ctx.bufnr))
+  local abs_path = Path.from_str(vim.fn.bufname(win_ctx.bufnr))
     :map(function(p) return p:absolute(win_cwd) end)
-    :unwrap_or(win_cwd)
+    :unwrap_or(win_cwd) --[[@as fs.Path ]]
   local path = condense_path(abs_path, win_cwd)
   local is_uri = path and path:is_uri()
   local path_exists = win_ctx.bufname ~= "" and not is_uri and abs_path:is_readable():block_on()
@@ -251,14 +256,14 @@ function M.generate()
     local dense_bufname = condense_path(win_ctx.bufname, win_cwd)
     if dense_bufname then
       basename = no_empty(dense_bufname:basename())
-      parent_path = dense_bufname:parent():unwrap_or(nil)
+      parent_path = dense_bufname:dirname():unwrap_or(nil)
     end
   elseif path then
     basename = no_empty(path:basename())
     parent_path = path:parent():unwrap_or(nil)
   end
 
-  ---@type user.winbar.StatusItem[]
+  --- @type StatusItem[]
   local path_segments = {}
   local show_repo = false
 
@@ -268,9 +273,9 @@ function M.generate()
     show_repo = true
     local dense_cwd = assert(condense_path(win_cwd, win_cwd, true))
 
-    winbar:add_child(StatusItem({
-      StatusItem(M.config.symbols.repo .. " ", "Directory"),
-      StatusItem(truncate_path_segment(dense_cwd:basename()), "WinBar"),
+    winbar:add_child(StatusItem.new({
+      StatusItem.new(symbols.repo .. " ", "Directory"),
+      StatusItem.new(truncate_path_segment(dense_cwd:basename()), "WinBar"),
     }))
   end
 
@@ -278,7 +283,7 @@ function M.generate()
 
   if parent_path then
     for _, part in ipairs(parent_path:explode()) do
-      table.insert(path_segments, StatusItem(truncate_path_segment(part), "Comment"))
+      table.insert(path_segments, StatusItem.new(truncate_path_segment(part), "Comment"))
     end
   end
 
@@ -289,24 +294,24 @@ function M.generate()
   end
 
   if basename then
-    local comp = StatusItem({})
+    local comp = StatusItem.new({})
 
     if vim.bo[win_ctx.bufnr].modified then
       -- Modified
-      comp:add_child(StatusItem("[+] ", "String"))
+      comp:add_child(StatusItem.new("[+] ", "String"))
     end
 
     if not vim.bo[win_ctx.bufnr].modifiable or vim.bo[win_ctx.bufnr].readonly then
       -- Read only
-      comp:add_child(StatusItem(fmt("%s ", symbols.readonly), "DiagnosticInfo"))
+      comp:add_child(StatusItem.new(fmt("%s ", symbols.readonly), "DiagnosticInfo"))
     end
 
     if vim.wo[win_ctx.winid].diff then
       -- Diff mode
-      comp:add_child(StatusItem(fmt("%s ", symbols.compare), "DiagnosticInfo"))
+      comp:add_child(StatusItem.new(fmt("%s ", symbols.compare), "DiagnosticInfo"))
     end
 
-    comp:add_child(StatusItem(truncate_path_segment(basename), "WinBar"))
+    comp:add_child(StatusItem.new(truncate_path_segment(basename), "WinBar"))
     table.insert(path_segments, comp)
   end
 
@@ -329,7 +334,7 @@ local queued = {}
 function M.update(winid)
   M.state.cache:invalidate(winid)
 
-  if vim.api.nvim_win_is_valid(winid) then
+  if api.nvim_win_is_valid(winid) then
     M.check_attach(winid)
   end
 end
@@ -447,7 +452,7 @@ function M.init()
             buf_match = ctx.buf
             win_match = api.nvim_get_current_win()
           else
-            win_match = tonumber(ctx.match)
+            win_match = tonumber(ctx.match) --[[@as int ]]
           end
         elseif ctx.event:match("^Buf") then
           buf_match = ctx.buf

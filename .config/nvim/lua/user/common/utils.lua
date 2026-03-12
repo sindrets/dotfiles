@@ -1,4 +1,5 @@
----@diagnostic disable: duplicate-doc-field
+--- @namespace user.common.utils
+
 local lz = require("user.lazy")
 
 local winshift_lib = lz.require("winshift.lib") ---@module "winshift.lib"
@@ -239,21 +240,21 @@ function M.str_center_pad(s, min_size, fill)
   return string.rep(fill, left_len) .. s .. string.rep(fill, right_len)
 end
 
----@class utils.StrQuoteSpec
+---@class StrQuoteOpts
 ---@field esc_fmt string Format string for escaping quotes. Passed to `string.format()`.
 ---@field prefer_single boolean Prefer single quotes.
 ---@field only_if_whitespace boolean Only quote the string if it contains whitespace.
 
 ---@param s string
----@param opt? utils.StrQuoteSpec
+---@param opt? StrQuoteOpts
 function M.str_quote(s, opt)
-  ---@cast opt utils.StrQuoteSpec
+  ---@cast opt StrQuoteOpts
   s = tostring(s)
   opt = vim.tbl_extend("keep", opt or {}, {
     esc_fmt = [[\%s]],
     prefer_single = false,
     only_if_whitespace = false,
-  }) --[[@as utils.StrQuoteSpec ]]
+  }) --[[@as StrQuoteOpts ]]
 
   if opt.only_if_whitespace and not s:find("%s") then
     return s
@@ -712,7 +713,7 @@ function M.vec_sort(t, comparator)
   return ret
 end
 
----@class Config.utils.ListBufsSpec
+---@class ListBufsSpec
 ---@field no_unloaded? boolean Filter out buffers that aren't loaded.
 ---@field no_unlisted? boolean Filter out buffers that aren't listed.
 ---@field no_hidden? boolean Filter out buffers that are hidden.
@@ -721,7 +722,7 @@ end
 ---@field options? table<string, any> Filter out buffers that don't match a given map of options.
 ---@field vars? table<string, any> Filter out buffers that don't match a given map of variables.
 
----@param opt? Config.utils.ListBufsSpec
+---@param opt? ListBufsSpec
 ---@return integer[] #Buffer numbers of matched buffers.
 function M.list_bufs(opt)
   opt = opt or {}
@@ -777,7 +778,7 @@ function M.list_bufs(opt)
 end
 
 ---@param path string
----@param opt? Config.utils.ListBufsSpec
+---@param opt? ListBufsSpec
 ---@return integer? bufnr
 function M.find_file_buffer(path, opt)
   local p = M.Path.from(path):absolute():tostring()
@@ -878,79 +879,139 @@ function M.create_fill_buf(opts)
 end
 
 function M.clear_prompt()
-  vim.api.nvim_echo({ { "" } }, false, {})
+  api.nvim_echo({ { "" } }, false, {})
   vim.cmd("redraw")
 end
 
----@class InputCharSpec
----@field clear_prompt boolean (default: true)
----@field allow_non_ascii boolean (default: false)
----@field filter string A lua pattern that the input must match in order to be valid. (default: nil)
----@field loop boolean Loop the input prompt until a valid char is given. (default: false)
----@field prompt_hl string (default: nil)
+--- `getchar()` with a timeout
+--- @param timeout_ms integer the timeout in milliseconds
+--- @return int|string|nil the character pressed, or nil if timeout
+local function getchar_with_timeout(timeout_ms)
+  local async = require("imminent")
 
----@param prompt string
----@param opt InputCharSpec
----@return string? Char
----@return string|number Raw
+  local char = nil
+  local time_start = uv.hrtime()
+  local input_received = false
+  local mx = async.sync.Mutex.new()
+
+  local handle --- @type imminent.time.Closeable
+  handle = async.time.set_interval(function()
+    if input_received or mx:is_locked() then return end
+    async.spawn(function()
+      mx:lock():await()
+      async.defer(mx.unlock, mx)
+      async.nvim_locks():await()
+      -- Check for input without blocking
+      local c = vim.fn.getchar(0)
+      if c ~= 0 then
+        char = c
+        input_received = true
+      end
+
+      if input_received or (uv.hrtime() - time_start) / 1e6 >= timeout_ms then
+        handle:close()
+      end
+    end)
+  end, 10)
+
+  local _, status = vim.wait(timeout_ms, function()
+    return input_received
+  end, 10, false)
+
+  -- Respect interrupts
+  if status == -2 then
+    handle:close()
+    error("Keyboard interrupt!")
+  end
+
+  return char
+end
+
+--- @class InputCharOpts
+--- @field clear_prompt? boolean (default: true)
+--- @field allow_non_ascii? boolean (default: false)
+--- @field filter? string A lua pattern that the input must match in order to be valid. (default: nil)
+--- @field loop? boolean Loop the input prompt until a valid char is given. (default: false)
+--- @field prompt_hl? string (default: nil)
+
+--- Fancy `getchar()` with some extra bells and whistles.
+---
+--- ## Raises
+---
+--- Raises an error if the user presses `<C-c>`. Use `pcall()` if you wish to
+--- handle keyboard interrupts.
+---
+--- @param prompt string
+--- @param opt InputCharOpts
+--- @return string? char
+--- @return string|number raw
 function M.input_char(prompt, opt)
   opt = vim.tbl_extend("keep", opt or {}, {
     clear_prompt = true,
     allow_non_ascii = false,
     loop = false,
     prompt_hl = nil,
-  }) --[[@as InputCharSpec ]]
+  }) --[[@as InputCharOpts ]]
 
-  --- @type boolean, string?, (string|number)?
+  local save_cmd_height = vim.opt.cmdheight:get()
+
+  --- @type boolean, string?, (string|number)
   local valid, s, raw
 
-  while true do
-    valid = true
+  local ok, err = M.trace_pcall(function()
+    while true do
+      valid = true
 
-    if prompt then
-      api.nvim_echo({ { prompt, opt.prompt_hl } }, false, {})
-    end
-
-    local c
-    if not opt.allow_non_ascii then
-      while type(c) ~= "number" do
-        c = vim.fn.getchar()
+      if prompt then
+        local n_lines = pb.count_lines(prompt)
+        vim.opt.cmdheight = math.max(save_cmd_height, n_lines)
+        api.nvim_echo({ { prompt, opt.prompt_hl } }, false, {})
       end
-    else
-      c = vim.fn.getchar()
-    end
 
-    if opt.clear_prompt then
-      M.clear_prompt()
-    end
+      -- Use `getchar_with_timeout` so that we can keep redrawing the prompt
+      -- until we're done.
+      local c = getchar_with_timeout(150)
 
-    s = type(c) == "number" and vim.fn.nr2char(c) or nil
-    raw = type(c) == "number" and s or c
-
-    if opt.filter then
-      if s == nil or not s:match(opt.filter) then
-        valid = false
+      if opt.clear_prompt then
+        M.clear_prompt()
       end
+
+      if c == nil or (not opt.allow_non_ascii and type(c) ~= "number") then
+        goto continue
+      end
+
+      s = type(c) == "number" and vim.fn.nr2char(c) or nil
+      raw = type(c) == "number" and s --[[@cast -? ]] or c
+
+      if opt.filter then
+        if s == nil or not s:match(opt.filter) then
+          valid = false
+        end
+      end
+
+      if valid or not opt.loop then break end
+      ::continue::
     end
+  end)
 
-    if valid or not opt.loop then break end
-  end
+  -- Cleanup
+  vim.opt.cmdheight = save_cmd_height
 
-  if not valid then
-    return nil, -1
-  end
+  -- re-raise any errors
+  if not ok then error(err, 0) end
+  if not valid then return nil, -1 end
 
   return s, raw
 end
 
----@class InputSpec
----@field default string
----@field completion string|function
----@field cancelreturn string
----@field callback fun(response: string?)
+--- @class InputOpts
+--- @field default string
+--- @field completion string|function
+--- @field cancelreturn string
+--- @field callback fun(response: string?)
 
----@param prompt string
----@param opt InputSpec
+--- @param prompt string
+--- @param opt InputOpts
 function M.input(prompt, opt)
   local completion = opt.completion
   if type(completion) == "function" then
@@ -968,18 +1029,18 @@ function M.input(prompt, opt)
   M.clear_prompt()
 end
 
----@class utils.confirm.Opt
----@field default boolean
+---@class confirm.Opts
+---@field default_yes boolean
 ---@field callback fun(choice: boolean)
 
 ---@param prompt string
----@param opt utils.confirm.Opt
+---@param opt confirm.Opts
 function M.confirm(prompt, opt)
   local ok, s = pcall(
     M.input_char,
     ("%s %s: "):format(
       prompt,
-      opt.default and "[Y/n]" or "[y/N]"
+      opt.default_yes and "[Y/n]" or "[y/N]"
     ),
     { filter = "[yYnN\27\r]", loop = true }
   )
@@ -994,7 +1055,7 @@ function M.confirm(prompt, opt)
       y = true,
       n = false,
     })[(s or ""):lower()]
-    if value == nil then value = opt.default end
+    if value == nil then value = opt.default_yes end
     opt.callback(value)
   end
 end
@@ -1022,21 +1083,23 @@ local list_like_options = {
   fillchars = true,
 }
 
---- @class Config.utils.set_local.Opt
+--- @class set_local.Opt
 --- @field method "set"|"remove"|"append"|"prepend" Assignment method. (default: "set")
-
---- @class Config.utils.set_local.ListSpec : string[]
+---
+--- @class set_local.ListSpec : string[]
 --- @field opt? utils.set_local.Opt
+---
+--- @alias WindowOptions table<string, boolean|integer|string|set_local.ListSpec>
 
 --- @param winids number[]|number Either a list of winids, or a single winid (0 for current window).
 --- @param option_map WindowOptions
---- @param opt? Config.utils.set_local.Opt
+--- @param opt? set_local.Opt
 function M.set_local(winids, option_map, opt)
   if type(winids) ~= "table" then
     winids = { winids }
   end
 
-  opt = vim.tbl_extend("keep", opt or {}, { method = "set" }) --[[@as Config.utils.set_local.Opt ]]
+  opt = vim.tbl_extend("keep", opt or {}, { method = "set" }) --[[@as set_local.Opt ]]
 
   for _, id in ipairs(winids) do
     api.nvim_win_call(id, function()
@@ -1207,11 +1270,11 @@ end
 --- Call a function in protected mode. If the function raises an error, include
 --- a traceback in the error.
 ---
---- @param func function # The function to call.
---- @param ... any # Args to apply to `func`.
+--- @generic Params, R
+--- @param func fun(...: Params...): R... # The function to call.
+--- @param ... Params... # Args to apply to `func`.
 --- @return boolean ok
---- @return unknown|string ret # Either the first returned value from `func`, or an error if it failed.
---- @return any ... # Any subsequent values returned from `func`.
+--- @return string|std.Unpack<[R...]> ret # Either the returned values from `func`, or an error if it failed.
 function M.trace_pcall(func, ...)
   local err
   local ret = M.tbl_pack(
@@ -1226,6 +1289,7 @@ function M.trace_pcall(func, ...)
 
   if not ret[1] then return false, err end
 
+  --- @diagnostic disable-next-line: missing-return-value
   return M.tbl_unpack(ret)
 end
 

@@ -17,7 +17,7 @@ local M = {}
 --- @field pattern? string|string[]
 --- @field buffer? integer
 --- @field desc? string
---- @field callback fun(ctx: AutocmdCallbackContext)
+--- @field callback fun(ctx: AutocmdCallbackContext)|string
 --- @field command? string
 --- @field once? boolean
 --- @field nested? boolean

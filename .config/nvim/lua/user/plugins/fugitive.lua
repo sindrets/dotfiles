@@ -1,5 +1,6 @@
 return function()
   local Path = Config.common.utils.Path
+  local Set = pb.Set
   local au = Config.common.au
   local utils = Config.common.utils
   local api = vim.api
@@ -120,42 +121,43 @@ return function()
     run_cleanup()
   end
 
+  --- @return int[]
   local function find_usable_tabs()
-    local all = api.nvim_list_tabpages()
-    local fugitive_tabs = vim.tbl_filter(function(v)
-      return vim.t[v].fugitive_form == "tab"
-    end, all)
-    local other_tabs = utils.vec_diff(all, fugitive_tabs)
+    local all = Set.from(api.nvim_list_tabpages())
+    local fugitive_tabs = Set.from(
+      all:iter():filter(function(v)
+        return vim.t[v].fugitive_form == "tab"
+      end)
+    )
+    local other_tabs = all:difference(fugitive_tabs)
     local prev_tab = utils.tabnr_to_id(vim.fn.tabpagenr("#")) or -1
 
-    if api.nvim_tabpage_is_valid(prev_tab) and not utils.vec_indexof(fugitive_tabs, prev_tab) then
-      return utils.vec_join(prev_tab, other_tabs)
-    else
-      return other_tabs
+    if api.nvim_tabpage_is_valid(prev_tab) and not fugitive_tabs:has(prev_tab) then
+      return pb.concat(prev_tab, other_tabs:totable())
     end
+
+    return other_tabs:totable()
   end
 
   ---@param tabid integer?
-  ---@return vector<integer>
+  ---@return int[]
   local function find_usable_wins(tabid)
     -- Make sure the tab's current window is first in the list.
-    local wins = utils.vec_join(
-      api.nvim_tabpage_get_win(tabid or 0),
-      api.nvim_tabpage_list_wins(tabid or 0)
-    )
-
-    return vim.tbl_filter(function(v)
-      return vim.bo[api.nvim_win_get_buf(v)].buftype == ""
-    end, wins)
+    return pb.Iter.of(api.nvim_tabpage_get_win(tabid or 0))
+      :chain(api.nvim_tabpage_list_wins(tabid or 0))
+      :filter(function(v)
+        return vim.bo[api.nvim_win_get_buf(v)].buftype == ""
+      end)
+      :totable()
   end
 
   ---@param tabid integer
-  ---@return vector<integer>
+  ---@return int[]
   local function find_commit_views(tabid)
-    return vim.tbl_filter(function(v)
+    return pb.filter(api.nvim_tabpage_list_wins(tabid), function(v)
       if vim.fn.win_gettype(v) ~= "" then return false end
       return vim.w[v].fugitive_type == "commit_view"
-    end, api.nvim_tabpage_list_wins(tabid))
+    end)
   end
 
   au.declare_group("fugitive_config", {}, {
@@ -178,7 +180,7 @@ return function()
 
         km.set("n", "P", function()
           utils.confirm("Confirm git push?", {
-            default = true,
+            default_yes = true,
             callback = function(choice)
               if choice then vim.cmd("Git push") end
             end,
@@ -362,14 +364,14 @@ return function()
 
           if commit then
             if commit:find(":") then
-              local path
+              local path --- @type string
               commit, path = commit:match("^(.-)^?:(.*)")
               vim.cmd(
                 fmt(
                   "DiffviewOpen %s^! --selected-file=%s",
                   commit,
                   vim.fn.fnameescape(
-                    Path.concat(vim.fn.FugitiveWorkTree(), path):unwrap():tostring()
+                    Path.concat(vim.fn.FugitiveWorkTree(), assert(path)):unwrap():tostring()
                   )
                 )
               )
@@ -387,14 +389,14 @@ return function()
 
           if commit then
             if commit:find(":") then
-              local path
+              local path --- @type string
               commit, path = commit:match("^(.-)^?:(.*)")
               vim.cmd(
                 fmt(
                   "DiffviewFileHistory --range=%s %s",
                   commit,
                   vim.fn.fnameescape(
-                    Path.concat(vim.fn.FugitiveWorkTree(), path):unwrap():tostring()
+                    Path.concat(vim.fn.FugitiveWorkTree(), assert(path)):unwrap():tostring()
                   )
                 )
               )
@@ -410,6 +412,9 @@ return function()
       end,
     },
   })
+
+  -- Remove annoying deprecated alias
+  vim.cmd.delcommand("Gbrowse")
 
   Config.plugin.fugitive = M
 end

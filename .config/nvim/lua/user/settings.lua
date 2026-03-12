@@ -157,7 +157,7 @@ vim.env.MANWIDTH = 80 -- Text width in man pages.
 
 local init_extra_path = vim.fn.fnamemodify(vim.fn.expand("$MYVIMRC"), ":h") .. "/init_extra.vim"
 if vim.fn.filereadable(init_extra_path) == 1 then
-  local data = vim.secure.read(init_extra_path)
+  local data = Config.common.secure.read(init_extra_path)
   if data then vim.cmd.source(init_extra_path) end
 end
 

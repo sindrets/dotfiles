@@ -76,7 +76,7 @@ function M.create_local_config(config)
     else
       for _, path in ipairs(M.local_config_paths) do
         if Path.from(path):is_readable():block_on() then
-          local data = vim.secure.read(path)
+          local data = Config.common.secure.read(path)
 
           if data then
             notify.config("Using project-local LSP config: " .. utils.str_quote(path))

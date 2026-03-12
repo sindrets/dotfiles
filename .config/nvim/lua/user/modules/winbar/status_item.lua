@@ -1,24 +1,25 @@
-local oop = require("user.oop")
+--- @namespace user.winbar
 
-local utils = Config.common.utils
+local pb = Config.common.pb
 local fmt = string.format
 
----@class user.winbar.StatusItem.state
----@field valid boolean
----@field rendered_string string
----@field content_string string
+--- @class StatusItem.State
+--- @field valid boolean
+--- @field rendered_string? string
+--- @field content_string? string
 
----@class user.winbar.StatusItem
----@operator call : user.winbar.StatusItem
----@field content string?
----@field hl string?
----@field children user.winbar.StatusItem[]?
----@field state user.winbar.StatusItem.state
-local StatusItem = oop.create_class("StatusItem")
+--- @class StatusItem
+--- @field content string?
+--- @field hl string?
+--- @field children StatusItem[]?
+--- @field state StatusItem.State
+local StatusItem = {}
 
-function StatusItem:init(x, hl)
+function StatusItem.new(x, hl)
+  local self = setmetatable({}, { __index = StatusItem })
+
   if type(x) == "table" then
-    self.children = utils.vec_slice(x)
+    self.children = pb.slice(x)
   elseif type(x) == "string" then
     self.content = x
   else
@@ -27,6 +28,8 @@ function StatusItem:init(x, hl)
 
   self.hl = hl
   self.state = { valid = false }
+
+  return self
 end
 
 function StatusItem:invalidate()
@@ -42,6 +45,7 @@ function StatusItem:render()
     self:_update()
   end
 
+  --- @cast self.state.rendered_string -?
   return self.state.rendered_string
 end
 
@@ -50,10 +54,11 @@ function StatusItem:get_content()
     self:_update()
   end
 
+  --- @cast self.state.content_string -?
   return self.state.content_string
 end
 
----@param item user.winbar.StatusItem
+--- @param item StatusItem
 function StatusItem:add_child(item)
   if not self.children then self.children = {} end
   self.content = nil
@@ -66,7 +71,7 @@ function StatusItem:get_children()
   return self.children
 end
 
----@private
+--- @private
 function StatusItem:_render()
   local ret = ""
 
@@ -75,13 +80,14 @@ function StatusItem:_render()
       ret = ret .. child:_render()
     end
   else
+    --- @cast self.content -?
     ret = ret .. fmt("%%#%s#", self.hl or "WinBar") .. (self.content:gsub("%%", "%%%%"))
   end
 
   return ret
 end
 
----@private
+--- @private
 function StatusItem:_content()
   local ret = ""
 
@@ -90,13 +96,14 @@ function StatusItem:_content()
       ret = ret .. child:_content()
     end
   else
+    --- @cast self.content -?
     ret = ret .. self.content
   end
 
   return ret
 end
 
----@private Render and update state.
+--- @private Render and update state.
 function StatusItem:_update()
   if self:is_valid() then return end
   local rs = ""

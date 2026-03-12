@@ -2,11 +2,11 @@
 
 local CacheEntry = require('user.modules.cache.CacheEntry')
 
---- @class Cache
---- @field store table<any, CacheEntry?>
---- @overload fun(): Cache
+--- @class Cache<K, V>
+--- @field store table<K, CacheEntry<V>?>
 local Cache = {}
 
+--- @return Cache<any, any>
 function Cache.new()
   local self = setmetatable({}, { __index = Cache })
   self.store = {}
@@ -14,16 +14,16 @@ function Cache.new()
   return self
 end
 
---- @param key any
---- @param data any
---- @param opts? CacheEntry.Opts
+--- @param key K
+--- @param data V
+--- @param opts? CacheEntry.new.Opts
 function Cache:put(key, data, opts)
   self.store[key] = CacheEntry.new(data, opts)
 end
 
 --- Check if the cache contains a valid entry for the given key.
 ---
---- @param key any
+--- @param key K
 --- @return boolean
 function Cache:has(key)
   local entry = self.store[key]
@@ -31,18 +31,19 @@ function Cache:has(key)
   return not not (entry and entry:is_valid())
 end
 
---- @param key any
---- @return any?
+--- @param key K
+--- @return V?
 function Cache:get(key)
   local entry = self.store[key]
 
-  if entry and entry:is_valid() then
-    return entry:get_data()
-  end
+  --- @diagnostic disable-next-line: access-invisible
+  if entry and entry:is_valid() then return entry.data end
+
+  return nil
 end
 
 --- Invalidate the cache entry associated with the given key if it exists.
---- @param key any
+--- @param key K
 function Cache:invalidate(key)
   local entry = self.store[key]
   if entry then entry:invalidate() end

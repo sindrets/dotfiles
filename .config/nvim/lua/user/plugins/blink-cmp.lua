@@ -4,6 +4,7 @@ return function()
 
   local utils = Config.common.utils
   local pb = Config.common.pb
+  local au = Config.common.au
 
   local fzy_sort = lz.require("blink.cmp.fuzzy.sort") --- @module "blink.cmp.fuzzy.sort"
 
@@ -249,5 +250,14 @@ return function()
         EnumMember = "",
       },
     },
+  })
+
+  au.declare_group("user.plugins.blink-cmp", {}, {
+    {
+      "ColorScheme",
+      callback = function()
+        require("blink.cmp.highlights").setup()
+      end,
+    }
   })
 end
