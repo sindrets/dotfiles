@@ -127,7 +127,8 @@ update_metadata () {
 # Retrieve metadata.
 # @param {int} $1 line number
 data () {
-    echo -n "$metadata" | sed -n "$1 p"
+    # escape `&` so that the data can be used in string substitution
+    echo -n "$metadata" | sed -n "${1}s/&/\\\\&/g; $1 p"
 }
 
 # Print formatted output
@@ -146,14 +147,14 @@ print_format () {
     local title=`shorten_string "$(data 5)" $title_max_length`
     local result="${templates[$template_index]}"
 
-    result="${result/__STATUS__/`data 1`}"
-    result="${result/__PLAYER__/`data 2`}"
-    result="${result/__ARTIST__/`data 3`}"
-    result="${result/__ALBUM__/`data 4`}"
+    result="${result/__STATUS__/$(data 1)}"
+    result="${result/__PLAYER__/$(data 2)}"
+    result="${result/__ARTIST__/$(data 3)}"
+    result="${result/__ALBUM__/$(data 4)}"
     result="${result/__TITLE__/$title}"
-    result="${result/__TRACK_NUMBER__/`data 6`}"
-    result="${result/__POSITION__/`data 7`}"
-    result="${result/__DURATION__/`data 8`}"
+    result="${result/__TRACK_NUMBER__/$(data 6)}"
+    result="${result/__POSITION__/$(data 7)}"
+    result="${result/__DURATION__/$(data 8)}"
 
     echo "$result"
 

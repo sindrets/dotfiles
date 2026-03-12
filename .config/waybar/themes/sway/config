@@ -93,6 +93,7 @@
 
   "custom/player": {
     "exec": "~/.config/i3/scripts/playerctl-utils.sh --follow",
+    "escape": true,
     "format": "{}",
     "on-click": "~/.config/i3/scripts/playerctl-utils.sh --use-active play-pause",
     "on-click-right": "pkill -USR1 -f 'playerctl-utils.sh --follow'"

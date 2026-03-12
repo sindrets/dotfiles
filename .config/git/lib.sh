@@ -12,6 +12,7 @@ function git_wt() {
         # Branch exists
         if [ ! -d "$tree_path" ]; then
             git worktree add "$tree_path" "$1"
+            git_cp_env_from_default_worktree "$tree_path"
         else
             echo "Worktree already exists!"
         fi
@@ -26,6 +27,7 @@ function git_wt() {
                 git checkout
             fi
         )
+        git_cp_env_from_default_worktree "$tree_path"
     fi
 }
 
@@ -101,8 +103,46 @@ function git_default_branch() {
     fi
 }
 
+function git_find_worktree_from_branch() {
+    set -o pipefail
+
+    ref="${1:-}"
+
+    # Ensure we are inside a git repository
+    git rev-parse --git-dir &>/dev/null || {
+      echo "Error: not inside a git repository" >&2
+      return 2
+    }
+
+    # Normalize to a full refs/heads/* name
+    if [[ "$ref" == refs/heads/* ]]; then
+      branch_ref="$ref"
+    else
+      branch_ref="refs/heads/$ref"
+    fi
+
+    # Verify the branch exists
+    git show-ref --verify --quiet "$branch_ref" || {
+      echo "Error: branch '$branch_ref' does not exist" >&2
+      return 2
+    }
+
+    # Scan worktrees for a matching branch association
+    git worktree list --porcelain | \
+        awk -v target="$branch_ref" '
+            /^worktree / { path = $2 }
+            /^branch / {
+                if ($2 == target) {
+                    print path
+                    found = 1
+                }
+            }
+            END { if (!found) exit 1 }
+        '
+}
+
 function git_ls_worktree_usage() {
-    set -euo pipefail
+    set -uo pipefail
 
     # Ensure inside repo
     if ! git rev-parse --git-dir &>/dev/null; then
@@ -133,5 +173,33 @@ function git_ls_worktree_usage() {
         fi
 
         printf "%-20s %s\n" "$DATE" "$WT_PATH"
+    done
+}
+
+function git_cp_env_from_default_worktree() {
+    set -o pipefail
+
+    if [ ! -d "$1" ]; then
+        echo "Target '$1' is not a directory!" >&2
+        return 1
+    fi
+
+    target_dir="$(realpath "$1")"
+    default_branch_path="$(git_find_worktree_from_branch "$(git_default_branch)" 2>/dev/null)"
+
+    if [ ! "$?" -eq 0 ]; then
+        return 1
+    fi
+
+    echo "Copying .env files from the default worktree..." >&2
+
+    cd "$target_dir" &>/dev/null
+
+    fd -u '^\.env$' "$default_branch_path" | while read -r env_file; do
+        relative_env="$(realpath --relative-to="$default_branch_path" "$env_file")"
+        new_env="$target_dir/$relative_env"
+
+        mkdir -p "$(dirname "$new_env")"
+        cp "$env_file" "$new_env"
     done
 }
