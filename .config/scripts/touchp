@@ -1,0 +1,6 @@
+#!/usr/bin/sh
+
+path_arg="${@:-1}"
+dir="$(dirname "$path_arg")"
+mkdir -p "$dir"
+touch $@

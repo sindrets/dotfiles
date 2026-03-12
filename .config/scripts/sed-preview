@@ -1,0 +1,46 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+function contains() {
+  local needle=$1
+  shift
+  local item
+  for item in "$@"; do
+    [[ "$item" == "$needle" ]] && return 0
+  done
+  return 1
+}
+
+args=("$@")
+options=()
+files=()
+
+for i in "${!args[@]}"; do
+    if [[ "${args[i]}" == "--" ]]; then
+        files=("${args[@]:i+1}")
+        break
+    fi
+
+    options+=("${args[i]}")
+done
+
+if [[ -z "${files[@]}" ]]; then
+    echo "No files to change!" >&2
+    exit 1
+fi
+
+is_in_place="$(contains "-i" "${options[@]}" && echo 1 || echo 0 )"
+
+for file in "${files[@]}"; do
+    echo -e "\n================== $file =================="
+
+    if [[ "$is_in_place" = 1 ]]; then
+        other="$(cat "$file")"
+        sed "${options[@]}" "$file"
+        diff --color=auto -u <(printf "%s\n" "$other") "$file" || true
+    else
+        other="$(sed "${options[@]}" "$file")"
+        diff --color=auto -u "$file" <(printf "%s\n" "$other") || true
+    fi
+done
