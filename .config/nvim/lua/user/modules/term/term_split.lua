@@ -1,4 +1,3 @@
-local oop = require("user.oop")
 local lazy = require("user.lazy")
 
 local utils = Config.common.utils
@@ -32,19 +31,22 @@ end
 ---@field config TermSplit.Config
 ---@field last_width integer
 ---@field last_height integer
-local TermSplit = oop.create_class("TermSplit")
+local TermSplit = {}
 
 TermSplit.winopts = {
   winfixwidth = true,
   winfixheight = true,
 }
 
-function TermSplit:init(position)
+function TermSplit.new(position)
+  local self = setmetatable({}, { __index = TermSplit })
   self.config = {
     position = position or "bottom",
     width = 100,
     height = 16,
   }
+
+  return self
 end
 
 ---@private

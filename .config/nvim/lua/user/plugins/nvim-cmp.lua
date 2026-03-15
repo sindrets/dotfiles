@@ -90,10 +90,10 @@ return function()
           get_bufnrs = function()
             return vim.tbl_filter(
               function(bufnr) return utils.buf_get_size(bufnr) < 1024 end,
-              utils.vec_union(
-                utils.list_bufs({ no_unlisted = true }),
-                utils.list_bufs({ no_hidden = true })
-              )
+              pb.iter(utils.list_bufs({ no_unlisted = true }))
+                :chain(utils.list_bufs({ no_hidden = true }))
+                :unique()
+                :totable()
             )
           end,
         },

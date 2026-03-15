@@ -44,7 +44,7 @@ function M.source_project_config()
           local code_chunk = loadfile(path:tostring())
 
           if code_chunk then
-            local ok, out = utils.trace_pcall(code_chunk)
+            local ok, out = pb.trace_pcall(code_chunk)
 
             if not ok then
               --- @cast out string
@@ -93,8 +93,8 @@ function M.open_file_location(location)
 
   local bufnr = assert(tonumber(bufnr_str)) --[[@as int ]]
   local l = vim.trim(location)
-  local file = utils.str_match(l, { "(.*):%d+:%d+:?$", "(.*):%d+:?$", "(.*):$" })
-  local line = tonumber(utils.str_match(l, { ".*:(%d+):%d+:?$", ".*:(%d+):?$" })) --[[@as int? ]]
+  local file = pb.match_any(l, { "(.*):%d+:%d+:?$", "(.*):%d+:?$", "(.*):$" })
+  local line = tonumber(pb.match_any(l, { ".*:(%d+):%d+:?$", ".*:(%d+):?$" })) --[[@as int? ]]
   local col = (tonumber(l:match(".*:%d+:(%d+):?$")) or 1) --[[@as int ]]
   local file_path = Path.from(file)
 

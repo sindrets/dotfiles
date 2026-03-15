@@ -1,3 +1,5 @@
+--- @namespace user.lib
+
 local Path = Config.common.utils.Path
 local utils = Config.common.utils
 local pb = Config.common.pb
@@ -14,25 +16,26 @@ local cmd = {}
 
 local scratch_counter = 1
 
----@class BufToggleEntry
----@field last_winid integer
----@field height integer|nil
+--- @class BufToggleEntry
+--- @field last_winid integer
+--- @field height integer|nil
 local BufToggleEntry = {}
 BufToggleEntry.__index = BufToggleEntry
 
----BufToggleEntry constructor.
----@param opts table
----@return BufToggleEntry
+--- BufToggleEntry constructor.
+--- @param opts table
+--- @return BufToggleEntry
 function BufToggleEntry.new(opts)
   opts = opts or {}
-  local self = {
-    height = opts.height
-  }
-  setmetatable(self, BufToggleEntry)
+  local self = setmetatable(
+    { height = opts.height },
+    { __index = BufToggleEntry }
+  )
+
   return self
 end
 
---- @class lib.create_view_toggler.Opt
+--- @class create_view_toggler.Opt
 --- A function that should return the buffer id of the wanted buffer if it
 --- exists, otherwise nil.
 --- @field find fun(): integer?
@@ -57,7 +60,7 @@ end
 ---   - The buffer is active in the current window.
 --- - Focus if (only if the `focus` option is enabled):
 ---   - The buffer exists, the window exists, but the window is not active.
----@param opts? lib.create_view_toggler.Opt
+---@param opts create_view_toggler.Opt
 ---@return function
 function M.create_view_toggler(opts)
   opts = opts or {}
@@ -95,7 +98,7 @@ function M.create_view_toggler(opts)
       else
         -- The window didn't immediately open. Create an autocommand waiting
         -- for the window to appear.
-        vim.api.nvim_create_autocmd({ "BufWinEnter", "BufEnter" }, {
+        api.nvim_create_autocmd({ "BufWinEnter", "BufEnter" }, {
           callback = function(e)
             target = find_win()
 
@@ -152,7 +155,7 @@ end
 
 function M.execute_macro_over_visual_range()
   print("@" .. vim.fn.getcmdline())
-  vim.fn.execute(":'<,'>normal @" .. vim.fn.nr2char(vim.fn.getchar()))
+  vim.fn.execute(":'<,'>normal @" .. vim.fn.nr2char(vim.fn.getchar() --[[@as int ]]))
 end
 
 ---@param range CommandRange
@@ -229,8 +232,26 @@ function M.workspace_files(opt)
       args = { "--type", "f", "-uu", "--strip-cwd-prefix" },
     })
   elseif vim.env.GIT_DIR or Path.from("./.git"):is_readable():block_on() then
-    Snacks.picker.git_files({
-      untracked = true,
+    -- Snacks.picker.git_files({
+    --   untracked = true,
+    -- })
+
+    Snacks.picker.files({
+      cmd = "sh",
+      args = {
+        "-c",
+        [==[
+          fd --type f --strip-cwd-prefix -0 \
+            | git check-attr -z --stdin linguist-generated \
+            | awk -v RS='\0' '
+            {
+                f[NR%3]=$0
+                if (NR%3==0) {
+                    if (f[0] != "true") print f[1]
+                }
+            }'
+        ]==],
+      }
     })
   else
     Snacks.picker.files({
@@ -258,9 +279,9 @@ function M.remove_buffer(force, bufnr)
   end
 
   -- Get all windows that currently display the target
-  local wins = vim.tbl_filter(function(v)
+  local wins = pb.filter(api.nvim_list_wins(), function(v)
     return api.nvim_win_get_buf(v) == bufnr
-  end, api.nvim_list_wins()) --[[@as vector ]]
+  end)
 
   if #wins == 0 then
     new_bufnr = api.nvim_get_current_buf()
@@ -296,6 +317,7 @@ function M.remove_buffer(force, bufnr)
     end)
   end
 
+  --- @cast new_bufnr -?
   -- Change the buffer in all windows that currently display the target
   -- buffer.
   for _, winid in ipairs(wins) do
@@ -309,7 +331,7 @@ function M.remove_buffer(force, bufnr)
 end
 
 --- @param force boolean
---- @param bufnr? number
+--- @param bufnr? int
 function M.smart_buf_delete(force, bufnr)
   bufnr = bufnr or api.nvim_get_current_buf()
 
@@ -338,7 +360,7 @@ function M.split_on_pattern(pattern, range, noformat)
   local epattern = pattern:gsub("/", "\\/")
   local last_line = api.nvim_win_get_cursor(0)[1]
 
-  local ok, err = pcall(vim.cmd, string.format(
+  local ok, err = pcall(vim.cmd, fmt(
     [[%ss/%s/\0\r/g]],
     range[1] == 0 and "" or ("%d,%d"):format(range[2], range[3]),
     epattern,
@@ -371,7 +393,7 @@ function M.indent_size()
 end
 
 ---Get the expected indent size of the current line.
----@return integer
+---@return int
 function M.get_cline_indent_size()
   -- [lnum, col]
   local save_cursor = api.nvim_win_get_cursor(0)
@@ -381,12 +403,13 @@ function M.get_cline_indent_size()
   local indentexpr = vim.bo.indentexpr
 
   if indentexpr and indentexpr ~= "" then
-    ok, size = pcall(vim.api.nvim_eval, indentexpr)
+    ok, size = pcall(api.nvim_eval, indentexpr)
 
     -- Restore cursor pos. 'indentexpr' is allowed to move the cursor.
     api.nvim_win_set_cursor(0, save_cursor)
 
     if ok then
+      --- @cast size int
       return size
     end
   end
@@ -481,11 +504,11 @@ function M.new_scratch_buf(filetype)
   return bufid
 end
 
----@class lib.comfy_quit.Opt
----@field keep_last boolean Don't close the window if it's the last window.
+---@class comfy_quit.Opt
+---@field keep_last? boolean Don't close the window if it's the last window.
 
 ---Close the current window and bring focus to the last used window.
----@param opt? lib.comfy_quit.Opt
+---@param opt? comfy_quit.Opt
 function M.comfy_quit(opt)
   opt = opt or {}
   local cur_win = api.nvim_get_current_win()
@@ -524,7 +547,7 @@ function M.comfy_grep(use_loclist, ...)
 
   local command = use_loclist and "lgrep! " or "grep! "
 
-  local ok, err = pcall(vim.api.nvim_exec, command .. table.concat(cargs, " "), true)
+  local ok, err = pcall(api.nvim_exec, command .. table.concat(cargs, " "), true)
   if not ok then
     utils.err(err)
     return
@@ -615,6 +638,7 @@ function M.set_center_cursor(flag)
   end
 
   if flag then
+    --- @diagnostic disable-next-line: preferred-local-alias
     Config.state.last_scrolloff = vim.go.scrolloff
   end
 
@@ -652,14 +676,15 @@ function M.mv_keymap(mode, lhs, new_mode, new_lhs, buffer)
         silent = map.silent == 1,
       }
 
-      vim.keymap.set(new_mode, new_lhs, map.rhs or map.callback, opts)
+      vim.keymap.set(new_mode, new_lhs, assert(map.rhs or map.callback), opts)
       vim.keymap.del(mode, lhs, { buffer = buffer })
     end
   end
 end
 
----@alias CommandRange { [1]: integer, [2]: integer, [3]: integer }
+--- @alias CommandRange [int, int?, int?]
 
+--- @param ... string
 function cmd.read_new(...)
   local args = { ... }
 
@@ -673,10 +698,12 @@ function cmd.read_new(...)
   if prefix == ":" then
     ex_mode = true
     args[1] = args[1]:sub(2)
+    --- @diagnostic disable-next-line: param-type-mismatch
     M.read_ex({ 0 }, unpack(args))
   elseif prefix == "!" then
     shell_mode = true
     args[1] = args[1]:sub(2)
+    --- @diagnostic disable-next-line: param-type-mismatch
     M.read_shell({ 0 }, unpack(args))
   else
     vim.cmd("read " .. table.concat(args, " "))
@@ -700,7 +727,7 @@ function expr.comfy_star(reverse, count)
   local ret = "<Cmd>set hlsearch <Bar> exe 'norm! wN'"
 
   if count > 0 then
-    ret = string.format(
+    ret = fmt(
       "%s <Bar> norm! %d%s",
       ret,
       count,
@@ -720,7 +747,7 @@ function expr.next_reference(reverse)
     reverse = false
   end
   if #vim.lsp.get_active_clients({ bufnr = 0 }) > 0 then
-    return utils.t(string.format(
+    return utils.t(fmt(
       '<Cmd>lua require("illuminate").goto_%s_reference()<CR>',
       reverse and "prev" or "next"
     ))
@@ -739,7 +766,7 @@ function cmd.help_here(subject)
     mods = "keepjumps keepalt"
   end
 
-  local ok, err = pcall(vim.api.nvim_exec, string.format("%s help %s", mods, subject), true)
+  local ok, err = pcall(api.nvim_exec, fmt("%s help %s", mods, subject), true)
   if not ok then
     M.remove_buffer(true)
     utils.err(err)
@@ -750,7 +777,7 @@ end
 function cmd.man_here(a, b)
   local tag = a
   if b then
-    tag = string.format("%s(%s)", b, a)
+    tag = fmt("%s(%s)", b, a)
   end
 
   local mods = ""
@@ -763,7 +790,7 @@ function cmd.man_here(a, b)
     mods = "keepjumps keepalt"
   end
 
-  local ok, err = pcall(vim.api.nvim_exec, string.format("%s tag %s", mods, tag), true)
+  local ok, err = pcall(api.nvim_exec, fmt("%s tag %s", mods, tag), true)
   if not ok then
     M.remove_buffer(true)
     utils.err(err)
@@ -780,7 +807,7 @@ function cmd.exec_selection(range, bin)
   local lines
   ---@cast range integer[]
   if type(range) == "table" and range[1] > 0 then
-    local r = utils.vec_join(range[2], range[3])
+    local r = pb.concat(range[2], range[3])
     table.sort(r)
     lines = api.nvim_buf_get_lines(0, r[1] - 1, r[2], false)
   else
@@ -790,11 +817,10 @@ function cmd.exec_selection(range, bin)
   if bin and bin ~= "" then
     Config.state.term.term_split:open(true)
     Config.term.send(
-      utils.vec_join(
-        bin .. " <<<$(cat << ___EOF___",
+      pb.concat(
+        bin .. " <<'___EOF___'",
         lines,
-        "___EOF___",
-        ")"
+        "___EOF___"
       )
     )
     return
@@ -807,7 +833,7 @@ function cmd.exec_selection(range, bin)
       print(out)
     end
   else
-    ok, out = pcall(utils.exec_lua, table.concat(lines, "\n"))
+    ok, out = pcall(pb.exec_lua, table.concat(lines, "\n"))
   end
 
   if not ok and out then
@@ -892,12 +918,12 @@ function cmd.windows(all)
   if all then
     local alt_tabnr = vim.fn.tabpagenr("#")
     if alt_tabnr > 0 then
-      alt_tabid = utils.tabnr_to_id(alt_tabnr)
+      alt_tabid = assert(utils.tabnr_to_id(alt_tabnr))
       alt_winid = api.nvim_tabpage_get_win(alt_tabid)
     end
   end
 
-  local res = {}
+  local res = {} --[[@as string[] ]]
   local sigil_map = {
     [curwin] = ">",
     [alt_winid or -1] = "#",
@@ -907,7 +933,7 @@ function cmd.windows(all)
     res[#res + 1] = "Tab page " .. i
     local wins = api.nvim_tabpage_list_wins(tabid)
 
-    utils.vec_push(res, unpack(vim.tbl_map(function(v)
+    pb.append(res, pb.map(wins, function(v)
       local bufnr = api.nvim_win_get_buf(v)
       local name = api.nvim_buf_get_name(bufnr)
 
@@ -921,18 +947,20 @@ function cmd.windows(all)
         ),
         utils.str_quote(name)
       )
-    end, wins) --[[@as vector ]]))
+    end))
   end
 
   print(table.concat(res, "\n"))
 end
 
+--- @alias vim.CursorPos [int, int, int, int, int]
+
 function M.nav_display_line(delta)
-  local old_cursor = vim.fn.getcurpos()
+  local old_cursor = vim.fn.getcurpos() --[[@as vim.CursorPos ]]
   vim.cmd("norm! g0")
-  local old_dsp_first = vim.fn.getcurpos()
+  local old_dsp_first = vim.fn.getcurpos() --[[@as vim.CursorPos ]]
   vim.cmd("norm! g$")
-  local old_dsp_last = vim.fn.getcurpos()
+  local old_dsp_last = vim.fn.getcurpos() --[[@as vim.CursorPos ]]
 
   local old_full_line = api.nvim_buf_get_lines(0, old_cursor[2] - 1, old_cursor[2], false)[1]
   local old_dsp_line = old_full_line:sub(old_dsp_first[3], old_dsp_last[3])
@@ -950,8 +978,8 @@ function M.nav_display_line(delta)
   -- local dsp_line = full_line:sub(dsp_first[3], dsp_last[3])
 
   vim.fn.winrestview({
-    col = utils.clamp(
-      dsp_first[3] + vim.api.nvim_strwidth(old_dsp_lead) - 1,
+    col = pb.clamp(
+      dsp_first[3] + api.nvim_strwidth(old_dsp_lead) - 1,
       dsp_first[3],
       dsp_last[3]
     ),

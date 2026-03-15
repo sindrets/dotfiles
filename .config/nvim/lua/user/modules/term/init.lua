@@ -6,7 +6,6 @@ local Terminal = lazy.require("user.modules.term.terminal")
 ---@type TermSplit
 local TermSplit = lazy.require("user.modules.term.term_split")
 
-local Path = Config.common.utils.Path
 local api = vim.api
 
 local M = {}
@@ -21,10 +20,10 @@ Config.state.term = {
 
 local state = Config.state.term
 
----@private
----Prune invalid terminals from state.
+--- @private
+--- Prune invalid terminals from state.
 function M.prune()
-  state.terminals = utils.tbl_fmap(state.terminals, function(v)
+  state.terminals = pb.map(state.terminals, function(v)
     ---@cast v Terminal
     return api.nvim_buf_is_valid(v.bufnr) and v or nil
   end)
@@ -32,7 +31,7 @@ end
 
 ---Set the current terminal in the TermSplit.
 ---@param term Terminal
----@param focus boolean Open and set the TermSplit as the current window.
+---@param focus? boolean Open and set the TermSplit as the current window.
 function M.set_term(term, focus)
   state.cur_term = term
   state.term_split:set_buf(term.bufnr)
@@ -49,7 +48,7 @@ end
 
 ---@private
 function M.remove_term(term)
-  local idx = utils.vec_indexof(state.terminals, term)
+  local idx = pb.indexof(state.terminals, term)
 
   if idx > -1 then
     table.remove(state.terminals, idx)
@@ -82,7 +81,7 @@ function M.new(opt)
     end
   end
 
-  local term = Terminal({
+  local term = Terminal.new({
     cwd = cwd,
     keymaps = {
       t = {
@@ -122,7 +121,7 @@ function M.prev(focus)
     return state.cur_term
   end
 
-  local idx = utils.vec_indexof(state.terminals, state.cur_term)
+  local idx = pb.indexof(state.terminals, state.cur_term)
 
   if idx > -1 then
     local term = state.terminals[(idx - 2) % #state.terminals + 1]
@@ -142,7 +141,7 @@ function M.next(focus)
     return state.cur_term
   end
 
-  local idx = utils.vec_indexof(state.terminals, state.cur_term)
+  local idx = pb.indexof(state.terminals, state.cur_term)
 
   if idx > -1 then
     local term = state.terminals[(idx) % #state.terminals + 1]
@@ -205,36 +204,41 @@ end, { bar = true })
 -- :[range]TermSend [args]
 -- @param [range] - The line range to send.
 -- @param {...string} [args] - The command to send.
-api.nvim_create_user_command("TermSend", function(e)
-  local lines
+api.nvim_create_user_command(
+  "TermSend",
+  function(e)
+    local lines
 
-  if e.range > 0 then
-    lines = api.nvim_buf_get_lines(0, e.line1 - 1, e.line2, false)
-  elseif e.args ~= "" then
-    lines = { e.args }
-  end
-
-  if lines then
-    state.term_split:open()
-    M.send(lines)
-  end
-end, {
-  range = true,
-  nargs = "*",
-  complete = function(arg_lead)
-    local exp = vim.fn.expand(arg_lead) --[[@as string ]]
-
-    if exp == "" or exp == arg_lead then
-      exp = nil
-    else
-      exp = utils.str_quote(exp, { only_if_whitespace = true, prefer_single = true })
+    if e.range > 0 then
+      lines = api.nvim_buf_get_lines(0, e.line1 - 1, e.line2, false)
+    elseif e.args ~= "" then
+      lines = { e.args }
     end
 
-    return utils.vec_join(exp, vim.fn.getcompletion(arg_lead, "shellcmd"))
+    if lines then
+      state.term_split:open()
+      M.send(lines)
+    end
   end,
-})
+  {
+    range = true,
+    nargs = "*",
+    complete = function(arg_lead)
+      --- @type string?
+      local exp = vim.fn.expand(arg_lead)
 
-state.term_split = TermSplit()
+      if exp == "" or exp == arg_lead then
+        exp = nil
+      else
+        exp = utils.str_quote(assert(exp), { only_if_whitespace = true, prefer_single = true })
+      end
+
+      return pb.concat(exp, vim.fn.getcompletion(arg_lead, "shellcmd"))
+    end,
+  }
+)
+
+state.term_split = TermSplit.new()
 
 M.Terminal = Terminal
 M.TermSplit = TermSplit

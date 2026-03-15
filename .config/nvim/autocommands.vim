@@ -32,14 +32,14 @@ augroup NvimConfig
 
     au TermEnter,TermOpen * setl nonu nornu signcolumn=yes:1
                 \ | if exists(":IlluminatePauseBuf") | exe "IlluminatePauseBuf" | endif
-    au TermOpen * let b:term_start = v:lua.vim.loop.hrtime()
+    au TermOpen * let b:term_start = v:lua.vim.uv.hrtime()
 
     " Automatically close interactive term buffers if exit status is 0. Don't
     " close the terminal if its lifetime was less than 2 seconds. Define
     " `b:term_keep` to keep the term regardless.
     au TermClose * ++nested
                 \ if v:event.status == 0 && exists("b:term_start") && !get(b:, "term_keep")
-                \ && (v:lua.vim.loop.hrtime() - b:term_start) / 1000000 > 2000
+                \ && (v:lua.vim.uv.hrtime() - b:term_start) / 1000000 > 2000
                 \ | bd | endif
 
     au TermOpen,BufEnter * lua

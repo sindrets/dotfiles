@@ -66,6 +66,36 @@ function git_clone_bare() {
     git wt "$main_branch"
 }
 
+function git_init_bare() {
+    local repo="$1"
+    local repo_path="$(realpath -m "$1")"
+    echo "REPO PATH: $repo_path"
+
+    mkdir -p "$repo_path"
+
+    (
+        cd "$repo_path" || exit 1
+        unset GIT_DIR
+        git init --bare . >/dev/null
+
+        export GIT_DIR="$PWD"
+
+        # create empty tree
+        tree=$(git mktree </dev/null)
+
+        # create initial commit
+        commit=$(printf "Initial commit\n" | git commit-tree "$tree")
+
+        # create main branch ref
+        git update-ref refs/heads/main "$commit"
+
+        # set HEAD to main
+        git symbolic-ref HEAD refs/heads/main
+
+        git_wt "main"
+    )
+}
+
 function git_changed_files() {
     set -e
 
@@ -110,25 +140,25 @@ function git_find_worktree_from_branch() {
 
     # Ensure we are inside a git repository
     git rev-parse --git-dir &>/dev/null || {
-      echo "Error: not inside a git repository" >&2
-      return 2
+        echo "Error: not inside a git repository" >&2
+        return 2
     }
 
     # Normalize to a full refs/heads/* name
     if [[ "$ref" == refs/heads/* ]]; then
-      branch_ref="$ref"
+        branch_ref="$ref"
     else
-      branch_ref="refs/heads/$ref"
+        branch_ref="refs/heads/$ref"
     fi
 
     # Verify the branch exists
     git show-ref --verify --quiet "$branch_ref" || {
-      echo "Error: branch '$branch_ref' does not exist" >&2
-      return 2
+        echo "Error: branch '$branch_ref' does not exist" >&2
+        return 2
     }
 
     # Scan worktrees for a matching branch association
-    git worktree list --porcelain | \
+    git worktree list --porcelain |
         awk -v target="$branch_ref" '
             /^worktree / { path = $2 }
             /^branch / {

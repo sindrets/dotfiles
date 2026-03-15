@@ -257,7 +257,7 @@ M.components = {
           local max_size = 51
           local margin = 42
           local width = vim.o.laststatus == 3 and vim.o.columns or api.nvim_win_get_width(0)
-          local size = utils.clamp(width - margin, 1, max_size)
+          local size = pb.clamp(width - margin, 1, max_size)
 
           -- Truncate name if it's too long
           if #uname > size then
@@ -369,17 +369,17 @@ M.components = {
         local cursor = api.nvim_win_get_cursor(0)
         local line = tostring(cursor[1])
         if #line % 2 ~= 0 then
-          line = utils.str_left_pad(line, #line + (2 - #line % 2))
+          line = pb.lpad(line, #line + (2 - #line % 2))
         end
 
         local col = tostring(cursor[2])
         if #col % 2 ~= 0 then
-          col = utils.str_right_pad(col, #col + (2 - #col % 2))
+          col = pb.rpad(col, #col + (2 - #col % 2))
         end
 
         local result = line .. ":" .. col
         if #result % 4 ~= 0 then
-          result = utils.str_center_pad(result, #result + (4 - #result % 4))
+          result = pb.cpad(result, #result + (4 - #result % 4))
         end
 
         return result
@@ -623,7 +623,7 @@ function M.update()
       -- MIDDLE :
       {},
       -- RIGHT :
-      utils.vec_join(
+      pb.concat(
         extend_comps(
           {
             comps.diagnostic.err(),

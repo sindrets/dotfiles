@@ -43,13 +43,14 @@ command("Terminal", "exe '<mods> sp' | exe 'term <args>'", { nargs = "*", comple
 command("TermTab", "tab sp | exe 'term' | startinsert", { bar = true })
 
 command("Job", function(c)
+  --- @type string[], string[], int
   local stdout, stderr, code
   local raw_cmd = c.args
   local cmd = raw_cmd:gsub("'", "''")
   local silent = (c.smods.silent and 1 or 0) + (c.smods.emsg_silent and 1 or 0)
 
   ---@diagnostic disable-next-line: unused-local
-  local function cb(job_id, data, event_name)
+  local function cb(_job_id, data, event_name)
     if event_name == "stdout" then stdout = data
     elseif event_name == "stderr" then stderr = data
     elseif event_name == "exit" then
@@ -61,9 +62,9 @@ command("Job", function(c)
           notify_fn = notify.shell.error
           notify_opt = { title = "Job exited with a non-zero status!" }
           msg = table.concat({
-            "cmd: ${cmd}",
-            "code: ${code}",
-            "stderr: ${stderr}",
+            "cmd: {cmd}",
+            "code: {code}",
+            "stderr: {stderr}",
           }, "\n")
         end
       else
@@ -71,14 +72,14 @@ command("Job", function(c)
           notify_fn = notify.shell.info
           notify_opt = { title = "Job exited normally" }
           msg = table.concat({
-            "cmd: ${cmd}",
-            "stdout: ${stdout}",
+            "cmd: {cmd}",
+            "stdout: {stdout}",
           }, "\n")
         end
       end
 
       if notify_fn and msg then
-        notify_fn(utils.str_template(msg, {
+        notify_fn(pb.format(msg, {
           cmd = raw_cmd,
           code = code,
           stderr = vim.trim(table.concat(stderr, "\n")),
@@ -140,7 +141,7 @@ end, {
           return ctx.argidx == 2 and prefix .. v or v
         end, vim.fn.getcompletion(arg_lead, "command"))
       elseif prefix == "!" then
-        return utils.vec_join(
+        return pb.concat(
           expand_shell_arg(arg_lead),
           vim.tbl_map(function(v)
             return ctx.argidx == 2 and prefix .. v or v
@@ -312,7 +313,7 @@ end, { bang = true })
 
 command("SetIndent", function(c)
   local new_size = assert(
-    tonumber(c.fargs[1]),
+    tonumber(c.fargs[1]) --[[@as int ]],
     fmt("IllegalArgument :: Expected number, got %s!", inspect(c.fargs[1]))
   )
 
@@ -329,7 +330,7 @@ command("Reindent", function(c)
   ---@diagnostic disable-next-line: param-type-mismatch
   local cur_size = vim.opt_local.sw:get()
 
-  local range = utils.vec_sort({ c.line1, c.line2 })
+  local range = pb.sorted({ c.line1, c.line2 })
   local save_et = vim.opt_local.et:get()
 
   vim.opt_local.ts = cur_size

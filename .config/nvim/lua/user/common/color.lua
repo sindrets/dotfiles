@@ -1,56 +1,62 @@
-local utils = require("user.common.utils")
 local hl = require("user.common.hl")
 
 local M = {}
 
 assert(bit ~= nil, "Color requires the bitlib!")
 
---#region TYPES
+--- @class RGBA
+--- @field red number Float [0,1]
+--- @field green number Float [0,1]
+--- @field blue number Float [0,1]
+--- @field alpha number Float [0,1]
 
----@class RGBA
----@field red number Float [0,1]
----@field green number Float [0,1]
----@field blue number Float [0,1]
----@field alpha number Float [0,1]
+--- @class HSV
+--- @field hue number Float [0,360)
+--- @field saturation number Float [0,1]
+--- @field value number Float [0,1]
 
----@class HSV
----@field hue number Float [0,360)
----@field saturation number Float [0,1]
----@field value number Float [0,1]
+--- @class HSL
+--- @field hue number Float [0,360)
+--- @field saturation number Float [0,1]
+--- @field lightness number Float [0,1]
 
----@class HSL
----@field hue number Float [0,360)
----@field saturation number Float [0,1]
----@field lightness number Float [0,1]
+--- @class Color
+--- @field private _red number
+--- @field private _green number
+--- @field private _blue number
+--- @field private _alpha number
+--- @field red number
+--- @field green number
+--- @field blue number
+--- @field alpha number
+--- @field hue number
+--- @field saturation number
+--- @field value number
+--- @field lightness number
+local Color = {}
 
---#endregion
+--- @param r number
+--- @param g number
+--- @param b number
+--- @param a? number
+function Color.new(r, g, b, a)
+  local self = setmetatable({}, {
+    __index = Color.__index,
+    __newindex = Color.__newindex,
+  }) --[[@as Color ]]
 
----@class Color
----@field private _red number
----@field private _green number
----@field private _blue number
----@field private _alpha number
----@field red number
----@field green number
----@field blue number
----@field alpha number
----@field hue number
----@field saturation number
----@field value number
----@field lightness number
-local Color = setmetatable({}, {})
-
-function Color:init(r, g, b, a)
   self:set_red(r)
   self:set_green(g)
   self:set_blue(b)
   self:set_alpha(a)
+
+  return self
 end
 
 ---@param c Color
 ---@return Color
 function Color.from_color(c)
-  return Color(c.red, c.green, c.blue, c.alpha)
+  return Color.new(c.red, c.green, c.blue, c.alpha)
 end
 
 ---@param h number Hue. Float [0,360)
@@ -60,9 +66,9 @@ end
 ---@return Color
 function Color.from_hsv(h, s, v, a)
   h = h % 360
-  s = utils.clamp(s, 0, 1)
-  v = utils.clamp(v, 0, 1)
-  a = utils.clamp(a or 1, 0, 1)
+  s = pb.clamp(s, 0, 1)
+  v = pb.clamp(v, 0, 1)
+  a = pb.clamp(a or 1, 0, 1)
 
   local k = (5 + h / 60) % 6
   local f5 = v - v * s * math.max(math.min(k, 4 - k, 1), 0)
@@ -71,7 +77,7 @@ function Color.from_hsv(h, s, v, a)
   k = (1 + h / 60) % 6
   local f1 = v - v * s * math.max(math.min(k, 4 - k, 1), 0)
 
-  return Color(f5, f3, f1, a)
+  return Color.new(f5, f3, f1, a)
 end
 
 ---@param h number Hue. Float [0,360)
@@ -81,9 +87,9 @@ end
 ---@return Color
 function Color.from_hsl(h, s, l, a)
   h = h % 360
-  s = utils.clamp(s, 0, 1)
-  l = utils.clamp(l, 0, 1)
-  a = utils.clamp(a or 1, 0, 1)
+  s = pb.clamp(s, 0, 1)
+  l = pb.clamp(l, 0, 1)
+  a = pb.clamp(a or 1, 0, 1)
   local _a = s * math.min(l, 1 - l)
 
   local k = (0 + h / 30) % 12
@@ -93,7 +99,7 @@ function Color.from_hsl(h, s, l, a)
   k = (4 + h / 30) % 12
   local f4 = l - _a * math.max(math.min(k - 3, 9 - k, 1), -1)
 
-  return Color(f0, f8, f4, a)
+  return Color.new(f0, f8, f4, a)
 end
 
 ---Create a color from a hex number.
@@ -114,7 +120,7 @@ function Color.from_hex(input)
 
   ---@cast n integer
 
-  return Color(
+  return Color.new(
     bit.rshift(n, 24) / 0xff,
     bit.band(bit.rshift(n, 16), 0xff) / 0xff,
     bit.band(bit.rshift(n, 8), 0xff) / 0xff,
@@ -152,7 +158,7 @@ end
 
 ---@return Color
 function Color:clone()
-  return Color(self._red, self._green, self._blue, self._alpha)
+  return Color.new(self._red, self._green, self._blue, self._alpha)
 end
 
 ---Returns a new shaded color.
@@ -162,7 +168,7 @@ function Color:shade(f)
   local t = f < 0 and 0 or 1.0
   local p = f < 0 and f * -1.0 or f
 
-  return Color(
+  return Color.new(
     (t - self._red) * p + self._red,
     (t - self._green) * p + self._green,
     (t - self._blue) * p + self._blue,
@@ -175,7 +181,7 @@ end
 ---@param f number Amount. Float [0,1].
 ---@return Color
 function Color:blend(other, f)
-  return Color(
+  return Color.new(
     (other._red - self._red) * f + self._red,
     (other._green - self._green) * f + self._green,
     (other._blue - self._blue) * f + self._blue,
@@ -298,30 +304,30 @@ function Color:to_css(with_alpha)
   return string.format("#%0" .. l .. "x", n)
 end
 
----@param v number Float [0,1].
+---@param v? number Float [0,1].
 function Color:set_red(v)
-  self._red = utils.clamp(v or 1.0, 0, 1)
+  self._red = pb.clamp(v or 1.0, 0, 1)
 
   return self
 end
 
----@param v number Float [0,1].
+---@param v? number Float [0,1].
 function Color:set_green(v)
-  self._green = utils.clamp(v or 1.0, 0, 1)
+  self._green = pb.clamp(v or 1.0, 0, 1)
 
   return self
 end
 
----@param v number Float [0,1].
+---@param v? number Float [0,1].
 function Color:set_blue(v)
-  self._blue = utils.clamp(v or 1.0, 0, 1)
+  self._blue = pb.clamp(v or 1.0, 0, 1)
 
   return self
 end
 
----@param v number Float [0,1].
+---@param v? number Float [0,1].
 function Color:set_alpha(v)
-  self._alpha = utils.clamp(v or 1.0, 0, 1)
+  self._alpha = pb.clamp(v or 1.0, 0, 1)
 
   return self
 end
@@ -338,7 +344,7 @@ end
 ---@param v number Float [0,1].
 function Color:set_saturation(v)
   local hsv = self:to_hsv()
-  hsv.saturation = utils.clamp(v, 0, 1)
+  hsv.saturation = pb.clamp(v, 0, 1)
   self:set_from_hsv(hsv.hue, hsv.saturation, hsv.value, self._alpha)
 
   return self
@@ -347,7 +353,7 @@ end
 ---@param v number Float [0,1].
 function Color:set_value(v)
   local hsv = self:to_hsv()
-  hsv.value = utils.clamp(v, 0, 1)
+  hsv.value = pb.clamp(v, 0, 1)
   self:set_from_hsv(hsv.hue, hsv.saturation, hsv.value, self._alpha)
 
   return self
@@ -356,7 +362,7 @@ end
 ---@param v number Float [0,1].
 function Color:set_lightness(v)
   local hsl = self:to_hsl()
-  hsl.lightness = utils.clamp(v, 0, 1)
+  hsl.lightness = pb.clamp(v, 0, 1)
   self:set_from_hsl(hsl.hue, hsl.saturation, hsl.lightness, self._alpha)
 
   return self
@@ -463,8 +469,8 @@ end
 
 ---@param v number Float [-1,1].
 function Color:mod_red(v)
-  return Color(
-    utils.clamp(self._red + v, 0, 1),
+  return Color.new(
+    pb.clamp(self._red + v, 0, 1),
     self._green,
     self._blue,
     self._alpha
@@ -473,9 +479,9 @@ end
 
 ---@param v number Float [-1,1].
 function Color:mod_green(v)
-  return Color(
+  return Color.new(
     self._red,
-    utils.clamp(self._green + v, 0, 1),
+    pb.clamp(self._green + v, 0, 1),
     self._blue,
     self._alpha
   )
@@ -483,21 +489,21 @@ end
 
 ---@param v number Float [-1,1].
 function Color:mod_blue(v)
-  return Color(
+  return Color.new(
     self._red,
     self._green,
-    utils.clamp(self._blue + v, 0, 1),
+    pb.clamp(self._blue + v, 0, 1),
     self._alpha
   )
 end
 
 ---@param v number Float [-1,1].
 function Color:mod_alpha(v)
-  return Color(
+  return Color.new(
     self._red,
     self._green,
     self._blue,
-    utils.clamp(self._alpha + v, 0, 1)
+    pb.clamp(self._alpha + v, 0, 1)
   )
 end
 
@@ -512,7 +518,7 @@ end
 ---@param v number Float [-1,1].
 function Color:mod_saturation(v)
   local hsv = self:to_hsv()
-  hsv.saturation = utils.clamp(hsv.saturation + v, 0, 1)
+  hsv.saturation = pb.clamp(hsv.saturation + v, 0, 1)
 
   return Color.from_hsv(hsv.hue, hsv.saturation, hsv.value)
 end
@@ -520,7 +526,7 @@ end
 ---@param v number Float [-1,1].
 function Color:mod_value(v)
   local hsv = self:to_hsv()
-  hsv.value = utils.clamp(hsv.value + v, 0, 1)
+  hsv.value = pb.clamp(hsv.value + v, 0, 1)
 
   return Color.from_hsv(hsv.hue, hsv.saturation, hsv.value)
 end
@@ -528,14 +534,14 @@ end
 ---@param v number Float [-1,1].
 function Color:mod_lightness(v)
   local hsl = self:to_hsl()
-  hsl.lightness = utils.clamp(hsl.lightness + v, 0, 1)
+  hsl.lightness = pb.clamp(hsl.lightness + v, 0, 1)
 
   return Color.from_hsl(hsl.hue, hsl.saturation, hsl.lightness)
 end
 
 ---@param c Color
 function Color:mod_color(c)
-  return Color(
+  return Color.new(
     self._red + c._red,
     self._green + c._green,
     self._blue + c._blue,
@@ -545,11 +551,11 @@ end
 
 ---@param rgba RGBA
 function Color:mod_rgba(rgba)
-  return Color(
-    utils.clamp(self._red + (rgba.red or 0), 0, 1),
-    utils.clamp(self._green + (rgba.green or 0), 0, 1),
-    utils.clamp(self._blue + (rgba.blue or 0), 0, 1),
-    utils.clamp(self._alpha + (rgba.alpha or 0), 0, 1)
+  return Color.new(
+    pb.clamp(self._red + (rgba.red or 0), 0, 1),
+    pb.clamp(self._green + (rgba.green or 0), 0, 1),
+    pb.clamp(self._blue + (rgba.blue or 0), 0, 1),
+    pb.clamp(self._alpha + (rgba.alpha or 0), 0, 1)
   )
 end
 
@@ -559,8 +565,8 @@ function Color:mod_hsv(hsv)
 
   return Color.from_hsv(
     cur.hue + (hsv.hue or 0) % 360,
-    utils.clamp(cur.saturation + (hsv.saturation or 0), 0, 1),
-    utils.clamp(cur.value + (hsv.value or 0), 0, 1),
+    pb.clamp(cur.saturation + (hsv.saturation or 0), 0, 1),
+    pb.clamp(cur.value + (hsv.value or 0), 0, 1),
     self._alpha
   )
 end
@@ -571,8 +577,8 @@ function Color:mod_hsl(hsl)
 
   return Color.from_hsl(
     cur.hue + (hsl.hue or 0) % 360,
-    utils.clamp(cur.saturation + (hsl.saturation or 0), 0, 1),
-    utils.clamp(cur.lightness + (hsl.lightness or 0), 0, 1),
+    pb.clamp(cur.saturation + (hsl.saturation or 0), 0, 1),
+    pb.clamp(cur.lightness + (hsl.lightness or 0), 0, 1),
     self._alpha
   )
 end
@@ -581,7 +587,7 @@ end
 function Color:highlight(v)
   local sign = self.lightness >= 0.5 and -1 or 1
   local hsv = self:to_hsv()
-  hsv.value = utils.clamp(hsv.value + v * sign, 0, 1)
+  hsv.value = pb.clamp(hsv.value + v * sign, 0, 1)
 
   return Color.from_hsv(hsv.hue, hsv.saturation, hsv.value)
 end
@@ -624,15 +630,8 @@ do
       rawset(self, k, v)
     end
   end
-
-  local mt = getmetatable(Color)
-  ---@return Color
-  function mt.__call(_, ...)
-    local this = setmetatable({}, Color)
-    this:init(...)
-    return this
-  end
 end
 
 M.Color = Color
+
 return M

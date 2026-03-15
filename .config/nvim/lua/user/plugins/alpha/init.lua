@@ -59,7 +59,7 @@ return function()
       "EndOfBuffer:DashboardEndOfBuffer",
     }, ",")
     for _, btn in ipairs(elements.buttons) do
-      local m = utils.vec_slice(btn.keymap)
+      local m = pb.slice(btn.keymap)
       m[4] = vim.tbl_extend("force", m[4] or {}, { buffer = bufnr })
       vim.keymap.set(m[1], m[2], m[3], m[4])
     end

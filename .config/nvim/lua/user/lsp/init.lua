@@ -80,7 +80,7 @@ function M.create_local_config(config)
 
           if data then
             notify.config("Using project-local LSP config: " .. utils.str_quote(path))
-            utils.exec_lua(data)
+            pb.exec_lua(data)
             break
           end
         end

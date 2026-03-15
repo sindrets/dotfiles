@@ -1,7 +1,3 @@
-local oop = require("user.oop")
-
-local Path = Config.common.utils.Path
-local utils = Config.common.utils
 local api = vim.api
 
 local uid_counter = 0
@@ -22,7 +18,7 @@ end
 ---@field name string
 ---@field cwd imminent.fs.Path
 ---@field keymaps table
-local Terminal = oop.create_class("Terminal")
+local Terminal = {}
 
 Terminal.bufopts = {
   undolevels = -1,
@@ -36,13 +32,14 @@ Terminal.winopts = {
 }
 
 ---@class Terminal.init.Opt
----@field bufnr integer
----@field cwd string|imminent.fs.Path
----@field keymaps table
+---@field bufnr? integer
+---@field cwd? string|imminent.fs.Path
+---@field keymaps? table
 
 ---@param opt Terminal.init.Opt
-function Terminal:init(opt)
+function Terminal.new(opt)
   opt = opt or {}
+  local self = setmetatable({}, { __index = Terminal })
   local cwd --- @type imminent.fs.Path?
 
   if opt.cwd then
@@ -63,12 +60,14 @@ function Terminal:init(opt)
   self.cwd = cwd or Path.cwd()
   self.keymaps = opt.keymaps or {}
   self.bufnr = opt.bufnr or self:create_buffer()
+
+  return self
 end
 
 ---Check whether or not the terminal job is running.
 ---@return boolean
 function Terminal:is_alive()
-  return self.jobid and utils.pick(1, pcall(vim.fn.jobpid, self.jobid))
+  return self.jobid and pb.pick(1, pcall(vim.fn.jobpid, self.jobid))
 end
 
 ---Spawn the terminal job.
