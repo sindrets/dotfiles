@@ -165,18 +165,18 @@ function M.read_ex(range, ...)
     return vim.fn.expand(v)
   end, { ... })
 
-  local ok, out = pcall(api.nvim_exec, table.concat(args, " "), true)
+  local ok, result = pcall(api.nvim_exec2, table.concat(args, " "), { output = true })
 
   if not ok then
-    if out and out ~= "" then
-      utils.err(out)
+    if result and result ~= "" then
+      utils.err(result)
     end
 
     return
   end
 
   local line = range[1] > 0 and range[2] or "."
-  vim.fn.setreg("x", out)
+  vim.fn.setreg("x", result.output)
   vim.cmd(line .. "put =@x")
 end
 
@@ -547,7 +547,7 @@ function M.comfy_grep(use_loclist, ...)
 
   local command = use_loclist and "lgrep! " or "grep! "
 
-  local ok, err = pcall(api.nvim_exec, command .. table.concat(cargs, " "), true)
+  local ok, err = pcall(api.nvim_exec2, command .. table.concat(cargs, " "), { output = true })
   if not ok then
     utils.err(err)
     return
@@ -766,7 +766,7 @@ function cmd.help_here(subject)
     mods = "keepjumps keepalt"
   end
 
-  local ok, err = pcall(api.nvim_exec, fmt("%s help %s", mods, subject), true)
+  local ok, err = pcall(api.nvim_exec2, fmt("%s help %s", mods, subject), { output = true })
   if not ok then
     M.remove_buffer(true)
     utils.err(err)
@@ -790,7 +790,7 @@ function cmd.man_here(a, b)
     mods = "keepjumps keepalt"
   end
 
-  local ok, err = pcall(api.nvim_exec, fmt("%s tag %s", mods, tag), true)
+  local ok, err = pcall(api.nvim_exec2, fmt("%s tag %s", mods, tag), { output = true })
   if not ok then
     M.remove_buffer(true)
     utils.err(err)
@@ -826,18 +826,18 @@ function cmd.exec_selection(range, bin)
     return
   end
 
-  local ok, out
+  local ok, result_or_err
   if ft == "vim" then
-    ok, out = pcall(api.nvim_exec, table.concat(lines, "\n"), true)
-    if ok and out then
-      print(out)
+    ok, result_or_err = pcall(api.nvim_exec2, table.concat(lines, "\n"), { output = true })
+    if ok and result_or_err.output then
+      print(result_or_err.output)
     end
   else
-    ok, out = pcall(pb.exec_lua, table.concat(lines, "\n"))
+    ok, result_or_err = pcall(pb.exec_lua, table.concat(lines, "\n"))
   end
 
-  if not ok and out then
-    utils.err(out)
+  if not ok and result_or_err then
+    utils.err(result_or_err)
   end
 end
 

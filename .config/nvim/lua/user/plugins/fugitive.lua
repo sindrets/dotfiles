@@ -18,7 +18,10 @@ return function()
     file = file or "autoload/fugitive.vim"
     if M.sid_cache[file] then return M.sid_cache[file] end
 
-    local script_entry = api.nvim_exec("filter #vim-fugitive.*/" .. file .. "# scriptnames", true)
+    local script_entry = api.nvim_exec2(
+      "filter #vim-fugitive.*/" .. file .. "# scriptnames",
+      { output = true }
+    ).output
     M.sid_cache[file] = tonumber(script_entry:match("^(%d+)")) --[[@as integer ]]
 
     return M.sid_cache[file]

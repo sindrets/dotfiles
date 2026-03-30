@@ -6,6 +6,7 @@ return function()
   local au = Config.common.au
   local hl = Config.common.hl
   local lib = Config.lib
+  local pb = Config.common.pb
   local utils = Config.common.utils
 
   local elements = {
@@ -76,7 +77,7 @@ return function()
   end
 
   local function init_elements()
-    local version_lines = vim.split(vim.api.nvim_exec("version", true), "\n", {})
+    local version_str = pb.line(api.nvim_exec2("version", { output = true }).output, 1)
 
     elements.header = {
       type = "text",
@@ -89,7 +90,7 @@ return function()
 
     elements.footer = {
       type = "text",
-      val = { "󰀘 " ..  version_lines[2] },
+      val = { "󰀘 " .. version_str },
       opts = {
         position = "center",
         hl = "DashboardFooter",

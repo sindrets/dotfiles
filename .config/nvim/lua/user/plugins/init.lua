@@ -540,7 +540,18 @@ require("lazy").setup({
     },
   },
   { "lambdalisue/suda.vim" },
-  { "rest-nvim/rest.nvim" },
+  {
+    "rest-nvim/rest.nvim",
+    init = function()
+      vim.g.rest_nvim = {
+        request = {
+          hooks = {
+            encode_url = false,
+          },
+        },
+      }
+    end,
+  },
 
   -- COLOR SCHEMES
   { "rktjmp/lush.nvim", lazy = true },
