@@ -367,15 +367,14 @@ end
 function M.get_unique_file_bufname(filename)
   local basename = vim.fn.fnamemodify(filename, ":t")
 
-  local collisions =
-    pb.Set.from(M.list_bufs({ no_unlisted = true }))
-      :union(pb.Set.from(M.list_bufs({ no_hidden = true })))
-      :iter()
-      :map(function(bufnr) return api.nvim_buf_get_name(bufnr) end) --[[@as Iter<string> ]]
-      :filter(function(name)
-        return name ~= filename and vim.fn.fnamemodify(name, ":t") == basename
-      end)
-      :totable()
+  local collisions = pb.iter(M.list_bufs({ no_unlisted = true }))
+    :chain(M.list_bufs({ no_hidden = true }))
+    :unique()
+    :map(function(bufnr) return api.nvim_buf_get_name(bufnr) end) --[[@as Iter<string> ]]
+    :filter(function(name)
+      return name ~= filename and vim.fn.fnamemodify(name, ":t") == basename
+    end)
+    :totable()
 
   -- Reverse filenames in order to compare their names
   filename = string.reverse(filename)

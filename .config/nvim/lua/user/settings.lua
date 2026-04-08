@@ -73,6 +73,7 @@ opt.diffopt = list {
   "iwhite",
   "vertical",
   "linematch:100",
+  "inline:char",
 }
 opt.pyxversion = 3
 opt.shada = list {
