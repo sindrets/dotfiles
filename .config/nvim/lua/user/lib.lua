@@ -241,7 +241,7 @@ function M.workspace_files(opt)
       args = {
         "-c",
         [==[
-          fd --type f --strip-cwd-prefix -0 \
+          fd --type f --strip-cwd-prefix --hidden -0 \
             | git check-attr -z --stdin linguist-generated \
             | awk -v RS='\0' '
             {
