@@ -35,7 +35,13 @@ prependenv () {
 }
 
 # Append our default paths
+# @param {string} path: The path to append
+# @param {0|1} strict: Only append if the path exists
 appendpath () {
+    if [ "$2" -eq 1 ]; then
+        # Don't proceed if the path doesn't exist
+        [ ! -d "$1" ] && return
+    fi
     case ":$PATH:" in
         *:"$1":*)
             ;;
@@ -44,7 +50,13 @@ appendpath () {
     esac
 }
 
+# @param {string} path: The path to prepend
+# @param {0|1} strict: Only prepend if the path exists
 prependpath () {
+    if [ "$2" -eq 1 ]; then
+        # Don't proceed if the path doesn't exist
+        [ ! -d "$1" ] && return
+    fi
     case ":$PATH:" in
         *:"$1":*)
             ;;
@@ -59,9 +71,10 @@ prependpath "$HOME/.config/scripts"
 appendpath '/usr/local/sbin'
 appendpath '/usr/local/bin'
 appendpath '/usr/bin'
-appendpath "$HOME/.config/emacs/bin"
-appendpath "$(ruby -e 'puts Gem.user_dir')/bin"
-appendpath "$HOME/.cargo/bin"
+appendpath "$HOME/.config/emacs/bin" 1
+appendpath "$(ruby -e 'puts Gem.user_dir')/bin" 1
+appendpath "$HOME/.cargo/bin" 1
+appendpath "$HOME/.lmstudio/bin" 1
 
 export PATH
 

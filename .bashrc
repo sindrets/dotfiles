@@ -136,4 +136,3 @@ chpwd_hook
 if [ ! $UID = 0 ]; then
 	neofetch
 fi
-
