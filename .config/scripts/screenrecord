@@ -7,8 +7,8 @@ target_basename="$(date +'%Y-%m-%d-%H%M%S')_screen"
 mkdir -p "$target_dir"
 
 temp=$(
-  getopt -o 'hsg:ar:e:' \
-    --long 'help,select,geometry,audio,framerate,encoding,no-dmabuf' \
+  getopt -o 'hsg:ar:e' \
+    --long 'help,select,geometry=,audio,framerate=,encoding=' \
     -n "screenrecord" \
     -- "$@"
 )
@@ -23,13 +23,13 @@ unset temp
 function usage() {
   cat <<-EOF
 		USAGE:
-		  screenrecord -s [options]
+		  screenrecord -s [options] | -g <geometry>
 
 		MODES:
 		  -s, --select
 		      Select a region of the screen to record.
-      -g, --geometry
-          Specify the geometry of the region to record.
+		  -g, --geometry '<x>,<y> <width>x<height>'
+		      Record a region of the screen specified by the given geometry.
 		
 		OPTIONS:
 		  -a, --audio
@@ -38,42 +38,9 @@ function usage() {
 		      Set the video framerate.
 		  -e, --encoding
 		      Set the video encoding.
-      --no-dmabuf
-          Disable the GPU copy and force a CPU one.
 		  -h, --help
 		      Display this help message.
 EOF
-}
-
-function format_geometry() {
-  local raw_geom="$1"
-
-  if [ -z "$raw_geom" ]; then
-    echo "Error: Geometry string cannot be empty." >&2
-    exit 1
-  fi
-
-  # Use Perl to parse coords (X,Y) and dims (WxH), rounding WxH dimensions.
-  perl -e '
-      my $full_geom = shift;
-      if ($full_geom =~ /^([^ ]+) ([^ ]+)$/) {
-          my $coords = $1;
-          my ($w, $h) = split(/x/, $2);
-
-          # Function to round a number N to the nearest even integer.
-          sub round_to_even {
-              my ($n) = @_;
-              return 2 * int(($n + 1) / 2);
-          }
-
-          my $new_w = round_to_even($w);
-          my $new_h = round_to_even($h);
-
-          print "$coords ${new_w}x${new_h}";
-      } else {
-           die "Invalid geometry format: $full_geom\n";
-      }
-  ' "$raw_geom"
 }
 
 mode=""
@@ -81,7 +48,24 @@ geometry=""
 framerate=30
 encoding="mp4"
 flag_audio=""
-flag_dmabuf=""
+
+# Round width and height to even numbers
+format_geometry() {
+  perl -e '
+    my $geom = shift;
+    # Parse geometry: "<x>,<y> <width>x<height>"
+    if ($geom =~ /^(.+?)\s+(\d+)x(\d+)$/) {
+      my ($xy, $w, $h) = ($1, $2, $3);
+      # Round width and height down to nearest even number
+      $w = int($w / 2) * 2;
+      $h = int($h / 2) * 2;
+      print "$xy ${w}x${h}\n";
+    } else {
+      print STDERR "Invalid geometry format: $geom\n";
+      exit 1;
+    }
+  ' "$1"
+}
 
 function set_mode() {
   if [ ! -z "$mode" ]; then
@@ -99,19 +83,10 @@ while true; do
     shift
     continue
     ;;
-  '-g')
-    # Geometry argument is expected as a single string in $2: "x,y WxH". Dimensions are rounded to the closest even number.
-    if [ -z "$2" ]; then
-      echo "Error: Geometry requires coordinates and dimensions." >&2
-      exit 1
-    fi
-
-    geometry_str="$2"
-
-    # Use the function to process geometry string
-    geometry="$(format_geometry "$geometry_str")"
-    shift 2
+  '-g'|'--geometry')
     set_mode "geometry"
+    geometry="$2"
+    shift 2
     continue
     ;;
   '-a' | '--audio')
@@ -120,13 +95,8 @@ while true; do
     shift
     continue
     ;;
-  '--no-dmabuf')
-    flag_dmabuf="--no-dmabuf"
-    shift
-    continue
-    ;;
   '-r' | '--framerate')
-    framerate=$2
+    framerate="$2"
     shift 2
     continue
     ;;
@@ -152,19 +122,14 @@ done
 
 case "$mode" in
 'select')
-  # Get geometry from slurp and process it
-  slurped_geom="$(slurp)"
-  formatted_geometry="$(format_geometry "$slurped_geom")"
-
   if [ "$XDG_SESSION_TYPE" = "x11" ]; then
     echo "Unimplemented session type" >&2
     exit 1
   else
-    wf-recorder -g "$formatted_geometry" \
-      "$flag_dmabuf" \
+    wf-recorder -g "$(format_geometry "$(slurp)")" \
       -r "$framerate" \
       -f "$target_dir/$target_basename.$encoding" \
-      "$flag_audio"
+      $flag_audio
   fi
   ;;
 'geometry')
@@ -172,11 +137,10 @@ case "$mode" in
     echo "Unimplemented session type" >&2
     exit 1
   else
-    wf-recorder -g "$geometry" \
-      "$flag_dmabuf" \
+    wf-recorder -g "$(format_geometry "$geometry")" \
       -r "$framerate" \
       -f "$target_dir/$target_basename.$encoding" \
-      "$flag_audio"
+      $flag_audio
   fi
   ;;
 *)
