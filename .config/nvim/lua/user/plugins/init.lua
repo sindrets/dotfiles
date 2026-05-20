@@ -188,6 +188,7 @@ require("lazy").setup({
     },
   },
   { "neovim/nvim-lspconfig" },
+  { "j-hui/fidget.nvim", opts = {} },
   {
     "stevearc/conform.nvim",
     config = conf("conform"),
@@ -235,6 +236,11 @@ require("lazy").setup({
     -- allows extending the providers array elsewhere in your config
     -- without having to redefine it
     opts_extend = { "sources.default", "sources.providers" }
+  },
+  {
+    "nickjvandyke/opencode.nvim",
+    version = "*",
+    init = conf("opencode"),
   },
   {
     "stevearc/oil.nvim",
@@ -411,6 +417,7 @@ require("lazy").setup({
   {
     "OXY2DEV/markview.nvim",
     branch = "main",
+    version = "*",
     ft = "markdown",
     dependencies = {
       "nvim-treesitter/nvim-treesitter",

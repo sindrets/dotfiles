@@ -318,11 +318,33 @@ nnoremap <M-CR> <Cmd>lua Config.fn.update_messages_win()<CR>
 " Open a terminal split
 nnoremap <silent> <C-l> <Cmd>TermToggle<CR>
 tnoremap <silent> <C-l> <Cmd>TermToggle<CR>
-tnoremap <silent> <Esc> <C-\><C-n>
-tnoremap <silent> <M-Space> <Esc>
-" Clear screen + scrollback
-tnoremap <C-M-l> <C-a><C-k>clear<CR><Cmd>setl scrollback=1 so=0 <bar> setl scrollback=10000 so<<CR>
 xnoremap <C-s> :TermSend<CR>
+
+lua <<EOF
+-- Press escape twice rapidly to leave terminal mode.
+vim.keymap.set(
+    { "t" },
+    "<Esc>",
+    function()
+        local bufid = vim.api.nvim_get_current_buf()
+
+        if vim.b[bufid].user_esc_timer then
+            vim.b[bufid].user_esc_timer:close()
+            vim.b[bufid].user_esc_timer = nil
+            vim.cmd("stopinsert")
+            return
+        end
+
+        local time = require("imminent.time")
+        vim.b[bufid].user_esc_timer = time.set_timeout(function()
+            vim.b[bufid].user_esc_timer = nil
+        end, 200)
+
+        return "<Esc>"
+    end,
+    { expr = true }
+)
+EOF
 
 " Quickfix, Location list, Jumps
 nnoremap <M-q> <Cmd>lua Config.fn.toggle_quickfix()<CR>

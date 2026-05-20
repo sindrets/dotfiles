@@ -12,7 +12,7 @@ local M = {}
 --- @field data table
 
 --- @class AucmdSpec
---- @field [1] (Config.common.au.VimEvent|string)|(Config.common.au.VimEvent|string)[]
+--- @field [1] (vim.api.keyset.events)|(vim.api.keyset.events[])
 --- @field group? string|integer
 --- @field pattern? string|string[]
 --- @field buffer? integer

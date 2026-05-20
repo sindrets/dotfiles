@@ -40,6 +40,12 @@ end, { nargs = "+", complete = "file" })
 
 command("Terminal", "exe '<mods> sp' | exe 'term <args>'", { nargs = "*", complete = "shellcmd" })
 
+command("TermClear", function(c)
+  if vim.bo[0].buftype == "terminal" then
+    vim.cmd("setl scrollback=1 so=0 | setl scrollback=10000 so")
+  end
+end, { bar = true })
+
 command("TermTab", "tab sp | exe 'term' | startinsert", { bar = true })
 
 command("Job", function(c)
