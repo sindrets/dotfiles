@@ -2,64 +2,134 @@
 
 show_help() {
     cat <<EOF
-Usage: $0 [options] <package_name> <target_version>
+Usage: $0 [options] <package_name>@<target_version>...
 
-Bulk update a package version across all package.json files.
+Bulk update package versions across all package.json files.
 
 Arguments:
-  package_name        Name of the npm package to update (e.g., lodash)
-  target_version      Target version to set (e.g., 4.17.21)
+  package_name@target_version    One or more packages with target versions
+                                 (e.g., lodash@4.17.21 react@18.2.0)
 
 Options:
   -h, --help          Show this help message
+  -n, --dry-run       Show what would change without modifying files
 
 Example:
-  $0 lodash 4.17.21
+  $0 lodash@4.17.21 react@18.2.0
 
-This script updates the package in dependencies, devDependencies, and overrides
+This script updates packages in dependencies, devDependencies, and overrides
 sections (exact version) and peerDependencies (with ^ prefix) of all
 package.json files.
 EOF
 }
 
-# --- ARGUMENT CHECK ---
-for arg in "$@"; do
-    case "$arg" in
-        -h|--help)
-            show_help
-            exit 0
-            ;;
+DRY_RUN=false
+PACKAGES=()
+
+# --- ARGUMENT PARSING ---
+eval set -- "$(getopt -o hn --long help,dry-run -- "$@")"
+
+while true; do
+    case "$1" in
+    -h | --help)
+        show_help
+        exit 0
+        ;;
+    -n | --dry-run)
+        DRY_RUN=true
+        ;;
+    --)
+        shift
+        break
+        ;;
+    *)
+        break
+        ;;
     esac
+    shift
 done
 
-if [ "$#" -ne 2 ]; then
+if [ "$#" -lt 1 ]; then
     echo "❌ Error: Missing arguments."
     echo ""
     show_help
     exit 1
 fi
 
-TARGET_PKG=$1
-TARGET_VER=$2
-# ----------------------
+for arg in "$@"; do
+    if [[ "$arg" != *"@"* ]]; then
+        echo "❌ Error: Invalid format '${arg}'. Use package@version (e.g., lodash@4.17.21)"
+        exit 1
+    fi
+    PACKAGES+=("$arg")
+done
 
-echo "🚀 Starting bulk update for '$TARGET_PKG' to '$TARGET_VER'..."
+# Build jq filter for all packages
+JQ_FILTER='.'
+for pkg_ver in "${PACKAGES[@]}"; do
+    pkg="${pkg_ver%@*}"
+    ver="${pkg_ver##*@}"
+    if [ "$ver" = "$pkg_ver" ] || [ -z "$ver" ]; then
+        echo "❌ Error: Invalid format '${pkg_ver}'. Use package@version (e.g., lodash@4.17.21)"
+        exit 1
+    fi
+    JQ_FILTER+=" | (if (.dependencies | has(\"${pkg}\")) then .dependencies[\"${pkg}\"] = \"${ver}\" else . end)"
+    JQ_FILTER+=" | (if (.devDependencies | has(\"${pkg}\")) then .devDependencies[\"${pkg}\"] = \"${ver}\" else . end)"
+    JQ_FILTER+=" | (if (.peerDependencies | has(\"${pkg}\")) then .peerDependencies[\"${pkg}\"] = (\"^\" + \"${ver}\") else . end)"
+    JQ_FILTER+=" | (if (.overrides | has(\"${pkg}\")) then .overrides[\"${pkg}\"] = \"${ver}\" else . end)"
+done
+
+echo "🚀 Starting bulk update for ${#PACKAGES[@]} package(s)..."
+
+if [ "$DRY_RUN" = true ]; then
+    echo ""
+    echo "=== DRY RUN MODE - no files will be modified ==="
+    echo ""
+fi
 
 find . -name "package.json" -not -path "*/node_modules/*" | while read -r pkg_json; do
-    echo "📝 Processing $pkg_json..."
+    MATCH_FILTER=""
+    for pkg_ver in "${PACKAGES[@]}"; do
+        pkg="${pkg_ver%@*}"
+        ver="${pkg_ver##*@}"
+        if [ "$ver" = "$pkg_ver" ] || [ -z "$ver" ]; then
+            continue
+        fi
+        part="(.dependencies | has(\"${pkg}\")) or
+            (.devDependencies | has(\"${pkg}\")) or
+            (.peerDependencies | has(\"${pkg}\")) or
+            (.overrides | has(\"${pkg}\"))"
+        if [ -z "$MATCH_FILTER" ]; then
+            MATCH_FILTER="$part"
+        else
+            MATCH_FILTER="$MATCH_FILTER or $part"
+        fi
+    done
 
-    jq --arg pkg "$TARGET_PKG" --arg ver "$TARGET_VER" \
-        '(if (.dependencies | has($pkg)) then .dependencies[$pkg] = $ver else . end) |
-         (if (.devDependencies | has($pkg)) then .devDependencies[$pkg] = $ver else . end) |
-         (if (.peerDependencies | has($pkg)) then .peerDependencies[$pkg] = ("^" + $ver) else . end) |
-         (if (.overrides | has($pkg)) then .overrides[$pkg] = $ver else . end)' \
-        "$pkg_json" | sponge "$pkg_json"
+    has_match=$(jq -e "$MATCH_FILTER" "$pkg_json" 2>/dev/null)
+
+    if [ "$has_match" = "true" ]; then
+        if [ "$DRY_RUN" = true ]; then
+            echo "--- $pkg_json ---"
+            new_content=$(jq "$JQ_FILTER" "$pkg_json")
+            diff --color=auto -u "$pkg_json" <(printf '%s\n' "$new_content") || true
+            echo ""
+        else
+            echo "📝 Processing $pkg_json..."
+
+            jq "$JQ_FILTER" "$pkg_json" | sponge "$pkg_json"
+        fi
+    fi
 
 done
 
-echo "✅ All package.json files updated."
-echo "📦 Running a single npm install at the root to sync lockfiles..."
+if [ "$DRY_RUN" = true ]; then
+    echo "=== DRY RUN complete - no changes were made ==="
+else
+    echo "✅ All package.json files updated."
+    echo "📦 Running a single npm install at the root to sync lockfiles..."
 
-npm install
+    npm install
 
-echo "✨ Done!"
+    echo "✨ Done!"
+fi
