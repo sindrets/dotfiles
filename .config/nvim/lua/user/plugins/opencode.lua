@@ -8,6 +8,7 @@ return function()
       position = "right",
       enter = false,
       title = {},
+      max_width = 100,
       wo = {
         signcolumn = "no",
         winbar = "",

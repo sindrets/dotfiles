@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+
+declare -A DEFAULT_FLAGS=(
+  [--model]="$HOME/.lmstudio/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ2_M.gguf"
+  [--port]="1234"
+  [--ctx-size]="131072"
+  [--gpu-layers]="40"
+  [--threads]="9"
+  [--parallel]="1"
+  [--batch-size]="2048"
+  [--ubatch-size]="512"
+  [--flash-attn]="on"
+  [--spec-type]="draft-mtp"
+  [--spec-draft-n-max]="2"
+  [--temp]="0.6"
+  [--presence-penalty]="0.0"
+  [--repeat-penalty]="1.0"
+)
+
+# Merge defaults with user overrides via while loop
+declare -A FINAL_FLAGS=("${DEFAULT_FLAGS[@]}")
+POSITIONAL=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --*)
+      FINAL_FLAGS[$1]="$2"
+      shift 2
+      ;;
+    *)
+      POSITIONAL+=("$1")
+      shift
+      ;;
+  esac
+done
+
+# If positional args were passed, use the first as model
+if [[ ${#POSITIONAL[@]} -gt 0 ]]; then
+  FINAL_FLAGS[--model]="${POSITIONAL[0]}"
+fi
+
+# Build the command line
+ARGS=()
+for key in "${!FINAL_FLAGS[@]}"; do
+  ARGS+=("$key" "${FINAL_FLAGS[$key]}")
+done
+
+llama-server "${ARGS[@]}"

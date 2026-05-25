@@ -18,24 +18,23 @@ ATTACH=false
 
 while [ $# -gt 0 ]; do
     case "$1" in
-        -h|--help)
-            usage
-            exit 0
-            ;;
-        -a|--attach)
-            ATTACH=true
-            shift
-            ;;
-        -*)
-            echo "Unknown option: $1" >&2
-            usage >&2
-            exit 1
-            ;;
-        *)
-            break
-            ;;
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    -a | --attach)
+        ATTACH=true
+        shift
+        ;;
+    -*)
+        echo "Unknown option: $1" >&2
+        usage >&2
+        exit 1
+        ;;
+    *)
+        break
+        ;;
     esac
-    shift
 done
 
 if [ $# -lt 1 ]; then
@@ -52,7 +51,7 @@ if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
     echo "Error: session '$SESSION_NAME' already exists" >&2
     exit 1
 else
-    tmux new-session -d -s "$SESSION_NAME" "$CMD" "$@"
+    tmux new-session -d -s "$SESSION_NAME" "$CMD $(printf '%q' "$@")"
     if $ATTACH; then
         tmux attach-session -t "$SESSION_NAME"
     fi
