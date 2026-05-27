@@ -42,8 +42,13 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
+CMD_ARGS=
 CMD="$1"
 shift
+
+if [[ $# -gt 0 ]]; then
+    CMD_ARGS="$(printf '%q' "$@")"
+fi
 
 SESSION_NAME="tmux-run-${CMD}"
 
@@ -51,7 +56,7 @@ if tmux has-session -t "$SESSION_NAME" 2>/dev/null; then
     echo "Error: session '$SESSION_NAME' already exists" >&2
     exit 1
 else
-    tmux new-session -d -s "$SESSION_NAME" "$CMD $(printf '%q' "$@")"
+    tmux new-session -d -s "$SESSION_NAME" "$CMD $CMD_ARGS"
     if $ATTACH; then
         tmux attach-session -t "$SESSION_NAME"
     fi

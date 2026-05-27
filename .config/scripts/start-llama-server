@@ -17,12 +17,23 @@ declare -A DEFAULT_FLAGS=(
   [--repeat-penalty]="1.0"
 )
 
-# Merge defaults with user overrides via while loop
-declare -A FINAL_FLAGS=("${DEFAULT_FLAGS[@]}")
+declare -A FINAL_FLAGS
+
+for key in "${!DEFAULT_FLAGS[@]}"; do
+  FINAL_FLAGS["$key"]="${DEFAULT_FLAGS[$key]}"
+done
+
 POSITIONAL=()
 
+# Merge defaults with user overrides via while loop
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --*=*)
+      key="${1%%=*}"
+      val="${1#*=}"
+      FINAL_FLAGS[$key]="$val"
+      shift
+      ;;
     --*)
       FINAL_FLAGS[$1]="$2"
       shift 2
@@ -36,7 +47,7 @@ done
 
 # If positional args were passed, use the first as model
 if [[ ${#POSITIONAL[@]} -gt 0 ]]; then
-  FINAL_FLAGS[--model]="${POSITIONAL[0]}"
+  FINAL_FLAGS["--model"]="${POSITIONAL[0]}"
 fi
 
 # Build the command line

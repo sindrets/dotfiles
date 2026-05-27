@@ -9,6 +9,18 @@
       "options": {
         "baseURL": "http://127.0.0.1:1234/v1"
       }
+    },
+    "litellm": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "LiteLLM Schibsted",
+      "options": {
+        "baseURL": "https://litellm.pct-ai-foundations-pro-1.eks.schibsted.io/"
+      },
+      "models": {
+        "bedrock-claude4.5-sonnet": {
+          "name": "Claude Sonnet 4.5"
+        }
+      }
     }
   }
 }

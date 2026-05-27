@@ -11,7 +11,7 @@ case "$1" in
         if [ "$XDG_SESSION_TYPE" = "x11" ]; then
             maim -s "$target"
         else
-            grim -g "$(slurp)" "$target"
+            grim -g "$(sloshr)" "$target"
         fi
         ;;
     -a)
