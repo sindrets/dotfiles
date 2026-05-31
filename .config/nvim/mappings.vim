@@ -384,6 +384,7 @@ nmap <silent> <C-w>gd <C-W>s<Cmd>lua vim.lsp.buf.definition()<CR>
 nmap <silent> gy <Cmd>lua vim.lsp.buf.type_definition()<CR>
 nmap <silent> gi <Cmd>lua vim.lsp.buf.implementation()<CR>
 nmap <silent> gr <Cmd>lua Snacks.picker.lsp_references()<CR>
+nmap <silent> grr <Cmd>lua Snacks.picker.lsp_references()<CR>
 nmap <silent> <leader>rn <Cmd>lua vim.lsp.buf.rename()<CR>
 nmap <silent> <F2> <Cmd>lua vim.lsp.buf.rename()<CR>
 " noremap <silent> <leader>ff <Cmd>lua require("conform").format({ async = true, lsp_format = "fallback" })<CR>

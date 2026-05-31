@@ -374,3 +374,7 @@ end, { nargs = "?", bang = true })
 command("ThemeToggle", function()
   Config.colorscheme.toggle_theme()
 end, { bar = true })
+
+command("ResetDiagnostics", function()
+  require("user.lsp").clear_all_diagnostics()
+end, { bar = true })

@@ -50,10 +50,24 @@ if [[ ${#POSITIONAL[@]} -gt 0 ]]; then
   FINAL_FLAGS["--model"]="${POSITIONAL[0]}"
 fi
 
+# Auto-detect mmproj file alongside the model
+if [[ -z "${FINAL_FLAGS["--mmproj"]}" ]]; then
+  model_dir="$(dirname "${FINAL_FLAGS["--model"]}")"
+  mmproj_file="$(find "$model_dir" -maxdepth 1 -iname '*mmproj*' -type f | head -n 1)"
+  if [[ -n "$mmproj_file" ]]; then
+    FINAL_FLAGS["--mmproj"]="$mmproj_file"
+  fi
+fi
+
 # Build the command line
 ARGS=()
 for key in "${!FINAL_FLAGS[@]}"; do
-  ARGS+=("$key" "${FINAL_FLAGS[$key]}")
+  value="${FINAL_FLAGS[$key]}"
+  if [[ "$value" == "true" ]]; then
+    ARGS+=("$key")
+  elif [[ ! "$value" == "false" ]]; then
+    ARGS+=("$key" "$value")
+  fi
 done
 
 llama-server "${ARGS[@]}"

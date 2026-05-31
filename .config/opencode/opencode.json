@@ -2,12 +2,31 @@
   "$schema": "https://opencode.ai/config.json",
   "autoupdate": false,
   "share": "manual",
+  "permission": {
+    "websearch": "allow",
+    "question": "allow"
+  },
   "provider": {
     "lmstudio": {
       "npm": "@ai-sdk/openai-compatible",
       "name": "LM Studio (local)",
       "options": {
         "baseURL": "http://127.0.0.1:1234/v1"
+      },
+      "models": {
+        "Qwen3.6-35B-A3B-APEX-MTP-Compact.gguf": {
+          "name": "Qwen3.6 35B A3B MTP",
+          "attachment": true,
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          }
+        }
       }
     },
     "litellm": {

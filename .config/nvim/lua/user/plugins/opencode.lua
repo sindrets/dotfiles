@@ -2,6 +2,8 @@ return function()
   local lz = require("user.lazy")
   local snacks_term = lz.require("snacks.terminal") ---@module "snacks.terminal"
 
+  vim.env.OPENCODE_ENABLE_EXA = 1
+
   local opencode_cmd = "opencode --port"
   local terminal_opts = {
     win = {
@@ -21,6 +23,7 @@ return function()
       end,
     },
   }
+
   vim.g.opencode_opts = {
     server = {
       start = function() snacks_term.open(opencode_cmd, terminal_opts) end,

@@ -280,6 +280,15 @@ function M.show_position_diagnostics()
   vim.diagnostic.open_float({ scope = "cursor", border = "single" })
 end
 
+function M.clear_all_diagnostics()
+  for _, bufnr in ipairs(vim.api.nvim_list_bufs()) do
+    if vim.api.nvim_buf_is_valid(bufnr) then
+      -- nil ns_id means "clear all namespaces" for this buffer
+      vim.diagnostic.reset(nil, bufnr)
+    end
+  end
+end
+
 M.define_diagnostic_signs({
   error = "",
   warn = "",

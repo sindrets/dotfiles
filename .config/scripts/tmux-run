@@ -47,7 +47,9 @@ CMD="$1"
 shift
 
 if [[ $# -gt 0 ]]; then
-    CMD_ARGS="$(printf '%q' "$@")"
+    for v in "$@"; do
+        CMD_ARGS+=" $(printf '%q' "$v")"
+    done
 fi
 
 SESSION_NAME="tmux-run-${CMD}"
