@@ -57,12 +57,7 @@ return function()
 
   nvim_treesitter.install(
     pb.iter(nvim_treesitter.get_available(2) --[[@as string[] ]])
-      :filter(function(lang)
-        return not vim.tbl_contains({
-          "luap",
-          "comment",
-        }, lang)
-      end)
+      :filter(pb.bind(pb.contains, { "luap", "comment" }))
       :chain(pb.keys(custom_parsers))
       :totable()
   )

@@ -25,6 +25,23 @@
             "output": [
               "text"
             ]
+          },
+          "variants": {
+            "high": {
+              "reasoningEffort": "high",
+              "textVerbosity": "low",
+              "reasoningSummary": "auto"
+            },
+            "medium": {
+              "reasoningEffort": "medium",
+              "textVerbosity": "low",
+              "reasoningSummary": "auto"
+            },
+            "low": {
+              "reasoningEffort": "low",
+              "textVerbosity": "low",
+              "reasoningSummary": "auto"
+            },
           }
         }
       }
@@ -37,7 +54,17 @@
       },
       "models": {
         "bedrock-claude4.5-sonnet": {
-          "name": "Claude Sonnet 4.5"
+          "name": "Claude Sonnet 4.5",
+          "attachment": true,
+          "modalities": {
+            "input": [
+              "text",
+              "image"
+            ],
+            "output": [
+              "text"
+            ]
+          }
         }
       }
     }

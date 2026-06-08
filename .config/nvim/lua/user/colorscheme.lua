@@ -16,7 +16,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 
 local M = {}
 
-M.DEFAULT_DARK = "oldworld"
+M.DEFAULT_DARK = "kanagawa-dragon"
 M.DEFAULT_LIGHT = "seoulbones"
 
 do
@@ -78,6 +78,7 @@ function M.normalize_diagnostic_hl()
   local supports_underline = M.supports_sp_underline()
 
   for _, name in ipairs(diagnostic_kinds) do
+    hi_link("DiagnosticFloating" .. name, "Diagnostic" .. name, { clear = true })
     local color = hl.get_fg("Diagnostic" .. name)
     hi("DiagnosticSign" .. name, { fg = color, explicit = true })
 
@@ -435,6 +436,55 @@ function M.setup_colorscheme(colors_name)
           border2 = "#2f2f2f",
         },
       }
+    })
+  elseif colors_name == "kanagawa-dragon" then
+    local colors = require("kanagawa.colors").setup({
+      colors = {
+        palette = {
+          dragonBlack0 = "#0d0d0d",
+          dragonBlack1 = "#12120f",
+          dragonBlack2 = "#191919",
+          dragonBlack3 = "#161616",
+          dragonBlack4 = "#272727",
+          dragonBlack5 = "#383838",
+          dragonBlack6 = "#5e5e5e",
+          samuraiRed = "#f68e91",
+          roninYellow = "#ffc182",
+        },
+        theme = {},
+      },
+      theme = "dragon",
+    })
+    local palette = colors.palette
+
+    require("kanagawa").setup({
+      theme = "dragon",
+      colors = {
+        palette = palette,
+        theme = {
+          dragon = {
+            ui = {
+              bg_dim     = palette.dragonBlack1,
+              bg_gutter  = palette.dragonBlack1,
+              bg_m3      = palette.dragonBlack2,
+              bg_m2      = palette.dragonBlack0,
+              bg_m1      = palette.dragonBlack0,
+              bg         = palette.dragonBlack0,
+              bg_p1      = palette.dragonBlack1,
+              bg_p2      = palette.dragonBlack2,
+
+              pmenu = {
+                  fg       = palette.dragonWhite,
+                  fg_sel   = "none",
+                  bg       = palette.dragonBlack2,
+                  bg_sel   = palette.dragonBlack4,
+                  bg_thumb = palette.dragonBlack4,
+                  bg_sbar  = palette.dragonBlack2,
+              },
+            },
+          },
+        },
+      },
     })
   end
 end
@@ -802,7 +852,12 @@ function M.apply_tweaks()
     })
     hi("@diff.delta", { fg = "#7E9CD8", explicit = true })
 
-    hi("Whitespace", { fg = bg_normal:highlight(0.18):to_css() })
+    hi("DiagnosticError", { fg = hl.get_fg("@diff.minus"), explicit = true })
+
+    hi(
+      { "Whitespace", "NonText", "IblWhitespace" },
+      { fg = bg_normal:highlight(0.15):to_css(), explicit = true }
+    )
     hi("BufferLineIndicatorSelected", { fg = "#7E9CD8" })
     hi_link("CurSearch", "IncSearch", { clear = true })
     hi_link("@lsp.type.comment", "Comment", { clear = true })
@@ -1176,7 +1231,6 @@ function M.apply_tweaks()
     })
 
     hi("DiagnosticError", { fg = hl.get_fg("@diff.minus"), explicit = true })
-    hi_link("DiagnosticFloatingError", "DiagnosticError", { clear = true })
 
     vim.g.terminal_color_1 = hl.get_fg("@diff.minus")
     vim.g.terminal_color_3 = hl.get_fg("Special")

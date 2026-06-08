@@ -155,7 +155,7 @@ require("lazy").setup({
     "nvim-treesitter/nvim-treesitter-context",
     config = function()
       require("treesitter-context").setup({
-        max_lines = 2,
+        max_lines = 3,
         zindex = 1,
         trim_scope = "inner",
         multiline_threshold = 300,

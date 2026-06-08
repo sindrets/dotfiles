@@ -126,7 +126,7 @@ case "$mode" in
     echo "Unimplemented session type" >&2
     exit 1
   else
-    wf-recorder -g "$(format_geometry "$(slurp)")" \
+    wf-recorder -g "$(format_geometry "$(sloshr)")" \
       -r "$framerate" \
       -f "$target_dir/$target_basename.$encoding" \
       $flag_audio

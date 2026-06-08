@@ -14,8 +14,12 @@ declare -A DEFAULT_FLAGS=(
   [--spec-draft-n-max]="2"
   [--temp]="0.6"
   [--presence-penalty]="0.0"
-  [--repeat-penalty]="1.0"
+  [--repeat-penalty]="1.05"
 )
+
+# more flags:
+#
+# --chat-template-kwargs '{"reasoning_effort": "medium"}'
 
 declare -A FINAL_FLAGS
 
