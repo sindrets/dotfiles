@@ -38,7 +38,12 @@ return function()
   }
 
   -- Recommended/example keymaps
-  -- vim.keymap.set({ "n", "x" }, "<C-a>", function() require("opencode").ask("@this: ", { submit = true }) end, { desc = "Ask opencode…" })
+  vim.keymap.set(
+    { "n", "x" },
+    "<leader>aa",
+    function() require("opencode").ask("@this: ", { submit = true }) end,
+    { desc = "Ask opencode…" }
+  )
   -- vim.keymap.set({ "n", "x" }, "<C-x>", function() require("opencode").select() end,                          { desc = "Select opencode…" })
   vim.keymap.set(
     { "n" },
