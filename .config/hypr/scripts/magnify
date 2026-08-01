@@ -5,6 +5,9 @@
     magnify <+|-><zoom_mod_factor> [min] [max]
 ]]
 
+local MIN_ZOOM = 1
+local MAX_ZOOM = math.huge
+
 local function eprint(...)
   local args = { n = select("#", ...), ... }
   for i = 1, args.n do args[i] = tostring(args[i]) end
@@ -47,4 +50,10 @@ eprint("mod_factor", mod_factor)
 eprint("current_zoom", current_zoom)
 eprint("new_value", new_value)
 
-exec("hyprctl keyword cursor:zoom_factor " .. clamp(new_value, 1, math.huge))
+-- exec("hyprctl keyword cursor:zoom_factor " .. clamp(new_value, 1, math.huge))
+exec(
+  "hyprctl eval " .. string.format(
+    "'hl.config({ cursor = { zoom_factor = %d }})'",
+    clamp(new_value, MIN_ZOOM, MAX_ZOOM)
+  )
+)

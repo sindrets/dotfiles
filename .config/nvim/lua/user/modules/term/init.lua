@@ -1,37 +1,41 @@
-local lazy = require("user.lazy")
+--- @namespace user.modules.term
+--- @using imminent
+--- @using pebbles
+
+local lz = require("user.lazy")
+
+local Result = lz.require("imminent.ds.Result") ---@module "imminent.ds.Result"
+local Terminal = lz.require("user.modules.term.Terminal") ---@type Terminal
+local TermSplit = lz.require("user.modules.term.TermSplit") ---@type TermSplit
+
 local utils = Config.common.utils
-
----@type Terminal
-local Terminal = lazy.require("user.modules.term.terminal")
----@type TermSplit
-local TermSplit = lazy.require("user.modules.term.term_split")
-
 local api = vim.api
 
 local M = {}
 
----@class TermState
----@field terminals Terminal[]
----@field cur_term Terminal
----@field term_split TermSplit
+--- @class TermState
+--- @field terminals Terminal[]
+--- @field cur_term Terminal
+--- @field term_split TermSplit
 Config.state.term = {
   terminals = {},
 }
 
 local state = Config.state.term
 
---- @private
 --- Prune invalid terminals from state.
+---
+--- @private
 function M.prune()
   state.terminals = pb.map(state.terminals, function(v)
-    ---@cast v Terminal
     return api.nvim_buf_is_valid(v.bufnr) and v or nil
   end)
 end
 
----Set the current terminal in the TermSplit.
----@param term Terminal
----@param focus? boolean Open and set the TermSplit as the current window.
+--- Set the current terminal in the TermSplit.
+---
+--- @param term Terminal
+--- @param focus? boolean Open and set the TermSplit as the current window.
 function M.set_term(term, focus)
   state.cur_term = term
   state.term_split:set_buf(term.bufnr)
@@ -41,12 +45,12 @@ function M.set_term(term, focus)
   end
 end
 
----@private
+--- @private
 function M.add_term(term)
   table.insert(state.terminals, term)
 end
 
----@private
+--- @private
 function M.remove_term(term)
   local idx = pb.indexof(state.terminals, term)
 
@@ -55,29 +59,29 @@ function M.remove_term(term)
   end
 end
 
----@class term.new.Opt
----@field cmd? string|string[] One or multiple commands to run immediately in the new terminal.
----@field cwd? string|imminent.fs.Path The initial working directory.
----@field focus? boolean Bring focus to the new terminal. (default: true)
+--- @class term.new.Opt
+--- @field cmd? string|string[] One or multiple commands to run immediately in the new terminal.
+--- @field cwd? string|fs.Path The initial working directory.
+--- @field focus? boolean Bring focus to the new terminal. (default: true)
 
----Create a new terminal and set it as the current terminal in the TermSplit.
----@param opt? term.new.Opt
----@return Terminal?
-function M.new(opt)
+--- Create a new terminal and set it as the current terminal in the TermSplit.
+---
+--- @param opt? term.new.Opt
+--- @return ds.Result<Terminal, string>
+function M.create(opt)
   opt = vim.tbl_extend("keep", opt or {}, { focus = true }) --[[@as term.new.Opt ]]
-  local cwd --- @type imminent.fs.Path?
+  local cwd --- @type fs.Path?
 
   if opt.cwd then
     cwd = (
       type(opt.cwd) == "string" and
-      Path.from(opt.cwd --[[@as string ]]) or
-      opt.cwd --[[@as imminent.fs.Path ]]
+      Path.from(opt.cwd) or
+      opt.cwd --[[@as fs.Path ]]
     )
       :absolute()
 
     if not (cwd:is_readable():block_on() and cwd:is_dir():block_on()) then
-      utils.err("The terminal cwd must be a valid readable directory!")
-      return
+      return Result.Err("The terminal cwd must be a valid readable directory!")
     end
   end
 
@@ -87,32 +91,31 @@ function M.new(opt)
       t = {
         ["<M-p>"] = M.prev,
         ["<M-n>"] = M.next,
-        ["<C-M-n>"] = M.new,
+        ["<C-M-n>"] = M.create,
       },
       n = {
         ["<M-p>"] = M.prev,
         ["<M-n>"] = M.next,
-        ["<C-M-n>"] = M.new,
+        ["<C-M-n>"] = M.create,
       },
     }
-  }) --[[@as Terminal ]]
+  })
   term:spawn()
 
   M.add_term(term)
   M.set_term(term, opt.focus)
 
   if opt.cmd then
-    vim.schedule(function()
-      term:send(opt.cmd)
-    end)
+    vim.schedule(function() term:send(opt.cmd) end)
   end
 
-  return term
+  return Result.Ok(term)
 end
 
----Go to the previous terminal.
----@param focus boolean
----@return Terminal?
+--- Go to the previous terminal.
+---
+--- @param focus boolean
+--- @return Terminal?
 function M.prev(focus)
   if not M.ensure_term() then return end
 
@@ -130,9 +133,10 @@ function M.prev(focus)
   end
 end
 
----Go to the next terminal.
----@param focus boolean
----@return Terminal?
+--- Go to the next terminal.
+---
+--- @param focus boolean
+--- @return Terminal?
 function M.next(focus)
   if not M.ensure_term() then return end
 
@@ -150,15 +154,14 @@ function M.next(focus)
   end
 end
 
----Send one or multiple commands to the current terminal.
----@param cmd string|string[]
+--- Send one or multiple commands to the current terminal.
+---
+--- @param cmd string|string[]
 function M.send(cmd)
-  if state.cur_term then
-    state.cur_term:send(cmd)
-  end
+  if state.cur_term then state.cur_term:send(cmd) end
 end
 
----@private
+--- @private
 function M.ensure_term()
   M.prune()
 
@@ -169,7 +172,7 @@ end
 -- :TermNew [cwd]
 -- @param {string} [cwd] - The initial working directory.
 api.nvim_create_user_command("TermNew", function(e)
-  M.new({ cwd = e.fargs[1] ~= "" and e.fargs[1] or nil })
+  M.create({ cwd = e.fargs[1] ~= "" and e.fargs[1] or nil })
 end, { nargs = "*", complete = "dir" })
 
 -- Open the TermSplit.
@@ -225,7 +228,7 @@ api.nvim_create_user_command(
     nargs = "*",
     complete = function(arg_lead)
       --- @type string?
-      local exp = vim.fn.expand(arg_lead)
+      local exp = vim.fn.expand(arg_lead) --[[@as string ]]
 
       if exp == "" or exp == arg_lead then
         exp = nil

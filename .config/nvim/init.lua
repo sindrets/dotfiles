@@ -44,6 +44,8 @@ api.nvim_create_autocmd("VimEnter", {
     require("user.modules.winbar").init()
     Config.buf_cleaner = require("user.modules.buf_cleaner")
     Config.buf_cleaner.enable(true)
+
+    require("user.modules.llm_chat").setup()
   end,
 })
 

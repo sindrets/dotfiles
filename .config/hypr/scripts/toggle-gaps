@@ -4,14 +4,26 @@ default_gaps_in=${1:-5}
 default_gaps_out=${2:-20}
 
 current_gaps="$(
-    hyprctl -j getoption general:gaps_in | jq -r '.custom'
+    hyprctl -j getoption general:gaps_in | jq -r '.css'
 )"
 
 # Toggle between 0 and default
 if [ "$current_gaps" = "0 0 0 0" ]; then
-    hyprctl keyword general:gaps_in "$default_gaps_in"
-    hyprctl keyword general:gaps_out "$default_gaps_out"
+    # hyprctl keyword general:gaps_in "$default_gaps_in"
+    # hyprctl keyword general:gaps_out "$default_gaps_out"
+    hyprctl eval "hl.config({
+        general = {
+            gaps_in = $default_gaps_in,
+            gaps_out = $default_gaps_out,
+        },
+    })"
 else
-    hyprctl keyword general:gaps_in 0
-    hyprctl keyword general:gaps_out 0
+    # hyprctl keyword general:gaps_in 0
+    # hyprctl keyword general:gaps_out 0
+    hyprctl eval "hl.config({
+        general = {
+            gaps_in = 0,
+            gaps_out = 0,
+        },
+    })"
 fi

@@ -1,67 +1,76 @@
 #!/bin/bash
 #
-#   This file echoes a bunch of color codes to the 
-#   terminal to demonstrate what's available.  Each 
-#   line is the color code of one forground color,
-#   out of 17 (default + 16 escapes), followed by a 
-#   test use of that color on all 17 background 
-#   colors (default + 16 escapes).
+# Display terminal color codes.
+#
+# No options : 8x2 background-color grid.
+# -a         : full table for the 8 main colors only (40m–47m / m/30m–37m).
+# -aa        : full output including bright colors.
 #
 
-T='TiP'   # The test text
+test_text='TiP'
 
-bg_colors=(
-    "40m"
-    "100m"
-    "41m"
-    "101m"
-    "42m"
-    "102m"
-    "43m"
-    "103m"
-    "44m"
-    "104m"
-    "45m"
-    "105m"
-    "46m"
-    "106m"
-    "47m"
-    "107m"
-)
+bg_main=("40m" "41m" "42m" "43m" "44m" "45m" "46m" "47m")
+fg_main=("m" "30m" "31m" "32m" "33m" "34m" "35m" "36m" "37m")
 
-fg_colors=(
-    "m"
-    "1m"
-    "30m"
-    "90m"
-    "31m"
-    "91m"
-    "32m"
-    "92m"
-    "33m"
-    "93m"
-    "34m"
-    "94m"
-    "35m"
-    "95m"
-    "36m"
-    "96m"
-    "37m"
-    "97m"
-)
+bg_bright=("100m" "101m" "102m" "103m" "104m" "105m" "106m" "107m")
+fg_bright=("1m" "90m" "91m" "92m" "93m" "94m" "95m" "96m" "97m")
 
-# print column headers
-echo -en "\n          "
-IFS=""
-for bg in ${bg_colors[*]}; do printf '% 8s' $bg; done; echo
-
-# print rows
-IFS=""
-for fg in ${fg_colors[*]}; do
-    printf " % 3s \e[$fg  $T  " $fg
-    for bg in ${bg_colors[*]}; do
-        printf "$EINS \e[$fg\e[$bg  $T  \e[0m";
+# ---------- default: dense 8x2 background-color grid, no text ----------
+show_grid() {
+    for i in $(seq 0 7); do
+        printf '\e[%s    \e[0m' "${bg_main[$i]}"
     done
-    echo;
-done
-echo
+    echo
+
+    for i in $(seq 0 7); do
+        printf '\e[%s    \e[0m' "${bg_bright[$i]}"
+    done
+    echo
+}
+
+# ---------- full table (optionally subset) ----------
+show_table() {
+    local -a bg_list=() fg_list=()
+    local mode="$1"
+    shift
+
+    if [[ "$mode" == "-a" ]]; then
+        fg_list=("${fg_main[@]}")
+    else
+        local -a fl=()
+        for i in $(seq 0 8); do
+            fl+=("${fg_main[$i]}" "${fg_bright[$i]}")
+        done
+        fg_list=("${fl[@]}")
+    fi
+
+    if [[ "$mode" == "-aa" ]]; then
+        local -a bl=()
+        for i in $(seq 0 7); do
+            bl+=("${bg_main[$i]}" "${bg_bright[$i]}")
+        done
+        bg_list=("${bl[@]}")
+    else
+        bg_list=("$@")
+    fi
+
+    echo -en "          "
+    for bg in "${bg_list[@]}"; do printf '% 7s' "$bg"; done
+    echo
+
+    for fg in "${fg_list[@]}"; do
+        printf " % 3s \e[$fg  $test_text  " "$fg"
+
+        for bg in "${bg_list[@]}"; do
+            printf "\e[%s\e[%s  $test_text  \e[0m" "$fg" "$bg"
+        done
+        echo
+    done
+    echo
+}
+
+case "${1:-}" in
+-a) show_table "-a" "${bg_main[@]}" ;;
+-aa) show_table "-aa" ;;
+*) show_grid ;;
+esac

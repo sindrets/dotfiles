@@ -1,9 +1,13 @@
-local lazy = require("user.lazy")
+--- @namespace user.modules.term
+--- @using pebbles
+
+local lz = require("user.lazy")
 
 local utils = Config.common.utils
 
-local Terminal = lazy.require("user.modules.term.terminal") ---@type Terminal
-local term_lib = lazy.require("user.modules.term") ---@module "user.modules.term"
+local Terminal = lz.require("user.modules.term.Terminal") ---@type Terminal
+local async = lz.require("imminent") ---@module "imminent"
+local term_lib = lz.require("user.modules.term") ---@module "user.modules.term"
 
 local api = vim.api
 local state = Config.state.term
@@ -18,19 +22,19 @@ local function clear_actual()
   state.actual_curbuf = nil
 end
 
----@alias TermSplit.Position "left"|"top"|"right"|"bottom"
+--- @alias TermSplit.Position "left"|"top"|"right"|"bottom"
 
----@class TermSplit.Config
----@field position TermSplit.Position
----@field width integer
----@field height integer
+--- @class TermSplit.Config
+--- @field position TermSplit.Position
+--- @field initial_width int
+--- @field initial_height int
 
----@class TermSplit : user.Object
----@field winid integer
----@field bufnr integer
----@field config TermSplit.Config
----@field last_width integer
----@field last_height integer
+--- @class TermSplit
+--- @field winid int
+--- @field bufnr int
+--- @field config TermSplit.Config
+--- @field last_width? int
+--- @field last_height? int
 local TermSplit = {}
 
 TermSplit.winopts = {
@@ -38,20 +42,24 @@ TermSplit.winopts = {
   winfixheight = true,
 }
 
-function TermSplit.new(position)
+--- @param opts? Partial<TermSplit.Config>
+function TermSplit.new(opts)
+  opts = opts or {}
   local self = setmetatable({}, { __index = TermSplit })
+
   self.config = {
-    position = position or "bottom",
-    width = 100,
-    height = 16,
+    position = opts.position or "bottom",
+    initial_width = opts.initial_width or 100,
+    initial_height = opts.initial_height or 16,
   }
 
   return self
 end
 
----@private
----Load the assigned buffer into the window. Creates a new terminal is no
----buffer is assigned.
+--- Load the assigned buffer into the window. Creates a new terminal is no
+--- buffer is assigned.
+---
+--- @private
 function TermSplit:load_buf()
   assert(self:is_open())
 
@@ -65,7 +73,7 @@ function TermSplit:load_buf()
     local term = term_lib.prev(false)
 
     if not term then
-      term = term_lib.new({ focus = false }) --[[@as Terminal ]]
+      term = term_lib.create({ focus = false }):unwrap()
     end
 
     self.bufnr = term.bufnr
@@ -96,14 +104,12 @@ function TermSplit:load_buf()
     --      involved with this solution (window rendering becoming off by 1
     --      cell, statusline disappearing...).
     vim.cmd("stopinsert")
-    vim.schedule(function()
-      vim.cmd("startinsert")
-    end)
+    async.time.schedule(vim.cmd --[[@as fun(cmd: string) ]], "startinsert")
   end
 end
 
----@param tabpage? integer
----@return boolean
+--- @param tabpage? int
+--- @return boolean
 function TermSplit:is_open(tabpage)
   local valid = self.winid and api.nvim_win_is_valid(self.winid)
 
@@ -116,13 +122,13 @@ function TermSplit:is_open(tabpage)
   return valid
 end
 
----@return boolean
+--- @return boolean
 function TermSplit:is_focused()
   return self:is_open() and api.nvim_get_current_win() == self.winid
 end
 
----Open the window and load the assigned terminal buffer.
----@param focus? boolean Set the opened window as the current window.
+--- Open the window and load the assigned terminal buffer.
+--- @param focus? boolean Set the opened window as the current window.
 function TermSplit:open(focus)
   save_actual()
 
@@ -145,8 +151,8 @@ function TermSplit:open(focus)
       local dir = ({ left = "H", bottom = "J", top = "K", right = "L" })[pos]
       vim.cmd("wincmd " .. dir)
 
-      local w = self.last_width or math.min(self.config.width, vim.o.columns / 2)
-      local h = self.last_height or math.min(self.config.height, vim.o.lines / 2)
+      local w = self.last_width or math.min(self.config.initial_width, vim.o.columns / 2)
+      local h = self.last_height or math.min(self.config.initial_height, vim.o.lines / 2)
 
       if form == "row" then
         vim.cmd("resize " .. h)
@@ -166,7 +172,7 @@ function TermSplit:open(focus)
   end
 end
 
----Close the window.
+--- Close the window.
 function TermSplit:close()
   if not self:is_open() then return end
 
@@ -188,19 +194,19 @@ function TermSplit:close()
   api.nvim_win_close(self.winid, false)
 end
 
----@class TerminalSplit.toggle.Opt
----@field focus boolean Set the window as the current window.
----@field focus_mode boolean If the window is open but unfocused: bring focus to the window instead of closing it. (implies `focus`)
+--- @class TerminalSplit.toggle.Opts
+--- @field focus? boolean Set the window as the current window.
+--- @field focus_mode? boolean If the window is open but unfocused: bring focus to the window instead of closing it. (implies `focus`)
 
----Toggle the window.
----@param opt TerminalSplit.toggle.Opt
-function TermSplit:toggle(opt)
-  opt = opt or {}
+--- Toggle the window.
+--- @param opts? TerminalSplit.toggle.Opts
+function TermSplit:toggle(opts)
+  opts = opts or {}
 
-  if opt.focus_mode then opt.focus = true end
+  if opts.focus_mode then opts.focus = true end
 
   local should_close = utils.ternary(
-    opt.focus_mode,
+    opts.focus_mode,
     { self.is_focused, self },
     { self.is_open, self, 0 }
   )
@@ -208,27 +214,20 @@ function TermSplit:toggle(opt)
   if should_close then
     self:close()
   else
-    self:open(opt.focus)
+    self:open(opts.focus)
   end
 end
 
----Set the assigned terminal buffer.
----@param bufnr integer Buffer number.
+--- Set the assigned terminal buffer.
+--- @param bufnr int Buffer number.
 function TermSplit:set_buf(bufnr)
   self.bufnr = bufnr
 
   if self:is_open() then
     local manage_state = not state.actual_curwin
-
-    if manage_state then
-      save_actual()
-    end
-
+    if manage_state then save_actual() end
     self:load_buf()
-
-    if manage_state then
-      clear_actual()
-    end
+    if manage_state then clear_actual() end
   end
 end
 

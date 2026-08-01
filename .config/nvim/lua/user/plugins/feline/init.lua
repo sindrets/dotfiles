@@ -1,3 +1,6 @@
+--- @using imminent
+--- @using pebbles
+
 local lz = require("user.lazy")
 
 local Job = lz.require("imminent.Job") ---@module "imminent.Job"
@@ -198,7 +201,7 @@ end
 ---@diagnostic disable-next-line: unused-local, unused-function
 local function width_condition(min_width)
   return function()
-    return vim.api.nvim_win_get_width(0) > min_width
+    return api.nvim_win_get_width(0) > min_width
   end
 end
 
@@ -431,12 +434,20 @@ M.components = {
       icon = icons.indent .. " ",
       truncate_hide = true,
     }),
+    win_cwd = StatusComponent({
+      update = { "WinEnter", "DirChanged" },
+      provider = function()
+        return Path.from(vim.fn.getcwd(0, 0)):absolute():fold_home():tostring()
+      end,
+      truncate_hide = true,
+    }),
   },
   git = {
     branch = StatusComponent({
       provider = {
         -- update = { "BufEnter", "CmdlineLeave", "FocusGained" },
         get = function()
+          --- @type string, fs.Path, fs.Path
           local rev, path, dir
 
           if vim.b[0].gitsigns_head then
@@ -449,9 +460,7 @@ M.components = {
             dir = path
           end
 
-          if rev == "" then
-            return ""
-          end
+          if rev == "" then return "" end
 
           local rebasing
           rev, rebasing = pb.match_any(rev, { "(.*)(%(rebasing%))", "(.*)" })
@@ -469,7 +478,7 @@ M.components = {
 
             local name = rev
 
-            async.spawn(function()
+            async.block_on(function()
               -- Check reflog to find the last checkout
               local cwd = dir:is_readable():await() and dir or Path.cwd()
 
@@ -487,37 +496,41 @@ M.components = {
                   Job.Conditions.zero_exit *
                   Job.Conditions.non_empty_stdout,
               })
+                :output()
+                :await()
 
-              if reflog:wait():await():is_ok() then
-                name = pb.match_any(pb.line(reflog.stdout:unwrap(), 1) or "", {
-                  "^checkout: moving from %S+ to (%S+)$",
-                  "^rebase %(start%): checkout (%S+)",
-                  "^rebase %(finish%): returning to (%S+)",
-                })
+              if not reflog:is_ok() then return end
 
-                local name_rev = Job.new({
-                  cmd = {
-                    "git",
-                    "name-rev",
-                    "--name-only",
-                    "--no-undefined",
-                    "--always",
-                    name,
-                  },
-                  cwd = cwd,
-                  success_cond =
-                    Job.Conditions.zero_exit *
-                    Job.Conditions.non_empty_stdout,
-                })
+              name = pb.match_any(pb.line(reflog:unwrap().stdout, 1) or "", {
+                "^checkout: moving from %S+ to (%S+)$",
+                "^rebase %(start%): checkout (%S+)",
+                "^rebase %(finish%): returning to (%S+)",
+              }) --[[@as string ]]
 
-                if name_rev:wait():await():is_ok() then
-                  name = pb.match_any(
-                    pb.line(name_rev.stdout:unwrap(), 1) or "",
-                    { "(.*)%^0", "(.*)" }
-                  )
-                end
-              end
-            end):block_on()
+              local name_rev = Job.new({
+                cmd = {
+                  "git",
+                  "name-rev",
+                  "--name-only",
+                  "--no-undefined",
+                  "--always",
+                  name,
+                },
+                cwd = cwd,
+                success_cond =
+                  Job.Conditions.zero_exit *
+                  Job.Conditions.non_empty_stdout,
+              })
+                :output()
+                :await()
+
+              if not name_rev:is_ok() then return end
+
+              name = pb.match_any(
+                pb.line(name_rev:unwrap().stdout, 1) or "",
+                { "(.*)%^0", "(.*)" }
+              ) --[[@as string ]]
+            end)
 
             cache:put(key, name, { ttl = 60 * 1000 })
 
@@ -626,6 +639,7 @@ function M.update()
       pb.concat(
         extend_comps(
           {
+            comps.file.win_cwd(),
             comps.diagnostic.err(),
             comps.diagnostic.warn(),
             comps.diagnostic.hint(),

@@ -1,12 +1,21 @@
 #!/usr/bin/bash
 
-# Sugar function for creating a new worktree for a given branch. Will create
-# the branch if it doesn't exist. Otherwise the new worktree is checked out to
-# the existing branch.
+# Create (or reuse) a worktree for the given branch. Will create the branch if
+# it doesn't exist. Otherwise the new worktree is checked out to the existing
+# branch.
+#
+# Args:
+#   $1 - branch_name: name of the branch to create a worktree for
 function git_wt() {
     set -e
     local common_dir="$(git rev-parse --git-common-dir)"
-    local tree_path="$common_dir/trees/$1"
+
+    # If the repo uses the new .git structure, place worktrees at $common_dir/../$1
+    if [ "$(basename "$common_dir")" = ".git" ]; then
+        tree_path="$(realpath -m "$common_dir/../$1")"
+    else
+        tree_path="$common_dir/trees/$1"
+    fi
 
     if git rev-parse --verify "$1" &>/dev/null; then
         # Branch exists
@@ -40,20 +49,28 @@ function git_pr_checkout() {
 function git_pr_wt() {
     local common_dir="$(git rev-parse --path-format=absolute --git-common-dir)"
     local bname="pr/$1"
-    pr-fetch "$1" && git worktree add "$common_dir/trees/$bname" "$bname"
+    pr-fetch "$1" && git_wt "$bname"
 }
 
+# Utility function for cloning a bare repo and setting it up for worktrees.
+#
+# Args:
+#   $1 - repo_uri: URI of the repository to clone (e.g. git@github.com:user/repo.git)
+#   $2 - repo_path: optional target directory path; defaults to <basename-of-uri>.bare
 function git_clone_bare() {
     set -e
-    git clone --bare $@
+    local repo_uri="$1"
+    local repo_path="${2:-}"
 
-    if [ ! -z "$2" ]; then
-        local repo_dir="$2"
-    else
-        local repo_dir="$(echo "$1" | awk -F/ '{print $NF}')"
+    # Default target dir: basename of URI without .git, + .bare
+    if [ -z "$repo_path" ]; then
+        repo_path="$(basename "$repo_uri" | sed 's/\.git$//').bare"
     fi
 
-    cd "$repo_dir"
+    mkdir -p "$repo_path"
+    git clone --bare "$repo_uri" "$repo_path/.git"
+
+    cd "$repo_path"
     git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
     git remote update
     git remote set-head -a origin
@@ -76,9 +93,9 @@ function git_init_bare() {
     (
         cd "$repo_path" || exit 1
         unset GIT_DIR
-        git init --bare . >/dev/null
+        git init --bare .git >/dev/null
 
-        export GIT_DIR="$PWD"
+        export GIT_DIR="$PWD/.git"
 
         # create empty tree
         tree=$(git mktree </dev/null)

@@ -1,53 +1,52 @@
--- Automatically delete listed buffers that have been untouched for 10 minutes.
+-- Automatically delete listed buffers that have been untouched for X minutes.
 
+--- @namespace user.modules.buf_cleaner
 --- @using imminent
 --- @using pebbles
 
-local async = require("imminent")
 local time = require("imminent.time")
 
-local Future = async.Future
 local api = vim.api
 local fmt = string.format
 local notify = Config.common.notify
 
 local M = {}
 
-M.CLEANUP_INTERVAL = 1000 * 60
-M.EXPIRATION_TIME = 1000 * 60 * 15 -- 15 min
+M.CLEANUP_INTERVAL = time.Duration.from_mins(1)
+M.TTL = time.Duration.from_mins(15)
 
----@private
----@type time.Closeable?
-M._interval_handle = nil
+--- @private
+M._interval_handle = nil --[[@as time.Closeable? ]]
+--- @private
+M._setup_done = false
 
----@private
----@type { [integer]: buf_cleaner.BufState }
+--- @private
+--- @type { [int]: BufState? }
 M.state_map = {}
 
-local function get_timestamp()
-  return uv.hrtime() / 1000000
-end
+--- @class BufState
+--- @field changetick int
+--- @field timestamp time.Instant
 
----@class buf_cleaner.BufState
----@field changetick integer
----@field timestamp number
-
+--- @param bufnr int
+--- @param opt? Partial<BufState>
+--- @return BufState
 local function new_buf_state(bufnr, opt)
   opt = opt or {}
 
   return {
     changetick = opt.changetick or api.nvim_buf_get_changedtick(bufnr),
-    timestamp = opt.timestamp or get_timestamp(),
+    timestamp = opt.timestamp or time.now()
   }
 end
 
----@param bufnr integer
----@param now number
----@param buf_state buf_cleaner.BufState
----@param win_buf_map table<integer, integer>
+---@param bufnr int
+---@param now time.Instant
+---@param buf_state BufState
+---@param win_buf_map table<int, int?>
 local function should_delete(bufnr, now, buf_state, win_buf_map)
   -- Check if expired
-  if now - buf_state.timestamp < M.EXPIRATION_TIME then return false end
+  if now:duration_since(buf_state.timestamp) < M.TTL then return false end
 
   -- Don't delete buffers that are displayed in a window
   if win_buf_map[bufnr] then return false end
@@ -61,57 +60,67 @@ local function should_delete(bufnr, now, buf_state, win_buf_map)
   return true
 end
 
-function M.is_running()
-  return not not M._interval_handle
-end
+function M.is_running() return not not M._interval_handle end
 
---- @return Future<[]>
---- @nodiscard
 function M.run()
-  return Future.from(function()
-    async.nvim_locks():await()
+  local bufs = vim.tbl_filter(
+    function(bufnr) return vim.bo[bufnr].buflisted end,
+    api.nvim_list_bufs()
+  )
 
-    local bufs = vim.tbl_filter(function(bufnr)
-      return vim.bo[bufnr].buflisted
-    end, api.nvim_list_bufs()) --[[@as integer[] ]]
+  --- @type table<int, int?>
+  local win_buf_map = {}
 
-    ---@type table<integer, integer>
-    local win_buf_map = {}
+  for _, winid in ipairs(api.nvim_list_wins()) do
+    win_buf_map[api.nvim_win_get_buf(winid)] = winid
+  end
 
-    for _, winid in ipairs(api.nvim_list_wins()) do
-      win_buf_map[api.nvim_win_get_buf(winid)] = winid
-    end
+  local now = time.now()
 
-    local now = uv.hrtime() / 1000000
+  for _, bufnr in ipairs(bufs) do
+    local buf_state = M.state_map[bufnr]
 
-    for _, bufnr in ipairs(bufs) do
-      local buf_state = M.state_map[bufnr]
+    if not buf_state then
+      -- This is a new buffer: save its state and continue
+      M.state_map[bufnr] = new_buf_state(bufnr, { timestamp = now })
+    else
+      local changetick = api.nvim_buf_get_changedtick(bufnr)
 
-      if not buf_state then
-        -- This is a new buffer: save its state and continue
-        M.state_map[bufnr] = new_buf_state(bufnr, { timestamp = now })
-      else
-        local changetick = api.nvim_buf_get_changedtick(bufnr)
+      if changetick > buf_state.changetick then
+        -- changetick has been incremented: update state
+        M.state_map[bufnr] = new_buf_state(bufnr, { changetick = changetick, timestamp = now })
+      elseif should_delete(bufnr, now, buf_state, win_buf_map) then
+        -- Buffer has expired: delete
+        local ok, err = pcall(function()
+          api.nvim_buf_delete(bufnr, { unload = true })
+          vim.bo[bufnr].buflisted = false
+        end)
 
-        if changetick > buf_state.changetick then
-          -- changetick has been incremented: update state
-          M.state_map[bufnr] = new_buf_state(bufnr, { changetick = changetick, timestamp = now })
-        elseif should_delete(bufnr, now, buf_state, win_buf_map) then
-          -- Buffer has expired: delete
-          local ok, err = pcall(function()
-            api.nvim_buf_delete(bufnr, { unload = true })
-            vim.bo[bufnr].buflisted = false
-          end)
-
-          if not ok and err then
-            api.nvim_echo({{ err }}, true, { err = true })
-          else
-            M.state_map[bufnr] = nil
-          end
+        if not ok and err then
+          api.nvim_echo({ { err } }, true, { err = true })
+        else
+          M.state_map[bufnr] = nil
         end
       end
     end
-  end)
+  end
+end
+
+function M.setup()
+  if M._setup_done then return end
+  M._setup_done = true
+
+  api.nvim_create_augroup("buf_cleaner", { clear = true })
+  api.nvim_create_autocmd("BufLeave", {
+    group = "buf_cleaner",
+    callback = function(e)
+      local buf_state = M.state_map[e.buf]
+      if buf_state then
+        -- Update timestamp on buffers we track
+        buf_state.timestamp = buf_state.timestamp:max(time.now() - M.TTL / 2)
+      end
+    end,
+  })
 end
 
 ---@param silent? boolean
@@ -121,35 +130,14 @@ function M.enable(silent)
     return
   end
 
-  api.nvim_create_augroup("buf_cleaner", { clear = true })
-  api.nvim_create_autocmd("BufLeave", {
-    group = "buf_cleaner",
-    callback = function(e)
-      local buf_state = M.state_map[e.buf]
-      if buf_state then
-        -- Update timestamp on buffers we track
-        buf_state.timestamp = math.max(
-          buf_state.timestamp,
-          get_timestamp() - M.EXPIRATION_TIME / 2
-        )
-      end
-    end,
-  })
+  M.setup()
+  M._interval_handle = time.set_interval(vim.schedule_wrap(M.run), M.CLEANUP_INTERVAL)
 
-  M._interval_handle = time.set_interval(
-    function() async.spawn(M.run()) end,
-    M.CLEANUP_INTERVAL
-  )
-
-  if not silent then
-    notify.info("The buffer cleaner is running.", { title = "buf_cleaner" })
-  end
+  if not silent then notify.info("The buffer cleaner is running.", { title = "buf_cleaner" }) end
 end
 
 ---@param silent? boolean
 function M.disable(silent)
-  api.nvim_create_augroup("buf_cleaner", { clear = true })
-
   if M._interval_handle then
     M._interval_handle.close()
     M._interval_handle = nil
@@ -160,40 +148,44 @@ function M.disable(silent)
   end
 end
 
-api.nvim_create_user_command(
-  "BufCleaner",
-  function(ctx)
-    local arg_parser = require("diffview.arg_parser")
-    local argo = arg_parser.scan(ctx.args, {})
-    local subcmd = argo.args[1]
+api.nvim_create_user_command("BufCleaner", function(ctx)
+  local arg_parser = require("diffview.arg_parser")
+  --- @diagnostic disable-next-line: missing-fields, param-type-mismatch
+  local argo = arg_parser.scan(ctx.args, {})
+  local subcmd = argo.args[1]
 
-    if subcmd then
-      if subcmd == "enable" or subcmd == "on" then
-        M.enable()
-      elseif subcmd == "disable" or subcmd == "off" then
+  if subcmd then
+    if subcmd == "enable" or subcmd == "on" then
+      M.enable()
+    elseif subcmd == "disable" or subcmd == "off" then
+      M.disable()
+    elseif subcmd == "toggle" then
+      if M.is_running() then
         M.disable()
-      elseif subcmd == "toggle" then
-        if M.is_running() then M.disable() else M.enable() end
-      elseif subcmd == "status" then
-        notify.info(fmt("The buffer cleaner is %srunning.", M.is_running() and "" or "not "))
+      else
+        M.enable()
       end
+    elseif subcmd == "status" then
+      notify.info(fmt("The buffer cleaner is %srunning.", M.is_running() and "" or "not "))
+    elseif subcmd == "run" then
+      M.run()
     end
+  end
+end, {
+  nargs = 1,
+  complete = function(_, cmd_line, cur_pos)
+    local arg_parser = require("diffview.arg_parser")
+    --- @diagnostic disable-next-line: missing-fields, param-type-mismatch
+    local ctx = arg_parser.scan(cmd_line, { allow_quoted = false, cur_pos = cur_pos })
+
+    local candidates = {}
+
+    if ctx.argidx == 2 then
+      candidates = { "on", "off", "enable", "disable", "toggle", "run", "status" }
+    end
+
+    return arg_parser.process_candidates(candidates, ctx)
   end,
-  {
-    nargs = 1,
-    complete = function(_, cmd_line, cur_pos)
-      local arg_parser = require("diffview.arg_parser")
-      local ctx = arg_parser.scan(cmd_line, { allow_quoted = false, cur_pos = cur_pos })
-
-      local candidates = {}
-
-      if ctx.argidx == 2 then
-        candidates = { "on", "off", "enable", "disable", "toggle", "status" }
-      end
-
-      return arg_parser.process_candidates(candidates, ctx)
-    end,
-  }
-)
+})
 
 return M

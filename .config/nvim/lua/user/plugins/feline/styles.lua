@@ -82,6 +82,9 @@ M.themes = {
         ["file.line_count"] = {
           fg = "dim400",
         },
+        ["file.win_cwd"] = {
+          fg = "dim400",
+        },
         ["git.diff_add"] = {
           fg = "add",
         },
@@ -164,6 +167,9 @@ M.themes = {
           style = "bold",
         },
         ["file.line_count"] = {
+          fg = "dim400",
+        },
+        ["file.win_cwd"] = {
           fg = "dim400",
         },
         ["git.diff_add"] = {

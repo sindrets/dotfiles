@@ -486,52 +486,33 @@ require("lazy").setup({
   {
     "zk-org/zk-nvim",
     cmd = { "ZkNotes", "ZkNew", "ZkIndex" },
-    --- @async
     config = function()
       local Path = require("imminent.fs.Path")
       local async = require("imminent")
       local pb = require("imminent.pebbles")
 
-      async.job({
-        "tomlq",
-        "-r",
-        ".notebook.dir",
-        vim.env.HOME .. "/.config/zk/config.toml"
+      async.Job.new({
+        cmd = { "tomlq", "-r", ".notebook.dir", vim.env.HOME .. "/.config/zk/config.toml" },
       })
-        :await()
-        :inspect(function(stdout)
-          vim.env.ZK_NOTEBOOK_DIR = Path.from_str(pb.line(stdout, 1) or "")
+        :output()
+        :block_on()
+        :inspect(function(output)
+          vim.env.ZK_NOTEBOOK_DIR = Path.from_str(pb.line(output.stdout, 1) or "")
             :unwrap()
             :absolute()
             :tostring()
         end)
-        :inspect_err(function(stderr)
+        :inspect_err(function(output)
           Config.common.notify.error(
-            string.format("Failed to get notebook dir:\n\n%s", stderr),
+            output.err
+              :wrap(string.format("Failed to get notebook dir:\n%s", output.stderr:unwrap_or("")))
+              :message(),
             { title = "zk" }
           )
         end)
 
-      async.nvim_locks():await()
-      require("zk").setup({
-        picker = "snacks_picker",
-      })
+      require("zk").setup({ picker = "snacks_picker" })
     end,
-  },
-  use_local {
-    "nvim-neorg/neorg",
-    lazy = true,
-    version = "*",
-    config = conf("neorg"),
-    -- build = ":Neorg sync-parsers",
-    ft = "norg",
-    cmd = { "Neorg" },
-    dependencies = {
-      "nvim-treesitter",
-      "nvim-lua/plenary.nvim",
-      "luarocks.nvim",
-    },
-    cond = vim.fn.has("nvim-0.8") == 1,
   },
   {
     "xorid/asciitree.nvim",

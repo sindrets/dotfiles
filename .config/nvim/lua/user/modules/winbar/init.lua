@@ -13,7 +13,7 @@ local api = vim.api
 local fmt = string.format
 local strwidth = api.nvim_strwidth
 
-local HOME_DIR = Path.home():tostring()
+local HOME_DIR = Path.home()
 local WINBAR_STRING = "%{%v:lua.require'user.modules.winbar'.generate()%}"
 
 local M = {}
@@ -86,7 +86,7 @@ end
 --- @return imminent.fs.Path?
 local function condense_path(pathlike, cwd, no_relative)
   local scheme = nil
-  local path
+  local path --- @type fs.Path
 
   if type(pathlike) == "string" then
     local r_path = Path.from_str(pathlike)
@@ -115,8 +115,8 @@ local function condense_path(pathlike, cwd, no_relative)
     end
   end
 
-  if pb.startswith(path:tostring(), HOME_DIR) then
-    path = Path.concat("~", path:diff(Path.from(HOME_DIR))):unwrap():normalize()
+  if path:starts_with(HOME_DIR) then
+    path = Path.join("~", path:diff(HOME_DIR)):unwrap():normalize()
   end
 
   path:set_uri_scheme(scheme):unwrap()

@@ -29,7 +29,11 @@ ACTIVE_WINDOW=$(hyprctl activewindow -j)
 IS_FLOATING=$(echo "$ACTIVE_WINDOW" | jq .floating)
 
 if [ "$IS_FLOATING" = "true" ]; then
-	hyprctl dispatch moveactive "$RESIZE_PARAMS_X" "$RESIZE_PARAMS_Y"
+	hyprctl dispatch "hl.dsp.window.move({
+		x = $RESIZE_PARAMS_X,
+		y = $RESIZE_PARAMS_Y,
+		relative = true
+	})"
 else
-	hyprctl dispatch movewindow "$DIRECTION"
+	hyprctl dispatch "hl.dsp.window.move({ direction = '$DIRECTION' })"
 fi

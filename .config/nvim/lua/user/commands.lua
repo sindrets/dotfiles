@@ -212,30 +212,33 @@ command("NeorgExport", function(c)
     end
   end
 
+  --- @type string, string
   local in_name, out_name
 
   if #c.fargs > 1 then
-    in_name = vim.fn.expand(c.fargs[1])
-    out_name = vim.fn.expand(c.fargs[2])
+    in_name = vim.fn.expand(c.fargs[1]) --[[@as string ]]
+    out_name = vim.fn.expand(c.fargs[2]) --[[@as string ]]
   elseif #c.fargs == 1 then
-    in_name = vim.fn.expand("%:p")
-    out_name = vim.fn.expand(c.fargs[1])
+    in_name = vim.fn.expand("%:p") --[[@as string ]]
+    out_name = vim.fn.expand(c.fargs[1]) --[[@as string ]]
   else
-    in_name = vim.fn.expand("%:p")
+    in_name = vim.fn.expand("%:p") --[[@as string ]]
     out_name = Path.from(in_name):with_extension("pdf"):tostring()
   end
 
-  async.job({ "neorg-export", in_name, out_name })
+  async.Job.new({ cmd = { "neorg-export", in_name, out_name } })
+    :output()
     :block_on()
-    :inspect(function()
+    :inspect(function(_)
       notify.info(
         fmt("Document exported to %s", pb.inspect(Path.from(out_name):relative():tostring()))
       )
     end)
-    :inspect_err(function(stderr)
-      notify.error(stderr, {
-        title = "Document export failed!"
-      })
+    :inspect_err(function(output)
+      notify.error(
+        output.err:wrap(fmt("stderr: %s", output.stderr:unwrap_or(""))):message(),
+        { title = "Document export failed!" }
+      )
     end)
 end, { nargs = "*", complete = "file" })
 
@@ -370,6 +373,14 @@ end, {})
 command("FilterQf", function(c)
   Config.lib.filter_qf(c.bang, c.fargs[1])
 end, { nargs = "?", bang = true })
+
+command("Cclear", function()
+  vim.fn.setqflist({})
+end, { bar = true })
+
+command("Lclear", function(c)
+  vim.fn.setloclist(c.count, {})
+end, { bar = true, count = 0 })
 
 command("ThemeToggle", function()
   Config.colorscheme.toggle_theme()

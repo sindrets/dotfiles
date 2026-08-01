@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
-hyprctl dispatch focuswindow "$(
-  if [[ $(hyprctl activewindow -j | jq ."floating") == "true" ]]; then
-    echo "tiled"; else echo "floating";
-  fi
-)"
+hyprctl dispatch "hl.dsp.window.cycle_next({$(
+    if [[ $(hyprctl activewindow -j | jq ."floating") == "true" ]]; then
+      echo "tiled = true"; else echo "floating = true";
+    fi
+  )})"

@@ -6,12 +6,25 @@ if [ -z $activeWindow ]; then
   exit 0
 fi
 
-current_special="$(hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .specialWorkspace.name')"
+current_special="$(
+  hyprctl monitors -j | jq -r '.[] | select(.focused == true) | .specialWorkspace.name'
+)"
+
+function set_floating() {
+  target="$1"
+  current_floating="$(hyprctl activewindow -j | jq ."floating")"
+
+  if ([[ "$current_floating" == "true" ]] && [[ "$target" == "false" ]]) ||
+     ([[ "$current_floating" == "false" ]] && [[ "$target" == "true" ]]); then
+    # action = "set/unset" is broken. It always toggles...
+    hyprctl dispatch 'hl.dsp.window.float({ action = "toggle" })'
+  fi
+}
 
 if [ "$current_special" == "special:magic" ]; then
-  hyprctl dispatch movetoworkspace e+0
-  hyprctl dispatch settiled
+  hyprctl dispatch 'hl.dsp.window.move({ workspace = "e+0" })'
+  set_floating false
 else
-  hyprctl dispatch setfloating
-  hyprctl dispatch movetoworkspacesilent special:magic
+  set_floating true
+  hyprctl dispatch 'hl.dsp.window.move({ workspace = "special:magic", silent = true })'
 fi

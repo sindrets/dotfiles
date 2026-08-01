@@ -16,7 +16,7 @@ choice=$(echo "$menu" | rofi -dmenu -i -p 'Choose' -l 4)
 
 # Perform actions based on selection
 case "$choice" in
-    *Logout*) hyprctl dispatch exit ;;
+    *Logout*) hyprctl dispatch 'hl.dsp.exit()' ;;
     *Lock*) hyprlock ;;
     *Shutdown*) systemctl poweroff ;;
     *Reboot*) systemctl reboot ;;

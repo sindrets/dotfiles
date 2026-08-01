@@ -1,0 +1,42 @@
+{
+  "$schema": "https://raw.githubusercontent.com/EmmyLuaLs/emmylua-analyzer-rust/refs/heads/main/crates/emmylua_code_analysis/resources/schema.json",
+  "codeAction": {
+    "insertSpace": true
+  },
+  "diagnostics": {
+    "enable": true,
+    "disable": [
+      "unnecessary-if",
+      "unnecessary-assert",
+      "invert-if",
+      "call-non-callable"
+    ],
+    "enables": [
+      "iter-variable-reassign",
+      "missing-global-doc"
+    ],
+    "severity": {
+      "param-type-mismatch": "error",
+      "return-type-mismatch": "error",
+      "assign-type-mismatch": "error",
+      "type-not-found": "error"
+    }
+  },
+  "runtime": {
+    "version": "Lua5.5"
+  },
+  "strict": {
+    "arrayIndex": true,
+    "typeCall": true
+  },
+  "workspace": {
+    "workspaceRoots": [
+      "."
+    ],
+    "ignoreGlobs": [],
+    "library": [
+      "/usr/share/hypr/stubs",
+      "./lib/imminent.nvim/lua"
+    ]
+  }
+}

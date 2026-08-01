@@ -17,7 +17,7 @@ local hi, hi_link, hi_clear = hl.hi, hl.hi_link, hl.hi_clear
 local M = {}
 
 M.DEFAULT_DARK = "kanagawa-dragon"
-M.DEFAULT_LIGHT = "seoulbones"
+M.DEFAULT_LIGHT = "south"
 
 do
   local name, bg
@@ -130,12 +130,13 @@ function M.generate_terminal_colors(opts)
     static_ansi8 = false,
   } --[[@as Config.colorscheme.generate_terminal_colors.Opts ]])
 
+  local bg_norm = assert(Color.from_hl("Normal", "bg"))
+  local is_light = bg_norm.lightness > 0.5
+
   if opts.gen_normals then
     -- black
-    -- vim.g.terminal_color_0  = "#15161E"
-    -- vim.g.terminal_color_8  = "#414868"
-    vim.g.terminal_color_0 = Color.from_hl("Normal", "bg"):highlight(0.1):to_css()
-    vim.g.terminal_color_8 = Color.from_hl("Normal", "bg"):highlight(0.2):to_css()
+    vim.g.terminal_color_0 = bg_norm:highlight(0.1):to_css()
+    vim.g.terminal_color_8 = bg_norm:highlight(0.2):to_css()
   end
 
   if opts.static_ansi8 then
@@ -148,14 +149,38 @@ function M.generate_terminal_colors(opts)
     vim.g.terminal_color_7  = base.terminal.white
     vim.g.terminal_color_15 = base.terminal.whiteBright
   else
-    vim.g.terminal_color_1  = vim.g.terminal_color_1 or base.terminal.red
-    vim.g.terminal_color_2  = vim.g.terminal_color_2 or base.terminal.green
-    vim.g.terminal_color_3  = vim.g.terminal_color_3 or base.terminal.yellow
-    vim.g.terminal_color_4  = vim.g.terminal_color_4 or base.terminal.blue
-    vim.g.terminal_color_5  = vim.g.terminal_color_5 or base.terminal.magenta
-    vim.g.terminal_color_6  = vim.g.terminal_color_6 or base.terminal.cyan
-    vim.g.terminal_color_7  = vim.g.terminal_color_7 or base.terminal.white
-    vim.g.terminal_color_15 = vim.g.terminal_color_15 or base.terminal.whiteBright
+    vim.g.terminal_color_1  = vim.g.terminal_color_1 or (
+      is_light and Color.from_hex(base.terminal.red):mod_value(-0.2):to_css() or
+      base.terminal.red
+    )
+    vim.g.terminal_color_2  = vim.g.terminal_color_2 or (
+      is_light and Color.from_hex(base.terminal.green):mod_value(-0.2):to_css() or
+      base.terminal.green
+    )
+    vim.g.terminal_color_3  = vim.g.terminal_color_3 or (
+      is_light and Color.from_hex(base.terminal.yellow):mod_value(-0.2):to_css() or
+      base.terminal.yellow
+    )
+    vim.g.terminal_color_4  = vim.g.terminal_color_4 or (
+      is_light and Color.from_hex(base.terminal.blue):mod_value(-0.2):to_css() or
+      base.terminal.blue
+    )
+    vim.g.terminal_color_5  = vim.g.terminal_color_5 or (
+      is_light and Color.from_hex(base.terminal.magenta):mod_value(-0.2):to_css() or
+      base.terminal.magenta
+    )
+    vim.g.terminal_color_6  = vim.g.terminal_color_6 or (
+      is_light and Color.from_hex(base.terminal.cyan):mod_value(-0.2):to_css() or
+      base.terminal.cyan
+    )
+    vim.g.terminal_color_7  = vim.g.terminal_color_7 or (
+      is_light and Color.from_hex(base.terminal.white):mod_value(-0.2):to_css() or
+      base.terminal.white
+    )
+    vim.g.terminal_color_15 = vim.g.terminal_color_15 or (
+      is_light and Color.from_hex(base.terminal.whiteBright):mod_value(-0.2):to_css() or
+      base.terminal.whiteBright
+    )
   end
 
   if opts.gen_alts then
@@ -182,7 +207,7 @@ function M.parametric_ease_out(k)
   return function(x)
     if x <= 0 then return 0 end
     if x >= 1 then return 1 end
-    return math.pow(1 - x, 2 * (k + 1 / 2)) * (-1) + 1
+    return -math.pow(1 - x, 2 * (k + 1 / 2)) + 1
   end
 end
 
@@ -472,19 +497,28 @@ function M.setup_colorscheme(colors_name)
               bg         = palette.dragonBlack0,
               bg_p1      = palette.dragonBlack1,
               bg_p2      = palette.dragonBlack2,
-
               pmenu = {
-                  fg       = palette.dragonWhite,
-                  fg_sel   = "none",
-                  bg       = palette.dragonBlack2,
-                  bg_sel   = palette.dragonBlack4,
-                  bg_thumb = palette.dragonBlack4,
-                  bg_sbar  = palette.dragonBlack2,
+                fg       = palette.dragonWhite,
+                fg_sel   = "none",
+                bg       = palette.dragonBlack2,
+                bg_sel   = palette.dragonBlack4,
+                bg_thumb = palette.dragonBlack4,
+                bg_sbar  = palette.dragonBlack2,
               },
             },
           },
         },
       },
+    })
+  elseif colors_name == "south" then
+    require("south").setup({
+      darker_floats = true,
+      styles = {
+        italics = true,         -- Master switch for font slant overrides
+        italic_comments = true, -- Toggles italicized comments (ignored if italics = false)
+        italic_linenums = false, -- Toggles italicized line numbers (ignored if italics = false)
+        bold_keywords = true,  -- Applies bold weight to syntax keywords
+      }
     })
   end
 end

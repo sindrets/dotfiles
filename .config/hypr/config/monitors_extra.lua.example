@@ -1,0 +1,8 @@
+local primary = "DP-1"
+local secondary = "DP-2"
+
+-- hl.workspace_rule({ workspace = "1", monitor = primary })
+-- hl.workspace_rule({ workspace = "9", monitor = secondary })
+
+-- Set the "primary" hint used by many xorg apps
+hl.on("hyprland.start", function() hl.exec_cmd("xrandr --output " .. primary .. " --primary") end)

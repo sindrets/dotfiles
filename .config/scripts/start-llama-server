@@ -1,7 +1,10 @@
 #!/usr/bin/env bash
 
+MODELS_DIR="$HOME/.lmstudio/models"
+
 declare -A DEFAULT_FLAGS=(
-  [--model]="$HOME/.lmstudio/models/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ2_M.gguf"
+  [--model]="$MODELS_DIR/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ2_M.gguf"
+  [--alias]="AUTO"
   [--port]="1234"
   [--ctx-size]="131072"
   [--gpu-layers]="40"
@@ -49,9 +52,16 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+
 # If positional args were passed, use the first as model
 if [[ ${#POSITIONAL[@]} -gt 0 ]]; then
   FINAL_FLAGS["--model"]="${POSITIONAL[0]}"
+fi
+
+# Set --alias from resolved model if still AUTO (user didn't pass --alias)
+if [[ "${FINAL_FLAGS["--alias"]}" == "AUTO" ]]; then
+  model_base="$(basename "${FINAL_FLAGS["--model"]}")"
+  FINAL_FLAGS["--alias"]="${model_base%.*}"
 fi
 
 # Auto-detect mmproj file alongside the model

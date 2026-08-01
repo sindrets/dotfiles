@@ -294,7 +294,7 @@ function M.list_bufs(opt)
     local wins = opt.tabpage and api.nvim_tabpage_list_wins(opt.tabpage) or api.nvim_list_wins()
     local bufnr
     local seen = {}
-    bufs = {}
+    bufs = {} --[[@as int[] ]]
     for _, winid in ipairs(wins) do
       bufnr = api.nvim_win_get_buf(winid)
       if not seen[bufnr] then
