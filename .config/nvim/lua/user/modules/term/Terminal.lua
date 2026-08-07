@@ -5,12 +5,10 @@
 local api = vim.api
 local pb = Config.common.pb
 
-local id_counter = 0
-
-local function next_id()
-  id_counter = id_counter + 1
-  return id_counter
-end
+local next_id = (function()
+  local counter = 0
+  return function() counter = counter + 1; return counter end
+end)()
 
 --- @return string
 local function get_shell()

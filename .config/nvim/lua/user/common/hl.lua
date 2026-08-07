@@ -110,8 +110,8 @@ if HAS_NVIM_0_8 then
   }
 end
 
-pb.add_rlookup(M.HlAttribute)
-pb.add_rlookup(style_attrs)
+pb.bi_table(M.HlAttribute)
+pb.bi_table(style_attrs)
 local hlattr = M.HlAttribute
 
 ---@param name string Syntax group name.
@@ -240,7 +240,7 @@ function M.hi_spec_to_def_map(spec)
   end
 
   if spec.style then
-    local spec_attrs = pb.add_rlookup(pb.split(spec.style, ",", { plain = true }))
+    local spec_attrs = pb.bi_table(pb.split(spec.style, ",", { plain = true }))
 
     for _, attr in ipairs(style_attrs) do
       res[attr] = spec_attrs[attr] ~= nil

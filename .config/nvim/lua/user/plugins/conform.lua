@@ -8,7 +8,7 @@ return function()
 
   --- Ordered list of formatters. Pick first available.
   local function ol(...)
-    return pb.extend(pb.concat(...), { stop_after_first = true })
+    return pb.assign(pb.concat(...), { stop_after_first = true })
   end
 
   local prettier = ol("prettierd", "prettier")
@@ -28,7 +28,7 @@ return function()
     formatters_by_ft = {
       lua = { "stylua" },
       -- Conform will run multiple formatters sequentially
-      python = { "isort", "black" },
+      python = { "ruff_organize_imports", "ruff_format" },
       -- Use a sub-list to run only the first available formatter
       javascript = prettier,
       javascriptreact = prettier,

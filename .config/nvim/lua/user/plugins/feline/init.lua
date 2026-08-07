@@ -32,6 +32,7 @@ local icons = {
   line_number = "",
   lsp_server = "",
   indent = "",
+  folder = "",
   os = {
     unix = "",
     windows = "",
@@ -207,13 +208,13 @@ end
 
 ---@class feline.CompConfigs
 M.components = {
-  block = StatusComponent({
+  block = StatusComponent.new({
     provider = {
       update = { "VimEnter" },
       get = function() return "▊" end,
     },
   }),
-  vi_mode = StatusComponent({
+  vi_mode = StatusComponent.new({
     provider = {
       update = { "ModeChanged" },
       get = function()
@@ -221,12 +222,12 @@ M.components = {
       end,
     }
   }),
-  paste_mode = StatusComponent({
+  paste_mode = StatusComponent.new({
     provider = function()
       return vim.o.paste and "[PASTE]" or ""
     end,
   }),
-  lsp_server = StatusComponent({
+  lsp_server = StatusComponent.new({
     provider = {
       update = { "LspAttach", "LspDetach", "BufEnter" },
       get = function()
@@ -244,13 +245,13 @@ M.components = {
       if exclude[vim.bo.filetype] then
         return false
       end
-      return next(vim.lsp.get_clients({ bufnr = 0 }))
+      return not not next(vim.lsp.get_clients({ bufnr = 0 }))
     end,
     icon = icons.lsp_server .. " ",
     truncate_hide = true,
   }),
   file = {
-    info = StatusComponent({
+    info = StatusComponent.new({
       provider = {
         update = { "BufEnter", "BufFilePost", "BufModifiedSet", "BufWritePost" },
         get = function()
@@ -275,7 +276,7 @@ M.components = {
         return vim.fn.bufname() ~= ""
       end,
     }),
-    icon = StatusComponent({
+    icon = StatusComponent.new({
       provider = {
         update = { "BufEnter", "BufFilePost" },
         get = function()
@@ -319,7 +320,7 @@ M.components = {
         }
       end,
     }),
-    filetype = StatusComponent({
+    filetype = StatusComponent.new({
       provider = {
         update = { "BufEnter", "FileType" },
         get = function()
@@ -347,7 +348,7 @@ M.components = {
         }
       end,
     }),
-    format = StatusComponent({
+    format = StatusComponent.new({
       provider = function ()
         local format = vim.bo.fileformat
         local enc = vim.bo.fileencoding
@@ -367,7 +368,7 @@ M.components = {
       end,
       truncate_hide = true,
     }),
-    line_info = StatusComponent({
+    line_info = StatusComponent.new({
       provider = function ()
         local cursor = api.nvim_win_get_cursor(0)
         local line = tostring(cursor[1])
@@ -388,7 +389,7 @@ M.components = {
         return result
       end,
     }),
-    line_percent = StatusComponent({
+    line_percent = StatusComponent.new({
       provider = function ()
         local current_line = api.nvim_win_get_cursor(0)[1]
         local total_line = api.nvim_buf_line_count(0)
@@ -396,13 +397,13 @@ M.components = {
         return result .. "%%"
       end,
     }),
-    line_count = StatusComponent({
+    line_count = StatusComponent.new({
       provider = function ()
         return tostring(api.nvim_buf_line_count(0))
       end,
       icon = icons.line_number .. " ",
     }),
-    search = StatusComponent({
+    search = StatusComponent.new({
       provider = function()
         if vim.v.hlsearch ~= 1 then return "" end
 
@@ -423,7 +424,7 @@ M.components = {
         return ("[%s/%s]"):format(current, total)
       end,
     }),
-    indent_info = StatusComponent({
+    indent_info = StatusComponent.new({
       provider = function()
         if vim.bo.expandtab then
           return "spaces:" .. vim.bo.shiftwidth
@@ -434,16 +435,18 @@ M.components = {
       icon = icons.indent .. " ",
       truncate_hide = true,
     }),
-    win_cwd = StatusComponent({
+    win_cwd = StatusComponent.new({
       update = { "WinEnter", "DirChanged" },
       provider = function()
-        return Path.from(vim.fn.getcwd(0, 0)):absolute():fold_home():tostring()
+        return Path.from(vim.fn.getcwd(0, 0)):absolute():fold_home():tostring() .. "/"
       end,
+      icon = icons.folder .. "  ",
+      right_sep = " ",
       truncate_hide = true,
     }),
   },
   git = {
-    branch = StatusComponent({
+    branch = StatusComponent.new({
       provider = {
         -- update = { "BufEnter", "CmdlineLeave", "FocusGained" },
         get = function()
@@ -546,24 +549,24 @@ M.components = {
       -- left_sep = "█",
       -- right_sep = "█ ",
     }),
-    diff_add = StatusComponent({
+    diff_add = StatusComponent.new({
       provider = "git_diff_added",
       icon = icons.git.diff_add .. " ",
       truncate_hide = true,
     }),
-    diff_mod = StatusComponent({
+    diff_mod = StatusComponent.new({
       provider = "git_diff_changed",
       icon = icons.git.diff_mod .. " ",
       truncate_hide = true,
     }),
-    diff_del = StatusComponent({
+    diff_del = StatusComponent.new({
       provider = "git_diff_removed",
       icon = icons.git.diff_del .. " ",
       truncate_hide = true,
     }),
   },
   diagnostic = {
-    err = StatusComponent({
+    err = StatusComponent.new({
       provider = "diagnostic_errors",
       icon = icons.diagnostic.err .. " ",
       enabled = function()
@@ -571,7 +574,7 @@ M.components = {
       end,
       truncate_hide = true,
     }),
-    warn = StatusComponent({
+    warn = StatusComponent.new({
       provider = "diagnostic_warnings",
       icon = icons.diagnostic.warn .. " ",
       enabled = function()
@@ -579,7 +582,7 @@ M.components = {
       end,
       truncate_hide = true,
     }),
-    info = StatusComponent({
+    info = StatusComponent.new({
       provider = "diagnostic_info",
       icon = icons.diagnostic.info .. " ",
       enabled = function()
@@ -587,7 +590,7 @@ M.components = {
       end,
       truncate_hide = true,
     }),
-    hint = StatusComponent({
+    hint = StatusComponent.new({
       provider = "diagnostic_hints",
       icon = icons.diagnostic.hint .. " ",
       enabled = function()
