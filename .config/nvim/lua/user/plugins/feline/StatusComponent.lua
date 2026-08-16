@@ -4,7 +4,10 @@ local pb = Config.common.pb
 
 local next_id = (function()
   local counter = 0
-  return function() counter = counter + 1; return "user_comp_" .. counter end
+  return function()
+    counter = counter + 1
+    return "user_comp_" .. counter
+  end
 end)()
 
 --- @class StatusComponent.Provider

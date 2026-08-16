@@ -164,8 +164,7 @@ return function()
           opts = {
             max_items = 20,
             get_bufnrs = function()
-              return pb
-                .iter(utils.list_bufs({ no_unlisted = true }))
+              return pb.iter(utils.list_bufs({ no_unlisted = true }))
                 :chain(utils.list_bufs({ no_hidden = true }))
                 :unique()
                 :filter(function(bufnr) return utils.buf_get_size(bufnr) < 1024 end)

@@ -20,7 +20,7 @@ require("neodev").setup({
 local cmp = prequire("cmp")
 local cmp_lsp = prequire("cmp_nvim_lsp")
 local blink = prequire("blink.cmp")
-local lspconfig = prequire("lspconfig")
+local lspconfig = prequire("lspconfig") ---@module "lspconfig"
 
 if not lspconfig then return end
 
@@ -119,6 +119,16 @@ require("user.lsp.java")
 -- Typescript
 -- lspconfig.tsserver.setup(M.create_config())
 require("user.lsp.typescript")
+
+-- Astro
+vim.lsp.config("astro", M.create_config({
+  init_options = {
+    typescript = {
+      tsdk = "./node_modules/typescript/lib",
+    },
+  },
+}))
+vim.lsp.enable("astro")
 
 -- Deno
 -- lspconfig.denols.setup(M.create_config())

@@ -1,6 +1,7 @@
 return function()
   local alpha = require("alpha")
   local banners = require("user.plugins.alpha.banners")
+  local alpha_utils = require("user.plugins.alpha.utils")
 
   local api = vim.api
   local au = Config.common.au
@@ -17,13 +18,17 @@ return function()
 
   local function get_banner()
     local height = api.nvim_win_get_height(0)
-    local list = { "lain", "nvim" }
+    local banner_candidates = { banners.lain_2, banners.nvim }
     local bg = vim.o.background
     local result
 
-    for _, name in ipairs(list) do
-      local banner = banners[name .. "_" .. bg] or banners[name]
-      result = vim.split(banner, "\n", {})
+    for _, banner in ipairs(banner_candidates) do
+      local display = banner.display
+      if banner.bg and banner.bg ~= bg then
+        display = alpha_utils.invert_braille_str(banner.display)
+      end
+
+      result = vim.split(display, "\n", {})
       if height >= #result + 20 then
         return result
       end
@@ -108,6 +113,27 @@ return function()
     }
   end
 
+  local function update_alpha()
+    alpha.setup({
+      opts = {
+        margin = 5,
+      },
+      layout = {
+        { type = "padding", val = 1, },
+        elements.header,
+        { type = "padding", val = 2, },
+        {
+          type = "group",
+          opts = {
+            spacing = 1,
+          },
+          val = elements.buttons,
+        },
+        elements.footer,
+      },
+    })
+  end
+
   au.declare_group("alpha_config", {}, {
     {
       "User",
@@ -120,30 +146,20 @@ return function()
       "ColorScheme",
       pattern = "*",
       callback = function(_)
+        if elements and elements.header then
+          elements.header.val = get_banner()
+        else
+          init_elements()
+        end
+
         setup_highlights()
+        update_alpha()
+        vim.cmd("AlphaRedraw")
       end,
     }
   })
 
   init_elements()
   setup_highlights()
-
-  alpha.setup({
-    opts = {
-      margin = 5,
-    },
-    layout = {
-      { type = "padding", val = 1, },
-      elements.header,
-      { type = "padding", val = 2, },
-      {
-        type = "group",
-        opts = {
-          spacing = 1,
-        },
-        val = elements.buttons,
-      },
-      elements.footer,
-    },
-  })
+  update_alpha()
 end

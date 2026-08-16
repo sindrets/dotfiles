@@ -45,7 +45,17 @@
 [delta]
 	features = line-numbers decorations
 	whitespace-error-style = 22 reverse
-	syntax-theme = base16
+	syntax-theme = Catppuccin Mocha
+	plus-style = syntax "#273528"
+	plus-non-emph-style = syntax "#273528"
+	plus-empty-line-marker-style = syntax "#273528"
+	plus-emph-style = "#98d3a4" "#38513f"
+	line-numbers-plus-style = "#98d3a4"
+	minus-style = syntax "#3c2530"
+	minus-empty-line-marker-style = syntax "#3c2530"
+	minus-non-emph-style = syntax "#3c2530"
+	minus-emph-style = "#ff92c8" "#5f374a"
+	line-numbers-minus-style = "#ff92c8"
 [filter "lfs"]
 	clean = git-lfs clean -- %f
 	smudge = git-lfs smudge -- %f
@@ -57,6 +67,8 @@
 	pr-checkout = "!f() { source $HOME/.config/git/lib.sh && git_pr_checkout $@; }; f"
 	pr-wt = "!f() { source $HOME/.config/git/lib.sh && git_pr_wt $@; }; f"
 	init-bare = "!f() { source $HOME/.config/git/lib.sh && git_init_bare $@; }; f"
+	ib = "!f() { source $HOME/.config/git/lib.sh && git_init_bare $@; }; f"
+	clone-bare = "!f() { source $HOME/.config/git/lib.sh && git_clone_bare $@; }; f"
 	cb = "!f() { source $HOME/.config/git/lib.sh && git_clone_bare $@; }; f"
 	stash-keep = !git stash store $(git stash create)
 	changed-files = "!f() { source $HOME/.config/git/lib.sh && git_changed_files $@; }; f"

@@ -3,21 +3,25 @@
 MODELS_DIR="$HOME/.lmstudio/models"
 
 declare -A DEFAULT_FLAGS=(
-  [--model]="$MODELS_DIR/unsloth/Qwen3.6-35B-A3B-MTP-GGUF/Qwen3.6-35B-A3B-UD-IQ2_M.gguf"
+  [--model]="$MODELS_DIR/mudler/Qwen3.6-35B-A3B-APEX-MTP-GGUF/Qwen3.6-35B-A3B-APEX-MTP-Quality.gguf"
   [--alias]="AUTO"
-  [--port]="1234"
+  [--port]="11434"
   [--ctx-size]="131072"
-  [--gpu-layers]="40"
-  [--threads]="9"
+  [--gpu-layers]="999"
+  [--threads]="8"
   [--parallel]="1"
   [--batch-size]="2048"
-  [--ubatch-size]="512"
+  [--ubatch-size]="2048"
+  [--cache-type-k]="q8_0"
+  [--cache-type-v]="q4_0"
   [--flash-attn]="on"
   [--spec-type]="draft-mtp"
   [--spec-draft-n-max]="2"
   [--temp]="0.6"
   [--presence-penalty]="0.0"
   [--repeat-penalty]="1.05"
+  [--n-cpu-moe]="32"
+  [--reasoning-preserve]="true"
 )
 
 # more flags:

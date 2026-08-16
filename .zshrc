@@ -37,7 +37,16 @@ function update_kitty_tab_title() {
 
             if [ -z "$repo_name" ]; then
                 if [ "$(git config --local core.bare)" = "true" ]; then
-                    repo_name="$(basename -s .git "$(git rev-parse --path-format=absolute --git-common-dir)")"
+                    common_dir="$(git rev-parse --path-format=absolute --git-common-dir)"
+
+                    if [[ "$common_dir" == *"/.git" ]]; then
+                        repo_name="$(
+                          repo_basename="$(basename "$(dirname "$common_dir")")"
+                          echo "${repo_basename%(.bare|.git)}"
+                        )"
+                    else
+                        repo_name="$(basename -s .git "$common_dir")"
+                    fi
                 else
                     repo_name="$(basename -s .git "$(git rev-parse --path-format=absolute --show-toplevel)")"
                 fi
@@ -318,6 +327,7 @@ alias h="cd ~"
 alias g="cd $GIT_WORKSPACE"
 alias m="cd ~/Documents/misc"
 alias r="source ~/.zshrc"
+alias ta="tmux a -t"
 alias nv="nvim"
 alias nvim-conf="GIT_DIR=$HOME/.dotfiles nvim --cmd 'cd ~/.config/nvim' -c 'args %' \
     ~/.config/nvim/init.lua ~/.config/nvim/lua/user/plugins/init.lua"

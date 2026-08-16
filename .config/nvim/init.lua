@@ -1,3 +1,4 @@
+--- @return any|nil
 _G.prequire = function(modname)
   local ok, mod = pcall(require, modname)
   if ok then return mod end

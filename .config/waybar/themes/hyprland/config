@@ -1,6 +1,7 @@
 {
   "modules-left": [
-    "hyprland/workspaces",
+    "ext/workspaces",
+    // "hyprland/workspaces",
     // "custom/scratch",
     "hyprland/submap",
     // "sway/window"
@@ -13,6 +14,7 @@
     // "backlight",
     "pulseaudio",
     "battery",
+    "custom/oskb",
     "tray",
     "clock",
     "hyprland/language"
@@ -21,6 +23,9 @@
     "format": "{}",
     "format-en": "us",
     "format-no": "no"
+  },
+  "ext/workspaces": {
+    "on-click": "activate"
   }
 }
 

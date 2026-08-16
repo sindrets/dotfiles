@@ -183,6 +183,7 @@ require("lazy").setup({
           "lua_ls",
           "emmylua_ls",
           "haxe_language_server",
+          "astro",
         },
       },
     },
@@ -236,11 +237,6 @@ require("lazy").setup({
     -- allows extending the providers array elsewhere in your config
     -- without having to redefine it
     opts_extend = { "sources.default", "sources.providers" }
-  },
-  {
-    "nickjvandyke/opencode.nvim",
-    version = "*",
-    init = conf("opencode"),
   },
   {
     "stevearc/oil.nvim",

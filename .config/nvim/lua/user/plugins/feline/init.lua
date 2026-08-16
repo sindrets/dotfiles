@@ -4,7 +4,7 @@
 local lz = require("user.lazy")
 
 local Job = lz.require("imminent.Job") ---@module "imminent.Job"
-local StatusComponent = lz.require("user.plugins.feline.status_component") ---@module "user.plugins.feline.status_component"
+local StatusComponent = lz.require("user.plugins.feline.StatusComponent") ---@module "user.plugins.feline.StatusComponent"
 local async = lz.require("imminent") ---@module "imminent"
 local devicons = lz.require("nvim-web-devicons") ---@module "nvim-web-devicons"
 local feline = lz.require("feline") ---@module "feline"
@@ -407,14 +407,19 @@ M.components = {
       provider = function()
         if vim.v.hlsearch ~= 1 then return "" end
 
+        --- @type boolean, string|{}|{
+        ---   current: number,
+        ---   exact_match: boolean,
+        ---   total: number,
+        ---   incomplete: number,
+        ---   maxcount: number
+        --- }
         local ok, count = pcall(vim.fn.searchcount, { maxcount = 10000, timeout = 150 })
+        if not ok or vim.tbl_isempty(count --[[@cast -string ]]) then return "" end
+        --- @cast count -string, -{}
 
-        if not ok or vim.tbl_isempty(count) then
-          return ""
-        end
-
-        local total = count.total
-        local current = count.current
+        local total = count.total --- @type string|number
+        local current = count.current --- @type string|number
 
         if count.incomplete == 2 then
           total = ">" .. count.maxcount
