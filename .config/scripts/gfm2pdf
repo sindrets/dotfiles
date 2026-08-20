@@ -1,0 +1,119 @@
+#!/usr/bin/env bash
+# gfm2pdf — render GitHub-flavoured Markdown to a PDF styled like github.com.
+#
+# Usage: gfm2pdf INPUT.md [OUTPUT.pdf] [--keep-html]
+#
+# Pipeline:
+#   1. pandoc reads with the `gfm` format (alerts, task lists, strikethrough,
+#      tables) and writes standalone HTML5 with all resources embedded,
+#      wrapped in <div class="markdown-body"> for github-markdown-css.
+#   2. Headless Chromium prints the HTML to PDF (full modern CSS support).
+#
+# github-markdown-css is downloaded once from cdnjs and cached under
+# $XDG_CACHE_HOME/gfm2pdf (default: ~/.cache/gfm2pdf);
+# the GitHub alert styles are embedded below and written into that cache dir.
+
+set -euo pipefail
+
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/gfm2pdf"
+GITHUB_CSS="$CACHE_DIR/github-markdown.min.css"
+GITHUB_CSS_URL="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.9.0/github-markdown.min.css"
+
+# GitHub alert styles for the divs pandoc's gfm reader emits:
+# .note / .tip / .important / .warning / .caution (with a .title child)
+ALERT_CSS=$(cat <<'EOF'
+/* GitHub-style styling for pandoc's GFM alert divs (-f gfm) */
+.note, .tip, .important, .warning, .caution {
+  margin: 0.5em 0;
+  padding: 0.6em 1em;
+  border-left: 0.25em solid;
+  word-wrap: break-word;
+}
+.note > .title, .tip > .title, .important > .title,
+.warning > .title, .caution > .title {
+  font-weight: 600;
+  margin: 0.2em 0;
+}
+.note      { border-color: #0969da; background: #ddf4ff }
+.tip       { border-color: #1a7f37; background: #dafbe1 }
+.important { border-color: #8250df; background: #fbefff }
+.warning   { border-color: #9a6700; background: #fff8c5 }
+.caution   { border-color: #d1242f; background: #ffebe9 }
+.note > .title      { color: #0969da }
+.tip > .title       { color: #1a7f37 }
+.important > .title { color: #8250df }
+.warning > .title   { color: #9a6700 }
+.caution > .title   { color: #d1242f }
+EOF
+)
+
+usage() { echo "Usage: gfm2pdf INPUT.md [OUTPUT.pdf] [--keep-html]" >&2; exit 1; }
+
+input="" out="" keep_html=0
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --keep-html) keep_html=1 ;;
+    -h|--help) usage ;;
+    *)
+      if [[ -z $input ]]; then input="$1"
+      elif [[ -z $out ]]; then out="$1"
+      else echo "gfm2pdf: unknown argument: $1" >&2; usage; fi
+      ;;
+  esac
+  shift
+done
+[[ -n $input ]] || usage
+
+# Resolve against the input's own directory so relative image paths
+# (e.g. ../images/...) in the document work regardless of where we are called from.
+dir="$(dirname "$input")"
+[[ -d $dir ]] || { echo "gfm2pdf: no such directory: $dir" >&2; exit 1; }
+cd "$dir"
+name="$(basename "$input")"
+[[ -f $name ]] || { echo "gfm2pdf: no such file: $input" >&2; exit 1; }
+
+if [[ -z $out ]]; then out="/tmp/${name%.*}.pdf"; fi
+mkdir -p "$(dirname "$out")"
+
+command -v pandoc >/dev/null \
+  || { echo "gfm2pdf: pandoc not found in PATH" >&2; exit 1; }
+command -v chromium >/dev/null \
+  || { echo "gfm2pdf: chromium not found in PATH" >&2; exit 1; }
+
+# Prepare cached CSS assets (each written once; delete a file to regenerate it).
+mkdir -p "$CACHE_DIR"
+if [[ ! -s $GITHUB_CSS ]]; then
+  echo "gfm2pdf: downloading github-markdown-css -> $GITHUB_CSS" >&2
+  curl -fsSL --retry 3 -o "$GITHUB_CSS" "$GITHUB_CSS_URL" \
+    || { echo "gfm2pdf: could not download github-markdown-css from $GITHUB_CSS_URL" >&2; exit 1; }
+fi
+
+if [[ ! -s $CACHE_DIR/gfm-alerts.css ]]; then
+  printf '%s\n' "$ALERT_CSS" >"$CACHE_DIR/gfm-alerts.css"
+fi
+
+tmpdir="$(mktemp -d)"
+trap 'rm -rf "$tmpdir"' EXIT
+html="$tmpdir/output.html"
+
+pandoc "$name" \
+  -s --embed-resources \
+  --from=gfm \
+  --css="$GITHUB_CSS" \
+  --css="$CACHE_DIR/gfm-alerts.css" \
+  --variable=include-before='<div class="markdown-body">' \
+  --variable=include-after='</div>' \
+  -t html5 \
+  -o "$html"
+
+if [[ $keep_html -eq 1 ]]; then
+  cp "$html" "${out%.pdf}.html"
+  echo "gfm2pdf: kept intermediate HTML at ${out%.pdf}.html" >&2
+fi
+
+# Headless Chromium prints the standalone HTML to PDF.
+# --no-pdf-header-footer suppresses the default date/title/page-number
+# header and footer that old headless mode adds by default.
+chromium --headless --disable-gpu --no-sandbox --no-pdf-header-footer \
+  --print-to-pdf="$(realpath -m "$out")" "$html"
+echo "gfm2pdf: wrote $out" >&2

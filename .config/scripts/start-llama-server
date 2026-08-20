@@ -16,7 +16,7 @@ declare -A DEFAULT_FLAGS=(
   [--cache-type-v]="q4_0"
   [--flash-attn]="on"
   [--spec-type]="draft-mtp"
-  [--spec-draft-n-max]="2"
+  [--spec-draft-n-max]="3"
   [--temp]="0.6"
   [--presence-penalty]="0.0"
   [--repeat-penalty]="1.05"
@@ -34,11 +34,16 @@ for key in "${!DEFAULT_FLAGS[@]}"; do
   FINAL_FLAGS["$key"]="${DEFAULT_FLAGS[$key]}"
 done
 
+JUST_PRINT=false
 POSITIONAL=()
 
 # Merge defaults with user overrides via while loop
 while [[ $# -gt 0 ]]; do
   case "$1" in
+    --just-print)
+      JUST_PRINT=true
+      shift
+      ;;
     --*=*)
       key="${1%%=*}"
       val="${1#*=}"
@@ -88,4 +93,8 @@ for key in "${!FINAL_FLAGS[@]}"; do
   fi
 done
 
-llama-server "${ARGS[@]}"
+if [[ "$JUST_PRINT" == "true" ]]; then
+  echo "llama-server ${ARGS[*]}"
+else
+  llama-server "${ARGS[@]}"
+fi
