@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # gfm2pdf — render GitHub-flavoured Markdown to a PDF styled like github.com.
 #
-# Usage: gfm2pdf INPUT.md [OUTPUT.pdf] [--keep-html]
+# Usage: gfm2pdf INPUT.md OUTPUT.pdf [--keep-html] [--page-scale FLOAT]
 #
 # Pipeline:
 #   1. pandoc reads with the `gfm` format (alerts, task lists, strikethrough,
@@ -11,7 +11,7 @@
 #
 # github-markdown-css is downloaded once from cdnjs and cached under
 # $XDG_CACHE_HOME/gfm2pdf (default: ~/.cache/gfm2pdf);
-# the GitHub alert styles are embedded below and written into that cache dir.
+# the GitHub alert styles are embedded below.
 
 set -euo pipefail
 
@@ -19,9 +19,125 @@ CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/gfm2pdf"
 GITHUB_CSS="$CACHE_DIR/github-markdown.min.css"
 GITHUB_CSS_URL="https://cdnjs.cloudflare.com/ajax/libs/github-markdown-css/5.9.0/github-markdown.min.css"
 
-# GitHub alert styles for the divs pandoc's gfm reader emits:
-# .note / .tip / .important / .warning / .caution (with a .title child)
-ALERT_CSS=$(cat <<'EOF'
+help_text="$(
+  cat <<'EOF'
+gfm2pdf — render GitHub-flavoured Markdown to a PDF styled like github.com.
+
+Usage: gfm2pdf INPUT.md OUTPUT.pdf [OPTIONS]
+
+Arguments:
+  INPUT.md      Path to the Markdown file to convert. Relative paths in the
+                document (e.g. images) are resolved against this file's
+                directory, not the current working directory.
+  OUTPUT.pdf    Where to write the PDF. With --keep-html, the intermediate
+                HTML is written next to it with a .html extension.
+
+Options:
+  --keep-html   Also keep the intermediate standalone HTML at OUTPUT.html.
+                Useful for viewing in a browser; the page follows the
+                system light/dark color scheme.
+  --page-scale FLOAT
+                Scale the rendered content by factor FLOAT (e.g. 0.8 = 80%),
+                default 1.0. Text, borders and images scale proportionally
+                while the PDF page size stays the same.
+  --page-size SIZE
+                Paper size for the PDF, as a CSS @page size: a keyword like A4,
+                letter or legal, or explicit dimensions (e.g. "210mm 297mm").
+                Default: A4.
+  -h, --help    Show this help and exit.
+
+Requirements: pandoc, curl, chromium or google-chrome.
+The github-markdown-css stylesheet is downloaded once and cached under
+$XDG_CACHE_HOME/gfm2pdf (default: ~/.cache/gfm2pdf).
+EOF
+)"
+
+usage() {
+  printf '%s\n' "$help_text" >&2
+  exit 1
+}
+
+input=""
+out=""
+keep_html=0
+page_scale="1.0"
+page_size="A4"
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+  --keep-html) keep_html=1 ;;
+  --page-scale)
+    [[ $# -ge 2 ]] || {
+      echo "gfm2pdf: --page-scale requires a value" >&2
+      usage
+    }
+    page_scale="$2"
+    shift
+    ;;
+  --page-size)
+    [[ $# -ge 2 ]] || {
+      echo "gfm2pdf: --page-size requires a value" >&2
+      usage
+    }
+    page_size="$2"
+    shift
+    ;;
+  -h | --help)
+    printf '%s\n' "$help_text" >&1
+    exit 0
+    ;;
+  *)
+    if [[ -z $input ]]; then
+      input="$1"
+    elif [[ -z $out ]]; then
+      out="$1"
+    else
+      echo "gfm2pdf: unknown argument: $1" >&2
+      usage
+    fi
+    ;;
+  esac
+  shift
+done
+[[ -n $input ]] || {
+  echo "gfm2pdf: missing INPUT.md" >&2
+  usage
+}
+[[ -n $out ]] || {
+  echo "gfm2pdf: missing OUTPUT.pdf" >&2
+  usage
+}
+
+# GitHub alert styles for the divs pandoc's gfm reader emits: .note / .tip /
+# .important / .warning / .caution (with a .title child). Colors use
+# github-markdown-css custom properties so alerts follow the light/dark color
+# scheme; backgrounds are the border color at 15% opacity.
+OVERRIDE_CSS=$(
+  cat <<'EOF'
+@media screen {
+  .markdown-body {
+    max-width: 800px;
+    padding: 16px;
+    margin: 0 auto;
+  }
+}
+@media (prefers-color-scheme: light) {
+  body {
+    --bgColor-default: #ffffff;
+    --fgColor-default: #1f2328;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  body {
+    --bgColor-default: #0d1117;
+    --fgColor-default: #f0f6fc;
+  }
+}
+body {
+  margin: 0;
+  background-color: var(--bgColor-default);
+  color: var(--fgColor-default);
+}
 /* GitHub-style styling for pandoc's GFM alert divs (-f gfm) */
 .note, .tip, .important, .warning, .caution {
   margin: 0.5em 0;
@@ -29,91 +145,170 @@ ALERT_CSS=$(cat <<'EOF'
   border-left: 0.25em solid;
   word-wrap: break-word;
 }
-.note > .title, .tip > .title, .important > .title,
-.warning > .title, .caution > .title {
+.note > .title,
+.tip > .title,
+.important > .title,
+.warning > .title,
+.caution > .title {
   font-weight: 600;
   margin: 0.2em 0;
 }
-.note      { border-color: #0969da; background: #ddf4ff }
-.tip       { border-color: #1a7f37; background: #dafbe1 }
-.important { border-color: #8250df; background: #fbefff }
-.warning   { border-color: #9a6700; background: #fff8c5 }
-.caution   { border-color: #d1242f; background: #ffebe9 }
-.note > .title      { color: #0969da }
-.tip > .title       { color: #1a7f37 }
-.important > .title { color: #8250df }
-.warning > .title   { color: #9a6700 }
-.caution > .title   { color: #d1242f }
+.note {
+  border-color: var(--borderColor-accent-emphasis);
+  background: color-mix(
+    in srgb,
+    var(--borderColor-accent-emphasis) 15%,
+    transparent
+  );
+}
+.tip {
+  border-color: var(--borderColor-success-emphasis);
+  background: color-mix(
+    in srgb,
+    var(--borderColor-success-emphasis) 15%,
+    transparent
+  );
+}
+.important {
+  border-color: var(--borderColor-done-emphasis);
+  background: color-mix(
+    in srgb,
+    var(--borderColor-done-emphasis) 15%,
+    transparent
+  );
+}
+.warning {
+  border-color: var(--borderColor-attention-emphasis);
+  background: color-mix(
+    in srgb,
+    var(--borderColor-attention-emphasis) 15%,
+    transparent
+  );
+}
+.caution {
+  border-color: var(--borderColor-danger-emphasis);
+  background: color-mix(
+    in srgb,
+    var(--borderColor-danger-emphasis) 15%,
+    transparent
+  );
+}
+.note > .title { color: var(--fgColor-accent); }
+.tip > .title { color: var(--fgColor-success); }
+.important > .title { color: var(--fgColor-done); }
+.warning > .title { color: var(--fgColor-attention); }
+.caution > .title { color: var(--fgColor-danger); }
 EOF
 )
 
-usage() { echo "Usage: gfm2pdf INPUT.md [OUTPUT.pdf] [--keep-html]" >&2; exit 1; }
+if [[ -n $page_size ]]; then
+  OVERRIDE_CSS="$(
+    cat <<EOF
+@page { size: $page_size; }
+$OVERRIDE_CSS
+EOF
+  )"
+fi
 
-input="" out="" keep_html=0
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --keep-html) keep_html=1 ;;
-    -h|--help) usage ;;
-    *)
-      if [[ -z $input ]]; then input="$1"
-      elif [[ -z $out ]]; then out="$1"
-      else echo "gfm2pdf: unknown argument: $1" >&2; usage; fi
-      ;;
-  esac
-  shift
-done
-[[ -n $input ]] || usage
+if [[ "$page_scale" != "1.0" ]]; then
+  OVERRIDE_CSS="$(
+    cat <<EOF
+@media print {
+  html {
+    --page-scale: $page_scale;
+    transform-origin: top left;
+    scale: var(--page-scale);
+    width: calc(100vw / var(--page-scale));
+  }
+}
+$OVERRIDE_CSS
+EOF
+  )"
+fi
 
-# Resolve against the input's own directory so relative image paths
-# (e.g. ../images/...) in the document work regardless of where we are called from.
 dir="$(dirname "$input")"
-[[ -d $dir ]] || { echo "gfm2pdf: no such directory: $dir" >&2; exit 1; }
-cd "$dir"
+[[ -d $dir ]] || {
+  echo "gfm2pdf: no such directory: $dir" >&2
+  exit 1
+}
 name="$(basename "$input")"
-[[ -f $name ]] || { echo "gfm2pdf: no such file: $input" >&2; exit 1; }
+[[ -f $input ]] || {
+  echo "gfm2pdf: no such file: $input" >&2
+  exit 1
+}
 
-if [[ -z $out ]]; then out="/tmp/${name%.*}.pdf"; fi
 mkdir -p "$(dirname "$out")"
 
-command -v pandoc >/dev/null \
-  || { echo "gfm2pdf: pandoc not found in PATH" >&2; exit 1; }
-command -v chromium >/dev/null \
-  || { echo "gfm2pdf: chromium not found in PATH" >&2; exit 1; }
+command -v pandoc >/dev/null ||
+  {
+    echo "gfm2pdf: pandoc not found in PATH" >&2
+    exit 1
+  }
+# Find an executable chromium binary
+CHROMIUM_BIN=""
+for candidate in chromium \
+  google-chrome-stable \
+  google-chrome \
+  "/Applications/Chromium.app/Contents/MacOS/Chromium" \
+  "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"; do
+  if command -v "$candidate" >/dev/null; then
+    CHROMIUM_BIN="$candidate"
+    break
+  fi
+done
+[[ -n $CHROMIUM_BIN ]] || {
+  echo "gfm2pdf: neither chromium nor google-chrome found in PATH" >&2
+  exit 1
+}
 
 # Prepare cached CSS assets (each written once; delete a file to regenerate it).
 mkdir -p "$CACHE_DIR"
 if [[ ! -s $GITHUB_CSS ]]; then
   echo "gfm2pdf: downloading github-markdown-css -> $GITHUB_CSS" >&2
-  curl -fsSL --retry 3 -o "$GITHUB_CSS" "$GITHUB_CSS_URL" \
-    || { echo "gfm2pdf: could not download github-markdown-css from $GITHUB_CSS_URL" >&2; exit 1; }
-fi
-
-if [[ ! -s $CACHE_DIR/gfm-alerts.css ]]; then
-  printf '%s\n' "$ALERT_CSS" >"$CACHE_DIR/gfm-alerts.css"
+  curl -fsSL --retry 3 -o "$GITHUB_CSS" "$GITHUB_CSS_URL" ||
+    {
+      echo "gfm2pdf: failed to download github-markdown-css from $GITHUB_CSS_URL" >&2
+      exit 1
+    }
 fi
 
 tmpdir="$(mktemp -d)"
 trap 'rm -rf "$tmpdir"' EXIT
+printf '%s\n' "$OVERRIDE_CSS" >"$tmpdir/overrides.css"
 html="$tmpdir/output.html"
 
-pandoc "$name" \
-  -s --embed-resources \
-  --from=gfm \
-  --css="$GITHUB_CSS" \
-  --css="$CACHE_DIR/gfm-alerts.css" \
-  --variable=include-before='<div class="markdown-body">' \
-  --variable=include-after='</div>' \
-  -t html5 \
-  -o "$html"
+# dir is the input's own directory; pandoc resolves relative resources in
+# the document (e.g. ../images/...) against its working directory, so the
+# pandoc invocation below runs in a subshell cd'd here.
+(
+  cd "$dir"
+  pandoc "$name" \
+    --standalone \
+    --embed-resources \
+    --from=gfm \
+    --css="$GITHUB_CSS" \
+    --css="$tmpdir/overrides.css" \
+    --variable=include-before='<div class="markdown-body">' \
+    --variable=include-after='</div>' \
+    -t html5 \
+    -o "$html"
+)
 
 if [[ $keep_html -eq 1 ]]; then
   cp "$html" "${out%.pdf}.html"
   echo "gfm2pdf: kept intermediate HTML at ${out%.pdf}.html" >&2
 fi
 
-# Headless Chromium prints the standalone HTML to PDF.
-# --no-pdf-header-footer suppresses the default date/title/page-number
-# header and footer that old headless mode adds by default.
-chromium --headless --disable-gpu --no-sandbox --no-pdf-header-footer \
-  --print-to-pdf="$(realpath -m "$out")" "$html"
+# Headless Chromium/Chrome prints the standalone HTML to PDF.
+# --no-pdf-header-footer suppresses the default date/title/page-number header
+# and footer that old headless mode adds by default. Resolve $out to an
+# absolute path (Chromium requires one)
+out="$(cd "$(dirname "$out")" && pwd)/$(basename "$out")"
+"$CHROMIUM_BIN" \
+  --headless \
+  --disable-gpu \
+  --no-sandbox \
+  --no-pdf-header-footer \
+  --print-to-pdf="$out" \
+  "$html"
 echo "gfm2pdf: wrote $out" >&2
