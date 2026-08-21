@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
-# gfm2pdf — render GitHub-flavoured Markdown to a PDF styled like github.com.
+# gfm2pdf - render GitHub-flavoured Markdown to a PDF styled like github.com.
 #
 # Usage: gfm2pdf INPUT.md OUTPUT.pdf [--keep-html] [--page-scale FLOAT]
 #
 # Pipeline:
 #   1. pandoc reads with the `gfm` format (alerts, task lists, strikethrough,
-#      tables) and writes standalone HTML5 with all resources embedded,
-#      wrapped in <div class="markdown-body"> for github-markdown-css.
+#      tables) and writes standalone HTML5 with all resources embedded.
 #   2. Headless Chromium prints the HTML to PDF (full modern CSS support).
 #
 # github-markdown-css is downloaded once from cdnjs and cached under
@@ -111,7 +110,7 @@ done
 # GitHub alert styles for the divs pandoc's gfm reader emits: .note / .tip /
 # .important / .warning / .caution (with a .title child). Colors use
 # github-markdown-css custom properties so alerts follow the light/dark color
-# scheme; backgrounds are the border color at 15% opacity.
+# scheme
 OVERRIDE_CSS=$(
   cat <<'EOF'
 @media screen {
@@ -226,9 +225,9 @@ EOF
   )"
 fi
 
-dir="$(dirname "$input")"
-[[ -d $dir ]] || {
-  echo "gfm2pdf: no such directory: $dir" >&2
+input_dir="$(dirname "$input")"
+[[ -d $input_dir ]] || {
+  echo "gfm2pdf: no such directory: $input_dir" >&2
   exit 1
 }
 name="$(basename "$input")"
@@ -277,11 +276,14 @@ trap 'rm -rf "$tmpdir"' EXIT
 printf '%s\n' "$OVERRIDE_CSS" >"$tmpdir/overrides.css"
 html="$tmpdir/output.html"
 
-# dir is the input's own directory; pandoc resolves relative resources in
-# the document (e.g. ../images/...) against its working directory, so the
-# pandoc invocation below runs in a subshell cd'd here.
+# - pandoc resolves relative resources in the document (e.g. ../images/...)
+# against its working directory, so the pandoc invocation below runs in a
+# subshell cd'd in the input's own dir.
+#
+# - wrap the html output in a markdown-body div for the github css to apply
+# correctly.
 (
-  cd "$dir"
+  cd "$input_dir"
   pandoc "$name" \
     --standalone \
     --embed-resources \
@@ -310,5 +312,6 @@ out="$(cd "$(dirname "$out")" && pwd)/$(basename "$out")"
   --no-sandbox \
   --no-pdf-header-footer \
   --print-to-pdf="$out" \
+  --generate-pdf-document-outline \
   "$html"
 echo "gfm2pdf: wrote $out" >&2
