@@ -103,9 +103,12 @@ function llmchat.setup()
     )
     local start_line = region[1][1][2]
     local end_line = region[#region][1][2]
+    local range_str = start_line == end_line and
+      tostring(start_line) or
+      string.format("%d-%d", start_line, end_line)
 
     term:send(
-      { string.format("%s:%d:%d ", cur_path:tostring(), start_line, end_line) },
+      { string.format("%s:%s ", cur_path:tostring(), range_str) },
       { auto_cr = false }
     )
 
