@@ -286,6 +286,14 @@ hl.config({
   },
 })
 
+hl.device({
+  name = "ydotoold-virtual-device",
+  kb_layout = "us",
+  kb_variant = "",
+  kb_options = "",
+  sensitivity = 0,
+})
+
 -- https://wiki.hypr.land/Configuring/Variables/#gestures
 -- hl.gesture({ fingers = 3, direction = "horizontal", action = "workspace" })
 

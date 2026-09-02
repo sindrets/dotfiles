@@ -33,7 +33,9 @@
     "workspaceRoots": [
       "."
     ],
-    "ignoreGlobs": [],
+    "ignoreGlobs": [
+      "lib/imminent.nvim/.dev/lua/**/*"
+    ],
     "library": [
       "/usr/share/hypr/stubs",
       "./lib/imminent.nvim/lua"

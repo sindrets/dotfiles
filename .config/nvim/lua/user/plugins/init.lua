@@ -195,10 +195,10 @@ require("lazy").setup({
     config = conf("conform"),
     event = "VeryLazy",
   },
-  {
-    "pmizio/typescript-tools.nvim",
-    dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
-  },
+  -- {
+  --   "pmizio/typescript-tools.nvim",
+  --   dependencies = { "nvim-lua/plenary.nvim", "neovim/nvim-lspconfig" },
+  -- },
   {
     "Hoffs/omnisharp-extended-lsp.nvim",
     dependencies = { "neovim/nvim-lspconfig" },

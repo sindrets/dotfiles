@@ -46,6 +46,7 @@ return function()
       bash = { "shfmt" },
       sh = { "shfmt" },
       zsh = { "shfmt" },
+      templ = { "templ" },
     },
   })
 

@@ -23,7 +23,7 @@ return {
   workspace_required = false,
   single_file_support = true,
   settings = {
-    Lua = {
+    emmylua = {
       runtime = {
         version = "LuaJIT",
       },

@@ -22,7 +22,7 @@ async.block_on(function()
 
   M.lsp_config = {
     settings = {
-      Lua = {
+      emmylua = {
         workspace = {
           library = async.all({
             local_plugin("diffview.nvim"),

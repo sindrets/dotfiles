@@ -70,10 +70,10 @@ function llmchat.setup()
 
     if cur_path:starts_with(Path.cwd()) then
       -- make the path relative if it's a descendant of the cwd
-      return Path.join(".", cur_path:relative()):unwrap()
+      return Path.join(".", cur_path:relative()):unwrap():fold_home()
     end
 
-    return cur_path
+    return cur_path:fold_home()
   end
 
   vim.keymap.set(

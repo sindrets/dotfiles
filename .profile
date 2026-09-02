@@ -74,6 +74,7 @@ appendpath '/usr/bin'
 appendpath "$HOME/.config/emacs/bin" 1
 appendpath "$(ruby -e 'puts Gem.user_dir')/bin" 1
 appendpath "$HOME/.cargo/bin" 1
+appendpath "$HOME/go/bin" 1
 appendpath "$HOME/.lmstudio/bin" 1
 
 export PATH

@@ -117,8 +117,7 @@ end
 require("user.lsp.java")
 
 -- Typescript
--- lspconfig.tsserver.setup(M.create_config())
-require("user.lsp.typescript")
+vim.lsp.enable("tsc")
 
 -- Astro
 vim.lsp.config("astro", M.create_config({
@@ -137,7 +136,7 @@ vim.lsp.enable("astro")
 -- require("user.lsp.lua")
 vim.lsp.config("emmylua_ls", M.create_config({
   settings = {
-    Lua = {
+    emmylua = {
       workspace = {
         library = {
           "$VIMRUNTIME",
