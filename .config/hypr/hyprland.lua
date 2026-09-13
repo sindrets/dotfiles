@@ -1,10 +1,16 @@
+--- @namespace hypr.user
+--- @using pebbles
+--- @using imminent
+
 -- #######################################################################################
 -- HYPRLAND CONFIG
--- EDIT THIS CONFIG ACCORDING TO THE WIKI INSTRUCTIONS.
 -- #######################################################################################
 
 -- Refer to the wiki for more information.
 -- https://wiki.hypr.land/Configuring/
+
+-- Lua 5.1 compat
+if not unpack then _G.unpack = table.unpack end
 
 local function append_pkgpath(path)
   package.path = package.path
@@ -16,26 +22,36 @@ local function append_pkgpath(path)
     }, ";")
 end
 
-local HOME = os.getenv("HOME")
-local CONF_DIR = HOME .. "/.config/hypr"
+local constants = require("lib.constants")
+
+local HOME = constants.HOME
+local CONF_DIR = constants.CONF_DIR
+
 append_pkgpath(HOME .. "/.luarocks/lib/lua/5.5/lpeg")
 append_pkgpath(HOME .. "/.luarocks/lib/lua/5.5/luv")
 append_pkgpath(HOME .. "/.luarocks/share/lua/5.5")
-append_pkgpath(CONF_DIR .. "/lib/imminent.nvim/lua")
-if not unpack then _G.unpack = table.unpack end
+append_pkgpath(CONF_DIR .. "/deps/imminent.nvim/lua")
 
-local Path = require("imminent.fs.Path")
+local PluginManager = require("lib.PluginManager")
 local async = require("imminent")
 local pb = require("imminent.pebbles")
 
 local d = hl.dispatch
 
---------------
--- MONITORS --
---------------
+-------------
+-- PLUGINS --
+-------------
 
--- See https://wiki.hypr.land/Configuring/Basics/Monitors/
--- hl.monitor({ output = "", mode = "preferred", position = "auto", scale = "auto" })
+-- Custom declarative plugin config. This loads the plugin library files _if
+-- they're found_. Gracefully fails with a warning notification otherwise.
+--
+-- This _must_ be loaded early in the config.
+--
+-- NOTE: Make sure hyprpm plugins are disabled in /var/cache/hyprpm/$USER/state.toml
+PluginManager.setup({
+  { "hyprbars" },
+  { "borders-plus-plus", enabled = false },
+})
 
 -----------------
 -- MY PROGRAMS --
@@ -141,7 +157,7 @@ hl.config({
 
     -- https://wiki.hypr.land/Configuring/Variables/#blur
     blur = {
-      enabled = true,
+      enabled = false,
       size = 3,
       passes = 1,
       vibrancy = 0.1696,
@@ -301,64 +317,6 @@ hl.device({
 -- See https://wiki.hypr.land/Configuring/Advanced-and-Cool/Devices/ for more
 -- hl.device({ name = "epic-mouse-v1", sensitivity = -0.5 })
 
--------------
--- PLUGINS --
--------------
-
-hl.config({
-  plugin = {
-    hyprbars = {
-      enabled = true,
-      bar_blur = false,
-      bar_height = 32,
-      bar_color = "rgb(1e1e1e)",
-      col = { text = "rgb(899296)" },
-      bar_text_size = 10,
-      bar_text_font = "Jetbrains Mono Nerd Font",
-      -- bar_text_weight = "Bold",
-      bar_button_padding = 8,
-      bar_padding = 10,
-      bar_part_of_window = true,
-      bar_precedence_over_border = true,
-    },
-  },
-})
-
-hl.plugin.hyprbars.add_button({
-  bg_color = "rgb(dc6d77)",
-  fg_color = "rgb(ffffff)",
-  size = 14,
-  icon = " ",
-  action = "hyprctl dispatch 'hl.dsp.window.close()'",
-})
-
-hl.plugin.hyprbars.add_button({
-  bg_color = "rgb(e4c17c)",
-  fg_color = "rgb(000000)",
-  size = 14,
-  icon = " ",
-  action = "hyprctl dispatch 'hl.dsp.window.fullscreen()'",
-})
-
-hl.plugin.hyprbars.add_button({
-  bg_color = "rgb(7eb1d8)",
-  fg_color = "rgb(000000)",
-  size = 14,
-  icon = " ",
-  action = [=[hyprctl dispatch 'hl.dsp.window.float({ action = "toggle" })']=],
-})
-
--- hl.config({
---   plugin = {
---     borders_plus_plus = {
---       add_borders = 0,
---       col = { border_1 = "rgba(00000099)" },
---       border_size_1 = 1,
---       natural_rounding = true,
---     },
---   },
--- })
-
 -----------------
 -- KEYBINDINGS --
 -----------------
@@ -385,9 +343,9 @@ hl.bind(
   hl.dsp.exec_cmd(table.concat({
     "nwg-displays",
     "--monitors_path",
-    HOME .. "/.config/hypr/config/monitors.conf",
+    HOME .. "/.config/hypr/extra/00_monitors.conf",
     "--workspaces_path",
-    HOME .. "/.config/hypr/config/workspaces.conf",
+    HOME .. "/.config/hypr/extra/10_workspaces.conf",
   }, " "))
 )
 hl.bind("Print", hl.dsp.exec_cmd(HOME .. "/.config/scripts/screenshot-utils.sh -s"))
@@ -596,173 +554,28 @@ hl.bind(
   { locked = true, repeating = true }
 )
 
+PluginManager.load_plugin_configs()
+
 ----------------------------
 -- WINDOWS AND WORKSPACES --
 ----------------------------
 
--- See https://wiki.hypr.land/Configuring/Basics/Window-Rules/
--- and https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
-
-hl.window_rule({
-  name = "suppress-maximize-events",
-  match = { class = ".*" },
-  suppress_event = "maximize",
-})
-
-hl.window_rule({
-  name = "fix-xwayland-drags",
-  match = {
-    class = "",
-    title = "",
-    xwayland = true,
-    float = true,
-    fullscreen = false,
-    pin = false,
-  },
-  no_focus = true,
-})
-
-hl.window_rule({
-  name = "kitty-float",
-  match = { class = "kitty_FLOAT" },
-  float = true,
-})
-
-hl.window_rule({
-  name = "1password-float-1",
-  match = { class = "1Password" },
-  float = true,
-})
-
-hl.window_rule({
-  name = "1password-float-2",
-  match = { class = "1password" },
-  float = true,
-})
-
-hl.window_rule({
-  name = "pavucontrol-float",
-  match = { class = "pavucontrol-qt" },
-  float = true,
-})
-
-hl.window_rule({
-  name = "thunar-progress-float",
-  match = { class = "thunar", title = "File Operation Progress" },
-  float = true,
-})
-
-hl.window_rule({
-  name = "thunar-confirm-float",
-  match = { class = "thunar", title = "Confirm to replace files" },
-  float = true,
-})
-
-hl.window_rule({
-  name = "pip-float",
-  match = { class = "(Firefox Beta|zen)", title = "Picture-in-Picture" },
-  float = true,
-})
-
-hl.window_rule({
-  name = "azote-float",
-  match = { class = "azote" },
-  float = true,
-})
-
-hl.window_rule({
-  name = "steam-friends-float",
-  match = { class = "steam", title = "Friends List" },
-  float = true,
-})
-
--- windowrule = float 1, match:class gamescope
--- windowrule = float 1, match:xdg_tag proton-game
-
-hl.window_rule({
-  name = "steam-app-float",
-  match = { initial_class = "^steam_app_.*" },
-  float = true,
-})
-
-hl.window_rule({
-  name = "modorganizer-no-bar",
-  match = { float = true, class = "steam_app_0", initial_title = "^ModOrganizer$" },
-  ["hyprbars:no_bar"] = true,
-  border_size = 0,
-  no_shadow = true,
-  no_blur = true,
-})
-
--- Affinity
-hl.window_rule({
-  name = "affinity-tile",
-  match = { class = "affinity.exe", initial_title = "Affinity" },
-  tile = true,
-})
-
-hl.window_rule({
-  name = "affinity-no-bar",
-  match = { float = true, class = "affinity.exe", title = "^$" },
-  ["hyprbars:no_bar"] = true,
-  border_size = 0,
-  no_shadow = true,
-  no_blur = true,
-})
-
--- flameshot
--- hl.window_rule({
---   name = "flameshot-overlay",
---   match = { class = "flameshot" },
---   move = "0 0",
---   pin = true,
---   border_size = 0,
---   rounding = 0,
---   stay_focused = true,
---   float = true,
---   opaque = true,
---   ["hyprbars:no_bar"] = true,
---   size = { 8320, 2160 },
--- })
-
--- screenkey
-hl.window_rule({
-  name = "screenkey-float",
-  match = { class = "one.alynx.showmethekey", initial_title = "^Floating Window.*" },
-  float = true,
-  pin = true,
-  no_initial_focus = true,
-  opacity = 0.7,
-  decorate = false,
-  ["hyprbars:no_bar"] = true,
-  border_size = 0,
-  no_shadow = true,
-  no_blur = true,
-})
-
--- Window bars
-hl.window_rule({
-  name = "no-bar-tiled",
-  match = { float = false },
-  ["hyprbars:no_bar"] = true,
-})
+require("window_rules")
 
 -----------------------------
 -- SOURCE ADDITIONAL FILES --
 -----------------------------
 
 async.block_on(function()
-  async.fs.ls(CONF_DIR .. "/config", { max_depth = math.huge --[[@as int ]] })
+  async.fs.ls(CONF_DIR .. "/extra", { max_depth = math.huge --[[@as int ]] })
     :await()
     :unwrap()
     :iter()
     :map(function(entry)
-      if entry.path:extension() == "lua" then
-        return entry.path
-      end
-      return pb.None
+      return entry.path:extension() == "lua" and
+        entry.path:to_os_path() or
+        pb.None
     end)
-    :for_each(function(path)
-      dofile(path:tostring())
-    end)
+    :sorted()
+    :for_each(function(s_path) dofile(s_path) end)
 end)

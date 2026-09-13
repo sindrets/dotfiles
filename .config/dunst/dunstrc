@@ -77,10 +77,10 @@
     separator_height = 1
 
     # Padding between text and separator.
-    padding = 32
+    padding = 24
 
     # Horizontal padding.
-    horizontal_padding = 32
+    horizontal_padding = 24
 
     # Defines width in pixels of frame around the notification window.
     # Set to 0 to disable.
@@ -109,11 +109,11 @@
 
     ### Text ###
 
-    font = Noto Sans 11
+    font = Cantarell 11
 
     # The spacing between lines.  If the height is smaller than the
     # font height, it will get raised to the font height.
-    line_height = 0
+    line_height = 2
 
     # Possible values are:
     # full: Allow a small subset of html markup in notifications:
@@ -149,7 +149,8 @@
     #   %n  progress value if set without any extra characters
     #   %%  Literal %
     # Markup is allowed
-    format = "<b>%s</b>\n%b"
+    # Note: using a span with small white-space to add margin between summary and body
+    format = <b>%s</b>\n<span font_size="25%"> </span>\n%b
 
     # Alignment of message text.
     # Possible values are "left", "center" and "right".
@@ -190,7 +191,7 @@
 
     # Paths to default icons.
     #icoin_path = /usr/share/icons/gnome/16x16/status/:/usr/share/icons/gnome/16x16/devices/
-	icon_path = /usr/share/icons/Numix/16/status/:/usr/share/icons/Numix/16/devices/:/usr/share/icons/Numix/16/actions:/usr/share/icons/Numix/48/notifications
+    icon_path = /usr/share/icons/Numix/16/status/:/usr/share/icons/Numix/16/devices/:/usr/share/icons/Numix/16/actions:/usr/share/icons/Numix/48/notifications
 
     ### History ###
 

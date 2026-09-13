@@ -165,6 +165,16 @@ vim.lsp.config("haxe_language_server", M.create_config({
   },
 }))
 
+-- Go
+vim.lsp.config("gopls", M.create_config({
+  cmd_env = { GOFUMPT_SPLIT_LONG_LINES = "on" },
+  settings = {
+    gopls = {
+      gofumpt = true,
+    },
+  },
+}))
+
 vim.diagnostic.config({
   virtual_text = false,
   underline = true,

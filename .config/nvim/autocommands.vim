@@ -106,8 +106,14 @@ vim.api.nvim_create_autocmd({ "BufRead" }, {
 vim.api.nvim_create_autocmd({ "FileType" }, {
     group = "NvimConfig",
     pattern = "*",
-    callback = function()
-        pcall(vim.treesitter.start)
+    callback = function(ctx)
+        local ts = prequire("nvim-treesitter")
+        if not ts then pcall(vim.treesitter.start) end
+
+        if pb.contains(ts.get_installed(), ctx.match) then
+            pcall(vim.treesitter.start)
+            -- vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
     end,
 })
 EOF
