@@ -411,40 +411,24 @@ require("lazy").setup({
   { "goolord/alpha-nvim", config = conf("alpha"), event = "VimEnter" },
   { "ryanoasis/vim-devicons" },
   {
-    "OXY2DEV/markview.nvim",
-    branch = "main",
-    version = "*",
-    ft = "markdown",
-    dependencies = {
-      "nvim-treesitter/nvim-treesitter",
-      "nvim-tree/nvim-web-devicons"
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' },
+    opts = {
+      -- anti_conceal = {
+      --   enabled = true,
+      --   disabled_modes = { "v", "V", "", "s", "S", "", "i", "ic", "ix" },
+      -- },
+      pipe_table = {
+        wrap = true,
+        cell = 'trimmed',
+        border_virtual = true,
+      },
+      win_options = {
+        concealcursor = {
+          rendered = "nc",
+        },
+      },
     },
-    config = function()
-      require("markview").setup({
-        markdown = {
-          code_blocks = {
-            pad_amount = 0,
-          },
-          list_items = {
-            indent_size = 2,
-            shift_width = 2,
-          },
-        },
-        preview = {
-          modes = { "n", "i", "no", "c" },
-          hybrid_modes = { "i" },
-          callbacks = {
-            on_enable = function(_, win)
-              api.nvim_win_call(win, function()
-                vim.opt_local.conceallevel = 3
-                vim.opt_local.concealcursor = "nc"
-              end)
-            end,
-          },
-        },
-      })
-      require("markview.highlights").setup()
-    end,
   },
   {
     "iamcco/markdown-preview.nvim",
