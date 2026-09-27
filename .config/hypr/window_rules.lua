@@ -2,6 +2,8 @@
 
 local PluginManager = require("lib.PluginManager")
 
+local if_loaded = PluginManager.if_loaded
+
 -- See https://wiki.hypr.land/Configuring/Basics/Window-Rules/
 -- and https://wiki.hypr.land/Configuring/Basics/Workspace-Rules/
 
@@ -31,14 +33,8 @@ hl.window_rule({
 })
 
 hl.window_rule({
-  name = "1password-float-1",
-  match = { class = "1Password" },
-  float = true,
-})
-
-hl.window_rule({
-  name = "1password-float-2",
-  match = { class = "1password" },
+  name = "1password-float",
+  match = { class = "com.onepassword.OnePassword" },
   float = true,
 })
 
@@ -93,7 +89,7 @@ hl.window_rule({
   border_size = 0,
   no_shadow = true,
   no_blur = true,
-  ["hyprbars:no_bar"] = PluginManager.if_loaded("hyprbars", true, nil),
+  ["hyprbars:no_bar"] = if_loaded("hyprbars", true, nil),
 })
 
 -- Affinity
@@ -109,7 +105,7 @@ hl.window_rule({
   border_size = 0,
   no_shadow = true,
   no_blur = true,
-  ["hyprbars:no_bar"] = PluginManager.if_loaded("hyprbars", true, nil),
+  ["hyprbars:no_bar"] = if_loaded("hyprbars", true, nil),
 })
 
 -- flameshot
@@ -139,12 +135,12 @@ hl.window_rule({
   border_size = 0,
   no_shadow = true,
   no_blur = true,
-  ["hyprbars:no_bar"] = PluginManager.if_loaded("hyprbars", true, nil),
+  ["hyprbars:no_bar"] = if_loaded("hyprbars", true, nil),
 })
 
 -- Window bars
 hl.window_rule({
   name = "no-bar-tiled",
   match = { float = false },
-  ["hyprbars:no_bar"] = PluginManager.if_loaded("hyprbars", true, nil),
+  ["hyprbars:no_bar"] = if_loaded("hyprbars", true, nil),
 })

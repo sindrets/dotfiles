@@ -1,7 +1,30 @@
 #!/usr/bin/bash
 
+# Usage: setclip [-n]
+#   -n  strip a single trailing newline (if present)
+
+strip_newline=0
+for arg in "$@"; do
+  case "$arg" in
+    -n) strip_newline=1 ;;
+    *) echo "unknown option: $arg" >&2; exit 1 ;;
+  esac
+done
+
+# Read stdin, stripping a single trailing newline when requested.
+# (Piped directly, so trailing newlines are preserved in the default case.)
+read_input() {
+  if [ "$strip_newline" -eq 1 ]; then
+    sed -z '$ s/\n$//'
+  else
+    cat
+  fi
+}
+
 if [ "$XDG_SESSION_TYPE" = "wayland" ]; then
-  cat - | wl-copy
+  copier=(wl-copy)
 else
-  cat - | xclip -selection c
+  copier=(xclip -selection c)
 fi
+
+read_input | "${copier[@]}"

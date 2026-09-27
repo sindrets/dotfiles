@@ -38,4 +38,15 @@ function utils.notify(msg, opts)
   async.spawn(async.Job.new({ cmd = cmd }):wait())
 end
 
+--- @generic T
+--- @param make fun(): T
+--- @return Lazy<T>
+function utils.lazy(make)
+  return { get = pb.once(make) }
+end
+
 return utils
+
+
+--- @class Lazy<T>
+--- @field get fun(): T

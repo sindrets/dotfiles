@@ -4,10 +4,13 @@
 --- @using pebbles
 
 local Path = require("imminent.fs.Path")
+local Result = require("imminent.ds.Result")
 local async = require("imminent")
 local pb = require("imminent.pebbles")
 local constants = require("lib.constants")
 local utils = require("lib.utils")
+
+local Ok, Err = Result.Ok, Result.Err
 
 local PluginManager = {}
 
@@ -30,34 +33,95 @@ local get_plugin_config_paths = pb.once(function()
   end)
 end)
 
+local function find_hyprpm_lib_files()
+  --- @return Result<Array<fs.Path>>
+  return async.Future.from(function()
+    return async.fs.find(Path.from("/var/cache/hyprpm/$USER"):expand_env(), {
+      type = "file",
+      names = { "%.so$" },
+      plain = false,
+      max_depth = 3,
+    })
+      :await()
+      :map(function(entries)
+        return entries:map(function(entry)
+          return entry.path
+        end)
+      end)
+  end)
+end
+
 --- @param plugins PluginSpec[]
 function PluginManager.setup(plugins)
   PluginManager.plugins = plugins
   PluginManager.load_plugin_files()
 end
 
+--- @private
+--- @param name string
+--- @param spec_lib_file? string
+--- @param hyprpm_libs Lazy<Future<[Array<fs.Path>]>>
+function PluginManager.resolve_lib_file(name, spec_lib_file, hyprpm_libs)
+  --- @return ds.Result<fs.Path, string>
+  return async.Future.from(function()
+    if spec_lib_file then
+      local lib_path = Path.from(spec_lib_file)
+      if lib_path:is_readable():await() then
+        return Ok(lib_path)
+      end
+
+      return Err(string.format("The given `lib_file` is not readable: %s", spec_lib_file))
+    end
+
+    local lib_path = Path.home():join(".cache/hyprland/plugins", name .. ".so"):unwrap()
+    if lib_path:is_readable():await() then
+      return Ok(lib_path)
+    end
+
+    local hyprpm_paths = hyprpm_libs:get():await()
+    local hyprpm_lib_path = hyprpm_paths:find(function(path)
+      return path:file_stem() == name
+    end)
+
+    if hyprpm_lib_path and hyprpm_lib_path:is_readable():await() then
+      return Ok(hyprpm_lib_path)
+    end
+
+    return Err(string.format("No library file found for '%s'!", name))
+  end)
+end
+
 function PluginManager.load_plugin_files()
   async.block_on(function()
+    --- @return Future<[Array<fs.Path>]>
+    local hyprpm_libs = utils.lazy(function()
+      return find_hyprpm_lib_files():and_then(function(r)
+        return r:unwrap_or(pb.Array.new())
+      end)
+    end)
+
     for _, spec in ipairs(PluginManager.plugins) do
       --- @cast spec PluginSpec
       local rspec = pb.assign({ enabled = true }, spec) --[[@as PluginSpec ]]
       if not rspec.enabled then goto continue end
 
       local name = rspec[1]
-      local lib_file = rspec.lib_file and
-        Path.from(rspec.lib_file) or
-        Path.home():join(".cache/hyprland/plugins", name .. ".so"):unwrap()
+      local r_lib_file = PluginManager
+        .resolve_lib_file(name, rspec.lib_file, hyprpm_libs)
+        :await()
 
-      if not lib_file:is_readable():await() then
+      if r_lib_file:is_err() then
         utils.notify(
-          string.format("Missing library file for plugin (%s): %s", name, lib_file:tostring()),
+          r_lib_file:fmt_context("loading library file for plugin '%s'", name):tostring(),
           { kind = "warn" }
         )
         goto continue
       end
 
       -- hl.exec_cmd(string.format("hyprctl plugin load '%s'", lib_file:tostring()))
-      hl.plugin.load(lib_file:to_os_path())
+      hl.plugin.load(r_lib_file:unwrap():to_os_path())
+      -- TODO: loading can fail, but the API keeps that a secret from us...
+      -- Assume loaded. Refactor this if the API improves.
       PluginManager.state[name] = { loaded = true }
 
       ::continue::
