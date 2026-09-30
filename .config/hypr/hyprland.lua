@@ -71,7 +71,7 @@ local MENU = HOME .. "/.config/rofi/applets/launchers-git/launcher.sh"
 hl.on("hyprland.start", function()
   hl.exec_cmd("systemctl --user start hyprpolkitagent")
   hl.exec_cmd("xrdb -merge " .. HOME .. "/.Xresources")
-  hl.exec_cmd("dunst")
+  hl.exec_cmd("swaync") -- notification daemon
   hl.exec_cmd("waybar")
   hl.exec_cmd("hyprpm reload")
   hl.exec_cmd("bash -c '[ -x ~/.azotebg-hyprland ] && ~/.azotebg-hyprland'")
@@ -148,19 +148,22 @@ hl.config({
 
     shadow = {
       enabled = true,
-      range = 16,
-      scale = 0.985,
-      render_power = 1,
-      color = "rgba(1a1a1a77)",
-      offset = { 0, 5 },
+      range = 52,
+      scale = 0.965,
+      render_power = 3,
+      -- color = "rgba(1a1a1a77)",
+      color = "rgba(000000bb)",
+      offset = { 0, 5 } --[[@as HL.Vec2Like]],
     },
 
     -- https://wiki.hypr.land/Configuring/Variables/#blur
     blur = {
       enabled = false,
-      size = 3,
-      passes = 1,
+      size = 8,
+      passes = 2,
       vibrancy = 0.1696,
+      ignore_opacity = true,
+      popups = true,
     },
   },
 
@@ -567,15 +570,11 @@ require("window_rules")
 -----------------------------
 
 async.block_on(function()
-  async.fs.ls(CONF_DIR .. "/extra", { max_depth = math.huge --[[@as int ]] })
+  async.fs.find(CONF_DIR .. "/extra", { names = { "%.lua$" }, plain = false })
     :await()
     :unwrap()
     :iter()
-    :map(function(entry)
-      return entry.path:extension() == "lua" and
-        entry.path:to_os_path() or
-        pb.None
-    end)
+    :map(function(entry) return entry.path:to_os_path() end)
     :sorted()
-    :for_each(function(s_path) dofile(s_path) end)
+    :for_each(pb.arity(dofile, 1))
 end)

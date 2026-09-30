@@ -1,0 +1,37 @@
+#!/usr/bin/env bash
+# notify-replace - notify-send wrapper with a stable per-caller notification
+# id.
+#
+# Repeated calls update ONE notification in place (dunst, swaync) instead of
+# stacking new ones. The replace-id is captured from notify-send output and
+# persisted per calling script:
+#   - key = cksum(caller path), state: ${TMPDIR:-/tmp}/notify-replace-ids/<key>
+#   - NS_ID=<int> env var overrides the key (dedicated slot for a callsite)
+# If the notification has already expired, "-r <dead id>" harmlessly creates
+# a fresh one and the stored id self-heals on the next capture.
+#
+# Usage:  notify-replace [-i ICON] [-t MS] [-u URGENCY] [notify-send flags...] SUMMARY [BODY]
+#   All other notify-send flags pass through unchanged. Prints the assigned id.
+set -euo pipefail
+
+caller="${BASH_SOURCE[1]:-notify-replace-interactive}"
+if [[ -n "${NS_ID:-}" ]]; then
+	state="${TMPDIR:-/tmp}/notify-replace-ids/NS_${NS_ID}"
+else
+	key="$(cksum <<<"$caller" | awk '{print $1 % 2000000000}')"
+	state="${TMPDIR:-/tmp}/notify-replace-ids/${key}"
+fi
+mkdir -p "${state%/*}"
+
+args=(--print-id)
+id=""
+if [[ -f "$state" ]]; then
+	id="$(cat "$state")"
+fi
+if [[ -n "$id" ]]; then
+	args+=(-r "$id")
+fi
+
+new_id="$(notify-send "${args[@]}" "$@")" || exit 1
+printf '%s' "$new_id" > "$state"
+printf '%s\n' "$new_id"

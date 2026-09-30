@@ -99,6 +99,13 @@
     "on-click-right": "pkill -USR1 -f 'playerctl-utils.sh --follow'"
   },
 
+  "custom/oskb": {
+    "exec": "bash -c 'command -v wvkbd-deskintl && sleep 0.$RANDOM && echo x && ! pgrep wvkbd-deskintl && wvkbd-deskintl --hidden --non-exclusive || true'",
+    "format": "󰌌",
+    "tooltip-format": "On-screen keyboard",
+    "on-click": "pkill --signal=SIGRTMIN -if wvkbd-"
+  },
+
   "backlight": {
     "device": "intel_backlight",
     "format": "{icon} {percent}%",
@@ -117,6 +124,27 @@
     },
 
     "on-click": "pavucontrol-qt"
+  },
+
+  "custom/notification": {
+    "tooltip": true,
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "󱅫",
+      "none": "󰂜",
+      "dnd-notification": "󰂠",
+      "dnd-none": "󰪓",
+      "inhibited-notification": "󰂛",
+      "inhibited-none": "󰪑",
+      "dnd-inhibited-notification": "󰂛",
+      "dnd-inhibited-none": "󰪑"
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
   }
 }
 

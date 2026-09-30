@@ -1,11 +1,9 @@
 #!/usr/bin/bash
 
-notif_id="$($HOME/.config/scripts/int-hash.sh $(realpath -m $0))"
-
 notify() {
 	local icon="${2:-'notification-display-brightness-high'}"
 	echo "$1" > /dev/stderr
-	dunstify -r "$notif_id" "$1" -t 1000 -i $icon
+	notify-replace -a System -t 1000 -i "$icon" "$1"
 }
 
 if [[ -e "/sys/class/backlight/intel_backlight" ]]; then
