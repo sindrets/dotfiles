@@ -1,8 +1,9 @@
-$bg: rgba(#111, 0.9);
-$bg-bright: #323232;
-$text: #ffffff;
+$bg: rgba(#0d0d0d, 0.9);
+$bg-bright: #2d2d2d;
+$text: #d3d8d3;
 $text-dim: #888888;
-$primary: #285577;
+$text-dark: #0d0d0d;
+$primary: #949fb5;
 
 * {
   font-family: "JetBrainsMono Nerd Font";
@@ -41,15 +42,26 @@ window#waybar {
 #workspaces {
   button {
     $btn-padding: 8px;
+    $border-bottom-width: 3px;
 
+    transition-property: background-color, color, border-color;
     background-color: $bg-bright;
     padding: 0px $btn-padding;
     min-width: 1px;
+    min-height: 25px;
     color: $text-dim;
     border-radius: 0;
+    border-bottom: solid $border-bottom-width $primary;
 
     &.focused, &.active {
       background-color: $primary;
+      color: $text-dark;
+    }
+
+    &:hover {
+      background-color: $bg;
+      border: solid 1px $primary;
+      border-bottom-width: $border-bottom-width;
       color: $text;
     }
   }

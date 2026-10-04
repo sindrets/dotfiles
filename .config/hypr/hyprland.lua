@@ -139,7 +139,7 @@ hl.config({
   },
 
   decoration = {
-    rounding = 5,
+    rounding = 8,
     rounding_power = 2.0,
 
     -- Change transparency of focused and unfocused windows
@@ -148,11 +148,11 @@ hl.config({
 
     shadow = {
       enabled = true,
-      range = 52,
+      range = 72,
       scale = 0.965,
       render_power = 3,
       -- color = "rgba(1a1a1a77)",
-      color = "rgba(000000bb)",
+      color = "rgba(000000dd)",
       offset = { 0, 5 } --[[@as HL.Vec2Like]],
     },
 

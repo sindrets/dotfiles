@@ -118,8 +118,8 @@ function PluginManager.load_plugin_files()
         goto continue
       end
 
-      -- hl.exec_cmd(string.format("hyprctl plugin load '%s'", lib_file:tostring()))
       hl.plugin.load(r_lib_file:unwrap():to_os_path())
+      hl.exec_cmd(string.format("hyprctl plugin load '%s'", r_lib_file:unwrap():to_os_path()))
       -- TODO: loading can fail, but the API keeps that a secret from us...
       -- Assume loaded. Refactor this if the API improves.
       PluginManager.state[name] = { loaded = true }
