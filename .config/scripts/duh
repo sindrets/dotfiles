@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+#
+# duh — like `du -h`, but with configurable decimal precision.
+#
+# usage: duh [-d <decimals>] <path> [path...]
+#
+# Prints one line per path: "<size>\t<path>", where <size> is the path's
+# size in bytes (as computed by du) rendered in the appropriate unit
+# (B, KB, MB, GB, TB, PB) with the configured number of decimal digits
+# (default 3).
+
+decimals=3
+paths=()
+
+if [ "$#" -eq 0 ]; then
+  echo "usage: duh [-d <decimals>] <path> [path...]" >&2
+  exit 1
+fi
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -d)
+      if [ -z "${2:-}" ]; then
+        echo "duh: option -d requires a value" >&2
+        exit 1
+      fi
+      decimals=$2
+      shift 2
+      ;;
+    *)
+      paths+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if ! [[ "$decimals" =~ ^[0-9]+$ ]]; then
+  echo "duh: -d requires a non-negative integer (got '$decimals')" >&2
+  exit 1
+fi
+
+if [ "${#paths[@]}" -eq 0 ]; then
+  echo "usage: duh [-d <decimals>] <path> [path...]" >&2
+  exit 1
+fi
+
+# Render a byte count in the appropriate unit with N decimal digits.
+human() {
+  awk -v b="$1" -v d="$decimals" 'BEGIN {
+    u[0]="B"; u[1]="KB"; u[2]="MB"; u[3]="GB"; u[4]="TB"; u[5]="PB"
+    i = 0
+    while (b >= 1024 && i < 5) { b /= 1024; i++ }
+    printf "%." d "f %s", b, u[i]
+  }'
+}
+
+for p in "${paths[@]}"; do
+  if [ -e "$p" ]; then
+    bytes=$(du -sb -- "$p" | cut -f 1)
+    printf '%s\t%s\n' "$(human "$bytes")" "$p"
+  else
+    echo "duh: $p: no such file or directory" >&2
+  fi
+done

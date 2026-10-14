@@ -1,0 +1,45 @@
+{
+  "modules-left": [
+    // "ext/workspaces",
+    "mango/workspaces",
+    // "custom/scratch",
+    "mango/keymode",
+    // "sway/window"
+    "custom/player"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "network",
+    "custom/cpu-temp",
+    // "backlight",
+    "pulseaudio",
+    "battery",
+    "custom/oskb",
+    "tray",
+    "clock",
+    "custom/notification",
+    "mango/language"
+  ],
+  "mango/language": {
+    "format": "{}",
+    "format-en": "us",
+    "format-no": "no"
+  },
+  "mango/workspaces": {
+    "format": "{icon}",
+    "hide-empty": true,
+    "on-click": "activate",
+    "on-click-right": "toggle",
+    "overview-label": "OVERVIEW"
+  },
+  "mango/keymode": {
+    "format": "{}",
+    "format-default": ""
+    // "format-test": " Test",
+  },
+  "include": [
+    "~/.config/waybar/themes/default/config"
+  ]
+}
+
+// vim: ft=jsonc

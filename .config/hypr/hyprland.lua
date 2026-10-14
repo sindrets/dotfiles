@@ -72,7 +72,7 @@ hl.on("hyprland.start", function()
   hl.exec_cmd("systemctl --user start hyprpolkitagent")
   hl.exec_cmd("xrdb -merge " .. HOME .. "/.Xresources")
   hl.exec_cmd("swaync") -- notification daemon
-  hl.exec_cmd("waybar")
+  hl.exec_cmd("waybar --config=" .. HOME .. "/.config/waybar/themes/hyprland/config")
   hl.exec_cmd("hyprpm reload")
   hl.exec_cmd("bash -c '[ -x ~/.azotebg-hyprland ] && ~/.azotebg-hyprland'")
   hl.exec_cmd("udiskie")

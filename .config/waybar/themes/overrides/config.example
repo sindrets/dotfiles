@@ -1,7 +1,0 @@
-{
-  "include": [
-    "~/.config/waybar/themes/hyprland/config"
-  ]
-}
-
-// vim: ft=jsonc

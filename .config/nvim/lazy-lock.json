@@ -66,7 +66,7 @@
   "pseudo-syntax": { "branch": "main", "commit": "ab329e8721e2ab86a55e7bae799f60af42348dab" },
   "rainbow-delimiters.nvim": { "branch": "master", "commit": "08783ec022e7ddefe0f12a16f1ac4968f55478b0" },
   "rasmus.nvim": { "branch": "main", "commit": "49f7ee7bf3eb00db52c77f84b15bc69f318bafc1" },
-  "render-markdown.nvim": { "branch": "main", "commit": "640a3ec6d538bad17c328be373c7cad0293d9589" },
+  "render-markdown.nvim": { "branch": "main", "commit": "245956d67572c137df375dbf256e96bdb07e0937" },
   "rest.nvim": { "branch": "main", "commit": "714d5512aaec5565d55652480c16c26f8d95645d" },
   "rose-pine": { "branch": "main", "commit": "8a11a44fed1e6ebd8078f219313dad048ad6fabf" },
   "scratchpad.nvim": { "branch": "main", "commit": "62dbf585119dd3232c3b4ab36248e4b276f15f87" },

@@ -18,7 +18,7 @@ return function()
 
   local function get_banner()
     local height = api.nvim_win_get_height(0)
-    local banner_candidates = { banners.lain_2, banners.nvim }
+    local banner_candidates = { banners.lain, banners.nvim }
     local bg = vim.o.background
     local result
 
@@ -74,7 +74,7 @@ return function()
   local function setup_highlights()
     hl.hi_link("DashboardNormal", "Normal", { default = true })
     hl.hi("DashboardEndOfBuffer", { fg = hl.get_bg("Normal"), bg = hl.get_bg("Normal"), default = true })
-    hl.hi_link("DashboardHeader", "Type", { default = true })
+    hl.hi("DashboardHeader", { fg = hl.get_fg("Normal"), explicit = true })
     hl.hi_link("DashboardCenter", "Keyword", { default = true })
     -- hl.hi_link("DashboardShortCut", "String", { default = true })
     hl.hi("DashboardShortCut", { fg = hl.get_fg("String"), gui = "bold,reverse", default = true })

@@ -41,9 +41,9 @@ window#waybar {
     border-bottom-width: 3px;
     color: #d3d8d3; }
 
-#mode, #submap {
+#mode, #submap, #keymode {
   background-color: #949fb5;
-  color: #d3d8d3;
+  color: #0d0d0d;
   margin: 0 10px;
   padding: 0px 8px;
   border: 1px solid #2f343a; }

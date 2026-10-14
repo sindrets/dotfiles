@@ -291,15 +291,16 @@ exec hash dbus-update-activation-environment 2>/dev/null && \
 # Autostart applications
 exec --no-startup-id $HOME/.config/sway/scripts/import-gsettings
 #   notification manager
-exec --no-startup-id dunst
+exec --no-startup-id swaync
 #   set wallpaper
 exec --no-startup-id [ -x ~/.azotebg ] && ~/.azotebg
 exec --no-startup-id udiskie
 exec --no-startup-id env QT_QPA_PLATFORM=xcb insync start
 exec --no-startup-id thunar --daemon
+exec --no-startup-id waybar --config=$HOME/.config/waybar/themes/sway/config
 
 # bar swaybar_command swaybar
-bar swaybar_command waybar
+# bar swaybar_command waybar
 
 # Theme colors
 set $background      #101112

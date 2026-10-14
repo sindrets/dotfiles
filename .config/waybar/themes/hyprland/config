@@ -27,7 +27,10 @@
   },
   "ext/workspaces": {
     "on-click": "activate"
-  }
+  },
+  "include": [
+    "~/.config/waybar/themes/default/config"
+  ]
 }
 
 // vim: ft=jsonc

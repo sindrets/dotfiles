@@ -1,7 +1,131 @@
 {
-  "include": [
-    "~/.config/waybar/themes/sway/config"
-  ]
+  "layer": "top",
+  "position": "top",
+  "height": 27,
+
+  "modules-left": [
+    "ext/workspaces",
+    "custom/player"
+  ],
+  "modules-center": [],
+  "modules-right": [
+    "network",
+    "custom/cpu-temp",
+    // "backlight",
+    "pulseaudio",
+    "battery",
+    "tray",
+    "clock",
+    "sway/language"
+  ],
+
+  "ext/workspaces": {
+    "on-click": "activate"
+  },
+
+  "tray": {
+    "icon-size": 18,
+    "spacing": 10
+  },
+
+  "clock": {
+    "format": "{:%a %b %d %R}",
+    "interval": 30
+  },
+
+  "battery": {
+    "bat": "BAT0",
+    "states": {
+      "full": 99,
+      "good": 98,
+      "normal": 98,
+      "warning": 20,
+      "critical": 10
+    },
+
+    "format": "{icon}  {capacity}%",
+    "format-good": "{icon}  {capacity}%",
+    "format-full": "  {capacity}%",
+    "format-icons": ["", "", "", "", ""],
+    "interval": 30
+  },
+
+  "network": {
+    // "interface": "wlp2*", // (Optional) To force the use of this interface
+    "format-wifi": "  {essid}",
+    "format-ethernet": "  {ipaddr}/{cidr}",
+    "tooltip-format": "  {ifname} via {gwaddr}",
+    "format-linked": "  {ifname} (No IP)",
+    "format-disconnected": "睊 Disconnected",
+    "format-alt": "{ifname}: {ipaddr}/{cidr}"
+  },
+
+  "temperature": {
+    // "thermal-zone": 0,
+    "format": "{icon} {temperatureC}°C",
+    "format-icons": [""],
+    "interval": 30
+  },
+
+  "custom/cpu-temp": {
+    "exec": "~/.config/polybar/scripts/cpu-temp.sh",
+    "format": "󰔏 {}",
+    "interval": 5
+  },
+
+  "custom/player": {
+    "exec": "~/.config/i3/scripts/playerctl-utils.sh --follow",
+    "escape": true,
+    "format": "{}",
+    "on-click": "~/.config/i3/scripts/playerctl-utils.sh --use-active play-pause",
+    "on-click-right": "pkill -USR1 -f 'playerctl-utils.sh --follow'"
+  },
+
+  "custom/oskb": {
+    "exec": "bash -c 'command -v wvkbd-deskintl && sleep 0.$RANDOM && echo x && ! pgrep wvkbd-deskintl && wvkbd-deskintl --hidden --non-exclusive || true'",
+    "format": "󰌌",
+    "tooltip-format": "On-screen keyboard",
+    "on-click": "pkill --signal=SIGRTMIN -if wvkbd-"
+  },
+
+  "backlight": {
+    "device": "intel_backlight",
+    "format": "{icon} {percent}%",
+    "format-icons": ["", "", "", ""],
+    "interval": 60
+  },
+
+  "pulseaudio": {
+    "format": "{icon}  {volume}%",
+    "format-bluetooth": " {volume}%",
+    "format-muted": "婢 Mute",
+    "interval": 60,
+    "format-icons": {
+      "default": [""]
+    },
+    "on-click": "pavucontrol-qt"
+  },
+
+  "custom/notification": {
+    "tooltip": true,
+    "format": "{icon}",
+    "format-icons": {
+      "notification": "󱅫",
+      "none": "󰂜",
+      "dnd-notification": "󰂠",
+      "dnd-none": "󰪓",
+      "inhibited-notification": "󰂛",
+      "inhibited-none": "󰪑",
+      "dnd-inhibited-notification": "󰂛",
+      "dnd-inhibited-none": "󰪑"
+    },
+    "return-type": "json",
+    "exec-if": "which swaync-client",
+    "exec": "swaync-client -swb",
+    "on-click": "swaync-client -t -sw",
+    "on-click-right": "swaync-client -d -sw",
+    "escape": true
+  }
 }
 
 // vim: ft=jsonc
