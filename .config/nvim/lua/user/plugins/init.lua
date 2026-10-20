@@ -552,6 +552,7 @@ require("lazy").setup({
   { "cpwrs/americano.nvim" },
   { "dgox16/oldworld.nvim" },
   { "xeind/nightingale.nvim" },
+  { "arnauKL/south.nvim" },
 }, {
   ui = {
     border = "single",

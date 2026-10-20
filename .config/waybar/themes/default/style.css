@@ -31,14 +31,14 @@ window#waybar {
   min-height: 25px;
   color: #888888;
   border-radius: 0;
-  border-bottom: solid 3px #949fb5; }
+  border-top: solid 3px #949fb5; }
   #workspaces button.focused, #workspaces button.active {
     background-color: #949fb5;
     color: #0d0d0d; }
   #workspaces button:hover {
     background-color: rgba(13, 13, 13, 0.9);
     border: solid 1px #949fb5;
-    border-bottom-width: 3px;
+    border-top-width: 3px;
     color: #d3d8d3; }
 
 #mode, #submap, #keymode {

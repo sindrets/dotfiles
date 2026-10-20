@@ -42,7 +42,7 @@ window#waybar {
 #workspaces {
   button {
     $btn-padding: 8px;
-    $border-bottom-width: 3px;
+    $border-width: 3px;
 
     transition-property: background-color, color, border-color;
     background-color: $bg-bright;
@@ -51,7 +51,7 @@ window#waybar {
     min-height: 25px;
     color: $text-dim;
     border-radius: 0;
-    border-bottom: solid $border-bottom-width $primary;
+    border-top: solid $border-width $primary;
 
     &.focused, &.active {
       background-color: $primary;
@@ -61,7 +61,7 @@ window#waybar {
     &:hover {
       background-color: $bg;
       border: solid 1px $primary;
-      border-bottom-width: $border-bottom-width;
+      border-top-width: $border-width;
       color: $text;
     }
   }

@@ -70,6 +70,7 @@ local MENU = HOME .. "/.config/rofi/applets/launchers-git/launcher.sh"
 -- Or execute your favorite apps at launch like this:
 hl.on("hyprland.start", function()
   hl.exec_cmd("systemctl --user start hyprpolkitagent")
+  hl.exec_cmd("systemctl --user start veilad.service") -- screen locker daemon
   hl.exec_cmd("xrdb -merge " .. HOME .. "/.Xresources")
   hl.exec_cmd("swaync") -- notification daemon
   hl.exec_cmd("waybar --config=" .. HOME .. "/.config/waybar/themes/hyprland/config")
@@ -333,7 +334,7 @@ hl.bind(mainMod .. " + SHIFT + Space", hl.dsp.window.float({ action = "toggle" }
 hl.bind(mainMod .. " + SHIFT + P", hl.dsp.window.pseudo())
 -- hl.bind(mainMod .. " + X", hl.dsp.eval("hl.dsp.layout('togglesplit')")) -- dwindle
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen())
-hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + ALT + L", hl.dsp.exec_cmd("veila lock"))
 hl.bind(mainMod .. " + O", pb.bind(require("scripts.toggle_gaps"), 5, 20))
 
 -- Program binds
