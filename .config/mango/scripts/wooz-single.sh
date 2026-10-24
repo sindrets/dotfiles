@@ -11,4 +11,4 @@ current_output="$(
   mmsg get all-monitors \
     | jq -r 'first(.monitors[] | select(.active == true)).name'
 )"
-exec wooz --output "$current_output" --invert-scroll --map-close q --zoom-in '25%'
+exec wooz --output "$current_output" --invert-scroll --map-close q --no-aa --zoom-in '50%'

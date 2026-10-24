@@ -43,6 +43,7 @@ return function()
       json = { "jq" },
       jsonc = { "deno_fmt" },
       rust = { "rustfmt" },
+      c = { "clang-format" },
       bash = { "shfmt" },
       sh = { "shfmt" },
       zsh = { "shfmt" },
