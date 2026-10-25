@@ -215,6 +215,7 @@ require("lazy").setup({
   use_local {
     "sindrets/blink.cmp",
     dependencies = {
+      "saghen/blink.lib",
       {
         "saghen/blink.compat",
         lazy = true,
@@ -227,10 +228,9 @@ require("lazy").setup({
       "ribru17/blink-cmp-spell",
     },
 
-    -- use a release tag to download pre-built binaries
-    -- version = "v0.*",
-    -- AND/OR build from source, requires nightly: https://rust-lang.github.io/rustup/concepts/channels.html#working-with-nightly-rust
-    build = "cargo build --release",
+    build = function()
+      require('blink.cmp').build():pwait()
+    end,
 
     config = conf("blink-cmp"),
 
@@ -499,10 +499,10 @@ require("lazy").setup({
     submodules = false,
     cmd = { "AsciiTree", "AsciiTreeUndo" },
   },
-  { "echasnovski/mini.splitjoin", version = false, config = {} },
+  { "echasnovski/mini.splitjoin", version = false, opts = {} },
   {
     "ellisonleao/dotenv.nvim",
-    config = {
+    opts = {
       enable_on_load = true, -- will load your .env file upon loading a buffer
       verbose = false, -- show error notification if .env file is not found and if .env is loaded
     },

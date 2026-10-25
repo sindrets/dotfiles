@@ -54,22 +54,35 @@ else
   target="$(realpath .)"
 fi
 
-function get_link_name() {
-  pushd "$1" > /dev/null
+function get_git_repo_name() {
+  repo_name="$(basename -s .git "$(git remote get-url origin 2>/dev/null)" 2>/dev/null)"
 
-  toplevel="$(git rev-parse --path-format=absolute --show-toplevel)"
-  gitdir="$(git rev-parse --path-format=absolute --git-common-dir)"
+  if [ -z "$repo_name" ]; then
+      if [ "$(git config --local core.bare)" = "true" ]; then
+          common_dir="$(git rev-parse --path-format=absolute --git-common-dir)"
 
-  popd > /dev/null
-
-  if [ "$(realpath -m $gitdir/..)" = "$toplevel" ]; then
-    name="$(basename "$1")"
-  else
-    # Assume we are inside a worktree
-    name="$(perl -pe 's/(.*\/)?(.*?)(\.git)?$/\2/g' <<< "$gitdir")"
+          if [[ "$common_dir" == *"/.git" ]]; then
+              repo_name="$(
+                repo_basename="$(basename "$(dirname "$common_dir")")"
+                echo "${repo_basename%(.bare|.git)}"
+              )"
+          else
+              repo_name="$(basename -s .git "$common_dir")"
+          fi
+      else
+          repo_name="$(basename -s .git "$(git rev-parse --path-format=absolute --show-toplevel)")"
+      fi
   fi
 
-  link_name="$plug_path/$name"
+  echo "$repo_name"
+}
+
+function get_link_name() {
+  pushd "$1" > /dev/null
+  repo_name="$(get_git_repo_name)"
+  popd > /dev/null
+
+  link_name="$plug_path/$repo_name"
   echo "$link_name"
 }
 

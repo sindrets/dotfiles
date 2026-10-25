@@ -31,6 +31,9 @@ function chpwd() {
 function update_kitty_tab_title() {
     if [ "$cur_term" = "kitty" ]; then
         branch="$(git branch --show-current 2>/dev/null)"
+        if [ -z "$branch" ]; then
+            branch="$(git rev-parse --short HEAD 2>/dev/null)"
+        fi
 
         if [ ! -z "$branch" ]; then
             repo_name="$(basename -s .git "$(git remote get-url origin 2>/dev/null)" 2>/dev/null)"
@@ -329,6 +332,7 @@ alias m="cd ~/Documents/misc"
 alias r="source ~/.zshrc"
 alias ta="tmux a -t"
 alias nv="nvim"
+alias nvclean="nvim --clean -u NORC"
 alias nvim-conf="GIT_DIR=$HOME/.dotfiles nvim --cmd 'cd ~/.config/nvim' -c 'args %' \
     ~/.config/nvim/init.lua ~/.config/nvim/lua/user/plugins/init.lua"
 alias nv-conf="nvim-conf"

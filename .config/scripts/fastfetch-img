@@ -3,9 +3,9 @@
 set -e
 
 if [ -n "$IMG" ]; then
-  src_img="$(realpath $IMG)"
+  src_img="$(realpath "$IMG")"
 else
-  src_img="$(find $NEOFETCH_IMG -regex '.*\.\(jpg\|png\)$' | shuf -n1)"
+  src_img="$(find "$NEOFETCH_IMG" -regex '.*\.\(jpg\|png\)$' | shuf -n1)"
 fi
 
 out_img_cache="$HOME/.cache/fastfetch/cropped_images/$(basename "$src_img")"
@@ -17,4 +17,4 @@ fi
 
 printf "%$(tput lines)s" | tr " " "\n"
 printf "\e[9999A"
-/usr/bin/fastfetch --kitty "$out_img_cache" --logo-width 50 --logo-padding-top 0 $@
+/usr/bin/fastfetch --kitty "$out_img_cache" --logo-width 51 --logo-padding-top 0 $@

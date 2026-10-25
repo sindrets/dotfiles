@@ -11,7 +11,7 @@ return function()
     return pb.assign(pb.concat(...), { stop_after_first = true })
   end
 
-  local prettier = ol("prettierd", "prettier")
+  local biome_or_prettier = ol("biome", "prettierd", "prettier")
 
   conform.formatters.prettier = {
     append_args = function()
@@ -30,16 +30,16 @@ return function()
       -- Conform will run multiple formatters sequentially
       python = { "ruff_organize_imports", "ruff_format" },
       -- Use a sub-list to run only the first available formatter
-      javascript = prettier,
-      javascriptreact = prettier,
-      typescript = prettier,
-      typescriptreact = prettier,
-      astro = prettier,
-      css = prettier,
-      scss = prettier,
-      sass = prettier,
-      html = prettier,
-      markdown = prettier,
+      javascript = biome_or_prettier,
+      javascriptreact = biome_or_prettier,
+      typescript = biome_or_prettier,
+      typescriptreact = biome_or_prettier,
+      astro = biome_or_prettier,
+      css = biome_or_prettier,
+      scss = biome_or_prettier,
+      sass = biome_or_prettier,
+      html = biome_or_prettier,
+      markdown = biome_or_prettier,
       json = { "jq" },
       jsonc = { "deno_fmt" },
       rust = { "rustfmt" },

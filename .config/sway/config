@@ -15,7 +15,7 @@ bindsym $mod+u border none
 bindsym $mod+y border pixel 1
 bindsym $mod+n border normal 1
 
-font pango:Noto Sans Bold 10
+font pango:Cantarell Bold 10
 
 floating_modifier $mod
 
@@ -175,6 +175,8 @@ bindsym $mod+Shift+8 move container to workspace $ws8; workspace $ws8
 bindsym $mod+Shift+9 move container to workspace $ws9; workspace $ws9
 bindsym $mod+Shift+0 move container to workspace $ws9; workspace $ws0
 bindsym $mod+Shift+KP_Subtract move container to workspace $wsTrash; workspace $wsTrash
+
+# bindsym $mod+Shift+button4 exec --no-startup-id /home/sindrets/.local/bin/wooz --invert-scroll --map-close q --output DP-1 --zoom-in '50%' --no-aa
 
 # Window rules
 

@@ -15,6 +15,7 @@
     "battery",
     "tray",
     "clock",
+    "custom/notification",
     "sway/language"
   ],
   "sway/workspaces": {

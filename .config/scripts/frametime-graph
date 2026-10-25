@@ -1,0 +1,448 @@
+#!/usr/bin/env python3
+"""frametime-graph — plot the per-frame presentation duration ("frame pacing")
+of a video file as a frametime graph.
+
+Each frame's duration is derived from the presentation timestamps of the video
+stream's packets (via ffprobe), i.e. how long the frame stays on screen. Frames
+that last much longer than the typical frame are highlighted, which makes
+stutter, duplicated/dropped frames and variable-framerate sections easy to spot.
+
+USAGE:
+  frametime-graph <video> [-o FILE] [-s N] [--log] [--clip PERCENTILE]
+
+  -o, --output FILE     output image, '-' for stdout
+  -s, --stream N        video stream index (default: 0)
+      --log             logarithmic y axis
+      --clip PERCENTILE clip the y axis at a duration percentile (default: 99.9)
+
+  Run `frametime-graph --help` for the full descriptions.
+
+Requires ffprobe (ffmpeg) and python3 with matplotlib (and numpy).
+"""
+
+import argparse
+import os
+import shutil
+import subprocess
+import sys
+from collections.abc import Sequence
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Never
+
+PROG = "frametime-graph"
+
+LINE_COLOR = "#3b82f6"
+HIGHLIGHT_COLOR = "#ef4444"
+MEDIAN_COLOR = "#10b981"
+MEAN_COLOR = "#f59e0b"
+DPI = 160  # pixels per inch of the rendered PNG
+LONG_FRAME_FACTOR = 2.0
+Y_HEADROOM_FACTOR = 3.0  # the y axis spans at least this many median frames
+
+try:
+    import matplotlib
+
+    matplotlib.use("Agg")
+
+    import numpy as np
+    import numpy.typing as npt
+    from matplotlib import pyplot as plt
+    from matplotlib.axes import Axes
+    from matplotlib.figure import Figure
+except ImportError as exc:  # pragma: no cover - dependency guard
+    sys.exit(f"{PROG}: python3 with matplotlib and numpy is required ({exc})")
+
+type FloatArray = npt.NDArray[np.float64]
+
+
+@dataclass(frozen=True, slots=True)
+class Options:
+    """Parsed command line."""
+
+    video: Path
+    output: Path | None  # None writes the PNG to stdout
+    stream: int
+    log_scale: bool
+    clip: float
+
+
+@dataclass(frozen=True, slots=True)
+class FrameSeries:
+    """Per-frame samples of one video stream."""
+
+    times: FloatArray  # frame start times, seconds from the first frame
+    durations: FloatArray  # frame durations, milliseconds
+    total: float  # stream duration, seconds
+
+
+@dataclass(frozen=True, slots=True)
+class FrameStats:
+    """Summary of a FrameSeries."""
+
+    frames: int
+    fps: float
+    p0_1: float  # 0.1th percentile frame duration, ms
+    mean: float
+    median: float
+    p99: float
+    p99_9: float  # 99.9th percentile frame duration, ms
+    long_frames: int  # frames lasting more than LONG_FRAME_FACTORx the median
+
+
+def fail(message: str) -> Never:
+    sys.exit(f"{PROG}: {message}")
+
+
+def hhmmss(seconds: float) -> str:
+    minutes, sec = divmod(seconds, 60)
+    hours, minutes = divmod(int(minutes), 60)
+    if hours:
+        return f"{hours}:{minutes:02d}:{sec:06.3f}"
+    return f"{minutes}:{sec:06.3f}"
+
+
+def to_float(value: str) -> float | None:
+    try:
+        return float(value)
+    except ValueError:
+        return None
+
+
+def non_negative_int(value: str) -> int:
+    try:
+        number = int(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"not an integer: {value!r}") from None
+    if number < 0:
+        raise argparse.ArgumentTypeError(f"must be non-negative: {number}")
+    return number
+
+
+def percentile_arg(value: str) -> float:
+    try:
+        number = float(value)
+    except ValueError:
+        raise argparse.ArgumentTypeError(f"not a number: {value!r}") from None
+    if not 0 < number <= 100:
+        raise argparse.ArgumentTypeError(f"must be in (0, 100]: {number}")
+    return number
+
+
+def parse_args(argv: Sequence[str]) -> Options:
+    parser = argparse.ArgumentParser(
+        prog=PROG,
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=__doc__.split("\n\n")[0],
+        epilog=(
+            "examples:\n"
+            f"  {PROG} ~/Videos/screencast.mp4\n"
+            f"  {PROG} movie.mkv -s 1 --log -o /tmp/movie-frames.png"
+        ),
+    )
+    parser.add_argument(
+        "video",
+        metavar="VIDEO",
+        type=Path,
+        help="video file to inspect",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        metavar="FILE",
+        help="output image, or '-' to write the PNG to stdout "
+        "(default: <VIDEO>-frametime.png next to the video)",
+    )
+    parser.add_argument(
+        "-s",
+        "--stream",
+        metavar="N",
+        type=non_negative_int,
+        default=0,
+        help="video stream index to inspect (default: 0)",
+    )
+    parser.add_argument(
+        "--log",
+        action="store_true",
+        help="use a logarithmic y axis",
+    )
+    parser.add_argument(
+        "--clip",
+        metavar="PERCENTILE",
+        type=percentile_arg,
+        default=99.9,
+        help="clip the y axis at the given percentile of frame durations so a "
+        "single huge outlier doesn't flatten the graph; clipped frames are "
+        "still marked on the top edge (default: 99.9, use 100 to disable)",
+    )
+    args = parser.parse_args(argv)
+    return Options(
+        video=args.video,
+        output=resolve_output(args.video, args.output),
+        stream=args.stream,
+        log_scale=args.log,
+        clip=args.clip,
+    )
+
+
+def resolve_output(video: Path, output: str | None) -> Path | None:
+    """Output path for the graph; None means "write the PNG to stdout"."""
+    if output is None:
+        return video.with_name(f"{video.stem}-frametime.png")
+    if output == "-":
+        return None
+    return Path(output)
+
+
+def probe_packets(video: Path, stream: int) -> str:
+    """Return ffprobe's packet timestamps/durations as CSV lines."""
+    command = [
+        "ffprobe",
+        "-v",
+        "error",
+        "-select_streams",
+        f"v:{stream}",
+        "-show_entries",
+        "packet=pts_time,duration_time",
+        "-of",
+        "csv=p=0",
+        "--",
+        str(video),
+    ]
+    try:
+        proc = subprocess.run(command, check=False, capture_output=True, text=True)
+    except OSError as exc:
+        fail(f"cannot run ffprobe: {exc}")
+    if proc.returncode != 0:
+        detail = proc.stderr.strip() or f"exit code {proc.returncode}"
+        fail(f"ffprobe failed ({detail})")
+    return proc.stdout
+
+
+def frame_stamps(csv_text: str) -> list[float]:
+    """Timestamps of every frame, in presentation order.
+
+    Containers without presentation timestamps fall back to accumulating the
+    packet durations, and packets arrive in decode order (B-frames), so the
+    result is sorted.
+    """
+    raw_pts: list[float | None] = []
+    raw_durations: list[float | None] = []
+    for line in csv_text.splitlines():
+        if not line.strip():
+            continue
+        fields = line.split(",")
+        raw_pts.append(to_float(fields[0]))
+        raw_durations.append(to_float(fields[1]) if len(fields) > 1 else None)
+
+    stamps: list[float] = []
+    previous: float | None = None
+    for pts, duration in zip(raw_pts, raw_durations):
+        if pts is not None:
+            previous = pts
+        elif previous is not None:
+            previous += duration or 0.0
+        else:
+            previous = duration or 0.0
+        stamps.append(previous)
+    return sorted(stamps)
+
+
+def frame_series(stamps: Sequence[float]) -> FrameSeries:
+    """Frame durations from the gaps between consecutive presentation stamps."""
+    array = np.asarray(stamps, dtype=np.float64)
+    gaps = np.diff(array)
+    keep = gaps > 0
+    if not keep.any():
+        fail("could not derive any frame durations")
+    return FrameSeries(
+        times=(array[:-1] - array[0])[keep],
+        durations=gaps[keep] * 1000.0,
+        total=float(array[-1] - array[0]),
+    )
+
+
+def measure(series: FrameSeries) -> FrameStats:
+    durations = series.durations
+    median = float(np.median(durations))
+    frames = int(durations.size)
+    return FrameStats(
+        frames=frames,
+        fps=frames / series.total if series.total > 0 else float("nan"),
+        p0_1=float(np.percentile(durations, 0.1)),
+        mean=float(durations.mean()),
+        median=median,
+        p99=float(np.percentile(durations, 99)),
+        p99_9=float(np.percentile(durations, 99.9)),
+        long_frames=int(np.count_nonzero(durations > LONG_FRAME_FACTOR * median)),
+    )
+
+
+def draw(
+    series: FrameSeries,
+    stats: FrameStats,
+    options: Options,
+    label: str,
+) -> Figure:
+    """Render the frametime graph (frame duration over time)."""
+    durations = series.durations
+    figure: Figure
+    axes: Axes
+    figure, axes = plt.subplots(figsize=(14, 5.5))
+
+    axes.plot(
+        series.times,
+        durations,
+        color=LINE_COLOR,
+        linewidth=0.7,
+        zorder=2,
+        label="frame duration",
+    )
+    long_mask = durations > LONG_FRAME_FACTOR * stats.median
+    if long_mask.any():
+        axes.scatter(
+            series.times[long_mask],
+            durations[long_mask],
+            s=11,
+            color=HIGHLIGHT_COLOR,
+            zorder=3,
+            label=f"long frames (> {LONG_FRAME_FACTOR:g}x median): {stats.long_frames}",
+        )
+    axes.axhline(
+        stats.median,
+        color=MEDIAN_COLOR,
+        linestyle="--",
+        linewidth=1,
+        zorder=1,
+        label=f"median {stats.median:.2f} ms",
+    )
+    if abs(stats.mean - stats.median) > 0.01:
+        axes.axhline(
+            stats.mean,
+            color=MEAN_COLOR,
+            linestyle="--",
+            linewidth=1,
+            zorder=1,
+            label=f"mean {stats.mean:.2f} ms",
+        )
+
+    limit = (
+        float(np.percentile(durations, options.clip))
+        if options.clip < 100
+        else float(durations.max())
+    )
+    # A frametime graph reads upwards from zero: the typical frame interval sits
+    # low in the plot and long frames stand out. Stretching the jitter band over
+    # the full height instead turns a busy clip into an unreadable solid block,
+    # so the axis always keeps a few median frames of range.
+    axis_top = max(limit, Y_HEADROOM_FACTOR * stats.median)
+    if options.log_scale:
+        positives = durations[durations > 0]
+        axis_bottom = float(positives.min()) * 0.5 if positives.size else 1e-3
+        axes.set_yscale("log")
+    else:
+        axis_bottom = 0.0
+        axes.ticklabel_format(axis="y", useOffset=False)
+    axes.set_ylim(bottom=axis_bottom, top=axis_top * 1.05)
+
+    # Frames above the top of the chart are pinned to that edge so they still
+    # show up instead of disappearing.
+    over_mask = durations > axis_top
+    over_count = int(np.count_nonzero(over_mask))
+    if over_count:
+        axes.scatter(
+            series.times[over_mask],
+            np.full(over_count, axis_top),
+            marker="^",
+            s=28,
+            color=HIGHLIGHT_COLOR,
+            edgecolors="none",
+            zorder=4,
+            label=f"off chart (> {axis_top:.1f} ms): {over_count}",
+        )
+
+    axes.set_title(
+        f"Frame durations — {label}  ·  {stats.fps:.2f} fps avg, "
+        f"{stats.frames} frames, {hhmmss(series.total)}",
+        fontsize=11,
+    )
+    axes.set_xlabel("time (s)")
+    axes.set_ylabel("frame duration (ms)")
+    axes.grid(True, which="major", alpha=0.25)
+    axes.margins(x=0)
+    axes.legend(loc="upper right", fontsize=8, framealpha=0.9)
+
+    figure.tight_layout()
+    return figure
+
+
+def save(figure: Figure, output: Path | None) -> None:
+    """Write the graph to `output`, or to stdout as PNG when it is None."""
+    try:
+        if output is None:
+            figure.savefig(sys.stdout.buffer, format="png", dpi=DPI)
+        else:
+            figure.savefig(output, dpi=DPI)
+    except (OSError, ValueError) as exc:
+        fail(f"cannot write graph: {exc}")
+
+
+def format_report(
+    label: str,
+    stats: FrameStats,
+    series: FrameSeries,
+    options: Options,
+) -> str:
+    destination = "-" if options.output is None else str(options.output)
+    fps_min = 1000.0 / stats.p99_9 if stats.p99_9 > 0 else float("nan")
+    fps_max = 1000.0 / stats.p0_1 if stats.p0_1 > 0 else float("nan")
+    return "\n".join(
+        (
+            f"video     : {label}",
+            f"stream    : v:{options.stream}",
+            f"frames    : {stats.frames}",
+            f"duration  : {hhmmss(series.total)}",
+            (
+                f"fps       : avg {stats.fps:.2f} | "
+                f"min {fps_min:.2f} | max {fps_max:.2f}"
+            ),
+            (
+                f"frame dur : p0.1 {stats.p0_1:.2f} | "
+                f"mean {stats.mean:.2f} | med {stats.median:.2f} | "
+                f"p99 {stats.p99:.2f} | p99.9 {stats.p99_9:.2f} ms"
+            ),
+            f"long (>{LONG_FRAME_FACTOR:g}x): {stats.long_frames} frame(s)",
+            f"graph     : {destination}",
+        )
+    )
+
+
+def main(argv: Sequence[str]) -> None:
+    options = parse_args(argv)
+    video = options.video
+
+    if not video.is_file():
+        fail(f"{video}: no such file")
+    if not os.access(video, os.R_OK):
+        fail(f"{video}: permission denied")
+    if shutil.which("ffprobe") is None:
+        fail("ffprobe not found (is ffmpeg installed?)")
+
+    stamps = frame_stamps(probe_packets(video, options.stream))
+    if len(stamps) < 2:
+        fail(
+            f"no frame timestamps in stream v:{options.stream} "
+            "(does that video stream exist?)"
+        )
+
+    series = frame_series(stamps)
+    stats = measure(series)
+    label = video.name
+
+    save(draw(series, stats, options, label), options.output)
+    report = format_report(label, stats, series, options)
+    print(report, file=sys.stderr if options.output is None else sys.stdout)
+
+
+if __name__ == "__main__":
+    main(sys.argv[1:])
