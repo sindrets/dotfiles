@@ -3,15 +3,6 @@
 # Set our umask
 umask 022
 
-export XDG_CONFIG_HOME="$HOME/.config"
-export VISUAL=nvim
-export EDITOR=nvim
-export BROWSER=/usr/bin/firefox-beta
-export TERMINAL=kitty
-export GREP_COLORS='ms=01;33:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36'
-export npm_config_prefix="$HOME/.local"
-export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
-
 appendenv () {
     local var_name="$1"
     local value="$(eval "echo \${$var_name}")"
@@ -65,6 +56,15 @@ prependpath () {
     esac
 }
 
+export XDG_CONFIG_HOME="$HOME/.config"
+export VISUAL=nvim
+export EDITOR=nvim
+export BROWSER=/usr/bin/firefox-beta
+export TERMINAL=kitty
+export GREP_COLORS='ms=01;33:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36'
+export npm_config_prefix="$HOME/.local"
+export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+
 prependpath "$HOME/.local/sbin"
 prependpath "$HOME/.local/bin"
 prependpath "$HOME/.config/scripts"
@@ -91,15 +91,15 @@ export XCURSOR_THEME="Vimix-cursors"
 
 # Load profiles from /etc/profile.d
 if test -d /etc/profile.d/; then
-	for profile in /etc/profile.d/*.sh; do
-		test -r "$profile" && . "$profile"
-	done
-	unset profile
+    for profile in /etc/profile.d/*.sh; do
+        test -r "$profile" && . "$profile"
+    done
+    unset profile
 fi
 
 # Source global bash config
 if test "$PS1" && test "$BASH" && test -z ${POSIXLY_CORRECT+x} && test -r /etc/bash.bashrc; then
-	. /etc/bash.bashrc
+    . /etc/bash.bashrc
 fi
 
 # Termcap is outdated, old, and crusty, kill it.

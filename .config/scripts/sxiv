@@ -1,7 +1,7 @@
 #!/usr/bin/bash
 
 if [ ! "$XDG_SESSION_TYPE" == "x11" ]; then
-  /usr/bin/swiv "$@"
+  swiv "$@"
 else
   /usr/bin/sxiv "$@"
 fi
