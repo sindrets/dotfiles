@@ -259,7 +259,7 @@ zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 # force zsh not to show completion menu, which allows fzf-tab to capture the unambiguous prefix
 zstyle ':completion:*' menu no
 # preview directory's content with eza when completing cd
-zstyle ':fzf-tab:complete:cd:*' fzf-preview 'exa -1 --group-directories-first --color=always $realpath'
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --group-directories-first --color=always $realpath'
 # custom fzf flags
 # NOTE: fzf-tab does not follow FZF_DEFAULT_OPTS by default
 zstyle ':fzf-tab:*' fzf-flags --color=fg:1,fg+:2 --bind=tab:accept
@@ -301,11 +301,11 @@ bindkey '^x^e' edit-command-line
 
 [ -f "$HOME/.bashrc.aliases" ] && source "$HOME/.bashrc.aliases"
 
-if [ -x "$(command -v exa)" ]; then
-    alias ls='exa --group-directories-first'
-    alias la='exa --group-directories-first -a'
-    alias ll="exa --group-directories-first -lh"
-    alias lla="exa --group-directories-first -lha"
+if [ -x "$(command -v eza)" ]; then
+    alias ls='eza --group-directories-first'
+    alias la='eza --group-directories-first -a'
+    alias ll="eza --group-directories-first -lh"
+    alias lla="eza --group-directories-first -lha"
 else
     alias ls='ls --group-directories-first --color=always'
     alias la='ls --group-directories-first -a'
