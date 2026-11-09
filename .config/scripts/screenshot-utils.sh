@@ -7,6 +7,26 @@ target="$target_dir/$(date +'%Y-%m-%d-%H%M%S')_screen.png"
 mkdir -p "$target_dir"
 
 case "$1" in
+# Ourrent output
+-o)
+    if [[ "$XDG_CURRENT_DESKTOP" == "mango" ]]; then
+        current_output="$(
+            mmsg get all-monitors |
+                jq -r 'first(.monitors[] | select(.active == true)).name'
+        )"
+
+        if [ -z "$current_output" ] || [ "$current_output" = "null" ]; then
+            notify-send "Screenshot" "Could not determine the current output"
+            exit 1
+        fi
+
+        grim -o "$current_output" "$target"
+    else
+        notify-send "Screenshot" "Not implemented for the current environment"
+        exit 1
+    fi
+    ;;
+# Selection
 -s)
     if [ "$XDG_SESSION_TYPE" = "x11" ]; then
         maim -s "$target"
@@ -14,6 +34,7 @@ case "$1" in
         grim -g "$(sloshr)" "$target"
     fi
     ;;
+# Active window
 -a)
     if [ "$XDG_SESSION_TYPE" = "x11" ]; then
         maim -i $(xdotool getactivewindow) |

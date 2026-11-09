@@ -217,6 +217,7 @@ require("lazy").setup({
     dependencies = {
       "saghen/blink.lib",
       {
+        "saghen/blink.lib",
         "saghen/blink.compat",
         lazy = true,
         opts = {
@@ -233,7 +234,6 @@ require("lazy").setup({
     end,
 
     config = conf("blink-cmp"),
-
     -- allows extending the providers array elsewhere in your config
     -- without having to redefine it
     opts_extend = { "sources.default", "sources.providers" }

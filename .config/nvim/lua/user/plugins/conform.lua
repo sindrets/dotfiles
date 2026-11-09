@@ -39,7 +39,7 @@ return function()
       scss = biome_or_prettier,
       sass = biome_or_prettier,
       html = biome_or_prettier,
-      markdown = biome_or_prettier,
+      markdown = ol("prettierd", "prettier"),
       json = { "jq" },
       jsonc = { "deno_fmt" },
       rust = { "rustfmt" },
