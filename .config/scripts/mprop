@@ -1,0 +1,100 @@
+#!/usr/bin/env bash
+# mprop — xprop/hyprprop equivalent for Mango WM.
+#
+# Interactively pick a window visible on the currently active tag(s) via
+# slurp's predefined-box mode, then print the selected client's full
+# properties. Booleans shown as yes/no, like hyprprop.
+#
+# Usage:
+#   mprop            interactively pick a visible window, print its properties
+#   mprop <id>       print properties of the client with the given Mango ID
+#   mprop --all      list all clients visible on the currently active tag(s)
+#   mprop -h|--help  show this help
+#
+set -euo pipefail
+
+usage() {
+  sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
+}
+
+case "${1:-}" in
+  -h|--help) usage; exit 0 ;;
+esac
+
+clients_json=$(mmsg get all-clients)
+tags_json=$(mmsg get all-tags)
+
+# Emit one box per client visible on the active tag of its monitor:
+#   <x>,<y> <width>x<height> <id><US><title>
+# The label encodes the client id so we can look it up after selection.
+visible_boxes=$(jq -r --argjson tags "$tags_json" '
+  def active($monitor): [ $tags.all_tags[] | select(.monitor == $monitor)
+                          | .tags[] | select(.is_active) | .index ] | first;
+  .clients[]
+  | .is_visible as $vis | .monitor as $mon | .tags as $tags
+  | select($vis and any($tags[]; . == active($mon)))
+  | "\(.x),\(.y) \(.width)x\(.height) \(.id)\u001f\(.title)"
+' <<<"$clients_json")
+
+print_client() {
+  jq -r '
+    ["Title:      " + .title,
+     "App ID:     " + .appid,
+     "PID:        " + (.pid|tostring),
+     "Mango ID:   " + (.id|tostring),
+     "Monitor:    " + .monitor,
+     "Tags:       " + ((.tags | join(", ")) // "(none)"),
+     "Geometry:   " + ((.x|tostring) + "," + (.y|tostring) + "  "
+                        + (.width|tostring) + "x" + (.height|tostring)),
+     "Visible:    " + (if .is_visible then "yes" else "no" end),
+     "Focused:    " + (if .is_focused then "yes" else "no" end),
+     "Floating:   " + (if .is_floating then "yes" else "no" end),
+     "Maximized:  " + (if .is_maximized then "yes" else "no" end),
+     "Fullscreen: " + (if .is_fullscreen then "yes" else "no" end),
+     "Fake FS:    " + (if .is_fakefullscreen then "yes" else "no" end),
+     "Minimized:  " + (if .is_minimized then "yes" else "no" end),
+     "Urgent:     " + (if .is_urgent then "yes" else "no" end),
+     "Scratchpad: " + (if .is_scratchpad or .is_namedscratchpad then "yes" else "no" end),
+     "Global:     " + (if .is_global or .is_unglobal then "yes" else "no" end),
+     "Overlay:    " + (if .is_overlay then "yes" else "no" end),
+     "XWayland:   " + (if .is_xwayland then "yes" else "no" end),
+     "Group:      " + (.is_group|tostring) + "/" + (.is_group_focus|tostring),
+     "Scroller:   " + (.scroller_proportion|tostring)]
+  | .[]
+  ' <<<"$1"
+}
+
+case "${1:-}" in
+  --all)
+    [[ -n "$visible_boxes" ]] || { echo "no visible clients on the current tag"; exit 1; }
+    printf '%s\n' "$visible_boxes" | while IFS= read -r line; do
+      label=${line#* }; label=${label#* }   # strip "<x>,<y> <w>x<h "
+      id=${label%%$'\x1f'*}; title=${label#*$'\x1f'}
+      client=$(jq -c --argjson id "$id" '.clients[] | select(.id == $id)' <<<"$clients_json")
+      printf 'id=%s  title=%s  monitor=%s  tags=%s  pos=%s,%s  size=%sx%s\n' \
+        "$id" "$title" \
+        "$(jq -r '.monitor' <<<"$client")" \
+        "$(jq -r '.tags | join(",")' <<<"$client")" \
+        "$(jq -r '.x' <<<"$client")" "$(jq -r '.y' <<<"$client")" \
+        "$(jq -r '.width' <<<"$client")" "$(jq -r '.height' <<<"$client")"
+    done
+    ;;
+  '')
+    # Interactive mode: pass boxes to slurp, it returns the label of the
+    # chosen box via %l.
+    [[ -n "$visible_boxes" ]] || { echo "mprop: no visible clients on the current tag" >&2; exit 1; }
+    label=$(printf '%s\n' "$visible_boxes" | slurp -r -f '%l') || exit 0
+    [[ -n "$label" ]] || exit 0
+    id=${label%%$'\x1f'*}
+    client=$(jq -c --argjson id "$id" '.clients[] | select(.id == $id)' <<<"$clients_json")
+    [[ -n "$client" && "$client" != "null" ]] || { echo "mprop: client $id vanished" >&2; exit 1; }
+    print_client "$client"
+    ;;
+  *)
+    id=$1
+    case $id in *[!0-9]*) echo "mprop: invalid client id '$id'" >&2; usage >&2; exit 2 ;; esac
+    client=$(jq -c --argjson id "$id" '.clients[] | select(.id == $id)' <<<"$clients_json")
+    [[ -n "$client" && "$client" != "null" ]] || { echo "mprop: no client with id $id" >&2; exit 1; }
+    print_client "$client"
+    ;;
+esac
