@@ -63,6 +63,7 @@
 	required = true
 [alias]
 	lg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %C(bold blue)<%an> %Cgreen(%cr)%Creset' --abbrev-commit
+	llg = log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %C(bold blue)<%an> %Cgreen(%cr)%Creset%n%b' --abbrev-commit --stat
 	wt = "!f() { source $HOME/.config/git/lib.sh && git_wt $@; }; f"
 	pr-checkout = "!f() { source $HOME/.config/git/lib.sh && git_pr_checkout $@; }; f"
 	pr-wt = "!f() { source $HOME/.config/git/lib.sh && git_pr_wt $@; }; f"

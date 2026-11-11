@@ -319,7 +319,7 @@ alias editdots='(cd ~ > /dev/null && GIT_DIR="~/.dotfiles" nvim +"Git ++curwin")
 alias gs="git status -sb"
 alias gd="git diff"
 alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %C(bold blue)<%an> %Cgreen(%cr)%Creset' --abbrev-commit"
-alias gll="git log --stat=80"
+alias gll="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %C(bold blue)<%an> %Cgreen(%cr)%Creset%n%b' --abbrev-commit --stat"
 alias dgs="dotfiles status -sb"
 alias dgd="dotfiles diff"
 alias dgl="dotfiles log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %C(bold blue)<%an> %Cgreen(%cr)%Creset' --abbrev-commit"
