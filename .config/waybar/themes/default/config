@@ -98,7 +98,7 @@
   "pulseaudio": {
     "format": "{icon}  {volume}%",
     "format-bluetooth": " {volume}%",
-    "format-muted": "婢 Mute",
+    "format-muted": "  Mute",
     "interval": 60,
     "format-icons": {
       "default": [""]
