@@ -117,6 +117,33 @@ end
 require("user.lsp.java")
 
 -- Typescript
+vim.lsp.config("tsc", {
+  handlers = {
+    ["textDocument/inlayHint"] = function(err, hints, ctx)
+      if hints then
+        hints = pb.filter(hints, function(hint)
+          -- LSP kind 1 is a type hint; leave parameter-name hints alone.
+          if hint.kind ~= 1 then return true end
+
+          --- @type string
+          local label = hint.label
+          if type(label) == "table" then
+            local parts = {}
+            for _, part in ipairs(label) do
+              parts[#parts + 1] = part.value
+            end
+            label = table.concat(parts)
+          end
+
+          -- Hide type hints containing inline object types.
+          return not label:find("{", 1, true)
+        end)
+      end
+
+      return vim.lsp.inlay_hint.on_inlayhint(err, hints, ctx)
+    end,
+  },
+})
 vim.lsp.enable("tsc")
 
 -- Astro

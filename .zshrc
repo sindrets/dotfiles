@@ -90,19 +90,6 @@ function get_term () {
     echo $(ps -o comm= -p "$session_leader_parent_int")
 }
 
-# Toggle VPN
-function vpn () {
-    if nordvpn status | grep -iq disconnected; then
-        nordvpn c no
-    else
-        nordvpn d
-    fi
-}
-
-function mdvless () {
-    /usr/bin/mdv $@ | less
-}
-
 # calculator
 function = () {
     python3 -c "from math import *; print($*)"
@@ -221,7 +208,6 @@ update_theme
 
 
 export NEOFETCH_IMG="$HOME/GoogleDrive/sindrets@gmail.com/Bilder/neofetch/"
-export BROWSER=/usr/bin/firefox-beta
 export LC_ALL=en_US.UTF-8 # force all applications to use default language for output
 export LESS=-r # scroll pager with mouse wheel.
 export KEYTIMEOUT=1 # zsh character sequencce wait (in 0.1s)
@@ -399,12 +385,12 @@ _fzf_compgen_dir() {
 [ -e "$HOME/.sh_extra" ] && source "$HOME/.sh_extra"
 
 # Init mise
-if [ -x "$(whence -p mise)" ]; then
+if command -v mise &>/dev/null; then
     eval "$(mise activate zsh)"
 fi
 
 # init prompt
-if [ -x "$(whence -p starship)" ]; then
+if command -v starship &>/dev/null; then
     eval "$(starship init zsh)"
 else
     echo "WARN: starship prompt not installed!" >&2

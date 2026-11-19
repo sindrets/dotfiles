@@ -59,11 +59,16 @@ prependpath () {
 export XDG_CONFIG_HOME="$HOME/.config"
 export VISUAL=nvim
 export EDITOR=nvim
-export BROWSER=/usr/bin/firefox-beta
 export TERMINAL=kitty
 export GREP_COLORS='ms=01;33:mc=01;31:sl=:cx=:fn=35:ln=32:bn=32:se=36'
 export npm_config_prefix="$HOME/.local"
 export DOCKER_HOST=unix://$XDG_RUNTIME_DIR/docker.sock
+
+if command -v firefox-beta; then
+    export BROWSER="$(which firefox-beta)"
+elif command -v firefox; then
+    export BROWSER="$(which firefox)"
+fi
 
 prependpath "$HOME/.local/sbin"
 prependpath "$HOME/.local/bin"
@@ -72,7 +77,7 @@ appendpath '/usr/local/sbin'
 appendpath '/usr/local/bin'
 appendpath '/usr/bin'
 appendpath "$HOME/.config/emacs/bin" 1
-appendpath "$(ruby -e 'puts Gem.user_dir')/bin" 1
+command -v ruby &>/dev/null && appendpath "$(ruby -e 'puts Gem.user_dir')/bin" 1
 appendpath "$HOME/.cargo/bin" 1
 appendpath "$HOME/go/bin" 1
 appendpath "$HOME/.local/share/pnpm/bin" 1
@@ -84,7 +89,7 @@ appendenv XCURSOR_PATH "$(realpath -m /usr/share/icons)"
 appendenv XCURSOR_PATH "$(realpath -m ~/.local/share/icons)"
 export XCURSOR_PATH
 
-eval "$(luarocks path)"
+command -v luarocks &>/dev/null && eval "$(luarocks path)"
 
 unset appendenv prependenv appendpath prependpath
 
@@ -111,7 +116,7 @@ unset MANPATH
 
 eval `dircolors "$HOME/.dir_colors"`
 
-if [ -z "$SSH_AUTH_SOCK" ] ; then
+if command -v ssh-agent &>/dev/null && [ -z "$SSH_AUTH_SOCK" ] ; then
   eval `ssh-agent -s` 1>/dev/null
 fi
 

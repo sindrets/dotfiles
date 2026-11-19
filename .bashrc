@@ -5,9 +5,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-export NEOFETCH_IMG="/home/sindrets/Google Drive/sindrets@gmail.com/Bilder/neofetch/"
-
-export BROWSER=/usr/bin/firefox
 export VISUAL=nvim
 export EDITOR=nvim
 export LC_ALL=en_US.UTF-8 # force all applications to use default language for output
@@ -15,31 +12,62 @@ export LESS=-r # scroll pager with mouse wheel.
 
 [[ -f "./.bashrc.aliases" ]] && source "./.bashrc.aliases"
 
-alias ls='ls --color=auto'
-alias ll="ls -lh"
-alias lla="ls -lha"
+if [ -x "$(command -v eza)" ]; then
+    alias ls='eza --group-directories-first'
+    alias la='eza --group-directories-first -a'
+    alias ll="eza --group-directories-first -lh"
+    alias lla="eza --group-directories-first -lha"
+else
+    alias ls='ls --group-directories-first --color=always'
+    alias la='ls --group-directories-first -a'
+    alias ll="ls --group-directories-first -lh"
+    alias lla="ls --group-directories-first -lha"
+fi
+
 alias grep="grep --color"
 alias dotfiles="/usr/bin/git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME"
-alias setclip="xclip -selection c"
-alias getclip="xclip -selection c -o"
-alias tree="tree -C"
-alias cd="cs"
-alias popd="popd_wrap" 
+alias editdots='(cd ~ > /dev/null && GIT_DIR="~/.dotfiles" nvim +"Git ++curwin")'
+alias gs="git status -sb"
+alias gd="git diff"
+alias gl="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %C(bold blue)<%an> %Cgreen(%cr)%Creset' --abbrev-commit"
+alias gll="git log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %C(bold blue)<%an> %Cgreen(%cr)%Creset%n%b' --abbrev-commit --stat"
+alias dgs="dotfiles status -sb"
+alias dgd="dotfiles diff"
+alias dgl="dotfiles log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %C(bold blue)<%an> %Cgreen(%cr)%Creset' --abbrev-commit"
+alias dgll="dotfiles log --stat=80"
+alias tree="exa --tree --icons --group-directories-first"
+alias ip="ip -c -h"
 alias h="cd ~"
-alias g="cd ~/Documents/git"
+alias g="cd $GIT_WORKSPACE"
 alias m="cd ~/Documents/misc"
-alias r="source ~/.bashrc"
-alias nvim-conf="$EDITOR ~/.config/nvim/init.vim"
+alias r="source ~/.zshrc"
+alias ta="tmux a -t"
+alias nv="nvim"
+alias nvclean="nvim --clean -u NORC"
+alias nvim-conf="GIT_DIR=$HOME/.dotfiles nvim --cmd 'cd ~/.config/nvim' -c 'args %' \
+    ~/.config/nvim/init.lua ~/.config/nvim/lua/user/plugins/init.lua"
+alias nv-conf="nvim-conf"
+alias nvim-pager="nvim -Rnc 'set bt=nowrite noswapfile ul=-1 nolist nonu nornu scl=yes:1 | lua Config.lib.set_center_cursor(true)'"
+alias nv-pager="nvim-pager"
 alias vim-conf="$EDITOR ~/.vimrc"
 alias bash-conf="$EDITOR ~/.bashrc"
+alias zsh-conf="$EDITOR ~/.zshrc"
+alias kitty-conf="$EDITOR ~/.config/kitty/kitty.conf"
 alias rmorphans='yay -Rs $(yay -Qqdt)'
-alias npmls="cat package.json | jq .scripts"
-alias pls="sudo "
-alias daddy="systemctl"
-alias kys="systemctl poweroff"
-alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save /etc/pacman.d/mirrorlist"
+alias npmls="jq .scripts package.json"
+alias rankmirrors="sudo reflector --verbose --latest 100 --sort rate --save \
+    /etc/pacman.d/mirrorlist"
 alias mdv="mdvless"
-alias man="man-color"
+alias nvminit="source /usr/share/nvm/init-nvm.sh"
+alias diff='diff -tW $(tput cols) --color'
+alias cw='code_dir=`jq -rM ".openedPathsList.workspaces3[]" "$HOME/.config/Code/storage.json" \
+    | fzf --height 10` && [ ! -z "$code_dir" ] && code --folder-uri $code_dir'
+alias tsall="find -maxdepth 1 -name 'tsconfig*.json' -exec sh -c 'echo \"Compiling for {}...\" \
+    && tsc -p {}' \\;"
+alias cal="/usr/bin/cal -mw"
+alias tlmgr="tlmgr --usermode"
+alias notes="zk edit -i --sort=created"
+alias ff="fastfetch"
 
 # Change directory and ls
 function cs () {
@@ -63,19 +91,6 @@ function getTerm () {
 	local session_leader_parent=$(ps -o ppid= -p "$sid_int")
 	local session_leader_parent_int=$((session_leader_parent))
 	echo $(ps -o comm= -p "$session_leader_parent_int")
-}
-
-# Toggle VPN
-function vpn () {
-	if nordvpn status | grep -iq disconnected; then
-		nordvpn c no
-	else
-		nordvpn d
-	fi
-}
-
-function mdvless () {
-	/usr/bin/mdv $@ | less
 }
 
 # calculator
@@ -102,37 +117,8 @@ function chpwd_hook() {
 	fi
 }
 
-case $term in
-
-	"konsole") ;;
-
-	"kitty") 
-		# Enable blurred transparency for Kitty
-		if [[ $(ps --no-header -p $PPID -o comm | grep -Ev '^(yakuake|konsole)$' ) ]]; then
-			for wid in $(xdotool search --pid $PPID); do
-				xprop -f _KDE_NET_WM_BLUR_BEHIND_REGION 32c -set _KDE_NET_WM_BLUR_BEHIND_REGION 0 -id $wid; done
-		fi
-
-		# Change neofetch img backend and source
-		if [[ -f "$NEOFETCH_IMG" || -d "$NEOFETCH_IMG" ]]; then
-			alias neofetch='printf %$(tput lines)s | tr " " "\n"; neofetch --backend kitty --source "$NEOFETCH_IMG"'
-		fi
-		;;
-
-esac 
-
 # PS1='[\u@\h \W]\$ '
 PS1="\[\033[38;5;12m\][\[$(tput sgr0)\]\[\033[38;5;10m\]\u\[$(tput sgr0)\]\[\033[38;5;12m\]@\[$(tput sgr0)\]\[\033[38;5;10m\]\h\[$(tput sgr0)\]\[\033[38;5;15m\] \W\[$(tput sgr0)\]\[\033[38;5;12m\]]\[$(tput sgr0)\]\[\033[38;5;15m\]\\$ \[$(tput sgr0)\]"
 
-powerline-daemon -q
-POWERLINE_BASH_CONTINUATION=1
-POWERLINE_BASH_SELECT=1
-. /usr/share/powerline/bindings/bash/powerline.sh
-
-eval $(thefuck --alias)
-
 # POST INIT
 chpwd_hook
-if [ ! $UID = 0 ]; then
-	neofetch
-fi
